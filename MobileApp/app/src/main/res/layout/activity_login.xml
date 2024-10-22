@@ -31,8 +31,8 @@
             android:ems="10"
             android:inputType="text"
             android:minHeight="48dp"
+            android:hint="@string/textview_username"
             android:layout_gravity="center_horizontal"
-            android:text="@string/textview_username"
             tools:ignore="LabelFor" />
 
         <EditText
@@ -44,7 +44,7 @@
             android:ems="10"
             android:inputType="textPassword"
             android:minHeight="48dp"
-            android:text="@string/textview_username"
+            android:hint="@string/textview_password"
             tools:ignore="LabelFor" />
 
         <Button
