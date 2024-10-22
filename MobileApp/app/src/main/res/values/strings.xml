@@ -3,6 +3,8 @@
     <string name="textview_username">Username</string>
     <string name="textview_password">Password</string>
     <string name="button_login">Login</string>
-    <string name="sign_up_label">Sign Up</string>
-    <string name="signup_register_label">Not a member? Sign In</string>
+    <string name="sign_up_label">Sign In</string>
+    <string name="signup_register_label">Not a member? Sign Up</string>
+    <string name="register_title">Register</string>
+    <string name="register_button">Register</string>
 </resources>
