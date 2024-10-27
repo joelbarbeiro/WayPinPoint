@@ -20,7 +20,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         etEmail = findViewById(R.id.textviewUsername);
-        etPassword = findViewById(R.id.textviewPassword);
+        etPassword = findViewById(R.id.registerTvPassword);
     }
 
     private static boolean isEmailValid(String email) {
@@ -49,6 +49,20 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(intent);
         } else {
             Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+    public void onClickRegisterLabel(View view) {
+        boolean isEmailValid;
+        isEmailValid = isEmailValid(etEmail.getText().toString());
+        Intent intent = new Intent(this, RegisterActivity.class);
+
+        if (isEmailValid) {
+            intent.putExtra(RegisterActivity.EMAIL, etEmail.getText().toString());
+            startActivity(intent);
+        } else {
+            startActivity(intent);
         }
     }
 }

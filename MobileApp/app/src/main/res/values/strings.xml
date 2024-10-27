@@ -3,7 +3,7 @@
 
     <!-- Login -->
     <string name="login_screen_label">Sign In</string>
-    <string name="login_textview_username">Username</string>
+    <string name="login_textview_username">Email</string>
     <string name="login_textview_password">Password</string>
     <string name="login_button">Login</string>
     <string name="login_register_label">Not a member? Sign Up</string>
