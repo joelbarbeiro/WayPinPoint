@@ -36,7 +36,7 @@
             tools:ignore="LabelFor" />
 
         <EditText
-            android:id="@+id/textviewPassword"
+            android:id="@+id/registerTvPassword"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -56,9 +56,10 @@
             android:text="@string/login_button" />
 
         <TextView
-            android:id="@+id/textView4"
+            android:id="@+id/textViewRegister"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:onClick="onClickRegisterLabel"
             android:text="@string/login_register_label"
             android:textAlignment="center" />
     </LinearLayout>

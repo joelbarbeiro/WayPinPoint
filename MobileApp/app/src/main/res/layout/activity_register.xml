@@ -24,39 +24,39 @@
             android:textSize="24sp" />
 
         <EditText
-            android:id="@+id/textview_username"
+            android:id="@+id/registerTvEmail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:autofillHints=""
             android:ems="10"
-            android:inputType="text"
+            android:hint="@string/login_textview_username"
+            android:inputType="textEmailAddress"
             android:minHeight="48dp"
-            android:hint="@string/textview_username"
             tools:ignore="LabelFor" />
 
         <EditText
-            android:id="@+id/textviewPassword"
+            android:id="@+id/registerTvPassword"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:autofillHints=""
             android:ems="10"
-            android:hint="@string/textview_password"
+            android:hint="@string/login_textview_password"
             android:inputType="textPassword"
             android:minHeight="48dp"
             tools:ignore="LabelFor" />
 
         <EditText
-            android:id="@+id/textviewConfirmPassword"
+            android:id="@+id/registerConfirmPassword"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:autofillHints=""
             android:ems="10"
+            android:hint="@string/register_confirm_password_label"
             android:inputType="textPassword"
             android:minHeight="48dp"
-            android:hint="@string/confirm_password_label"
             tools:ignore="LabelFor" />
 
         <Button
@@ -64,6 +64,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
+            android:onClick="onClickRegister"
             android:text="@string/register_button" />
 
     </LinearLayout>
