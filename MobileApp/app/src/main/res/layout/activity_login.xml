@@ -19,20 +19,20 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
+            android:text="@string/login_screen_label"
             android:textAlignment="center"
-            android:textSize="24sp"
-            android:text="@string/sign_up_label" />
+            android:textSize="24sp" />
 
         <EditText
-            android:id="@+id/textview_username"
+            android:id="@+id/textviewUsername"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
             android:autofillHints=""
             android:ems="10"
+            android:hint="@string/login_textview_username"
             android:inputType="text"
             android:minHeight="48dp"
-            android:hint="@string/textview_username"
-            android:layout_gravity="center_horizontal"
             tools:ignore="LabelFor" />
 
         <EditText
@@ -42,9 +42,9 @@
             android:layout_gravity="center_horizontal"
             android:autofillHints=""
             android:ems="10"
+            android:hint="@string/login_textview_password"
             android:inputType="textPassword"
             android:minHeight="48dp"
-            android:hint="@string/textview_password"
             tools:ignore="LabelFor" />
 
         <Button
@@ -52,13 +52,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="@string/button_login" />
+            android:onClick="onClickLogin"
+            android:text="@string/login_button" />
 
         <TextView
             android:id="@+id/textView4"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:text="@string/signup_register_label" />
+            android:text="@string/login_register_label"
+            android:textAlignment="center" />
     </LinearLayout>
 </LinearLayout>
