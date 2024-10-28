@@ -2,9 +2,9 @@
 
 namespace frontend\models;
 
+use common\models\User;
 use Yii;
 use yii\base\Model;
-use common\models\User;
 
 /**
  * Signup form
@@ -42,6 +42,7 @@ class SignupForm extends Model
      * Signs user up.
      *
      * @return bool whether the creating new account was successful and email was sent
+     * @throws \Exception
      */
     public function signup()
     {
@@ -56,8 +57,8 @@ class SignupForm extends Model
 
             // the following three lines were added:
             $auth = \Yii::$app->authManager;
-            $authorRole = $auth->getRole('client');
-            $auth->assign($authorRole, $user->getId());
+            $clientRole = $auth->getRole('client');
+            $auth->assign($clientRole, $user->getId());
 
             return $user;
         }
