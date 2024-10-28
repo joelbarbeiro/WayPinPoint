@@ -22,16 +22,22 @@ class RbacController extends Controller
         $updateActivity->description = 'Update Activity';
         $auth->add($updateActivity);
 
+        // add "manageUsers" permission
+        $manageUsers = $auth->createPermission('manageUsers');
+        $manageUsers->description = 'Manage Users';
+        $auth->add($manageUsers);
+
         // add "client" role and give this role the "createPost" permission
         $client = $auth->createRole('client');
         $auth->add($client);
         $auth->addChild($client, $createActivity);
+        $auth->addChild($client, $updateActivity);
 
         // add "admin" role and give this role the "updateActivity" permission
         // as well as the permissions of the "author" role
         $admin = $auth->createRole('admin');
         $auth->add($admin);
-        $auth->addChild($admin, $updateActivity);
+        $auth->addChild($admin, $manageUsers);
         $auth->addChild($admin, $client);
 
         // Assign roles to users. 1 and 2 are IDs returned by IdentityInterface::getId()

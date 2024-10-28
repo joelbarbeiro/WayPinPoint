@@ -6,6 +6,7 @@ use Yii;
 use yii\base\NotSupportedException;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
+use yii\filters\AccessControl;
 use yii\web\IdentityInterface;
 
 /**
@@ -44,10 +45,53 @@ class User extends ActiveRecord implements IdentityInterface
     public function behaviors()
     {
         return [
-            TimestampBehavior::class,
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['admin'],
+                    ],
+                ],
+            ],
         ];
     }
 
+    public function actionAssignRole($id)
+    {
+        $auth = Yii::$app->authManager;
+        $user = User::findOne($id);
+
+        if(!$user){
+            throw new \yii\web\ForbiddenHttpException('User not found');
+        }
+        $this->deleteAndAssignRole($id);
+
+    }
+
+    public function deleteAndAssignRole($id)
+    {
+        $auth = Yii::$app->authManager;
+        $user = User::findOne($id);
+        if(Yii::$app->request->isPost){
+            $roleName = Yii::$app->request->post('role');
+            $role = $auth->getRole($roleName);
+
+            if($role){
+                //Remove Role
+                $auth->revokeAll($user);
+
+                //Assign new role
+                $auth->assign($role, $user->id);
+                echo 'role has been Assigned';
+            }
+            else {
+                echo 'Error, User does not exist';
+            }
+            return $this->redirect(['user/index', 'id' => $user->id ]);
+        }
+        return $this->redirect(['user/index', 'id' => $user->id ]);
+    }
     /**
      * {@inheritdoc}
      */
