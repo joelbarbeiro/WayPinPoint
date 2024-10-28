@@ -1,5 +1,7 @@
 <?php
-namespace console\controllers; //namespace for advanced Project
+
+namespace console\controllers;
+//namespace for advanced Project
 use Yii;
 use yii\console\Controller;
 
@@ -17,7 +19,7 @@ class RbacController extends Controller
 
         // add "updateActivity" permission
         $updateActivity = $auth->createPermission('updateActivity');
-        $updateActivity->description = 'Update post';
+        $updateActivity->description = 'Update Activity';
         $auth->add($updateActivity);
 
         // add "client" role and give this role the "createPost" permission
@@ -36,6 +38,6 @@ class RbacController extends Controller
         // usually implemented in your User model.
         $auth->assign($client, 2);
         $auth->assign($admin, 1);
-        // php yii rbac/init no fim disto para fazer assing disto tudo
+        // php yii rbac/init no fim disto para fazer assign disto tudo
     }
 }
