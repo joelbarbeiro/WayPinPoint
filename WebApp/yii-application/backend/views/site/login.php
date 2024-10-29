@@ -31,6 +31,7 @@ use yii\bootstrap5\Html;
             ->label(false)
             ->passwordInput(['placeholder' => $model->getAttributeLabel('password')]) ?>
 
+
         <div class="row">
             <div class="col-8">
                 <?= $form->field($model, 'rememberMe')->checkbox([
@@ -63,8 +64,8 @@ use yii\bootstrap5\Html;
             <a href="forgot-password.html">I forgot my password</a>
         </p>
         <p class="mb-0">
-            <a href="register.html" class="text-center">Register a new membership</a>
+            <a href="<?= \yii\helpers\Url::toRoute('site/register')?>">Register new supplier</a>
         </p>
     </div>
-    <!-- /.login-card-body -->
+    <!-- /.login-card-body -->
 </div>

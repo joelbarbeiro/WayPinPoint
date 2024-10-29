@@ -1,7 +1,7 @@
 <?php
 
 namespace console\controllers;
-//namespace for advanced Project
+
 use Yii;
 use yii\console\Controller;
 
@@ -12,32 +12,51 @@ class RbacController extends Controller
         $auth = Yii::$app->authManager;
         $auth->removeAll();
 
-        // add "createPost" permission
+        // Define permissions
         $createActivity = $auth->createPermission('createActivity');
-        $createActivity->description = 'Create a activity';
+        $createActivity->description = 'Create an activity';
         $auth->add($createActivity);
 
-        // add "updateActivity" permission
         $updateActivity = $auth->createPermission('updateActivity');
-        $updateActivity->description = 'Update Activity';
+        $updateActivity->description = 'Update an activity';
         $auth->add($updateActivity);
 
-        // add "client" role and give this role the "createPost" permission
+        $viewActivity = $auth->createPermission('viewActivity');
+        $viewActivity->description = 'View an activity';
+        $auth->add($viewActivity);
+
+        // Define roles
         $client = $auth->createRole('client');
         $auth->add($client);
-        $auth->addChild($client, $createActivity);
+        $auth->addChild($client, $viewActivity);
 
-        // add "admin" role and give this role the "updateActivity" permission
-        // as well as the permissions of the "author" role
+        $supplier = $auth->createRole('supplier');
+        $auth->add($supplier);
+        $auth->addChild($supplier, $viewActivity);
+        $auth->addChild($supplier, $createActivity);
+        $auth->addChild($supplier,$updateActivity);
+
+        $manager = $auth->createRole('manager');
+        $auth->add($manager);
+        $auth->addChild($manager, $viewActivity);
+        $auth->addChild($manager, $updateActivity);
+
+        $salesperson = $auth->createRole('salesperson');
+        $auth->add($salesperson);
+        $auth->addChild($salesperson, $viewActivity);
+        $auth->addChild($salesperson, $updateActivity);
+
+        $guide = $auth->createRole('guide');
+        $auth->add($guide);
+        $auth->addChild($guide, $viewActivity);
+
         $admin = $auth->createRole('admin');
         $auth->add($admin);
         $auth->addChild($admin, $updateActivity);
         $auth->addChild($admin, $client);
-
-        // Assign roles to users. 1 and 2 are IDs returned by IdentityInterface::getId()
-        // usually implemented in your User model.
-        $auth->assign($client, 2);
-        $auth->assign($admin, 1);
-        // php yii rbac/init no fim disto para fazer assign disto tudo
+        $auth->addChild($admin, $supplier);
+        $auth->addChild($admin, $manager);
+        $auth->addChild($admin, $salesperson);
+        $auth->addChild($admin, $guide);
     }
 }

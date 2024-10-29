@@ -6,6 +6,7 @@ use Yii;
 use yii\base\NotSupportedException;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
+use yii\filters\AccessControl;
 use yii\web\IdentityInterface;
 
 /**
@@ -28,7 +29,7 @@ class User extends ActiveRecord implements IdentityInterface
     const STATUS_DELETED = 0;
     const STATUS_INACTIVE = 9;
     const STATUS_ACTIVE = 10;
-
+    public $role;
 
     /**
      * {@inheritdoc}
@@ -44,10 +45,64 @@ class User extends ActiveRecord implements IdentityInterface
     public function behaviors()
     {
         return [
-            TimestampBehavior::class,
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['admin'],
+                    ],
+                ],
+            ],
         ];
     }
+    public function getRole()
+    {
+        $roles = Yii::$app->authManager->getRolesByUser($this->id);
+        return reset($roles) ? reset($roles)->name : null;
+    }
+    public function actionAssignRole($id)
+    {
+        $auth = Yii::$app->authManager;
+        $user = User::findOne($id);
 
+        if(!$user){
+            throw new \yii\web\ForbiddenHttpException('User not found');
+        }
+        $this->deleteAndAssignRole($id);
+
+    }
+
+    public function deleteAndAssignRole($id)
+    {
+        $auth = Yii::$app->authManager;
+        $user = User::findOne($id);
+        if(Yii::$app->request->isPost){
+            $roleName = Yii::$app->request->post('role');
+            $role = $auth->getRole($roleName);
+
+            if($role && (Yii::$app->user->can('manageUsers'))){
+                //Remove Role
+                $auth->revokeAll($user);
+
+                //Assign new role
+                $auth->assign($role, $user->id);
+                echo 'role has been Assigned';
+            }
+            else {
+                echo 'Error, User does not exist';
+            }
+            return $this->redirect(['user/index', 'id' => $user->id ]);
+        }
+        $roles = $auth->getRoles();
+        $currentRole = $auth->getRolesByUser($user);
+
+        return $this->render('assign-role', [
+            'user' => $user,
+            'roles' => $roles,
+            'currentRole' => reset($currentRole) ? reset($currentRole)->name : null,
+        ]);
+    }
     /**
      * {@inheritdoc}
      */
@@ -210,4 +265,5 @@ class User extends ActiveRecord implements IdentityInterface
     {
         $this->password_reset_token = null;
     }
+
 }
