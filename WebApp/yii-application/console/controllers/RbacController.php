@@ -27,6 +27,9 @@ class RbacController extends Controller
         $manageUsers->description = 'Manage Users';
         $auth->add($manageUsers);
 
+        $assignRoles = $auth->createPermission('assignRoles');
+        $assignRoles->description = 'Assign roles to users';
+        $auth->add($assignRoles);
         // add "client" role and give this role the "createPost" permission
         $client = $auth->createRole('client');
         $auth->add($client);
@@ -38,8 +41,8 @@ class RbacController extends Controller
         $admin = $auth->createRole('admin');
         $auth->add($admin);
         $auth->addChild($admin, $manageUsers);
+        $auth->addChild($admin, $assignRoles);
         $auth->addChild($admin, $client);
-
         // Assign roles to users. 1 and 2 are IDs returned by IdentityInterface::getId()
         // usually implemented in your User model.
         $auth->assign($client, 2);

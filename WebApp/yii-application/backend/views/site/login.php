@@ -9,7 +9,7 @@ use yii\bootstrap5\Html;
 ?>
 <div class="card">
     <div class="card-body login-card-body">
-        <p class="login-box-msg">Sign in to start your session</p>
+        <p class="login-box-msg">Backend ----- ! Sign in to start your session</p>
 
         <?php $form = \yii\bootstrap4\ActiveForm::begin(['id' => 'login-form']) ?>
 
@@ -21,6 +21,15 @@ use yii\bootstrap5\Html;
         ])
             ->label(false)
             ->textInput(['placeholder' => $model->getAttributeLabel('username')]) ?>
+
+        <?= $form->field($model, 'password', [
+            'options' => ['class' => 'form-group has-feedback'],
+            'inputTemplate' => '{input}<div class="input-group-append"><div class="input-group-text"><span class="fas fa-lock"></span></div></div>',
+            'template' => '{beginWrapper}{input}{error}{endWrapper}',
+            'wrapperOptions' => ['class' => 'input-group mb-3']
+        ])
+            ->label(false)
+            ->passwordInput(['placeholder' => $model->getAttributeLabel('password')]) ?>
 
         <?= $form->field($model, 'password', [
             'options' => ['class' => 'form-group has-feedback'],
@@ -63,8 +72,11 @@ use yii\bootstrap5\Html;
             <a href="forgot-password.html">I forgot my password</a>
         </p>
         <p class="mb-0">
-            <a href="register.html" class="text-center">Register a new membership</a>
+            <a href="backend\views\register\register.php" class="text-center">Register a new membershi * </a>
+        </p>
+        <p class="mb-0">
+            <a href="<?= \yii\helpers\Url::toRoute('site\register')?>">Register</a>
         </p>
     </div>
-    <!-- /.login-card-body -->
+    <!-- /.login-card-body -->
 </div>

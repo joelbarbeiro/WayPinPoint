@@ -29,7 +29,7 @@ class User extends ActiveRecord implements IdentityInterface
     const STATUS_DELETED = 0;
     const STATUS_INACTIVE = 9;
     const STATUS_ACTIVE = 10;
-
+    public $role;
 
     /**
      * {@inheritdoc}
@@ -56,7 +56,11 @@ class User extends ActiveRecord implements IdentityInterface
             ],
         ];
     }
-
+    public function getRole()
+    {
+        $roles = Yii::$app->authManager->getRolesByUser($this->id);
+        return reset($roles) ? reset($roles)->name : null;
+    }
     public function actionAssignRole($id)
     {
         $auth = Yii::$app->authManager;
@@ -77,7 +81,7 @@ class User extends ActiveRecord implements IdentityInterface
             $roleName = Yii::$app->request->post('role');
             $role = $auth->getRole($roleName);
 
-            if($role){
+            if($role && (Yii::$app->user->can('manageUsers'))){
                 //Remove Role
                 $auth->revokeAll($user);
 
@@ -90,7 +94,14 @@ class User extends ActiveRecord implements IdentityInterface
             }
             return $this->redirect(['user/index', 'id' => $user->id ]);
         }
-        return $this->redirect(['user/index', 'id' => $user->id ]);
+        $roles = $auth->getRoles();
+        $currentRole = $auth->getRolesByUser($user);
+
+        return $this->render('assign-role', [
+            'user' => $user,
+            'roles' => $roles,
+            'currentRole' => reset($currentRole) ? reset($currentRole)->name : null,
+        ]);
     }
     /**
      * {@inheritdoc}
