@@ -1,37 +1,35 @@
 <?php
+
 /** @var yii\web\View $this */
 /** @var yii\bootstrap5\ActiveForm $form */
-/** @var backend\models\RegisterForm $model */
+/** @var \frontend\models\SignupForm $model */
 
-use yii\widgets\ActiveForm;
-use yii\helpers\Html;
+use yii\bootstrap5\Html;
+use yii\bootstrap5\ActiveForm;
 
-$this->title = 'Register';
+$this->title = 'Signup';
+$this->params['breadcrumbs'][] = $this->title;
 ?>
-<h1></h1>
-<div class="register-box">
-    <div class="register-logo">
-        <a href=""><b>Backend</b> Registration</a>
-    </div>
+<div class="site-signup">
+    <h1><?= Html::encode($this->title) ?></h1>
 
-    <div class="card">
-        <div class="card-body register-card-body">
-            <p class="login-box-msg">Register a new membership</p>
+    <p>Please fill out the following fields to signup:</p>
 
-            <?php $form = ActiveForm::begin(['id' => 'register-form']); ?>
+    <div class="row">
+        <div class="col-lg-5">
+            <?php $form = ActiveForm::begin(['id' => 'form-signup']); ?>
 
-            <?= $form->field($model, 'username')->textInput(['placeholder' => 'Username'])->label(false) ?>
-            <?= $form->field($model, 'email')->textInput(['placeholder' => 'Email'])->label(false) ?>
-            <?= $form->field($model, 'password')->passwordInput(['placeholder' => 'Password'])->label(false) ?>
+            <?= $form->field($model, 'username')->textInput(['autofocus' => true]) ?>
 
-            <div class="row">
-                <div class="col-12">
-                    <?= Html::submitButton('Register', ['class' => 'btn btn-primary btn-block']) ?>
-                </div>
+            <?= $form->field($model, 'email') ?>
+
+            <?= $form->field($model, 'password')->passwordInput() ?>
+
+            <div class="form-group">
+                <?= Html::submitButton('Signup', ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
             </div>
 
             <?php ActiveForm::end(); ?>
-
         </div>
     </div>
 </div>

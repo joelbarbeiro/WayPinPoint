@@ -2,6 +2,9 @@
 
 namespace backend\models;
 
+use common\models\User;
+use Yii;
+
 /**
  * This is the model class for table "user".
  *
@@ -18,6 +21,7 @@ namespace backend\models;
  */
 class RegisterForm extends \yii\db\ActiveRecord
 {
+    public $password;
     /**
      * {@inheritdoc}
      */
@@ -38,6 +42,7 @@ class RegisterForm extends \yii\db\ActiveRecord
             [['auth_key'], 'string', 'max' => 32],
             [['username'], 'unique'],
             [['email'], 'unique'],
+            ['password', 'string', 'min' => Yii::$app->params['user.passwordMinLength']],
             [['password_reset_token'], 'unique'],
         ];
     }
@@ -50,6 +55,7 @@ class RegisterForm extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'username' => 'Username',
+            'password' => 'Password',
             'auth_key' => 'Auth Key',
             'password_hash' => 'Password Hash',
             'password_reset_token' => 'Password Reset Token',
@@ -59,5 +65,27 @@ class RegisterForm extends \yii\db\ActiveRecord
             'updated_at' => 'Updated At',
             'verification_token' => 'Verification Token',
         ];
+    }
+
+    public function register()
+    {
+        if ($this->validate()) {
+            $user = new User();
+            $user->username = $this->username;
+            $user->email = $this->email;
+            $user->setPassword($this->password);
+            $user->generateAuthKey();
+            $user->status = 10;
+            $user->save(false);
+
+            // the following three lines were added:
+            $auth = \Yii::$app->authManager;
+            $clientRole = $auth->getRole('supplier');
+            $auth->assign($clientRole, $user->getId());
+
+            return $user;
+        }
+
+        return null;
     }
 }

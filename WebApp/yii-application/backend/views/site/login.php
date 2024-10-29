@@ -75,7 +75,7 @@ use yii\bootstrap5\Html;
             <a href="backend\views\register\register.php" class="text-center">Register a new membershi * </a>
         </p>
         <p class="mb-0">
-            <a href="<?= \yii\helpers\Url::toRoute('site\register')?>">Register</a>
+            <a href="<?= \yii\helpers\Url::toRoute('site/register')?>">Register</a>
         </p>
     </div>
     <!-- /.login-card-body -->
