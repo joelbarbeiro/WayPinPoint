@@ -1,4 +1,10 @@
 <?php
+
+use yii\helpers\Html;
+
+/* @var $this yii\web\View */
+/* @var $user common\models\User */
+
 $this->title = 'Starter Page';
 $this->params['breadcrumbs'] = [['label' => $this->title]];
 ?>
@@ -16,7 +22,7 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
             ]) ?>
         </div>
     </div>
-
+        <?= Html::a('Assign Role', ['site/roleassign'], ['class' => 'btn btn-info']) ?>
     <div class="row">
         <div class="col-12 col-sm-6 col-md-3">
             <?= \hail812\adminlte\widgets\InfoBox::widget([
