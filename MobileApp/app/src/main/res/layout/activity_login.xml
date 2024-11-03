@@ -30,7 +30,7 @@
             android:layout_gravity="center_horizontal"
             android:autofillHints=""
             android:ems="10"
-            android:hint="@string/login_textview_username"
+            android:hint="@string/login_textview_email"
             android:inputType="text"
             android:minHeight="48dp"
             tools:ignore="LabelFor" />

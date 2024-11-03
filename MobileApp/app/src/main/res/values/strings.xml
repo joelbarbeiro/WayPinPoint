@@ -3,7 +3,8 @@
 
     <!-- Login -->
     <string name="login_screen_label">Sign In</string>
-    <string name="login_textview_username">Email</string>
+    <string name="login_textview_email">Email</string>
+    <string name="login_textview_username">Username</string>
     <string name="login_textview_password">Password</string>
     <string name="login_button">Login</string>
     <string name="login_register_label">Not a member? Sign Up</string>
@@ -12,6 +13,7 @@
     <string name="register_title">Register</string>
     <string name="register_button">Register</string>
     <string name="register_confirm_password_label">Confirm Password</string>
+
 
     <!-- Menu -->
     <string name="menu_my_profile_label">My Profile</string>
@@ -24,5 +26,10 @@
     <string name="menu_header_image_description">Menu header Image</string>
     <string name="ndOpen">Open</string>
     <string name="ndClose">Close</string>
+
+<!-- My Profile-->
+    <string name="my_profile_nif">NIF</string>
+    <string name="my_profile_save_button">Save Changes</string>
+    <string name="my_profile_delete_button">Delete Profile</string>
 
 </resources>
