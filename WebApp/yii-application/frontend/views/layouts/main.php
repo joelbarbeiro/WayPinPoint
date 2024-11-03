@@ -69,7 +69,7 @@ TemplateAsset::register($this);
 
         // Define the menu items
         $menuItems = [
-            ['label' => 'Activities', 'url' => ['/activities/index']],
+            ['label' => 'Activities', 'url' => ['/activity/index']],
         ];
         if (Yii::$app->user->isGuest) {
             $menuItems[] = ['label' => 'Signup', 'url' => ['/site/signup']];
@@ -82,20 +82,28 @@ TemplateAsset::register($this);
             'items' => $menuItems,
         ]);
 
-        echo '<div class="d-flex align-items-center">'; // Centering the search and user login/logout
-        echo Html::beginForm(['/site/search'], 'get', ['class' => 'form-inline me-2']); // Add margin-end
-        echo Html::textInput('search', '', ['class' => 'form-control', 'placeholder' => 'Search for Activities']);
+        echo Html::beginForm(['/activity/index'], 'get', ['class' => 'form-inline me-2']);
+        echo Html::textInput('ActivitySearch[search]', '', ['class' => 'form-control', 'placeholder' => 'Search for Activities']);
         echo Html::submitButton('<i class="fa fa-search"></i>', ['class' => 'btn btn-outline-primary']);
         echo Html::endForm();
 
         echo Html::a(
             '<i class="fa fa-shopping-cart "></i>',
             ['/cart/index'],
-            ['class' => 'btn btn-outline-primary']
+            ['class' => 'btn btn-outline-primary me-2']
         );
 
+        if (!Yii::$app->user->isGuest):
+            $userId = Yii::$app->user->identity->id;
+            echo Html::a(
+                '<i class="fa fa-user-alt"></i>',
+                ['/user/view', 'id' => $userId],
+                ['class' => 'btn btn-outline-primary']
+            );
+        endif;
+
         if (Yii::$app->user->isGuest) {
-            echo Html::tag('div', Html::a('Login', ['/site/login'], ['class' => 'btn btn-link text-decoration-none']), ['class' => 'ms-2']); // Add margin-start
+            echo Html::tag('div', Html::a('Login', ['/site/login'], ['class' => 'btn btn-link text-decoration-none']), ['class' => 'ms-2']);
         } else {
             echo Html::beginForm(['/site/logout'], 'post', ['class' => 'd-flex ms-2']) // Add margin-start
                 . Html::submitButton(
