@@ -58,7 +58,7 @@ $imgDir ="yii\backend\web\assets\img\\";
                     ['label' => 'Bookings',  'icon' => 'file-code', 'url' => ['/gii'], 'target' =>
                         '_blank'],
                     ['label' => 'Manage activity', 'url' => ['activities/index'], 'iconStyle' => 'far',],
-                    ['label' => 'Users', 'url' => ['user/backendregister'], 'iconStyle' => 'far',],
+                    ['label' => 'Users', 'url' => ['/backendregister'], 'iconStyle' => 'far',],
                     ['label' => 'Manage User'],
                     ['label' => 'Selling Points', 'header' => true],
                     ['label' => 'Add Selling Point'],

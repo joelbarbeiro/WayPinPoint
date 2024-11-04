@@ -8,7 +8,6 @@ use Yii;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use yii\web\Controller;
-use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use backend\models\RegisterForm;
 /**
@@ -28,7 +27,6 @@ class SiteController extends Controller
                     [
                         'actions' => ['login', 'error', 'register'],
                         'allow' => true,
-                        'roles' => ['supplier'],
                     ],
                     [
                         'actions' => ['logout', 'index'],
@@ -83,7 +81,6 @@ class SiteController extends Controller
             'model' => $model,
            ]);
     }
-
     /**
      * Login action.
      *
