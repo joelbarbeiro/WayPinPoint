@@ -1,4 +1,7 @@
 <?php
+
+use yii\helpers\Url;
+
 /** @var yii\backend\assets $assetDir */
 $imgDir ="yii\backend\web\assets\img\\";
 ?>
@@ -58,7 +61,7 @@ $imgDir ="yii\backend\web\assets\img\\";
                     ['label' => 'Bookings',  'icon' => 'file-code', 'url' => ['/gii'], 'target' =>
                         '_blank'],
                     ['label' => 'Manage activity', 'url' => ['activities/index'], 'iconStyle' => 'far',],
-                    ['label' => 'Users', 'url' => ['/backendregister'], 'iconStyle' => 'far',],
+                    ['label' => 'User', 'icon' => 'user', 'url' => Url::to(['role-register/role-register'])],
                     ['label' => 'Manage User'],
                     ['label' => 'Selling Points', 'header' => true],
                     ['label' => 'Add Selling Point'],
