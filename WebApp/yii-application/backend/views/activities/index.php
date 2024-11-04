@@ -30,7 +30,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
-        'otherDataProvider' => $otherDataProvider,
+        //'otherDataProvider' => $otherDataProvider,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
@@ -40,14 +40,14 @@ $this->params['breadcrumbs'][] = $this->title;
             'maxpax',
             'priceperpax',
             'address',
-            [
+            /*[
                 'label' => 'Date',
                 'value' =>  $otherDataProvider ? $otherDataProvider->date->date : 'No date',
             ],
             [
                 'label' => 'Time',
                 'value' => $otherDataProvider ? $otherDataProvider->time->hour : 'No time',
-            ],
+            ],*/
             [
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, Activities $model, $key, $index, $column) {
