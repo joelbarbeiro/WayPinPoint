@@ -21,8 +21,6 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                 'body' => 'There is a problem that we need to fix. A wonderful serenity has taken possession of my entire soul, like these sweet mornings of spring which I enjoy with my whole heart.'
             ]) ?>
         </div>
-    </div>
-        <?= Html::a('Assign Role', ['site/roleassign'], ['class' => 'btn btn-info']) ?>
     <div class="row">
         <div class="col-12 col-sm-6 col-md-3">
             <?= \hail812\adminlte\widgets\InfoBox::widget([
