@@ -13,6 +13,7 @@ class RegisterController extends \yii\web\Controller
     {
         $model = new RegisterForm();
 
+
         if ($model->load(Yii::$app->request->post()) && $model->register()) {
             Yii::$app->session->setFlash('success', 'Registration successful. You can now log in.');
             return $this->redirect(['site/login']);
