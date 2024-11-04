@@ -17,3 +17,5 @@ php yii migrate/create create_sales_table --fields="activities_id:integer:notNul
 php yii migrate/create create_bookings_table --fields="activities_id:integer:notNull:foreignKey(activities),calendar_id:integer:notNull:foreignKey(calendar),user_id:integer:notNull:foreignKey(user),numberpax:integer:notNull"
 
 php yii migrate/create create_invoices_table --fields="user:integer:notNull:foreignKey(user),sales_id:integer:notNull:foreignKey(sales)"
+
+php yii migrate/create create_userextras_table --fields="user:integer:notNull:foreignKey(user),phone:string(20):notnull,supplier:integer:notnull:defaultValue(0)"
