@@ -4,7 +4,6 @@ namespace common\models;
 
 use Yii;
 use yii\base\NotSupportedException;
-use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\filters\AccessControl;
 use yii\web\IdentityInterface;
@@ -50,12 +49,13 @@ class User extends ActiveRecord implements IdentityInterface
                 'rules' => [
                     [
                         'allow' => true,
-                        'roles' => ['admin'],
+                        'roles' => ['client'],
                     ],
                 ],
             ],
         ];
     }
+
     public function getRole()
     {
         $roles = Yii::$app->authManager->getRolesByUser($this->id);
@@ -68,6 +68,16 @@ class User extends ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
+
+            ['username', 'required'],
+            ['username', 'string', 'max' => 255],
+            ['username', 'unique'],
+
+            ['email', 'required'],
+            ['email', 'email'],
+            ['email', 'string', 'max' => 255],
+            ['email', 'unique'],
+
             ['status', 'default', 'value' => self::STATUS_INACTIVE],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_INACTIVE, self::STATUS_DELETED]],
         ];
@@ -124,7 +134,8 @@ class User extends ActiveRecord implements IdentityInterface
      * @param string $token verify email token
      * @return static|null
      */
-    public static function findByVerificationToken($token) {
+    public static function findByVerificationToken($token)
+    {
         return static::findOne([
             'verification_token' => $token,
             'status' => self::STATUS_INACTIVE
@@ -143,7 +154,7 @@ class User extends ActiveRecord implements IdentityInterface
             return false;
         }
 
-        $timestamp = (int) substr($token, strrpos($token, '_') + 1);
+        $timestamp = (int)substr($token, strrpos($token, '_') + 1);
         $expire = Yii::$app->params['user.passwordResetTokenExpire'];
         return $timestamp + $expire >= time();
     }
