@@ -1,5 +1,9 @@
 <?php
 /** @var yii\backend\assets $assetDir */
+
+use yii\helpers\Url;
+
+
 ?>
 
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
@@ -54,6 +58,7 @@
                     ['label' => 'Gii',  'icon' => 'file-code', 'url' => ['/gii'], 'target' => '_blank'],
                     ['label' => 'Debug', 'icon' => 'bug', 'url' => ['/debug'], 'target' => '_blank'],
                     ['label' => 'MULTI LEVEL EXAMPLE', 'header' => true],
+                    ['label' => 'User', 'icon' => 'user', 'url' => Url::to(['role-register/role-register'])],
                     ['label' => 'Level1'],
                     [
                         'label' => 'Level1',
