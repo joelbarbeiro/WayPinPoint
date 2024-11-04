@@ -4,7 +4,6 @@ namespace common\models;
 
 use Yii;
 use yii\base\NotSupportedException;
-use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\filters\AccessControl;
 use yii\web\IdentityInterface;
@@ -50,65 +49,35 @@ class User extends ActiveRecord implements IdentityInterface
                 'rules' => [
                     [
                         'allow' => true,
-                        'roles' => ['admin'],
+                        'roles' => ['client'],
                     ],
                 ],
             ],
         ];
     }
+
     public function getRole()
     {
         $roles = Yii::$app->authManager->getRolesByUser($this->id);
         return reset($roles) ? reset($roles)->name : null;
     }
-    public function actionAssignRole($id)
-    {
-        $auth = Yii::$app->authManager;
-        $user = User::findOne($id);
 
-        if(!$user){
-            throw new \yii\web\ForbiddenHttpException('User not found');
-        }
-        $this->deleteAndAssignRole($id);
-
-    }
-
-    public function deleteAndAssignRole($id)
-    {
-        $auth = Yii::$app->authManager;
-        $user = User::findOne($id);
-        if(Yii::$app->request->isPost){
-            $roleName = Yii::$app->request->post('role');
-            $role = $auth->getRole($roleName);
-
-            if($role && (Yii::$app->user->can('manageUsers'))){
-                //Remove Role
-                $auth->revokeAll($user);
-
-                //Assign new role
-                $auth->assign($role, $user->id);
-                echo 'role has been Assigned';
-            }
-            else {
-                echo 'Error, User does not exist';
-            }
-            return $this->redirect(['user/index', 'id' => $user->id ]);
-        }
-        $roles = $auth->getRoles();
-        $currentRole = $auth->getRolesByUser($user);
-
-        return $this->render('assign-role', [
-            'user' => $user,
-            'roles' => $roles,
-            'currentRole' => reset($currentRole) ? reset($currentRole)->name : null,
-        ]);
-    }
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
+
+            ['username', 'required'],
+            ['username', 'string', 'max' => 255],
+            ['username', 'unique'],
+
+            ['email', 'required'],
+            ['email', 'email'],
+            ['email', 'string', 'max' => 255],
+            ['email', 'unique'],
+
             ['status', 'default', 'value' => self::STATUS_INACTIVE],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_INACTIVE, self::STATUS_DELETED]],
         ];
@@ -165,7 +134,8 @@ class User extends ActiveRecord implements IdentityInterface
      * @param string $token verify email token
      * @return static|null
      */
-    public static function findByVerificationToken($token) {
+    public static function findByVerificationToken($token)
+    {
         return static::findOne([
             'verification_token' => $token,
             'status' => self::STATUS_INACTIVE
@@ -184,7 +154,7 @@ class User extends ActiveRecord implements IdentityInterface
             return false;
         }
 
-        $timestamp = (int) substr($token, strrpos($token, '_') + 1);
+        $timestamp = (int)substr($token, strrpos($token, '_') + 1);
         $expire = Yii::$app->params['user.passwordResetTokenExpire'];
         return $timestamp + $expire >= time();
     }

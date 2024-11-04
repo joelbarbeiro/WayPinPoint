@@ -38,22 +38,19 @@ return [
             'errorAction' => 'site/error',
         ],
         'view' => [
-         'theme' => [
-             'pathMap' => [
-                 '@backend/views' => '@backend/views',
-                '@app/views' => '@vendor/hail812/yii2-adminlte3/src/views'
-             ],
-         ],
-    ],
-
-        /*
+            'theme' => [
+                'pathMap' => [
+                    '@backend/views' => '@backend/views',
+                    '@app/views' => '@vendor/hail812/yii2-adminlte3/src/views'
+                ],
+            ],
+        ],
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
             ],
         ],
-        */
     ],
     'params' => $params,
 ]; 
