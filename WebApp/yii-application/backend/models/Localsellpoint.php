@@ -2,7 +2,7 @@
 
 namespace backend\models;
 
-use Yii;
+use common\models\User;
 
 /**
  * This is the model class for table "localsellpoint".
@@ -31,6 +31,7 @@ class Localsellpoint extends \yii\db\ActiveRecord
     {
         return [
             [['user_id'], 'integer'],
+            [['manager_id'], 'integer'],
             [['address', 'name'], 'required'],
             [['address'], 'string', 'max' => 400],
             [['name'], 'string', 'max' => 100],
@@ -46,6 +47,7 @@ class Localsellpoint extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'user_id' => 'User ID',
+            'manager_id' => 'Manager ID',
             'address' => 'Address',
             'name' => 'Name',
         ];
@@ -60,4 +62,10 @@ class Localsellpoint extends \yii\db\ActiveRecord
     {
         return $this->hasOne(User::class, ['id' => 'user_id']);
     }
+
+    public function getManager()
+    {
+        return $this->hasOne(User::class, ['id' => 'manager_id']);
+    }
+
 }
