@@ -23,8 +23,6 @@ use yii\helpers\Html;
 </style>
 <div class="localsellpoint-index">
 
-    <h1>Local Selling Points</h1>
-
     <p>
         <?= Html::a('Create Localsellpoint', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
@@ -44,10 +42,10 @@ use yii\helpers\Html;
                 <tbody>
                 <tr>
                     <td><?= Html::encode($local->name) ?></td>
-                    <td><small><?= Html::encode($local->address) ?></small></td>
-<!--                    <td><small>--><?php //= Html::encode($local->manager) ?><!--</small></td>-->
-                    <td>
-                        <?= Html::a('Assign Manager', ['manager/assign', 'localId' => $local->id],
+                    <td><?= Html::encode($local->address) ?></td>
+                    <td><?= Html::encode($local->manager->username) ?></td>
+                    <td><small>
+                        <?= Html::a('Assign Manager', ['localsellpoint/update', 'id' => $local->id],
                             ['class' => 'btn btn-success']) ?>
                     </td>
                 </tr>

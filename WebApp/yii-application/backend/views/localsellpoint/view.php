@@ -13,8 +13,6 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="localsellpoint-view">
 
-    <h1><?= Html::encode($this->title) ?></h1>
-
     <p>
         <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Delete', ['delete', 'id' => $model->id], [
@@ -29,10 +27,20 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
-            'id',
-            'user_id',
+            [
+                'label' => 'Owner',
+                'value' => function ($model) {
+                    return $model->user->username;
+                }
+            ],
             'address',
             'name',
+            [
+                'label' => 'Manager',
+                'value' => function ($model) {
+                    return $model->manager->username;
+                }
+            ],
         ],
     ]) ?>
 

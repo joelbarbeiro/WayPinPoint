@@ -100,19 +100,6 @@ class LocalsellpointController extends Controller
         ]);
     }
 
-    public function actionAssign($id)
-    {
-        $model = $this->findModel($id);
-        $managerIds = Yii::$app->authManager->getUserIdsByRole('manager');
-        $managerUserNames = User::find()
-            ->select(['id', 'username'])
-            ->where(['id' => $managerIds])
-            ->asArray()
-            ->all();
-
-
-    }
-
     /**
      * Updates an existing Localsellpoint model.
      * If update is successful, the browser will be redirected to the 'view' page.
@@ -123,13 +110,22 @@ class LocalsellpointController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-
+        $managerIds = Yii::$app->authManager->getUserIdsByRole('manager');
+        $managerUserNames = User::find()
+            ->select(['id', 'username'])
+            ->where(['id' => $managerIds])
+            ->asArray()
+            ->all();
+        $managersMap = ArrayHelper::map($managerUserNames, 'id', 'username');
+        $userId = Yii::$app->user->id;
+        $model->user_id = $userId;
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('update', [
             'model' => $model,
+            'managersMap' => $managersMap
         ]);
     }
 
