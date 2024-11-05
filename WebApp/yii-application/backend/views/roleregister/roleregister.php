@@ -19,6 +19,7 @@ use yii\bootstrap5\Html;
     <?= $form->field($model, 'username')->textInput(['autofocus' => true]) ?>
     <?= $form->field($model, 'email')->input('email') ?>
     <?= $form->field($model, 'password')->passwordInput() ?>
+    <?= $form->field($model, 'phone')->textInput() ?>
     <?= $form->field($model, 'role')->dropDownList([
         'manager' => 'manager',
         'salesperson' => 'salesperson',
@@ -28,5 +29,5 @@ use yii\bootstrap5\Html;
     <div class="form-group">
         <?= Html::submitButton('Register User', ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
     </div>
-    <?php ActiveForm::end()?>
+    <?php ActiveForm::end() ?>
 </div>

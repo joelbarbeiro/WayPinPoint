@@ -3,6 +3,7 @@
 namespace backend\controllers;
 
 use backend\models\RoleRegisterForm;
+use common\models\UserExtra;
 use Yii;
 use yii\filters\AccessControl;
 
@@ -31,11 +32,14 @@ class RoleRegisterController extends \yii\web\Controller
     public function actionRoleRegister()
     {
         $model = new RoleRegisterForm();
+        $userExtra = new UserExtra();
         if ($model->load($this->request->post()) && $model->roleRegister()) {
+            var_dump($userExtra);
             \Yii::$app->session->setFlash('success', 'User registered successfully with roleregister: ' . $model->role);
             return $this->redirect(['site/index']); // Adjust to where you want to redirect
         }
         return $this->render('@backend/views/roleregister/roleregister', [
+            'userExtra' => $userExtra,
             'model' => $model
         ]);
     }
