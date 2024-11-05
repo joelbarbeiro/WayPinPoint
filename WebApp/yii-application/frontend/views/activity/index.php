@@ -29,12 +29,15 @@ $this->params['breadcrumbs'][] = $this->title;
             'description',
             'photo',
             'maxpax',
-            //'priceperpax',
-            //'address',
+            'priceperpax',
+            'address',
             [
                 'class' => ActionColumn::className(),
-                'template' => '{view}',
-                'urlCreator' => function ($action, Activity $model, $key, $index, $column) {
+                'template' => '{view} {myButton}',
+                'buttons' => ['myButton' => function ($url, $model) {
+                    return Html::a('Comprar', ['cart/index', 'id' => $model->id]);
+                }],
+                'urlCreator' => function ($action, frontend\models\Activity $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'id' => $model->id]);
                  }
             ],
