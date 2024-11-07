@@ -15,13 +15,13 @@ $dateModel = new Dates();
 
     <div class="activities-form">
 
-        <?php $form = ActiveForm::begin(); ?>
+        <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
 
         <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
         <?= $form->field($model, 'description')->textInput(['maxlength' => true]) ?>
 
-        <?= $form->field($model, 'photo')->textInput() ?>
+        <?= $form->field($model, 'photoFile')->fileInput(['multiple' => false, 'accept' => 'image/*']) ?>
 
         <?= $form->field($model, 'maxpax')->textInput() ?>
 

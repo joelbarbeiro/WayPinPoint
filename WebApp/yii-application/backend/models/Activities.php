@@ -3,6 +3,7 @@
 namespace backend\models;
 
 use Yii;
+use yii\web\UploadedFile;
 
 /**
  * This is the model class for table "activities".
@@ -23,6 +24,7 @@ use Yii;
  */
 class Activities extends \yii\db\ActiveRecord
 {
+    public $photoFile;
     /**
      * {@inheritdoc}
      */
@@ -44,6 +46,7 @@ class Activities extends \yii\db\ActiveRecord
             [['description'], 'string', 'max' => 255],
             [['photo'], 'string', 'max' => 250],
             [['address'], 'string', 'max' => 400],
+            [['photoFile'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, jpeg'],
         ];
     }
 
@@ -60,7 +63,20 @@ class Activities extends \yii\db\ActiveRecord
             'maxpax' => 'Maxpax',
             'priceperpax' => 'Priceperpax',
             'address' => 'Address',
+            'photoFile' => 'Upload Photo',
         ];
+    }
+    public function uploadPhoto()
+    {
+        $this->photo = "dns";
+
+            $binaryFile = UploadedFile::getInstance($this, 'photoFile');
+            if ($binaryFile) {
+                $filePath = Yii::getAlias('@backend/web/uploads/') . $binaryFile->name . '.' . $binaryFile->extension;
+                if ($binaryFile->saveAs($filePath)) {
+                    $this->photo = $binaryFile->baseName . '.' . $binaryFile->extension;
+                }
+            }
     }
 
     /**

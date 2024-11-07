@@ -51,7 +51,6 @@ class ActivitiesController extends Controller
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            'otherDataProvider' => $calendar,
         ]);
     }
 
@@ -82,15 +81,15 @@ class ActivitiesController extends Controller
         $timeModel = new Times();
 
         if ($model->load($this->request->post()) && $timeModel->load($this->request->post()) &&
-                $dateModel->load($this->request->post()))
-            {
+            $dateModel->load($this->request->post())) {
+            $model->uploadPhoto();
             if ($model->save() && $timeModel->save() && $dateModel->save()) {
                 $calendarModel->activities_id = $model->id;
                 $calendarModel->date_id = $dateModel->id;
                 $calendarModel->time_id = $timeModel->id;
 
                 if ($calendarModel->save()) {
-                    return $this->redirect(['view', 'id' => $model->id]);
+                    //return $this->redirect(['view', 'id' => $model->id]);
                 }
             }
         }
