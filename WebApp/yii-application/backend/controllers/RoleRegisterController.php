@@ -34,7 +34,6 @@ class RoleRegisterController extends \yii\web\Controller
         $model = new RoleRegisterForm();
         $userExtra = new UserExtra();
         if ($model->load($this->request->post()) && $model->roleRegister()) {
-            var_dump($userExtra);
             \Yii::$app->session->setFlash('success', 'User registered successfully with roleregister: ' . $model->role);
             return $this->redirect(['site/index']); // Adjust to where you want to redirect
         }

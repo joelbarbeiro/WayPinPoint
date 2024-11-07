@@ -6,6 +6,7 @@ use backend\models\Localsellpoint;
 use backend\models\LocalsellpointSearch;
 use common\models\User;
 use Yii;
+use yii\db\Query;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
@@ -81,8 +82,14 @@ class LocalsellpointController extends Controller
         $managerUserNames = User::find()
             ->select(['id', 'username'])
             ->where(['id' => $managerIds])
+            ->andWhere(['id' => (new Query())
+                ->select('user')
+                ->from('userextras')
+                ->where(['supplier' => $userId])
+            ])
             ->asArray()
             ->all();
+
         $managersMap = ArrayHelper::map($managerUserNames, 'id', 'username');
         $model->user_id = $userId;
         if ($this->request->isPost) {
