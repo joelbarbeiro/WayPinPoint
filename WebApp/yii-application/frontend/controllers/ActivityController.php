@@ -2,8 +2,8 @@
 
 namespace frontend\controllers;
 
-use app\models\Activity;
-use app\models\ActivitySearch;
+use frontend\models\Activity;
+use frontend\models\ActivitySearch;
 use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;

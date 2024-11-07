@@ -1,13 +1,13 @@
 <?php
 
-use app\models\Activity;
+use frontend\models\Activity;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
 
 /** @var yii\web\View $this */
-/** @var app\models\ActivitySearch $searchModel */
+/** @var frontend\models\ActivitySearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
 $this->title = 'Activities';

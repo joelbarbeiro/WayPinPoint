@@ -22,14 +22,15 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
         <p>
             The above error occurred while the Web server was processing your request.
             Please contact us if you think this is a server error. Thank you.
-            Meanwhile, you may <?= Html::a('return to dashboard',$frontend),Yii::$app->user->logout(); ?>
+            Meanwhile, you may <?= Html::a('return to dashboard',$frontend) , Yii::$app->user->logout(); ?>
             or try using the search form.
         </p>
 
         <form class="search-form" style="margin-right: 190px;">
             <div class="input-group">
-                <input type="text" name="search" class="form-control" placeholder="Search">
-
+                <label>
+                    <input type="text" name="search" class="form-control" placeholder="Search">
+                </label>
                 <div class="input-group-append">
                     <button type="submit" name="submit" class="btn btn-danger"><i class="fas fa-search"></i>
                     </button>
