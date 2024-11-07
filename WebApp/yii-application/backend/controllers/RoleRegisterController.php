@@ -52,7 +52,7 @@ class RoleRegisterController extends \yii\web\Controller
                     [
                         'actions' => ['role-register'],
                         'allow' => true,
-                        'roles' => ['@'], // Only logged-in users can access this action
+                        'roles' => ['supplier'], // Only logged-in users can access this action
                     ],
                 ],
             ],
