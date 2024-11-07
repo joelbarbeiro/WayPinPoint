@@ -117,14 +117,20 @@ class LocalsellpointController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $userId = Yii::$app->user->id;
         $managerIds = Yii::$app->authManager->getUserIdsByRole('manager');
         $managerUserNames = User::find()
             ->select(['id', 'username'])
             ->where(['id' => $managerIds])
+            ->andWhere(['id' => (new Query())
+                ->select('user')
+                ->from('userextras')
+                ->where(['supplier' => $userId])
+            ])
             ->asArray()
             ->all();
+
         $managersMap = ArrayHelper::map($managerUserNames, 'id', 'username');
-        $userId = Yii::$app->user->id;
         $model->user_id = $userId;
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
