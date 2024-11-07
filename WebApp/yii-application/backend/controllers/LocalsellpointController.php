@@ -7,6 +7,7 @@ use backend\models\LocalsellpointSearch;
 use common\models\User;
 use Yii;
 use yii\db\Query;
+use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
@@ -25,6 +26,20 @@ class LocalsellpointController extends Controller
         return array_merge(
             parent::behaviors(),
             [
+                'access' => [
+                    'class' => AccessControl::class,
+                    'rules' => [
+                        [
+                            'actions' => ['index', 'create', 'update', 'delete'],
+                            'allow' => false,
+                        ],
+                        [
+                            'actions' => ['logout', 'index'],
+                            'allow' => true,
+                            'roles' => ['@'],
+                        ],
+                    ],
+                ],
                 'verbs' => [
                     'class' => VerbFilter::className(),
                     'actions' => [
