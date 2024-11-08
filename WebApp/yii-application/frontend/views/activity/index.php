@@ -23,14 +23,18 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
+        //'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
             'name',
             'description',
             'photo',
             'maxpax',
-            'priceperpax',
+            ['attribute' => 'priceperpax',
+                'label' => 'Price',
+                'value' => function ($model) {
+                    return $model->priceperpax . "€";
+                }],
             'address',
             [
                 'class' => ActionColumn::className(),

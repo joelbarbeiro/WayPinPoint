@@ -2,12 +2,18 @@
 
 namespace frontend\controllers;
 
+use common\models\User;
+use Da\QrCode\QrCode;
+use frontend\models\Activity;
 use frontend\models\Cart;
+use Mpdf\Mpdf;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+
+
 /**
  * CartController implements the CRUD actions for Cart model.
  */
@@ -38,19 +44,10 @@ class CartController extends Controller
      */
     public function actionIndex()
     {
+        $query = Cart::find()->where(['user_id' => Yii::$app->user->id]);
+
         $dataProvider = new ActiveDataProvider([
-            'query' => Cart::find(),
-            /*
-            'pagination' => [
-                'pageSize' => 50
-            ],
-            'sort' => [
-                'defaultOrder' => [
-                    'user_id' => SORT_DESC,
-                    'product_id' => SORT_DESC,
-                ]
-            ],
-            */
+            'query' => $query,
         ]);
 
         return $this->render('index', [
@@ -86,7 +83,7 @@ class CartController extends Controller
             if ($model->load($this->request->post())) {
                 $model->product_id = $activityId;
                 if ($model->save()) {
-                    return $this->redirect(['view', 'user_id' => $model->user_id, 'product_id' => $model->product_id]);
+                    return $this->redirect(['index', 'user_id' => $model->user_id, 'product_id' => $model->product_id]);
                 }
             }
         } else {
@@ -149,4 +146,47 @@ class CartController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
+
+    public function actionDownload()
+    {
+        $userId = Yii::$app->request->post('user_id');
+        $activityId = Yii::$app->request->post('activity_id');
+        // Fetch user and activity data
+        $user = User::findOne($userId);
+        $activity = Activity::findOne($activityId);
+        $price = $activity->priceperpax;
+
+        if (!$user || !$activity) {
+            Yii::$app->session->setFlash('error', 'User or Activity not found.');
+            return $this->redirect(['index']);
+        }
+        $qrCodeData = "User: $user->username, Activity: $activity->description, Price: $activity->priceperpax";
+        $qrCode = (new QrCode($qrCodeData))
+            ->setSize(250)
+            ->setMargin(5)
+            ->setBackgroundColor(51, 153, 255);
+        $content = $this->renderPartial('receipt', [
+            'user' => $user,
+            'activity' => $activity,
+            'qrCode' => $qrCode,
+        ]);
+
+        $pdf = new Mpdf();
+        $pdf->WriteHTML($content);
+        return Yii::$app->response->sendContentAsFile($pdf->Output('', 'S'), "receipt_{$user->username}_{$activity->description}.pdf", [
+            'mimeType' => 'application/pdf',
+        ]);
+    }
+
+    /*public function generateQrCode()
+    {
+        $userId = Yii::$app->request->post('user_id');
+        $activityId = Yii::$app->request->post('activity_id');
+        $user = User::findOne($userId);
+        $activity = Activity::findOne($activityId);
+
+
+        return $qrCode;
+    }*/
+
 }

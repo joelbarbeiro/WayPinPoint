@@ -57,7 +57,7 @@ class Cart extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getProduct()
+    public function getActivity()
     {
         return $this->hasOne(Activities::class, ['id' => 'product_id']);
     }

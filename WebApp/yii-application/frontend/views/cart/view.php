@@ -6,7 +6,7 @@ use yii\widgets\DetailView;
 /** @var yii\web\View $this */
 /** @var frontend\models\Cart $model */
 
-$this->title = $model->user_id;
+$this->title = $model->activity->description;
 $this->params['breadcrumbs'][] = ['label' => 'Carts', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
@@ -29,9 +29,19 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
-            'user_id',
-            'product_id',
-            'quantity',
+            ['attribute' => 'User',
+                'value' => function ($model){
+                    return $model->user->username;
+                }
+            ],
+            ['attribute' => 'Description',
+                'value' => function ($model){
+                    return $model->activity->description;
+                }],
+            ['attribute' => 'Quantity',
+                'value' => function ($model){
+                    return $model->quantity;
+                }],
         ],
     ]) ?>
 
