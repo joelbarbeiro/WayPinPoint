@@ -4,13 +4,16 @@
 namespace backend\models;
 
 use common\models\User;
+use common\models\UserExtra;
 use Yii;
 use yii\db\ActiveRecord;
+
 class RoleRegisterForm extends ActiveRecord
 {
     public $username;
     public $email;
     public $password;
+    public $phone;
     public $role;
 
     public function rules()
@@ -29,6 +32,10 @@ class RoleRegisterForm extends ActiveRecord
 
             ['password', 'required'],
             ['password', 'string', 'min' => Yii::$app->params['user.passwordMinLength']],
+
+            ['phone', 'required'],
+            ['phone', 'string'],
+
             ['role', 'required'],
             ['role', 'in', 'range' => ['manager', 'guide', 'salesperson']],
         ];
@@ -36,6 +43,7 @@ class RoleRegisterForm extends ActiveRecord
 
     public function roleRegister()
     {
+        $supplierId = Yii::$app->user->id;
         if ($this->validate()) {
             $user = new User();
             $user->username = $this->username;
@@ -43,13 +51,20 @@ class RoleRegisterForm extends ActiveRecord
             $user->setPassword($this->password);
             $user->generateAuthKey();
             $user->status = 10;
-            $user->save(false);
+            if ($user->save(false)) {
+                $userExtra = new UserExtra();
+                $userExtra->phone = $this->phone;
+                $userExtra->user = $user->id;
+                $userExtra->supplier = $supplierId;
+                $userExtra->save(false);
+            }
             $auth = \Yii::$app->authManager;
             $clientRole = $auth->getRole($this->role);
             $auth->assign($clientRole, $user->getId());
 
             return $user;
         }
+
         return null;
     }
 }

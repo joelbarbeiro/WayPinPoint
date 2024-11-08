@@ -4,25 +4,24 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /** @var yii\web\View $this */
-/** @var frontend\models\ActivitySearch $model */
+/** @var backend\models\LocalsellpointSearch $model */
 /** @var yii\widgets\ActiveForm $form */
 ?>
 
-<div class="activity-search">
+<div class="localsellpoint-search">
 
     <?php $form = ActiveForm::begin([
         'action' => ['index'],
         'method' => 'get',
     ]); ?>
 
+    <?= $form->field($model, 'id') ?>
+
+    <?= $form->field($model, 'user_id') ?>
+
+    <?= $form->field($model, 'address') ?>
+
     <?= $form->field($model, 'name') ?>
-
-    <?= $form->field($model, 'description') ?>
-
-    <?= $form->field($model, 'photo') ?>
-
-    <?= $form->field($model, 'maxpax') ?>
-
 
     <div class="form-group">
         <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>

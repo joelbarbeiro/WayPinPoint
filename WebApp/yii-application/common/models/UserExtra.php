@@ -1,8 +1,6 @@
 <?php
 
-namespace backend\models;
-
-use common\models\User;
+namespace common\models;
 
 /**
  * This is the model class for table "userextras".
@@ -14,7 +12,7 @@ use common\models\User;
  *
  * @property User $user0
  */
-class Userextras extends \yii\db\ActiveRecord
+class UserExtra extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}

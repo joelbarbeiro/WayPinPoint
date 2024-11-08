@@ -1,18 +1,21 @@
 <?php
 
-namespace frontend\controllers;
+namespace backend\controllers;
 
-use frontend\models\Activity;
-use frontend\models\ActivitySearch;
+use backend\models\Localsellpoint;
+use backend\models\LocalsellpointSearch;
+use common\models\User;
 use Yii;
+use yii\db\Query;
+use yii\filters\VerbFilter;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
- * ActivityController implements the CRUD actions for Activity model.
+ * LocalsellpointController implements the CRUD actions for Localsellpoint model.
  */
-class ActivityController extends Controller
+class LocalsellpointController extends Controller
 {
     /**
      * @inheritDoc
@@ -33,18 +36,20 @@ class ActivityController extends Controller
     }
 
     /**
-     * Lists all Activity models.
+     * Lists all Localsellpoint models.
      *
      * @return string
      */
     public function actionIndex()
     {
-        $searchModel = new ActivitySearch();
+        $searchModel = new LocalsellpointSearch();
+        $userId = Yii::$app->user->id;
 
-        // Pass the query parameters (including the search term) to the search model
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-        // Render the index view, passing the data provider and search model
+        $dataProvider = $searchModel->search($this->request->queryParams);
+        $dataProvider->query->andWhere(['user_id' => $userId]);
+
+
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
@@ -52,7 +57,7 @@ class ActivityController extends Controller
     }
 
     /**
-     * Displays a single Activity model.
+     * Displays a single Localsellpoint model.
      * @param int $id ID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
@@ -65,14 +70,28 @@ class ActivityController extends Controller
     }
 
     /**
-     * Creates a new Activity model.
+     * Creates a new Localsellpoint model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
     public function actionCreate()
     {
-        $model = new Activity();
+        $model = new Localsellpoint();
+        $userId = Yii::$app->user->id;
+        $managerIds = Yii::$app->authManager->getUserIdsByRole('manager');
+        $managerUserNames = User::find()
+            ->select(['id', 'username'])
+            ->where(['id' => $managerIds])
+            ->andWhere(['id' => (new Query())
+                ->select('user')
+                ->from('userextras')
+                ->where(['supplier' => $userId])
+            ])
+            ->asArray()
+            ->all();
 
+        $managersMap = ArrayHelper::map($managerUserNames, 'id', 'username');
+        $model->user_id = $userId;
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
                 return $this->redirect(['view', 'id' => $model->id]);
@@ -83,11 +102,13 @@ class ActivityController extends Controller
 
         return $this->render('create', [
             'model' => $model,
+            'userId' => $userId,
+            'managersMap' => $managersMap,
         ]);
     }
 
     /**
-     * Updates an existing Activity model.
+     * Updates an existing Localsellpoint model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param int $id ID
      * @return string|\yii\web\Response
@@ -96,18 +117,33 @@ class ActivityController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $userId = Yii::$app->user->id;
+        $managerIds = Yii::$app->authManager->getUserIdsByRole('manager');
+        $managerUserNames = User::find()
+            ->select(['id', 'username'])
+            ->where(['id' => $managerIds])
+            ->andWhere(['id' => (new Query())
+                ->select('user')
+                ->from('userextras')
+                ->where(['supplier' => $userId])
+            ])
+            ->asArray()
+            ->all();
 
+        $managersMap = ArrayHelper::map($managerUserNames, 'id', 'username');
+        $model->user_id = $userId;
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('update', [
             'model' => $model,
+            'managersMap' => $managersMap
         ]);
     }
 
     /**
-     * Deletes an existing Activity model.
+     * Deletes an existing Localsellpoint model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param int $id ID
      * @return \yii\web\Response
@@ -121,15 +157,15 @@ class ActivityController extends Controller
     }
 
     /**
-     * Finds the Activity model based on its primary key value.
+     * Finds the Localsellpoint model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param int $id ID
-     * @return Activity the loaded model
+     * @return Localsellpoint the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Activity::findOne(['id' => $id])) !== null) {
+        if (($model = Localsellpoint::findOne(['id' => $id])) !== null) {
             return $model;
         }
 
