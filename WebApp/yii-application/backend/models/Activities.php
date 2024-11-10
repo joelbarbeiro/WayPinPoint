@@ -25,6 +25,9 @@ use yii\web\UploadedFile;
 class Activities extends \yii\db\ActiveRecord
 {
     public $photoFile;
+    public $hours = [];
+    public $dates = [];
+
     /**
      * {@inheritdoc}
      */
@@ -47,6 +50,9 @@ class Activities extends \yii\db\ActiveRecord
             [['photo'], 'string', 'max' => 250],
             [['address'], 'string', 'max' => 400],
             [['photoFile'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, jpeg'],
+            [['dates', 'hours'], 'required'],
+            [['dates'], 'each', 'rule' => ['date', 'format' => 'php:Y-m-d']],
+            [['hours'], 'each', 'rule' => ['integer']],
         ];
     }
 
@@ -64,19 +70,38 @@ class Activities extends \yii\db\ActiveRecord
             'priceperpax' => 'Priceperpax',
             'address' => 'Address',
             'photoFile' => 'Upload Photo',
+            'dates' => 'Dates',
+            'hours' => 'Custom Hours',
         ];
     }
+
     public function uploadPhoto()
     {
-        $this->photo = "dns";
-
-            $binaryFile = UploadedFile::getInstance($this, 'photoFile');
-            if ($binaryFile) {
-                $filePath = Yii::getAlias('@backend/web/uploads/') . $binaryFile->name . '.' . $binaryFile->extension;
-                if ($binaryFile->saveAs($filePath)) {
-                    $this->photo = $binaryFile->baseName . '.' . $binaryFile->extension;
-                }
+        $binaryFile = UploadedFile::getInstance($this, 'photoFile');
+        if ($binaryFile) {
+            $filePath = Yii::getAlias('@backend/web/uploads/') . $binaryFile->baseName . '.' . $binaryFile->extension;
+            if ($binaryFile->saveAs($filePath, true)) {
+                $this->photo = $binaryFile->baseName . '.' . $binaryFile->extension;
+            } else {
+                Yii::error("File save failed");
             }
+        } else {
+            Yii::error("No file uploaded");
+        }
+    }
+
+    public function getCalendarArray()
+    {
+        // Create the array of date => array of hours
+        $calendar = [];
+        foreach ($this->dates as $index => $date) {
+            if (!isset($calendar[$date])) {
+                $calendar[$date] = [];
+            }
+            $calendar[$date][] = $this->hours[$index] ?? 0;
+        }
+
+        return $calendar;
     }
 
     /**
