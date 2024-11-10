@@ -17,7 +17,7 @@ class CalendarSearch extends Calendar
     public function rules()
     {
         return [
-            [['id', 'activities_id', 'date_id', 'time_id'], 'integer'],
+            [['id', 'activities_id', 'date_id'], 'integer'],
         ];
     }
 
@@ -60,7 +60,6 @@ class CalendarSearch extends Calendar
             'id' => $this->id,
             'activities_id' => $this->activities_id,
             'date_id' => $this->date_id,
-            'time_id' => $this->time_id,
         ]);
 
         return $dataProvider;
