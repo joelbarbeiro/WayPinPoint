@@ -8,6 +8,7 @@ use Yii;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use yii\web\Controller;
+use yii\web\ForbiddenHttpException;
 use yii\web\Response;
 use backend\models\RegisterForm;
 /**
@@ -27,6 +28,10 @@ class SiteController extends Controller
                     [
                         'actions' => ['login', 'error', 'register'],
                         'allow' => true,
+                    ],
+                    [
+                        'actions' => ['index', 'create', 'update', 'delete'],
+                        'allow' => false,
                     ],
                     [
                         'actions' => ['logout', 'index'],
@@ -49,10 +54,12 @@ class SiteController extends Controller
      */
     public function actions()
     {
+        $userId = Yii::$app->user->id;
         return [
             'error' => [
                 'class' => \yii\web\ErrorAction::class,
             ],
+            $this->layout = 'blank',
         ];
     }
 
@@ -70,7 +77,6 @@ class SiteController extends Controller
     {
         $model = new RegisterForm();
 
-        $this->layout = 'blank';
 
         if ($model->load(Yii::$app->request->post()) && $model->register()) {
             Yii::$app->session->setFlash('success', 'Registration successful. You can now log in.');
@@ -104,6 +110,18 @@ class SiteController extends Controller
         return $this->render('login', [
             'model' => $model,
         ]);
+    }
+
+    public function actionError(){
+        $exception = Yii::$app->errorHandler->exception;
+
+        if($exception !== null){
+            if ($exception instanceof ForbiddenHttpException) {
+                // Render a custom 403 view
+                return $this->render('@backend/views/error');
+            }
+        }
+        return $this->render('error', ['exception' => $exception]);
     }
 
     /**
