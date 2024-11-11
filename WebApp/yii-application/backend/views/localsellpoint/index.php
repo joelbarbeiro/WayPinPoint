@@ -36,16 +36,21 @@ use yii\helpers\Html;
                 <tr>
                     <th>Shop Name</th>
                     <th>Address</th>
-                    <th>Manager</th>
+                    <th>Owner</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr>
                     <td><?= Html::encode($local->name) ?></td>
                     <td><?= Html::encode($local->address) ?></td>
-                    <td><?= Html::encode($local->manager->username) ?></td>
-                    <td><small>
-                        <?= Html::a('Assign Manager', ['localsellpoint/update', 'id' => $local->id],
+                    <td><?= Html::encode($local->user->username) ?></td>
+
+                    <td>
+                        <?= Html::a('Edit Shop', ['localsellpoint/update', 'id' => $local->id],
+                            ['class' => 'btn btn-warning']) ?>
+                    </td>
+                    <td>
+                        <?= Html::a('Shop details', ['localsellpoint/view', 'id' => $local->id],
                             ['class' => 'btn btn-success']) ?>
                     </td>
                 </tr>

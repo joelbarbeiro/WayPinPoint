@@ -27,19 +27,30 @@ class ActivitiesController extends Controller
             parent::behaviors(),
             [
                 'access' => [
-                    'class' => AccessControl::class,
-                    'rules' => [
-                        [
-                            'actions' => ['index', 'create', 'update', 'delete'],
-                            'allow' => false,
-                        ],
-                        [
-                            'actions' => ['logout', 'index'],
-                            'allow' => true,
-                            'roles' => ['@'],
-                        ],
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'actions' => ['login', 'error', 'register'],
+                        'allow' => true,
                     ],
+                    [
+                        'actions' => ['index', 'create', 'update', 'delete'], // Backoffice actions
+                        'allow' => false,
+                        'roles' => ['client'], // Explicitly deny client access to backoffice
+                    ],
+                    [
+                        'actions' => ['index', 'create', 'update', 'delete'],
+                        'allow' => true,
+                        'roles' => ['admin','supplier','manager','salesperson','guide'],
+                    ],
+                    [
+                        'actions' => ['logout', 'index'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+
                 ],
+            ],
                 'verbs' => [
                     'class' => VerbFilter::className(),
                     'actions' => [

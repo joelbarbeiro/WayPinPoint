@@ -54,7 +54,7 @@ $imgDir = "yii\backend\web\assets\img\\";
                         ]
                     ],
                     ['label' => 'Employee Management', 'header' => true],
-                    ['label' => 'User', 'icon' => 'user', 'url' => Url::to(['role-register/role-register'])],
+                    ['label' => 'User', 'icon' => 'user', 'url' => Url::to(['role-register/index'])],
                     //['label' => 'Simple Link', 'icon' => 'th', 'badge' => '<span class="right
                     // badge badge-danger">New</span>'],
                     ['label' => 'Activities', 'header' => true],

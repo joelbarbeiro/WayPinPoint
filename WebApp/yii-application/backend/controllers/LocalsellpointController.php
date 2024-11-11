@@ -25,21 +25,31 @@ class LocalsellpointController extends Controller
     {
         return array_merge(
             parent::behaviors(),
-            [
-                'access' => [
-                    'class' => AccessControl::class,
-                    'rules' => [
-                        [
-                            'actions' => ['index', 'create', 'update', 'delete'],
-                            'allow' => false,
-                        ],
-                        [
-                            'actions' => ['logout', 'index'],
-                            'allow' => true,
-                            'roles' => ['@'],
-                        ],
+            ['access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'actions' => ['login', 'error', 'register'],
+                        'allow' => true,
                     ],
+                    [
+                        'actions' => ['index', 'create', 'update', 'delete', 'view'], // Backoffice actions
+                        'allow' => false,
+                        'roles' => ['client'], // Explicitly deny client access to backoffice
+                    ],
+                    [
+                        'actions' => ['index', 'create', 'update', 'delete', 'view'],
+                        'allow' => true,
+                        'roles' => ['admin', 'supplier', 'manager', 'salesperson', 'guide'],
+                    ],
+                    [
+                        'actions' => ['logout', 'index'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+
                 ],
+            ],
                 'verbs' => [
                     'class' => VerbFilter::className(),
                     'actions' => [
@@ -59,10 +69,9 @@ class LocalsellpointController extends Controller
     {
         $searchModel = new LocalsellpointSearch();
         $userId = Yii::$app->user->id;
-
-
         $dataProvider = $searchModel->search($this->request->queryParams);
-        $dataProvider->query->andWhere(['user_id' => $userId]);
+        $dataProvider->query
+            ->andWhere(['user_id' => $userId]);
 
 
         return $this->render('index', [
@@ -79,8 +88,24 @@ class LocalsellpointController extends Controller
      */
     public function actionView($id)
     {
+        $localStore = Localsellpoint::findOne($id);
+
+        $userId = Yii::$app->user->id;
+        $users = $localStore->user::find()
+            ->select(['username'])
+            ->andWhere(['id' => (new Query())
+                ->select('user_id')
+                ->from('userextras')
+                ->where(['supplier' => $userId])
+            ])
+            ->asArray()
+            ->all();
+
+        $employeesMap = ArrayHelper::map($users, 'id', 'username');
+
         return $this->render('view', [
             'model' => $this->findModel($id),
+            'employeesMap' => $employeesMap,
         ]);
     }
 
@@ -89,6 +114,7 @@ class LocalsellpointController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
+
     public function actionCreate()
     {
         $model = new Localsellpoint();
@@ -98,7 +124,7 @@ class LocalsellpointController extends Controller
             ->select(['id', 'username'])
             ->where(['id' => $managerIds])
             ->andWhere(['id' => (new Query())
-                ->select('user')
+                ->select('user_id')
                 ->from('userextras')
                 ->where(['supplier' => $userId])
             ])
@@ -106,6 +132,8 @@ class LocalsellpointController extends Controller
             ->all();
 
         $managersMap = ArrayHelper::map($managerUserNames, 'id', 'username');
+
+
         $model->user_id = $userId;
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
@@ -131,29 +159,28 @@ class LocalsellpointController extends Controller
      */
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id);
+        $model = Localsellpoint::findOne($id);
         $userId = Yii::$app->user->id;
-        $managerIds = Yii::$app->authManager->getUserIdsByRole('manager');
-        $managerUserNames = User::find()
-            ->select(['id', 'username'])
-            ->where(['id' => $managerIds])
+        $users = User::find()
+            ->select(['username'])
             ->andWhere(['id' => (new Query())
-                ->select('user')
+                ->select('user_id')
                 ->from('userextras')
                 ->where(['supplier' => $userId])
             ])
             ->asArray()
             ->all();
 
-        $managersMap = ArrayHelper::map($managerUserNames, 'id', 'username');
+        $employeesMap = ArrayHelper::map($users, 'id', 'username');
         $model->user_id = $userId;
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('update', [
             'model' => $model,
-            'managersMap' => $managersMap
+            'employeesMap' => $employeesMap,
         ]);
     }
 

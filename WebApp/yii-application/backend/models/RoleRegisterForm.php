@@ -6,6 +6,7 @@ namespace backend\models;
 use common\models\User;
 use common\models\UserExtra;
 use Yii;
+use yii\base\Model;
 use yii\db\ActiveRecord;
 
 class RoleRegisterForm extends ActiveRecord
@@ -14,7 +15,13 @@ class RoleRegisterForm extends ActiveRecord
     public $email;
     public $password;
     public $phone;
+    public $address;
+    public $nif;
+    public $localsellpoint;
     public $role;
+    /**
+     * @var mixed|null
+     */
 
     public function rules()
     {
@@ -36,10 +43,30 @@ class RoleRegisterForm extends ActiveRecord
             ['phone', 'required'],
             ['phone', 'string'],
 
+            ['address', 'required'],
+            ['address', 'string'],
+
+            ['nif', 'required'],
+            ['nif', 'string'],
+
+            ['localsellpoint', 'required'],
+            ['localsellpoint', 'string'],
+
             ['role', 'required'],
             ['role', 'in', 'range' => ['manager', 'guide', 'salesperson']],
         ];
     }
+
+    public function saveUserRoleAssignment($userExtraId, $localsellpointId)
+    {
+        $localsellpointUserextra = new LocalsellpointUserextra();
+        $localsellpointUserextra->localsellpoint_id = $localsellpointId;
+        $localsellpointUserextra->userextra_id = $userExtraId;
+        $localsellpointUserextra->role = $this->role;
+
+        return $localsellpointUserextra->save(false); // Save without validation if validations are in place in RoleRegisterForm
+    }
+
 
     public function roleRegister()
     {
@@ -54,9 +81,14 @@ class RoleRegisterForm extends ActiveRecord
             if ($user->save(false)) {
                 $userExtra = new UserExtra();
                 $userExtra->phone = $this->phone;
-                $userExtra->user = $user->id;
+                $userExtra->user_id = $user->id;
+                $userExtra->address = $this->address;
+                $userExtra->nif = $this->nif;
+                $userExtra->localsellpoint_id = $this->localsellpoint;
                 $userExtra->supplier = $supplierId;
-                $userExtra->save(false);
+                if ($userExtra->save(false)) {
+                    $this->saveUserRoleAssignment($userExtra->id, $this->localsellpoint);
+                }
             }
             $auth = \Yii::$app->authManager;
             $clientRole = $auth->getRole($this->role);

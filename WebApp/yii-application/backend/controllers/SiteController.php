@@ -2,15 +2,15 @@
 
 namespace backend\controllers;
 
+use backend\models\RegisterForm;
 use common\models\LoginForm;
-use common\models\User;
 use Yii;
-use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\ForbiddenHttpException;
 use yii\web\Response;
-use backend\models\RegisterForm;
+
 /**
  * Site controller
  */
@@ -30,14 +30,21 @@ class SiteController extends Controller
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['index', 'create', 'update', 'delete'],
+                        'actions' => ['index', 'create', 'update', 'delete'], // Backoffice actions
                         'allow' => false,
+                        'roles' => ['client'], // Explicitly deny client access to backoffice
+                    ],
+                    [
+                        'actions' => ['index', 'create', 'update', 'delete'],
+                        'allow' => true,
+                        'roles' => ['admin', 'supplier', 'manager', 'salesperson', 'guide'],
                     ],
                     [
                         'actions' => ['logout', 'index'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
+
                 ],
             ],
             'verbs' => [
@@ -54,12 +61,13 @@ class SiteController extends Controller
      */
     public function actions()
     {
-        $userId = Yii::$app->user->id;
         return [
             'error' => [
                 'class' => \yii\web\ErrorAction::class,
+                'layout' => 'blank'
             ],
-            $this->layout = 'blank',
+
+
         ];
     }
 
@@ -85,8 +93,9 @@ class SiteController extends Controller
 
         return $this->render('register', [
             'model' => $model,
-           ]);
+        ]);
     }
+
     /**
      * Login action.
      *
@@ -112,10 +121,11 @@ class SiteController extends Controller
         ]);
     }
 
-    public function actionError(){
+    public function actionError()
+    {
         $exception = Yii::$app->errorHandler->exception;
 
-        if($exception !== null){
+        if ($exception !== null) {
             if ($exception instanceof ForbiddenHttpException) {
                 // Render a custom 403 view
                 return $this->render('@backend/views/error');

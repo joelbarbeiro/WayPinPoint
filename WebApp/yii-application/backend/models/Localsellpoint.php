@@ -3,6 +3,7 @@
 namespace backend\models;
 
 use common\models\User;
+use Yii;
 
 /**
  * This is the model class for table "localsellpoint".
@@ -12,7 +13,9 @@ use common\models\User;
  * @property string $address
  * @property string $name
  *
+ * @property LocalsellpointUserextra[] $localsellpointUserextras
  * @property User $user
+ * @property Userextras[] $userextras
  */
 class Localsellpoint extends \yii\db\ActiveRecord
 {
@@ -31,8 +34,8 @@ class Localsellpoint extends \yii\db\ActiveRecord
     {
         return [
             [['user_id'], 'integer'],
-            [['manager_id'], 'integer'],
             [['address', 'name'], 'required'],
+            [['localuserextra']], 'int',
             [['address'], 'string', 'max' => 400],
             [['name'], 'string', 'max' => 100],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
@@ -47,10 +50,20 @@ class Localsellpoint extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'user_id' => 'User ID',
-            'manager_id' => 'Manager ID',
+            'localuserextra' => 'Local User',
             'address' => 'Address',
             'name' => 'Name',
         ];
+    }
+
+    /**
+     * Gets query for [[LocalsellpointUserextras]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getLocalsellpointUserextras()
+    {
+        return $this->hasMany(LocalsellpointUserextra::class, ['localsellpoint_id' => 'id']);
     }
 
     /**
@@ -63,9 +76,13 @@ class Localsellpoint extends \yii\db\ActiveRecord
         return $this->hasOne(User::class, ['id' => 'user_id']);
     }
 
-    public function getManager()
+    /**
+     * Gets query for [[Userextras]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUserextras()
     {
-        return $this->hasOne(User::class, ['id' => 'manager_id']);
+        return $this->hasMany(Userextras::class, ['localsellpoint_id' => 'id']);
     }
-
 }

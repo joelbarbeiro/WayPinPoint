@@ -15,9 +15,9 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'manager_id')->dropDownList(
-        $managersMap,
-        ['prompt' => 'Select a Manager']
+    <?= $form->field($model, 'localuserextra')->dropDownList(
+        $employeesMap,
+        ['prompt' => 'Assign Employees']
     ); ?>
 
     <div class="form-group">
