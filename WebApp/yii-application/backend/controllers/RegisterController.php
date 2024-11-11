@@ -1,14 +1,30 @@
 <?php
 
 namespace backend\controllers;
+use common\models\User;
 
 use backend\models\RegisterForm;
 use Yii;
+use yii\filters\VerbFilter;
 use yii\widgets\ActiveForm;
 
 
 class RegisterController extends \yii\web\Controller
 {
+    public function behaviors()
+    {
+        return array_merge(
+            parent::behaviors(),
+            [
+                'verbs' => [
+                    'class' => VerbFilter::className(),
+                    'actions' => [
+                        'delete' => ['POST'],
+                    ],
+                ],
+            ]
+        );
+    }
     public function actionIndex()
     {
         $model = new RegisterForm();
@@ -29,5 +45,17 @@ class RegisterController extends \yii\web\Controller
         $form = new ActiveForm();
         return $this->renderContent("Bootstrap 5 ActiveForm loaded successfully");
     }
+    public function actionBackendRegister()
+    {
+        $model = new User();
+        if ($model->load($this->request->post()) && $model->register()) {
+            \Yii::$app->session->setFlash('success', 'User registered successfully with role: ' . $model->role);
+            return $this->redirect(['site/index']); // Adjust to where you want to redirect
+        }
+        return $this->render('backendregister', [
+            'model' => $model
+        ]);
+    }
+
 
 }
