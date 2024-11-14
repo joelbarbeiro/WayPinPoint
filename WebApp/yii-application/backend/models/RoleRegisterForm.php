@@ -99,4 +99,49 @@ class RoleRegisterForm extends ActiveRecord
 
         return null;
     }
+
+    public function roleUpdate($userId)
+    {
+        $userExtra = UserExtra::findOne($userId);
+        $user = $userExtra->user;
+        $transaction = Yii::$app->db->beginTransaction();
+        try {
+            if (!$user) {
+                throw new \Exception("User not found");
+            }
+
+            // Update user attributes
+            $user->username = $this->username;
+            $user->email = $this->email;
+            if ($this->password) {
+                $user->setPassword($this->password);
+            }
+            $userExtra->phone = $this->phone;
+            $userExtra->address = $this->address;
+            $userExtra->nif = $this->nif;
+            $userExtra->localsellpoint_id = $this->localsellpoint;
+
+            // Update or reassign role
+            $auth = \Yii::$app->authManager;
+            $auth->revokeAll($user->id);  // Remove existing roles
+            $newRole = $auth->getRole($this->role);
+            if (!$newRole) {
+                throw new \Exception("Role not found");
+            }
+            $auth->assign($newRole, $user->id);
+
+            // Save user and userExtra
+            if ($user->save(false) && $userExtra->save(false)) {
+                $transaction->commit();
+                return true;
+            } else {
+                $transaction->rollBack();
+                return false;
+            }
+        } catch (\Exception $e) {
+            $transaction->rollBack();
+            throw $e;
+        }
+    }
+
 }

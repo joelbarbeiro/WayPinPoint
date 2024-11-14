@@ -131,7 +131,7 @@ class LocalsellpointController extends Controller
             ->asArray()
             ->all();
 
-        $managersMap = ArrayHelper::map($managerUserNames, 'id', 'username');
+        $employeesMap = ArrayHelper::map($managerUserNames, 'id', 'username');
 
 
         $model->user_id = $userId;
@@ -146,7 +146,7 @@ class LocalsellpointController extends Controller
         return $this->render('create', [
             'model' => $model,
             'userId' => $userId,
-            'managersMap' => $managersMap,
+            'employeesMap' => $employeesMap,
         ]);
     }
 
@@ -173,8 +173,8 @@ class LocalsellpointController extends Controller
 
         $employeesMap = ArrayHelper::map($users, 'id', 'username');
         $model->user_id = $userId;
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
 
+        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 

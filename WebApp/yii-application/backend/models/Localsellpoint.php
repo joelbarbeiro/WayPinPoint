@@ -3,7 +3,7 @@
 namespace backend\models;
 
 use common\models\User;
-use Yii;
+use common\models\UserExtra;
 
 /**
  * This is the model class for table "localsellpoint".
@@ -15,7 +15,7 @@ use Yii;
  *
  * @property LocalsellpointUserextra[] $localsellpointUserextras
  * @property User $user
- * @property Userextras[] $userextras
+ * @property UserExtra[] $userextras
  */
 class Localsellpoint extends \yii\db\ActiveRecord
 {
@@ -30,14 +30,22 @@ class Localsellpoint extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
+
+    public $localuserextra;
+    public $assignedEmployees;
+    public $assignedManager;
+
+
     public function rules()
     {
         return [
             [['user_id'], 'integer'],
             [['address', 'name'], 'required'],
-            [['localuserextra']], 'int',
             [['address'], 'string', 'max' => 400],
             [['name'], 'string', 'max' => 100],
+            [['localuserextra'], 'integer'],
+            [['assignedManager'], 'safe'],
+            [['assignedEmployees'], 'safe'],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
         ];
     }
@@ -50,9 +58,9 @@ class Localsellpoint extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'user_id' => 'User ID',
-            'localuserextra' => 'Local User',
             'address' => 'Address',
             'name' => 'Name',
+            'localuserextra' => 'Local User',
         ];
     }
 
@@ -83,6 +91,7 @@ class Localsellpoint extends \yii\db\ActiveRecord
      */
     public function getUserextras()
     {
-        return $this->hasMany(Userextras::class, ['localsellpoint_id' => 'id']);
+        return $this->hasMany(UserExtra::class, ['id' => 'userextra_id'])
+            ->via('localsellpointUserextras');
     }
 }

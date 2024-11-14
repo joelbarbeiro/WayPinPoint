@@ -12,7 +12,7 @@ $this->params['breadcrumbs'][] = 'Update';
 ?>
 <div class="localsellpoint-update">
 
-    <?= $this->render('_form', [
+    <?= $this->render('_update', [
         'model' => $model,
         'employeesMap' => $employeesMap,
     ]) ?>

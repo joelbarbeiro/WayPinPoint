@@ -6,14 +6,13 @@ use yii\widgets\DetailView;
 /** @var yii\web\View $this */
 /** @var common\models\UserExtra $model */
 
-$this->title = $model->id;
+$this->title ="Employee : " . $model->user->username;
 $this->params['breadcrumbs'][] = ['label' => 'User Extras', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
 <div class="user-extra-view">
 
-    <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
         <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
@@ -29,13 +28,27 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
-            'id',
-            'user_id',
-            'localsellpoint_id',
+            [
+                'label' => 'Username',
+                'value' => function ($model) {
+                    return $model->user->username;
+                }
+            ],
+            [
+                'label' => 'Shop assigned to ',
+                'value' => function ($model) {
+                    return $model->localsellpoint->name;
+                }
+            ],
             'nif',
             'address',
             'phone',
-            'supplier',
+            [
+                'label' => 'Employer',
+                'value' => function ($model) use ($supplier) {
+                    return $supplier->username;
+                }
+            ],
         ],
     ]) ?>
 
