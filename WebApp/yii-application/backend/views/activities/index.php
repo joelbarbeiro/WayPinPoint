@@ -16,46 +16,28 @@ use yii\grid\GridView;
 
 $this->title = 'Activities';
 $this->params['breadcrumbs'][] = $this->title;
+
 ?>
 <div class="activities-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <p>
-        <?= Html::a('Create Activities', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
+    <?php
+        foreach ($dataProvider->models as $activity) {
 
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+            echo '<div class="card" ">';
+            echo '<img src="backend/upload/'.$activity->photo.'" class="card-img-top" alt="...">';
+            echo '<div class="card-body">';
+            echo '<h5 class="card-title">'.$activity->name.'</h5>';
+            echo '<p class="card-text">'.$activity->description.'</p>';
 
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        //'otherDataProvider' => $otherDataProvider,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
+            foreach ($activity->calendars as $calendar) {
+                echo '<p class="card-text"> Date: ' . $calendar->date->date . ' Time: ' . $calendar->time->hour . '</p>';
+            }
 
-            'name',
-            'description',
-            'photo',
-            'maxpax',
-            'priceperpax',
-            'address',
-            /*[
-                'label' => 'Date',
-                'value' =>  $otherDataProvider ? $otherDataProvider->date->date : 'No date',
-            ],
-            [
-                'label' => 'Time',
-                'value' => $otherDataProvider ? $otherDataProvider->time->hour : 'No time',
-            ],*/
-            [
-                'class' => ActionColumn::className(),
-                'urlCreator' => function ($action, Activities $model, $key, $index, $column) {
-                    return Url::toRoute([$action, 'id' => $model->id]);
-                 }
-            ],
-        ],
-    ]); ?>
-
-
+            echo '<a href="#" class="btn btn-primary">Edit</a>';
+            echo '</div>';
+            echo '</div>';
+        }
+    ?>
 </div>

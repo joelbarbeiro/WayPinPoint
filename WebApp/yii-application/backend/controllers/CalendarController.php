@@ -27,7 +27,7 @@ class CalendarController extends Controller
                     'rules' => [
                         [
                             'actions' => ['index', 'create', 'update', 'delete'],
-                            'allow' => false,
+                            'allow' => true,
                         ],
                         [
                             'actions' => ['logout', 'index'],

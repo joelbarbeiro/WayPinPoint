@@ -9,6 +9,7 @@ use backend\models\Calendar;
 use backend\models\CalendarSearch;
 use backend\models\Dates;
 use backend\models\Times;
+use yii\data\ActiveDataProvider;
 use yii\helpers\ArrayHelper;
 use yii\filters\AccessControl;
 
@@ -33,8 +34,8 @@ class ActivitiesController extends Controller
                     'class' => AccessControl::class,
                     'rules' => [
                         [
-                            'actions' => ['index', 'create', 'update', 'delete'],
-                            'allow' => false,
+                            'actions' => ['index', 'create', 'update', 'delete', 'view'],
+                            'allow' => true,
                         ],
                         [
                             'actions' => ['logout', 'index'],
@@ -62,14 +63,14 @@ class ActivitiesController extends Controller
     {
         $searchModel = new ActivitiesSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
-        $searchModelCalendar = new CalendarSearch();
-        $calendar = $searchModelCalendar->search($this->request->queryParams);
 
+        $dataProvider->query->all();
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
+
     }
 
     /**
@@ -130,8 +131,7 @@ class ActivitiesController extends Controller
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public
-    function actionUpdate($id)
+    public function actionUpdate($id)
     {
         $model = $this->findModel($id);
 
@@ -151,8 +151,7 @@ class ActivitiesController extends Controller
      * @return \yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public
-    function actionDelete($id)
+    public function actionDelete($id)
     {
         $this->findModel($id)->delete();
 
@@ -166,8 +165,7 @@ class ActivitiesController extends Controller
      * @return Activities the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected
-    function findModel($id)
+    protected function findModel($id)
     {
         if (($model = Activities::findOne(['id' => $id])) !== null) {
             return $model;

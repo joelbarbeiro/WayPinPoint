@@ -26,18 +26,25 @@ class SiteController extends Controller
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        'actions' => ['login', 'error', 'register'],
+                        'actions' => ['login', 'error', 'register', 'view'],
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['index', 'create', 'update', 'delete'],
+                        'actions' => ['index', 'create', 'update', 'delete', 'view'], // Backoffice actions
                         'allow' => false,
+                        'roles' => ['client'], // Explicitly deny client access to backoffice
                     ],
                     [
-                        'actions' => ['logout', 'index'],
+                        'actions' => ['index', 'create', 'update', 'delete', 'view'],
+                        'allow' => true,
+                        'roles' => ['admin', 'supplier', 'manager', 'salesperson', 'guide'],
+                    ],
+                    [
+                        'actions' => ['logout', 'index', 'view'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
+
                 ],
             ],
             'verbs' => [
@@ -59,7 +66,6 @@ class SiteController extends Controller
             'error' => [
                 'class' => \yii\web\ErrorAction::class,
             ],
-            $this->layout = 'blank',
         ];
     }
 
