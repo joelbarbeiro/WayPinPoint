@@ -89,6 +89,8 @@ class SiteController extends Controller
             return $this->redirect(['site/login']);
         }
 
+        $this->layout = 'blank';
+
         return $this->render('register', [
             'model' => $model,
            ]);

@@ -17,25 +17,27 @@ use yii\grid\GridView;
 $this->title = 'Activities';
 $this->params['breadcrumbs'][] = $this->title;
 
+$imgPath = Url::to('@web/assets/uploads/'.Yii::$app->user->id.'/');
+
 ?>
 <div class="activities-index">
-
-    <h1><?= Html::encode($this->title) ?></h1>
 
     <?php
         foreach ($dataProvider->models as $activity) {
 
-            echo '<div class="card" ">';
-            echo '<img src="backend/upload/'.$activity->photo.'" class="card-img-top" alt="...">';
+            echo '<div class="card m-5" >';
+            echo '<img src="'.$imgPath.$activity->photo.'" class="card-img-top" alt="...">';
             echo '<div class="card-body">';
             echo '<h5 class="card-title">'.$activity->name.'</h5>';
             echo '<p class="card-text">'.$activity->description.'</p>';
 
             foreach ($activity->calendars as $calendar) {
-                echo '<p class="card-text"> Date: ' . $calendar->date->date . ' Time: ' . $calendar->time->hour . '</p>';
+                if($calendar->status != 0) {
+                    echo '<p class="card-text"> Date: ' . $calendar->date->date . ' Time: ' . $calendar->time->hour . '</p>';
+                }
             }
 
-            echo '<a href="#" class="btn btn-primary">Edit</a>';
+            echo '<a href="' . Url::to(['activities/view', 'id' => $activity->id]) . '" class="btn btn-primary">View</a>';
             echo '</div>';
             echo '</div>';
         }
