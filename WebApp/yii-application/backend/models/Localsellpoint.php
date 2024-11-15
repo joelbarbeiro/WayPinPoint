@@ -32,7 +32,8 @@ class Localsellpoint extends \yii\db\ActiveRecord
      */
 
     public $localuserextra;
-    public $assignedEmployees;
+
+    public $assignedEmployees = [];
     public $assignedManager;
 
 
@@ -60,6 +61,8 @@ class Localsellpoint extends \yii\db\ActiveRecord
             'user_id' => 'User ID',
             'address' => 'Address',
             'name' => 'Name',
+            'assignedManager' => 'Assigned Manager',
+            'assignedEmployees' => 'Assigned Employees',
             'localuserextra' => 'Local User',
         ];
     }

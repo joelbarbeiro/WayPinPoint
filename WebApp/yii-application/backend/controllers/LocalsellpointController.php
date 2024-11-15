@@ -5,6 +5,7 @@ namespace backend\controllers;
 use backend\models\Localsellpoint;
 use backend\models\LocalsellpointSearch;
 use common\models\User;
+use common\models\UserExtra;
 use Yii;
 use yii\db\Query;
 use yii\filters\AccessControl;
@@ -73,7 +74,6 @@ class LocalsellpointController extends Controller
         $dataProvider->query
             ->andWhere(['user_id' => $userId]);
 
-
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
@@ -91,18 +91,20 @@ class LocalsellpointController extends Controller
         $localStore = Localsellpoint::findOne($id);
 
         $userId = Yii::$app->user->id;
+
         $users = $localStore->user::find()
-            ->select(['username'])
+            ->select(['id', 'username'])
+            ->where(['status' => 10])
             ->andWhere(['id' => (new Query())
                 ->select('user_id')
                 ->from('userextras')
                 ->where(['supplier' => $userId])
+                ->andWhere(['localsellpoint_id' => $localStore->id])
             ])
             ->asArray()
             ->all();
 
         $employeesMap = ArrayHelper::map($users, 'id', 'username');
-
         return $this->render('view', [
             'model' => $this->findModel($id),
             'employeesMap' => $employeesMap,
@@ -120,6 +122,7 @@ class LocalsellpointController extends Controller
         $model = new Localsellpoint();
         $userId = Yii::$app->user->id;
         $managerIds = Yii::$app->authManager->getUserIdsByRole('manager');
+
         $managerUserNames = User::find()
             ->select(['id', 'username'])
             ->where(['id' => $managerIds])
@@ -132,7 +135,6 @@ class LocalsellpointController extends Controller
             ->all();
 
         $employeesMap = ArrayHelper::map($managerUserNames, 'id', 'username');
-
 
         $model->user_id = $userId;
         if ($this->request->isPost) {
@@ -161,20 +163,25 @@ class LocalsellpointController extends Controller
     {
         $model = Localsellpoint::findOne($id);
         $userId = Yii::$app->user->id;
-        $users = User::find()
-            ->select(['username'])
-            ->andWhere(['id' => (new Query())
-                ->select('user_id')
-                ->from('userextras')
-                ->where(['supplier' => $userId])
-            ])
+
+        $userExtras = UserExtra::find()
+            ->select(['userextras.id', 'userextras.user_id', 'userextras.supplier', 'user.username'])
+            ->innerJoin('user', 'user.id = userextras.user_id')
+            ->where(['userextras.supplier' => $userId])
             ->asArray()
             ->all();
 
-        $employeesMap = ArrayHelper::map($users, 'id', 'username');
+        $employeesMap = ArrayHelper::map($userExtras, 'id', 'username');
+
         $model->user_id = $userId;
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            $selectedEmployeeIds = $model->assignedEmployees;
+            $usersToAssign = UserExtra::find()->where(['id' => $selectedEmployeeIds])->all();
+            foreach ($usersToAssign as $user) {
+                $user->localsellpoint_id = $model->id;
+                $user->save();
+            }
             return $this->redirect(['view', 'id' => $model->id]);
         }
 

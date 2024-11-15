@@ -8,23 +8,15 @@ use yii\helpers\Html;
 /** @var yii\data\ActiveDataProvider $dataProvider */
 /** @var $model Localsellpoint */
 
-?>
-<style>
-    table {
-        width: 100%;
-    }
+$this->title = 'Local Shops ';
 
-    th, td {
-        width: 33%;
-        text-align: center;
-        padding: 10px;
-        border-bottom: 1px solid #ddd;
-    }
-</style>
+$this->registerCssFile('@web/css/site.css');
+?>
+
 <div class="localsellpoint-index">
 
     <p>
-        <?= Html::a('Create Localsellpoint', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Create Local Shop', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>

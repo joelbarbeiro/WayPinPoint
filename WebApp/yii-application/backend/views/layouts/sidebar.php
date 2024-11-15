@@ -64,8 +64,8 @@ $imgDir = "yii\backend\web\assets\img\\";
                         '_blank'],
                     ['label' => 'Manage activity', 'url' => ['activities/index'], 'iconStyle' => 'far',],
                     ['label' => 'Selling Points', 'header' => true],
-                    ['label' => 'My Selling Points', 'icon' => 'map', 'url' => Url::to(['localsellpoint/index'])],
-                    ['label' => 'Add Selling Point', 'icon' => 'plus', 'url' => Url::to(['localsellpoint/create'])],
+                    ['label' => 'My Local Shops', 'icon' => 'map', 'url' => Url::to(['localsellpoint/index'])],
+                    ['label' => 'Add Local Shop', 'icon' => 'plus', 'url' => Url::to(['localsellpoint/create'])],
                     ['label' => 'Sales', 'header' => true],
                 ],
             ]);

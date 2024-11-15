@@ -82,10 +82,10 @@ class RoleRegisterController extends \yii\web\Controller
 
         $model->username = $user->username;
         $model->email = $user->email;
-        $model->phone = $user->userExtra->phone ?? '';
-        $model->address = $user->userExtra->address ?? '';
-        $model->nif = $user->userExtra->nif ?? '';
-        $model->localsellpoint = $user->userExtra->localsellpoint_id ?? '';
+        $model->phone = $userExtra->phone ;
+        $model->address = $userExtra->address;
+        $model->nif = $userExtra->nif ;
+        $model->localsellpoint = $userExtra->localsellpoint_id ;
         $model->role = $user->getRole();
 
         $localsellpoints = Localsellpoint::find()

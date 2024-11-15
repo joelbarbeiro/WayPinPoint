@@ -23,7 +23,6 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
         ]) ?>
     </p>
-
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
@@ -41,7 +40,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     $usernames = [];
 
                     foreach ($employeesMap as $user) {
-                        $usernames[] = $user;
+                        array_push($usernames, $user);
                     }
                     return !empty($usernames) ? implode(', ', $usernames) : "No Employees";
                 }

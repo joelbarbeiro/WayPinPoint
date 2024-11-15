@@ -6,8 +6,8 @@ namespace backend\models;
 use common\models\User;
 use common\models\UserExtra;
 use Yii;
-use yii\base\Model;
 use yii\db\ActiveRecord;
+use yii\db\Query;
 
 class RoleRegisterForm extends ActiveRecord
 {
@@ -19,6 +19,7 @@ class RoleRegisterForm extends ActiveRecord
     public $nif;
     public $localsellpoint;
     public $role;
+
     /**
      * @var mixed|null
      */
@@ -47,7 +48,8 @@ class RoleRegisterForm extends ActiveRecord
             ['address', 'string'],
 
             ['nif', 'required'],
-            ['nif', 'string'],
+            ['nif', 'integer', 'min' => 100000000, 'max' => 999999999],
+            ['nif', 'exist', 'targetClass' => '\backend\models\User', 'targetAttribute' => 'nif', 'message' => 'The NIF does not exist in the database.'],
 
             ['localsellpoint', 'required'],
             ['localsellpoint', 'string'],
@@ -70,6 +72,15 @@ class RoleRegisterForm extends ActiveRecord
 
     public function roleRegister()
     {
+        $nifExists = (new Query())
+            ->from('userextras')
+            ->where(['nif' => $this->nif])
+            ->exists();
+
+        if ($nifExists) {
+            throw new \yii\web\BadRequestHttpException("NIF already exists.");
+        }
+
         $supplierId = Yii::$app->user->id;
         if ($this->validate()) {
             $user = new User();
@@ -104,6 +115,16 @@ class RoleRegisterForm extends ActiveRecord
     {
         $userExtra = UserExtra::findOne($userId);
         $user = $userExtra->user;
+
+        $nifExists = (new Query())
+            ->from('userextras')
+            ->where(['nif' => $this->nif])
+            ->exists();
+
+        if ($nifExists) {
+            throw new \yii\web\BadRequestHttpException("NIF already exists.");
+        }
+
         $transaction = Yii::$app->db->beginTransaction();
         try {
             if (!$user) {

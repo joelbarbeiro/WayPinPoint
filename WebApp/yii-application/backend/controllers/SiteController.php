@@ -85,6 +85,7 @@ class SiteController extends Controller
     {
         $model = new RegisterForm();
 
+        $this->layout = 'blank';
 
         if ($model->load(Yii::$app->request->post()) && $model->register()) {
             Yii::$app->session->setFlash('success', 'Registration successful. You can now log in.');

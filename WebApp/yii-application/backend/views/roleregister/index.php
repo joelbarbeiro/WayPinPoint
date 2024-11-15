@@ -10,32 +10,17 @@ use yii\grid\GridView;
 /** @var common\models\UserExtraSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'User Extras';
+$this->title = 'Employees ';
 $this->params['breadcrumbs'][] = $this->title;
+$this->registerCssFile('@web/css/site.css');
+
 ?>
-<style>
-    .btn-danger, .btn-warning {
-        width: 100%
-    }
-
-    table {
-        width: 100%;
-    }
-
-    th, td {
-        width: 33%;
-        text-align: center;
-        padding: 10px;
-        border-bottom: 1px solid #ddd;
-    }
-</style>
 
 <div class="user-extra-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Create User Extra', ['role-register'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Register an Employee', ['role-register'], ['class' => 'btn btn-success']) ?>
     </p>
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
@@ -50,6 +35,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <th>NIF</th>
                     <th>Address</th>
                     <th>Phone</th>
+                    <th>Position</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -58,12 +44,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     <td><?= Html::encode($employee->nif) ?></td>
                     <td><?= Html::encode($employee->address) ?></td>
                     <td><?= Html::encode($employee->phone) ?></td>
+                    <td><?= Html::encode($employee->user->getRole()) ?></td>
                     <td>
                         <?= Html::a('Edit Employee', ['role-register/update', 'id' => $employee->id],
                             ['class' => 'btn btn-warning']) ?>
                     </td>
                     <td>
-                        <?= Html::a('Soft Delete', ['role-register/delete', 'id' => $employee->user->id],
+                        <?= Html::a('Remove Employee', ['role-register/delete', 'id' => $employee->user->id],
                             ['class' => 'btn btn-danger']) ?>
                     </td>
                 </tr>
