@@ -4,14 +4,15 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
-/** @var backend\models\Localsellpoint $model */
+/** @var common\models\UserExtra $model */
 
-$this->title = $model->name;
-$this->params['breadcrumbs'][] = ['label' => 'Localsellpoints', 'url' => ['index']];
+$this->title ="Employee : " . $model->user->username;
+$this->params['breadcrumbs'][] = ['label' => 'User Extras', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
-<div class="localsellpoint-view">
+<div class="user-extra-view">
+
 
     <p>
         <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
@@ -23,26 +24,29 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
         ]) ?>
     </p>
+
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
             [
-                'label' => 'Owner',
+                'label' => 'Username',
                 'value' => function ($model) {
                     return $model->user->username;
                 }
             ],
-            'address',
-            'name',
             [
-                'label' => 'Employees',
-                'value' => function ($model) use ($employeesMap) {
-                    $usernames = [];
-
-                    foreach ($employeesMap as $user) {
-                        array_push($usernames, $user);
-                    }
-                    return !empty($usernames) ? implode(', ', $usernames) : "No Employees";
+                'label' => 'Shop assigned to ',
+                'value' => function ($model) {
+                    return $model->localsellpoint->name;
+                }
+            ],
+            'nif',
+            'address',
+            'phone',
+            [
+                'label' => 'Employer',
+                'value' => function ($model) use ($supplier) {
+                    return $supplier->username;
                 }
             ],
         ],

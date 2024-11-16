@@ -54,7 +54,7 @@ $imgDir = "yii\backend\web\assets\img\\";
                         ]
                     ],
                     ['label' => 'Employee Management', 'header' => true],
-                    ['label' => 'User', 'icon' => 'user', 'url' => Url::to(['role-register/role-register'])],
+                    ['label' => 'User', 'icon' => 'user', 'url' => Url::to(['role-register/index'])],
                     //['label' => 'Simple Link', 'icon' => 'th', 'badge' => '<span class="right
                     // badge badge-danger">New</span>'],
                     ['label' => 'Activities', 'header' => true],
@@ -64,8 +64,8 @@ $imgDir = "yii\backend\web\assets\img\\";
                         '_blank'],
                     ['label' => 'Manage activity', 'url' => ['activities/index'], 'iconStyle' => 'far',],
                     ['label' => 'Selling Points', 'header' => true],
-                    ['label' => 'My Selling Points', 'icon' => 'map', 'url' => Url::to(['localsellpoint/index'])],
-                    ['label' => 'Add Selling Point', 'icon' => 'plus', 'url' => Url::to(['localsellpoint/create'])],
+                    ['label' => 'My Local Shops', 'icon' => 'map', 'url' => Url::to(['localsellpoint/index'])],
+                    ['label' => 'Add Local Shop', 'icon' => 'plus', 'url' => Url::to(['localsellpoint/create'])],
                     ['label' => 'Sales', 'header' => true],
                 ],
             ]);

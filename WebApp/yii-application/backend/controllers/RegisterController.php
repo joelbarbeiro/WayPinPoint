@@ -45,17 +45,5 @@ class RegisterController extends \yii\web\Controller
         $form = new ActiveForm();
         return $this->renderContent("Bootstrap 5 ActiveForm loaded successfully");
     }
-    public function actionBackendRegister()
-    {
-        $model = new User();
-        if ($model->load($this->request->post()) && $model->register()) {
-            \Yii::$app->session->setFlash('success', 'User registered successfully with role: ' . $model->role);
-            return $this->redirect(['site/index']); // Adjust to where you want to redirect
-        }
-        return $this->render('backendregister', [
-            'model' => $model
-        ]);
-    }
-
 
 }

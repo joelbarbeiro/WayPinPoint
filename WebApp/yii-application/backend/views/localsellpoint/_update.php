@@ -15,10 +15,12 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'localuserextra')->dropDownList(
-        $employeesMap,
-        ['prompt' => 'Assign Manager']
-    ); ?>
+    <?= $form->field($model, 'assignedEmployees[]')->dropDownList(
+            $employeesMap,
+        [
+            'multiple' => true
+        ],
+    ) ?>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
