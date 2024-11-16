@@ -88,21 +88,9 @@ class LocalsellpointController extends Controller
      */
     public function actionView($id)
     {
-        $localStore = Localsellpoint::findOne($id);
-
         $userId = Yii::$app->user->id;
 
-        $users = $localStore->user::find()
-            ->select(['id', 'username'])
-            ->where(['status' => 10])
-            ->andWhere(['id' => (new Query())
-                ->select('user_id')
-                ->from('userextras')
-                ->where(['supplier' => $userId])
-                ->andWhere(['localsellpoint_id' => $localStore->id])
-            ])
-            ->asArray()
-            ->all();
+        $users = Localsellpoint::getEmployeesForLocalStore($id,$userId);
 
         $employeesMap = ArrayHelper::map($users, 'id', 'username');
         return $this->render('view', [
@@ -121,18 +109,8 @@ class LocalsellpointController extends Controller
     {
         $model = new Localsellpoint();
         $userId = Yii::$app->user->id;
-        $managerIds = Yii::$app->authManager->getUserIdsByRole('manager');
 
-        $managerUserNames = User::find()
-            ->select(['id', 'username'])
-            ->where(['id' => $managerIds])
-            ->andWhere(['id' => (new Query())
-                ->select('user_id')
-                ->from('userextras')
-                ->where(['supplier' => $userId])
-            ])
-            ->asArray()
-            ->all();
+        $managerUserNames = UserExtra::getManagersForSupplier($userId);
 
         $employeesMap = ArrayHelper::map($managerUserNames, 'id', 'username');
 
@@ -164,12 +142,7 @@ class LocalsellpointController extends Controller
         $model = Localsellpoint::findOne($id);
         $userId = Yii::$app->user->id;
 
-        $userExtras = UserExtra::find()
-            ->select(['userextras.id', 'userextras.user_id', 'userextras.supplier', 'user.username'])
-            ->innerJoin('user', 'user.id = userextras.user_id')
-            ->where(['userextras.supplier' => $userId])
-            ->asArray()
-            ->all();
+        $userExtras = UserExtra::getEmployeesForSupplier($userId);
 
         $employeesMap = ArrayHelper::map($userExtras, 'id', 'username');
 

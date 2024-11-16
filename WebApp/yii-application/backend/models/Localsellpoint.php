@@ -4,6 +4,7 @@ namespace backend\models;
 
 use common\models\User;
 use common\models\UserExtra;
+use yii\db\Query;
 
 /**
  * This is the model class for table "localsellpoint".
@@ -97,4 +98,29 @@ class Localsellpoint extends \yii\db\ActiveRecord
         return $this->hasMany(UserExtra::class, ['id' => 'userextra_id'])
             ->via('localsellpointUserextras');
     }
+    public static function getLocalStoreForSupplier($userId): array
+    {
+        return Localsellpoint::find()
+            ->select(['id', 'name'])
+            ->where(['user_id' => $userId])
+            ->asArray()
+            ->all();
+    }
+    public static function getEmployeesForLocalStore($id, $userId): array
+    {
+        $localStore = Localsellpoint::findOne($id);
+
+        return User::find()
+            ->select(['id', 'username'])
+            ->where(['status' => 10])
+            ->andWhere(['id' => (new Query())
+                ->select('user_id')
+                ->from('userextras')
+                ->where(['supplier' => $userId])
+                ->andWhere(['localsellpoint_id' => $localStore->id])
+            ])
+            ->asArray()
+            ->all();
+    }
+
 }

@@ -5,6 +5,7 @@ namespace common\models;
 use backend\models\Localsellpoint;
 use backend\models\LocalsellpointUserextra;
 use Yii;
+use yii\db\Query;
 
 /**
  * This is the model class for table "userextras".
@@ -74,16 +75,6 @@ class UserExtra extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[LocalsellpointUserextras]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getLocalsellpointUserextras()
-    {
-        return $this->hasMany(LocalsellpointUserextra::class, ['userextra_id' => 'id']);
-    }
-
-    /**
      * Gets query for [[User]].
      *
      * @return \yii\db\ActiveQuery
@@ -92,4 +83,34 @@ class UserExtra extends \yii\db\ActiveRecord
     {
         return $this->hasOne(User::class, ['id' => 'user_id']);
     }
+
+    public static function getManagersForSupplier($userId): array
+    {
+        $managerIds = Yii::$app->authManager->getUserIdsByRole('manager');
+
+        return User::find()
+            ->select(['id', 'username'])
+            ->where(['id' => $managerIds])
+            ->andWhere(['id' => (new Query())
+                ->select('user_id')
+                ->from('userextras')
+                ->where(['supplier' => $userId])
+            ])
+            ->asArray()
+            ->all();
+
+    }
+
+    public static function getEmployeesForSupplier($userId): array
+    {
+        return UserExtra::find()
+            ->select(['userextras.id', 'userextras.user_id', 'userextras.supplier', 'user.username'])
+            ->innerJoin('user', 'user.id = userextras.user_id')
+            ->where(['userextras.supplier' => $userId])
+            ->andWhere(['user.status'=> 10])
+            ->asArray()
+            ->all();
+    }
+
+
 }

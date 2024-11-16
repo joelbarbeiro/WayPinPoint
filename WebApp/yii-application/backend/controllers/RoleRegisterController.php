@@ -24,11 +24,8 @@ class RoleRegisterController extends \yii\web\Controller
         $dataProvider = $searchModel->search($this->request->queryParams);
         $userId = Yii::$app->user->id;
 
-        $employees = UserExtra::find()
-            ->select(['id'])
-            ->where(['supplier' => $userId])
-            ->asArray()
-            ->all();
+        $employees = UserExtra::getEmployeesForSupplier($userId);
+
 
         $employeesMap = ArrayHelper::map($employees, 'id', 'username');
         return $this->render('@backend/views/roleregister/index', [
@@ -38,20 +35,14 @@ class RoleRegisterController extends \yii\web\Controller
         ]);
     }
 
-    public function actionTest()
-    {
-        $form = new RoleRegisterForm();
-        return $this->renderContent("Bootstrap 5 ActiveForm loaded successfully");
-    }
-
     public function actionRoleRegister()
     {
+        $userId = Yii::$app->user->id;
         $model = new RoleRegisterForm();
         $userExtra = new UserExtra();
-        $localsellpoints = Localsellpoint::find()
-            ->select(['id', 'name'])
-            ->asArray()
-            ->all();
+
+        $localsellpoints = Localsellpoint::getLocalStoreForSupplier($userId);
+
         $localsellpointsMap = ArrayHelper::map($localsellpoints, 'id', 'name');
 
         if ($model->load($this->request->post()) && $model->roleRegister()) {
@@ -136,7 +127,7 @@ class RoleRegisterController extends \yii\web\Controller
                     [
                         'actions' => ['role-register', 'index', 'delete', 'view', 'update'],
                         'allow' => true,
-                        'roles' => ['supplier'], // Only logged-in users can access this action
+                        'roles' => ['supplier'],
                     ],
                 ],
             ],

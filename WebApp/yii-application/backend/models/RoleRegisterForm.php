@@ -49,7 +49,6 @@ class RoleRegisterForm extends ActiveRecord
 
             ['nif', 'required'],
             ['nif', 'integer', 'min' => 100000000, 'max' => 999999999],
-            ['nif', 'exist', 'targetClass' => '\backend\models\User', 'targetAttribute' => 'nif', 'message' => 'The NIF does not exist in the database.'],
 
             ['localsellpoint', 'required'],
             ['localsellpoint', 'string'],
@@ -97,13 +96,11 @@ class RoleRegisterForm extends ActiveRecord
                 $userExtra->nif = $this->nif;
                 $userExtra->localsellpoint_id = $this->localsellpoint;
                 $userExtra->supplier = $supplierId;
-                if ($userExtra->save(false)) {
-                    $this->saveUserRoleAssignment($userExtra->id, $this->localsellpoint);
-                }
+                $userExtra->save(false);
             }
             $auth = \Yii::$app->authManager;
-            $clientRole = $auth->getRole($this->role);
-            $auth->assign($clientRole, $user->getId());
+            $role = $auth->getRole($this->role);
+            $auth->assign($role, $user->getId());
 
             return $user;
         }
@@ -131,7 +128,6 @@ class RoleRegisterForm extends ActiveRecord
                 throw new \Exception("User not found");
             }
 
-            // Update user attributes
             $user->username = $this->username;
             $user->email = $this->email;
             if ($this->password) {
@@ -142,16 +138,14 @@ class RoleRegisterForm extends ActiveRecord
             $userExtra->nif = $this->nif;
             $userExtra->localsellpoint_id = $this->localsellpoint;
 
-            // Update or reassign role
             $auth = \Yii::$app->authManager;
-            $auth->revokeAll($user->id);  // Remove existing roles
+            $auth->revokeAll($user->id);
             $newRole = $auth->getRole($this->role);
             if (!$newRole) {
                 throw new \Exception("Role not found");
             }
             $auth->assign($newRole, $user->id);
 
-            // Save user and userExtra
             if ($user->save(false) && $userExtra->save(false)) {
                 $transaction->commit();
                 return true;

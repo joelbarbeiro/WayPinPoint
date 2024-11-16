@@ -26,7 +26,7 @@ $this->registerCssFile('@web/css/site.css');
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <?php foreach ($dataProvider->models as $employee): ?>
-    <?php if($employee->user->status == 0) continue; ?>
+    <?php if($employee->user->status == 0 || $employee->supplier != Yii::$app->user->id) continue; ?>
         <div class="employees">
             <table>
                 <thead>
