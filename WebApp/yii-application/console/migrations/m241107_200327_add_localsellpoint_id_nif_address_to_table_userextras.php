@@ -13,7 +13,7 @@ class m241107_200327_add_localsellpoint_id_nif_address_to_table_userextras exten
     public function safeUp()
     {
         $this->renameColumn('{{%userextras}}', 'user', 'user_id');
-        $this->addColumn('{{%userextras}}', 'localsellpoint_id', $this->integer()->notNull()->after('user_id'));
+        $this->addColumn('{{%userextras}}', 'localsellpoint_id', $this->integer()->null()->after('user_id'));
         $this->addForeignKey(
             'fk-userextras-localsellpoint_id',
             '{{%userextras}}',
