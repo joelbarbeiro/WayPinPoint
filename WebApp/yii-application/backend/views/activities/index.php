@@ -16,46 +16,30 @@ use yii\grid\GridView;
 
 $this->title = 'Activities';
 $this->params['breadcrumbs'][] = $this->title;
+
+$imgPath = Url::to('@web/assets/uploads/'.Yii::$app->user->id.'/');
+
 ?>
 <div class="activities-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <?php
+        foreach ($dataProvider->models as $activity) {
 
-    <p>
-        <?= Html::a('Create Activities', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
+            echo '<div class="card m-5" >';
+            echo '<img src="'.$imgPath.$activity->photo.'" class="card-img-top" alt="...">';
+            echo '<div class="card-body">';
+            echo '<h5 class="card-title">'.$activity->name.'</h5>';
+            echo '<p class="card-text">'.$activity->description.'</p>';
 
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+            foreach ($activity->calendars as $calendar) {
+                if($calendar->status != 0) {
+                    echo '<p class="card-text"> Date: ' . $calendar->date->date . ' Time: ' . $calendar->time->hour . '</p>';
+                }
+            }
 
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        //'otherDataProvider' => $otherDataProvider,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
-            'name',
-            'description',
-            'photo',
-            'maxpax',
-            'priceperpax',
-            'address',
-            /*[
-                'label' => 'Date',
-                'value' =>  $otherDataProvider ? $otherDataProvider->date->date : 'No date',
-            ],
-            [
-                'label' => 'Time',
-                'value' => $otherDataProvider ? $otherDataProvider->time->hour : 'No time',
-            ],*/
-            [
-                'class' => ActionColumn::className(),
-                'urlCreator' => function ($action, Activities $model, $key, $index, $column) {
-                    return Url::toRoute([$action, 'id' => $model->id]);
-                 }
-            ],
-        ],
-    ]); ?>
-
-
+            echo '<a href="' . Url::to(['activities/view', 'id' => $activity->id]) . '" class="btn btn-primary">View</a>';
+            echo '</div>';
+            echo '</div>';
+        }
+    ?>
 </div>

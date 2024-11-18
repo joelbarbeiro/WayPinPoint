@@ -26,7 +26,7 @@ class SiteController extends Controller
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        'actions' => ['login', 'error', 'register'],
+                        'actions' => ['login', 'error', 'register', 'view'],
                         'allow' => true,
                     ],
                     [
@@ -40,7 +40,12 @@ class SiteController extends Controller
                         'roles' => ['admin', 'supplier', 'manager', 'salesperson', 'guide'],
                     ],
                     [
-                        'actions' => ['logout', 'index'],
+                        'actions' => ['index', 'create', 'update', 'delete', 'view'],
+                        'allow' => true,
+                        'roles' => ['admin', 'supplier', 'manager', 'salesperson', 'guide'],
+                    ],
+                    [
+                        'actions' => ['logout', 'index', 'view'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -91,6 +96,8 @@ class SiteController extends Controller
             Yii::$app->session->setFlash('success', 'Registration successful. You can now log in.');
             return $this->redirect(['site/login']);
         }
+
+        $this->layout = 'blank';
 
         return $this->render('register', [
             'model' => $model,

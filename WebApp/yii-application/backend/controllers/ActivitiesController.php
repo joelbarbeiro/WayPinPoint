@@ -9,6 +9,8 @@ use backend\models\Calendar;
 use backend\models\CalendarSearch;
 use backend\models\Dates;
 use backend\models\Times;
+use Yii;
+use yii\data\ActiveDataProvider;
 use yii\helpers\ArrayHelper;
 use yii\filters\AccessControl;
 
@@ -73,14 +75,21 @@ class ActivitiesController extends Controller
     {
         $searchModel = new ActivitiesSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
-        $searchModelCalendar = new CalendarSearch();
-        $calendar = $searchModelCalendar->search($this->request->queryParams);
 
+        $userId = Yii::$app->user->id;
+
+        $dataProvider->query->joinWith('calendars')
+            ->andWhere(['user_id' => $userId])
+            ->andWhere(['activities.status' => 1])
+            ->andWhere(['calendar.status' => 1]);
+
+        $dataProvider->query->all();
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
+
     }
 
     /**
@@ -91,8 +100,23 @@ class ActivitiesController extends Controller
      */
     public function actionView($id)
     {
+        $userId = Yii::$app->user->id;
+
+        $model = Activities::find()
+            ->joinWith('calendars')
+            ->where([
+                'activities.id' => $id,
+                'activities.user_id' => $userId,
+                'calendar.status' => 1
+            ])
+            ->one();
+
+        if (!$model) {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
+
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $model,
         ]);
     }
 
@@ -111,6 +135,7 @@ class ActivitiesController extends Controller
         if ($model->load($this->request->post())) {
             $getDateTimes = $model->getCalendarArray();
             $model->uploadPhoto();
+            $model->user_id = Yii::$app->user->id;
             if ($model->validate() && $model->save()) {
                 foreach ($getDateTimes as $date => $timeId) {
                     $dates = new Dates();
@@ -125,7 +150,7 @@ class ActivitiesController extends Controller
                     }
                 }
             }
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['index']);
         }
 
         return $this->render('create', [
@@ -141,8 +166,7 @@ class ActivitiesController extends Controller
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public
-    function actionUpdate($id)
+    public function actionUpdate($id)
     {
         $model = $this->findModel($id);
 
@@ -162,11 +186,14 @@ class ActivitiesController extends Controller
      * @return \yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public
-    function actionDelete($id)
+    public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
 
+        if ($this->request->isPost && $model != null) {
+            $model->status = 0;
+            $model->save(false);
+        }
         return $this->redirect(['index']);
     }
 
@@ -177,8 +204,7 @@ class ActivitiesController extends Controller
      * @return Activities the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected
-    function findModel($id)
+    protected function findModel($id)
     {
         if (($model = Activities::findOne(['id' => $id])) !== null) {
             return $model;

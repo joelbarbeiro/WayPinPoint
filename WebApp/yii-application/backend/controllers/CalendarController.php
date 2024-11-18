@@ -22,6 +22,20 @@ class CalendarController extends Controller
         return array_merge(
             parent::behaviors(),
             [
+                'access' => [
+                    'class' => AccessControl::class,
+                    'rules' => [
+                        [
+                            'actions' => ['index', 'create', 'update', 'delete'],
+                            'allow' => true,
+                        ],
+                        [
+                            'actions' => ['logout', 'index'],
+                            'allow' => true,
+                            'roles' => ['@'],
+                        ],
+                    ],
+                ],
                 'verbs' => [
                     'class' => VerbFilter::className(),
                     'actions' => [
