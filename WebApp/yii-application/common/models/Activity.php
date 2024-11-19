@@ -1,6 +1,8 @@
 <?php
 
-namespace frontend\models;
+namespace common\models;
+
+use frontend\models\Picture;
 
 /**
  * This is the model class for table "activities".
