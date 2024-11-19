@@ -3,8 +3,7 @@
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
-/** @var frontend\models\Cart $model */
-
+/** @var \common\models\Cart $model */
 $this->title = 'Create Cart';
 $this->params['breadcrumbs'][] = ['label' => 'Carts', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;

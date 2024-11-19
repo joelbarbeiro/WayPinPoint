@@ -1,10 +1,10 @@
 <?php
 
-use frontend\models\Cart;
-use yii\helpers\Html;
-use yii\helpers\Url;
+use common\models\Cart;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
+use yii\helpers\Html;
+use yii\helpers\Url;
 
 /** @var yii\web\View $this */
 /** @var yii\data\ActiveDataProvider $dataProvider */
@@ -40,19 +40,22 @@ $this->params['breadcrumbs'][] = $this->title;
             }],
         [
             'class' => ActionColumn::className(),
-            'template' => '{view} {delete} {update} {myButton}',
-            'buttons' => ['myButton' => function ($url, $model, $key) {
-                    return Html::beginForm(['cart/download'], 'post')
+            'template' => '{view} {update} {delete} {checkout}',
+            'buttons' => [
+            'checkout' => function ($url, $model, $key) {
+                    return Html::beginForm(['cart/checkout'], 'post')
                         . Html::hiddenInput('user_id', $model->user_id)
                         . Html::hiddenInput('activity_id', $model->product_id)
                         . Html::submitButton('Checkout', ['class' => 'btn btn-primary' ,
                             'data-confirm' => 'Are you sure you want to purchase this activity?',
                             'data-method' => 'post'])
                         . Html::endForm();
+
             }],
             'urlCreator' => function ($action, Cart $model, $key, $index, $column) {
                 return Url::toRoute([$action, 'user_id' => $model->user_id, 'product_id' => $model->product_id]);
             }
         ],
+
     ],
 ]); ?>

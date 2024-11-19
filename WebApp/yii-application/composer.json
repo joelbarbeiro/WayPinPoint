@@ -22,7 +22,8 @@
         "yiisoft/yii2-bootstrap4": "^2.0",
         "yiisoft/yii2-bootstrap5": "^2.0",
         "mpdf/mpdf": "^8.2",
-        "2amigos/qrcode-library": "3.1.0"
+        "2amigos/qrcode-library": "3.1.0",
+        "symfony/var-dumper": "^5.4"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",

@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
-/** @var frontend\models\Cart $model */
+/** @var \common\models\Cart $model */
 
 $this->title = 'Update Cart: ' . $model->user_id;
 $this->params['breadcrumbs'][] = ['label' => 'Carts', 'url' => ['index']];

@@ -1,13 +1,13 @@
 <?php
 
-use frontend\models\Activity;
-use yii\helpers\Html;
-use yii\helpers\Url;
+use common\models\Activity;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
+use yii\helpers\Html;
+use yii\helpers\Url;
 
 /** @var yii\web\View $this */
-/** @var frontend\models\ActivitySearch $searchModel */
+/** @var \common\models\ActivitySearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 /** @var Activity $model title */
 
@@ -36,13 +36,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     return $model->priceperpax . "€";
                 }],
             'address',
-            [
+            [   
                 'class' => ActionColumn::className(),
                 'template' => '{view} {myButton}',
                 'buttons' => ['myButton' => function ($url, $model) {
                     return Html::a('Buy', ['cart/create', 'activityId' => $model->id], ['class' => 'btn btn-primary']);
                 }],
-                'urlCreator' => function ($action, frontend\models\Activity $model, $key, $index, $column) {
+                'urlCreator' => function ($action, \common\models\Activity $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'id' => $model->id]);
                  }
             ],

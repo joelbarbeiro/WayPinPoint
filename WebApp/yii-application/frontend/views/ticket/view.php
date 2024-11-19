@@ -4,14 +4,14 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
-/** @var common\models\User $model */
+/** @var \common\models\Ticket $model */
 
-$this->title = $model->username;
-$this->params['breadcrumbs'][] = ['label' => 'Users', 'url' => ['site/index']];
+$this->title = $model->id;
+$this->params['breadcrumbs'][] = ['label' => 'Tickets', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
-<div class="user-view">
+<div class="ticket-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
@@ -24,15 +24,16 @@ $this->params['breadcrumbs'][] = $this->title;
                 'method' => 'post',
             ],
         ]) ?>
-        <?= Html::a('Invoices', ['invoice/index', 'id' => $model->id], ['class' => 'btn btn-info']) ?>
-        <?= Html::a('Tickets', ['ticket/index', 'id' => $model->id], ['class' => 'btn btn-info']) ?>
     </p>
 
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
-            'username',
-            'email:email',
+            'id',
+            'activities_id',
+            'participant',
+            'qr',
+            'status',
         ],
     ]) ?>
 

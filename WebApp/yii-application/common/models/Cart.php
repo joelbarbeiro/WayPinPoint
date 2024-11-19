@@ -1,10 +1,8 @@
 <?php
 
-namespace frontend\models;
+namespace common\models;
 
 use backend\models\Activities;
-use common\models\User;
-use Yii;
 
 /**
  * This is the model class for table "cart".
@@ -12,6 +10,7 @@ use Yii;
  * @property int $user_id
  * @property int $product_id
  * @property int $quantity
+ * @property int $id
  *
  * @property Activities $product
  * @property User $user
@@ -34,7 +33,6 @@ class Cart extends \yii\db\ActiveRecord
         return [
             [['user_id', 'product_id', 'quantity'], 'required'],
             [['user_id', 'product_id', 'quantity'], 'integer'],
-            [['user_id', 'product_id'], 'unique', 'targetAttribute' => ['user_id', 'product_id']],
             [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Activities::class, 'targetAttribute' => ['product_id' => 'id']],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
         ];
@@ -49,6 +47,7 @@ class Cart extends \yii\db\ActiveRecord
             'user_id' => 'User ID',
             'product_id' => 'Product ID',
             'quantity' => 'Quantity',
+            'id' => 'ID',
         ];
     }
 

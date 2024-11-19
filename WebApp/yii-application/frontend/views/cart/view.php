@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
-/** @var frontend\models\Cart $model */
+/** @var \common\models\Cart $model */
 
 $this->title = $model->activity->description;
 $this->params['breadcrumbs'][] = ['label' => 'Carts', 'url' => ['index']];

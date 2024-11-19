@@ -1,9 +1,9 @@
 <?php
 /** @var User $user */
 
-/** @var Activity $activity */
+/** @var \common\models\Activity $activity */
 
-use frontend\models\Activity;
+use common\models\Activity;
 use common\models\User;
 
 ?>
