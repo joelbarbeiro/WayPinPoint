@@ -2,17 +2,19 @@
 
 namespace backend\controllers;
 
-use backend\models\Calendar;
-use backend\models\CalendarSearch;
-use yii\filters\AccessControl;
+use backend\models\Localsellpoint;
+use backend\models\RoleRegisterForm;
+use common\models\User;
+use common\models\UserExtra;
+use common\models\UserExtraSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * CalendarController implements the CRUD actions for Calendar model.
+ * UserextraController implements the CRUD actions for UserExtra model.
  */
-class CalendarController extends Controller
+class UserextraController extends Controller
 {
     /**
      * @inheritDoc
@@ -33,13 +35,13 @@ class CalendarController extends Controller
     }
 
     /**
-     * Lists all Calendar models.
+     * Lists all UserExtra models.
      *
      * @return string
      */
     public function actionIndex()
     {
-        $searchModel = new CalendarSearch();
+        $searchModel = new UserExtraSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
@@ -49,7 +51,7 @@ class CalendarController extends Controller
     }
 
     /**
-     * Displays a single Calendar model.
+     * Displays a single UserExtra model.
      * @param int $id ID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
@@ -62,29 +64,36 @@ class CalendarController extends Controller
     }
 
     /**
-     * Creates a new Calendar model.
+     * Creates a new UserExtra model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
     public function actionCreate()
     {
-        $model = new Calendar();
+        $model = new UserExtra();
+        $user = new User();
+        $localsellpoints = Localsellpoint::find()
+            ->select(['id', 'name'])
+            ->asArray()
+            ->all();
 
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
-            }
-        } else {
+        if ($model->load($this->request->post()) && $model->roleRegister()) {
+            \Yii::$app->session->setFlash('success', 'User registered successfully with roleregister: ' . $model->role);
+            return $this->redirect(['site/index']); // Adjust to where you want to redirect
+        }
+        else {
             $model->loadDefaultValues();
         }
 
         return $this->render('create', [
             'model' => $model,
+            'user' => $user,
+            'localsellpoints' => $localsellpoints,
         ]);
     }
 
     /**
-     * Updates an existing Calendar model.
+     * Updates an existing UserExtra model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param int $id ID
      * @return string|\yii\web\Response
@@ -104,7 +113,7 @@ class CalendarController extends Controller
     }
 
     /**
-     * Deletes an existing Calendar model.
+     * Deletes an existing UserExtra model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param int $id ID
      * @return \yii\web\Response
@@ -118,15 +127,15 @@ class CalendarController extends Controller
     }
 
     /**
-     * Finds the Calendar model based on its primary key value.
+     * Finds the UserExtra model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param int $id ID
-     * @return Calendar the loaded model
+     * @return UserExtra the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Calendar::findOne(['id' => $id])) !== null) {
+        if (($model = UserExtra::findOne(['id' => $id])) !== null) {
             return $model;
         }
 

@@ -2,7 +2,9 @@
 
 namespace backend\models;
 
-use Yii;
+use common\models\User;
+use common\models\UserExtra;
+use yii\db\Query;
 
 /**
  * This is the model class for table "localsellpoint".
@@ -12,7 +14,9 @@ use Yii;
  * @property string $address
  * @property string $name
  *
+ * @property LocalsellpointUserextra[] $localsellpointUserextras
  * @property User $user
+ * @property UserExtra[] $userextras
  */
 class Localsellpoint extends \yii\db\ActiveRecord
 {
@@ -27,6 +31,13 @@ class Localsellpoint extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
+
+    public $localuserextra;
+
+    public $assignedEmployees = [];
+    public $assignedManager;
+
+
     public function rules()
     {
         return [
@@ -34,6 +45,9 @@ class Localsellpoint extends \yii\db\ActiveRecord
             [['address', 'name'], 'required'],
             [['address'], 'string', 'max' => 400],
             [['name'], 'string', 'max' => 100],
+            [['localuserextra'], 'integer'],
+            [['assignedManager'], 'safe'],
+            [['assignedEmployees'], 'safe'],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
         ];
     }
@@ -48,7 +62,20 @@ class Localsellpoint extends \yii\db\ActiveRecord
             'user_id' => 'User ID',
             'address' => 'Address',
             'name' => 'Name',
+            'assignedManager' => 'Assigned Manager',
+            'assignedEmployees' => 'Assigned Employees',
+            'localuserextra' => 'Local User',
         ];
+    }
+
+    /**
+     * Gets query for [[LocalsellpointUserextras]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getLocalsellpointUserextras()
+    {
+        return $this->hasMany(LocalsellpointUserextra::class, ['localsellpoint_id' => 'id']);
     }
 
     /**
@@ -60,4 +87,40 @@ class Localsellpoint extends \yii\db\ActiveRecord
     {
         return $this->hasOne(User::class, ['id' => 'user_id']);
     }
+
+    /**
+     * Gets query for [[Userextras]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUserextras()
+    {
+        return $this->hasMany(UserExtra::class, ['id' => 'userextra_id'])
+            ->via('localsellpointUserextras');
+    }
+    public static function getLocalStoreForSupplier($userId): array
+    {
+        return Localsellpoint::find()
+            ->select(['id', 'name'])
+            ->where(['user_id' => $userId])
+            ->asArray()
+            ->all();
+    }
+    public static function getEmployeesForLocalStore($id, $userId): array
+    {
+        $localStore = Localsellpoint::findOne($id);
+
+        return User::find()
+            ->select(['id', 'username'])
+            ->where(['status' => 10])
+            ->andWhere(['id' => (new Query())
+                ->select('user_id')
+                ->from('userextras')
+                ->where(['supplier' => $userId])
+                ->andWhere(['localsellpoint_id' => $localStore->id])
+            ])
+            ->asArray()
+            ->all();
+    }
+
 }

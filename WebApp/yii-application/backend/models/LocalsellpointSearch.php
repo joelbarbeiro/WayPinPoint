@@ -4,12 +4,11 @@ namespace backend\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use backend\models\Calendar;
 
 /**
- * CalendarSearch represents the model behind the search form of `backend\models\Calendar`.
+ * LocalsellpointSearch represents the model behind the search form of `backend\models\Localsellpoint`.
  */
-class CalendarSearch extends Calendar
+class LocalsellpointSearch extends Localsellpoint
 {
     /**
      * {@inheritdoc}
@@ -17,7 +16,8 @@ class CalendarSearch extends Calendar
     public function rules()
     {
         return [
-            [['id', 'activities_id', 'date_id'], 'integer'],
+            [['id', 'user_id'], 'integer'],
+            [['address', 'name'], 'safe'],
         ];
     }
 
@@ -39,7 +39,7 @@ class CalendarSearch extends Calendar
      */
     public function search($params)
     {
-        $query = Calendar::find();
+        $query = Localsellpoint::find();
 
         // add conditions that should always apply here
 
@@ -58,9 +58,11 @@ class CalendarSearch extends Calendar
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'activities_id' => $this->activities_id,
-            'date_id' => $this->date_id,
+            'user_id' => $this->user_id,
         ]);
+
+        $query->andFilterWhere(['like', 'address', $this->address])
+            ->andFilterWhere(['like', 'name', $this->name]);
 
         return $dataProvider;
     }

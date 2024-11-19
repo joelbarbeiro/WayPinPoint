@@ -2,24 +2,22 @@
 
 namespace backend\controllers;
 
-use backend\models\Activities;
-use backend\models\ActivitiesSearch;
-use backend\models\Calendar;
-
-use backend\models\CalendarSearch;
-use backend\models\Dates;
-use backend\models\Times;
-use yii\helpers\ArrayHelper;
+use backend\models\Localsellpoint;
+use backend\models\LocalsellpointSearch;
+use common\models\User;
+use common\models\UserExtra;
+use Yii;
+use yii\db\Query;
 use yii\filters\AccessControl;
-
+use yii\filters\VerbFilter;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
- * ActivitiesController implements the CRUD actions for Activities model.
+ * LocalsellpointController implements the CRUD actions for Localsellpoint model.
  */
-class ActivitiesController extends Controller
+class LocalsellpointController extends Controller
 {
     /**
      * @inheritDoc
@@ -28,8 +26,7 @@ class ActivitiesController extends Controller
     {
         return array_merge(
             parent::behaviors(),
-            [
-                'access' => [
+            ['access' => [
                 'class' => AccessControl::class,
                 'rules' => [
                     [
@@ -37,14 +34,14 @@ class ActivitiesController extends Controller
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['index', 'create', 'update', 'delete'], // Backoffice actions
+                        'actions' => ['index', 'create', 'update', 'delete', 'view'], // Backoffice actions
                         'allow' => false,
                         'roles' => ['client'], // Explicitly deny client access to backoffice
                     ],
                     [
-                        'actions' => ['index', 'create', 'update', 'delete'],
+                        'actions' => ['index', 'create', 'update', 'delete', 'view'],
                         'allow' => true,
-                        'roles' => ['admin','supplier','manager','salesperson','guide'],
+                        'roles' => ['admin', 'supplier', 'manager', 'salesperson', 'guide'],
                     ],
                     [
                         'actions' => ['logout', 'index'],
@@ -65,17 +62,17 @@ class ActivitiesController extends Controller
     }
 
     /**
-     * Lists all Activities models.
+     * Lists all Localsellpoint models.
      *
      * @return string
      */
     public function actionIndex()
     {
-        $searchModel = new ActivitiesSearch();
+        $searchModel = new LocalsellpointSearch();
+        $userId = Yii::$app->user->id;
         $dataProvider = $searchModel->search($this->request->queryParams);
-        $searchModelCalendar = new CalendarSearch();
-        $calendar = $searchModelCalendar->search($this->request->queryParams);
-
+        $dataProvider->query
+            ->andWhere(['user_id' => $userId]);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -84,86 +81,97 @@ class ActivitiesController extends Controller
     }
 
     /**
-     * Displays a single Activities model.
+     * Displays a single Localsellpoint model.
      * @param int $id ID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionView($id)
     {
+        $userId = Yii::$app->user->id;
+
+        $users = Localsellpoint::getEmployeesForLocalStore($id,$userId);
+
+        $employeesMap = ArrayHelper::map($users, 'id', 'username');
         return $this->render('view', [
             'model' => $this->findModel($id),
+            'employeesMap' => $employeesMap,
         ]);
     }
 
     /**
-     * Creates a new Activities model.
+     * Creates a new Localsellpoint model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
+
     public function actionCreate()
     {
-        $model = new Activities();
+        $model = new Localsellpoint();
+        $userId = Yii::$app->user->id;
 
-        $hoursQuery = Times::find()->select(['id', 'hour'])->asArray()->all();
-        $hoursList = ArrayHelper::map($hoursQuery, 'id', 'hour');
+        $managerUserNames = UserExtra::getManagersForSupplier($userId);
 
-        if ($model->load($this->request->post())) {
-            $getDateTimes = $model->getCalendarArray();
-            $model->uploadPhoto();
-            if ($model->validate() && $model->save()) {
-                foreach ($getDateTimes as $date => $timeId) {
-                    $dates = new Dates();
-                    $dates->date =$date;
-                    $dates->save();
-                    foreach ($timeId as $time) {
-                        $calendarModel = new Calendar();
-                        $calendarModel->activities_id = $model->id;
-                        $calendarModel->date_id = $dates->id;
-                        $calendarModel->time_id = $time;
-                        $calendarModel->save();
-                    }
-                }
+        $employeesMap = ArrayHelper::map($managerUserNames, 'id', 'username');
+
+        $model->user_id = $userId;
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post()) && $model->save()) {
+                return $this->redirect(['view', 'id' => $model->id]);
             }
-            return $this->redirect(['view', 'id' => $model->id]);
+        } else {
+            $model->loadDefaultValues();
         }
 
         return $this->render('create', [
             'model' => $model,
-            'hoursList' => $hoursList,
+            'userId' => $userId,
+            'employeesMap' => $employeesMap,
         ]);
     }
 
     /**
-     * Updates an existing Activities model.
+     * Updates an existing Localsellpoint model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param int $id ID
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public
-    function actionUpdate($id)
+    public function actionUpdate($id)
     {
-        $model = $this->findModel($id);
+        $model = Localsellpoint::findOne($id);
+        $userId = Yii::$app->user->id;
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+        $userExtras = UserExtra::getEmployeesForSupplier($userId);
+
+        $employeesMap = ArrayHelper::map($userExtras, 'id', 'username');
+
+        $model->user_id = $userId;
+
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            $selectedEmployeeIds = $model->assignedEmployees;
+            $usersToAssign = UserExtra::find()->where(['id' => $selectedEmployeeIds])->all();
+            foreach ($usersToAssign as $user) {
+                $user->localsellpoint_id = $model->id;
+                $user->save();
+            }
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('update', [
             'model' => $model,
+            'employeesMap' => $employeesMap,
         ]);
     }
 
     /**
-     * Deletes an existing Activities model.
+     * Deletes an existing Localsellpoint model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param int $id ID
      * @return \yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public
-    function actionDelete($id)
+    public function actionDelete($id)
     {
         $this->findModel($id)->delete();
 
@@ -171,16 +179,15 @@ class ActivitiesController extends Controller
     }
 
     /**
-     * Finds the Activities model based on its primary key value.
+     * Finds the Localsellpoint model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param int $id ID
-     * @return Activities the loaded model
+     * @return Localsellpoint the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected
-    function findModel($id)
+    protected function findModel($id)
     {
-        if (($model = Activities::findOne(['id' => $id])) !== null) {
+        if (($model = Localsellpoint::findOne(['id' => $id])) !== null) {
             return $model;
         }
 

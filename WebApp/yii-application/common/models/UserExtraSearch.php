@@ -1,15 +1,15 @@
 <?php
 
-namespace backend\models;
+namespace common\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use backend\models\Calendar;
+use common\models\UserExtra;
 
 /**
- * CalendarSearch represents the model behind the search form of `backend\models\Calendar`.
+ * UserExtraSearch represents the model behind the search form of `common\models\UserExtra`.
  */
-class CalendarSearch extends Calendar
+class UserExtraSearch extends UserExtra
 {
     /**
      * {@inheritdoc}
@@ -17,7 +17,8 @@ class CalendarSearch extends Calendar
     public function rules()
     {
         return [
-            [['id', 'activities_id', 'date_id'], 'integer'],
+            [['id', 'user_id', 'localsellpoint_id', 'nif', 'supplier'], 'integer'],
+            [['address', 'phone'], 'safe'],
         ];
     }
 
@@ -39,7 +40,7 @@ class CalendarSearch extends Calendar
      */
     public function search($params)
     {
-        $query = Calendar::find();
+        $query = UserExtra::find();
 
         // add conditions that should always apply here
 
@@ -58,9 +59,14 @@ class CalendarSearch extends Calendar
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'activities_id' => $this->activities_id,
-            'date_id' => $this->date_id,
+            'user_id' => $this->user_id,
+            'localsellpoint_id' => $this->localsellpoint_id,
+            'nif' => $this->nif,
+            'supplier' => $this->supplier,
         ]);
+
+        $query->andFilterWhere(['like', 'address', $this->address])
+            ->andFilterWhere(['like', 'phone', $this->phone]);
 
         return $dataProvider;
     }
