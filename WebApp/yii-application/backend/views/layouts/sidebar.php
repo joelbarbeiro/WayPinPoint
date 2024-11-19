@@ -55,7 +55,7 @@ $logo = Url::to('@web/assets/logo/waypinpoint.png');
                         ]
                     ],*/
                     ['label' => 'Employee Management', 'header' => true],
-                    ['label' => 'User', 'icon' => 'user', 'url' => Url::to(['role-register/role-register'])],
+                    ['label' => 'User', 'icon' => 'user', 'url' => Url::to(['role-register/index'])],
                     ['label' => 'Activities', 'header' => true],
                     //['label' => 'Bookings', 'url' => ['site/login'], 'icon' => 'sign-in-alt',
                     // 'visible' => Yii::$app->user->isGuest],
@@ -64,8 +64,8 @@ $logo = Url::to('@web/assets/logo/waypinpoint.png');
                     ['label' => 'Create activity', 'icon' => 'plus', 'url' => ['activities/create']],
                     ['label' => 'Manage activity', 'icon' => 'map', 'url' => ['activities/index']],
                     ['label' => 'Selling Points', 'header' => true],
-                    ['label' => 'My Selling Points', 'icon' => 'map', 'url' =>['localsellpoint/index']],
-                    ['label' => 'Add Selling Point', 'icon' => 'plus', 'url' => ['localsellpoint/create']],
+                    ['label' => 'My Local Shops', 'icon' => 'map', 'url' =>['localsellpoint/index']],
+                    ['label' => 'Add Local Shop', 'icon' => 'plus', 'url' => ['localsellpoint/create']],
                     ['label' => 'Sales', 'header' => true],
                     ['label' => 'Manage sales', 'icon' => 'plus', 'url' => Url::to(['sales/index'])],
                 ],

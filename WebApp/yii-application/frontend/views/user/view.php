@@ -24,6 +24,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 'method' => 'post',
             ],
         ]) ?>
+        <?= Html::a('Invoices', ['invoice/index', 'id' => $model->id], ['class' => 'btn btn-info']) ?>
+        <?= Html::a('Tickets', ['ticket/index', 'id' => $model->id], ['class' => 'btn btn-info']) ?>
     </p>
 
     <?= DetailView::widget([
@@ -31,8 +33,6 @@ $this->params['breadcrumbs'][] = $this->title;
         'attributes' => [
             'username',
             'email:email',
-            'created_at:datetime',
-            'updated_at:datetime',
         ],
     ]) ?>
 

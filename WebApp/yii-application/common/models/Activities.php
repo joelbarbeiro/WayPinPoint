@@ -87,26 +87,42 @@ class Activities extends \yii\db\ActiveRecord
 
     public function uploadPhoto()
     {
-        $uploadPath = $this->checkUploadFolder();
+        $uploadBackendPath = $this->checkBackendUploadFolder();
+        $uploadFrontendPath = $this->checkFrontendUploadFolder();
+
         $binaryFile = UploadedFile::getInstance($this, 'photoFile');
         if ($binaryFile) {
             $changeFileName = Yii::$app->security->generateRandomString(16) . '.' . $binaryFile->extension;
-            $filePath = $uploadPath . $changeFileName;
-            //$filePath = Yii::getAlias('@/web/assets/uploads/') . $binaryFile->baseName . '.' . $binaryFile->extension;
-            if ($binaryFile->saveAs($filePath, true)) {
+            $fileBackendPath = $uploadBackendPath . $changeFileName;
+            $fileFrontendPath = $uploadFrontendPath . $changeFileName;
+
+            if ($binaryFile->saveAs($fileBackendPath)) {
+                // Copy the file to the frontend directory
+                if (!copy($fileBackendPath, $fileFrontendPath)) {
+                    Yii::error("Failed to copy file to frontend directory");
+                }
+
                 $this->photo = $changeFileName;
             } else {
-                Yii::error("File save failed");
+                Yii::error("File save failed at: " . $fileBackendPath);
             }
         } else {
             Yii::error("No file uploaded");
         }
     }
 
-
-    public function checkUploadFolder()
+    public function checkBackendUploadFolder()
     {
-        $uploadPath = Yii::getAlias('@backend/web/assets/uploads/'.Yii::$app->user->id.'/');
+        $uploadPath = Yii::getAlias('@backend/web/assets/uploads/' . Yii::$app->user->id . '/');
+        if (!is_dir($uploadPath)) {
+            mkdir($uploadPath, 0775, true);
+        }
+        return $uploadPath;
+    }
+
+    public function checkFrontendUploadFolder()
+    {
+        $uploadPath = Yii::getAlias('@frontend/web/assets/uploads/' . Yii::$app->user->id . '/');
         if (!is_dir($uploadPath)) {
             mkdir($uploadPath, 0775, true);
         }
@@ -177,7 +193,8 @@ class Activities extends \yii\db\ActiveRecord
         return $this->hasMany(Tickets::class, ['activities_id' => 'id']);
     }
 
-    public function getUser(){
+    public function getUser()
+    {
         return $this->hasOne(User::class, ['user_id' => 'id']);
     }
 }

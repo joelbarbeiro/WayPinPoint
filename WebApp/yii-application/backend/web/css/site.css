@@ -8,6 +8,19 @@ main > .container {
     height: 60px;
 }
 
+.user-extra-index table,
+.localsellpoint-index table {
+    width: 100%;
+}
+
+.user-extra-index th, .user-extra-index td,
+.localsellpoint-index th, .localsellpoint-index td{
+    width: 10%;
+    text-align: center;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
 .footer > .container {
     padding-right: 15px;
     padding-left: 15px;

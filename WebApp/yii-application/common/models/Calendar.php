@@ -2,7 +2,7 @@
 
 namespace common\models;
 
-use backend\models\Bookings;
+use common\models\Bookings;
 
 /**
  * This is the model class for table "calendar".

@@ -11,6 +11,7 @@ use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
+
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
@@ -31,14 +32,25 @@ class ActivitiesController extends Controller
                     'class' => AccessControl::class,
                     'rules' => [
                         [
+                            'actions' => ['login', 'error', 'register'],
+                            'allow' => true,
+                        ],
+                        [
+                            'actions' => ['index', 'create', 'update', 'delete', 'view'], // Backoffice actions
+                            'allow' => false,
+                            'roles' => ['client'], // Explicitly deny client access to backoffice
+                        ],
+                        [
                             'actions' => ['index', 'create', 'update', 'delete', 'view'],
                             'allow' => true,
+                            'roles' => ['admin', 'supplier', 'manager', 'salesperson', 'guide'],
                         ],
                         [
                             'actions' => ['logout', 'index'],
                             'allow' => true,
                             'roles' => ['@'],
                         ],
+
                     ],
                 ],
                 'verbs' => [
@@ -124,7 +136,7 @@ class ActivitiesController extends Controller
             if ($model->validate() && $model->save()) {
                 foreach ($getDateTimes as $date => $timeId) {
                     $dates = new Dates();
-                    $dates->date =$date;
+                    $dates->date = $date;
                     $dates->save();
                     foreach ($timeId as $time) {
                         $calendarModel = new Calendar();

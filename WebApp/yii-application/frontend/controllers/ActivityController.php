@@ -2,12 +2,12 @@
 
 namespace frontend\controllers;
 
-use frontend\models\Activity;
-use frontend\models\ActivitySearch;
+use common\models\Activity;
+use common\models\ActivitySearch;
 use Yii;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
  * ActivityController implements the CRUD actions for Activity model.

@@ -3,7 +3,7 @@
 /** @var yii\web\View $this */
 /** @var backend\models\Localsellpoint $model */
 
-$this->title = 'Create Local Selling Point';
+$this->title = 'Create Local Shop';
 $this->params['breadcrumbs'][] = ['label' => 'Localsellpoints', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -12,7 +12,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= $this->render('_form', [
         'model' => $model,
         'userId' => $userId,
-        'managersMap' => $managersMap,
+        'employeesMap' => $employeesMap,
     ]) ?>
 
 </div>

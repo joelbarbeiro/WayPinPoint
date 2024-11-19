@@ -1,6 +1,18 @@
 <?php
 
-namespace frontend\models;
+namespace common\models;
+
+use frontend\models\Picture;
+
+use backend\models\Bookings;
+use backend\models\Calendar;
+use backend\models\Pictures;
+use backend\models\Sales;
+use backend\models\Tickets;
+use common\models\User;
+use Yii;
+use yii\web\UploadedFile;
+
 
 /**
  * This is the model class for table "activities".
@@ -13,11 +25,11 @@ namespace frontend\models;
  * @property float $priceperpax
  * @property string $address
  *
- * @property Booking[] $bookings
+ * @property Bookings[] $bookings
  * @property Calendar[] $calendars
- * @property Picture[] $pictures
- * @property Sale[] $sales
- * @property Ticket[] $tickets
+ * @property Pictures[] $pictures
+ * @property Sales[] $sales
+ * @property Tickets[] $tickets
  */
 class Activity extends \yii\db\ActiveRecord
 {
@@ -42,6 +54,12 @@ class Activity extends \yii\db\ActiveRecord
             [['description'], 'string', 'max' => 255],
             [['photo'], 'string', 'max' => 250],
             [['address'], 'string', 'max' => 400],
+            [['user_id'], 'integer'],
+            [['status'], 'integer'],
+            [['photoFile'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, jpeg'],
+            [['dates', 'hours'], 'required'],
+            [['dates'], 'each', 'rule' => ['date', 'format' => 'php:Y-m-d']],
+            [['hours'], 'each', 'rule' => ['integer']],
         ];
     }
 
@@ -58,7 +76,26 @@ class Activity extends \yii\db\ActiveRecord
             'maxpax' => 'Maxpax',
             'priceperpax' => 'Priceperpax',
             'address' => 'Address',
+            'user_id' => 'User ID',
+            'status' => 'Status',
+            'photoFile' => 'Upload Photo',
+            'dates' => 'Dates',
+            'hours' => 'Custom Hours',
         ];
+    }
+
+    public function getCalendarArray()
+    {
+        // Create the array of date => array of hours
+        $calendar = [];
+        foreach ($this->dates as $index => $date) {
+            if (!isset($calendar[$date])) {
+                $calendar[$date] = [];
+            }
+            $calendar[$date][] = $this->hours[$index] ?? 0;
+        }
+
+        return $calendar;
     }
 
     /**
@@ -68,7 +105,7 @@ class Activity extends \yii\db\ActiveRecord
      */
     public function getBookings()
     {
-        return $this->hasMany(Booking::class, ['activities_id' => 'id']);
+        return $this->hasMany(Bookings::class, ['activities_id' => 'id']);
     }
 
     /**
@@ -88,7 +125,7 @@ class Activity extends \yii\db\ActiveRecord
      */
     public function getPictures()
     {
-        return $this->hasMany(Picture::class, ['activities_id' => 'id']);
+        return $this->hasMany(Pictures::class, ['activities_id' => 'id']);
     }
 
     /**
@@ -98,7 +135,7 @@ class Activity extends \yii\db\ActiveRecord
      */
     public function getSales()
     {
-        return $this->hasMany(Sale::class, ['activities_id' => 'id']);
+        return $this->hasMany(Sales::class, ['activities_id' => 'id']);
     }
 
     /**
@@ -108,6 +145,11 @@ class Activity extends \yii\db\ActiveRecord
      */
     public function getTickets()
     {
-        return $this->hasMany(Ticket::class, ['activities_id' => 'id']);
+        return $this->hasMany(Tickets::class, ['activities_id' => 'id']);
+    }
+
+    public function getUser()
+    {
+        return $this->hasOne(User::class, ['user_id' => 'id']);
     }
 }
