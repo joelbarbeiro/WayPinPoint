@@ -5,18 +5,14 @@ namespace backend\controllers;
 use backend\models\Activities;
 use backend\models\ActivitiesSearch;
 use backend\models\Calendar;
-
-use backend\models\CalendarSearch;
 use backend\models\Dates;
 use backend\models\Times;
 use Yii;
-use yii\data\ActiveDataProvider;
-use yii\helpers\ArrayHelper;
 use yii\filters\AccessControl;
-
+use yii\filters\VerbFilter;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
  * ActivitiesController implements the CRUD actions for Activities model.
@@ -32,30 +28,30 @@ class ActivitiesController extends Controller
             parent::behaviors(),
             [
                 'access' => [
-                'class' => AccessControl::class,
-                'rules' => [
-                    [
-                        'actions' => ['login', 'error', 'register'],
-                        'allow' => true,
-                    ],
-                    [
-                        'actions' => ['index', 'create', 'update', 'delete'], // Backoffice actions
-                        'allow' => false,
-                        'roles' => ['client'], // Explicitly deny client access to backoffice
-                    ],
-                    [
-                        'actions' => ['index', 'create', 'update', 'delete'],
-                        'allow' => true,
-                        'roles' => ['admin','supplier','manager','salesperson','guide'],
-                    ],
-                    [
-                        'actions' => ['logout', 'index'],
-                        'allow' => true,
-                        'roles' => ['@'],
-                    ],
+                    'class' => AccessControl::class,
+                    'rules' => [
+                        [
+                            'actions' => ['login', 'error', 'register'],
+                            'allow' => true,
+                        ],
+                        [
+                            'actions' => ['index', 'create', 'update', 'delete', 'view'], // Backoffice actions
+                            'allow' => false,
+                            'roles' => ['client'], // Explicitly deny client access to backoffice
+                        ],
+                        [
+                            'actions' => ['index', 'create', 'update', 'delete', 'view'],
+                            'allow' => true,
+                            'roles' => ['admin', 'supplier', 'manager', 'salesperson', 'guide'],
+                        ],
+                        [
+                            'actions' => ['logout', 'index'],
+                            'allow' => true,
+                            'roles' => ['@'],
+                        ],
 
+                    ],
                 ],
-            ],
                 'verbs' => [
                     'class' => VerbFilter::className(),
                     'actions' => [
@@ -139,7 +135,7 @@ class ActivitiesController extends Controller
             if ($model->validate() && $model->save()) {
                 foreach ($getDateTimes as $date => $timeId) {
                     $dates = new Dates();
-                    $dates->date =$date;
+                    $dates->date = $date;
                     $dates->save();
                     foreach ($timeId as $time) {
                         $calendarModel = new Calendar();
