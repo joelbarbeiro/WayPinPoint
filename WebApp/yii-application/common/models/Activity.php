@@ -1,6 +1,8 @@
 <?php
 
-namespace frontend\models;
+namespace common\models;
+
+use frontend\models\Picture;
 
 use backend\models\Bookings;
 use backend\models\Calendar;

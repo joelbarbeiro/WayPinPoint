@@ -2,17 +2,17 @@
 
 namespace frontend\controllers;
 
-use common\models\Activity;
-use common\models\ActivitySearch;
+use common\models\Invoice;
+use common\models\InvoiceSearch;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
 /**
- * ActivityController implements the CRUD actions for Activity model.
+ * InvoiceController implements the CRUD actions for Invoice model.
  */
-class ActivityController extends Controller
+class InvoiceController extends Controller
 {
     /**
      * @inheritDoc
@@ -33,26 +33,34 @@ class ActivityController extends Controller
     }
 
     /**
-     * Lists all Activity models.
+     * Lists all Invoice models.
      *
      * @return string
      */
     public function actionIndex()
     {
-        $searchModel = new ActivitySearch();
+        $searchModel = new InvoiceSearch();
 
-        // Pass the query parameters (including the search term) to the search model
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+       /* $invoices = Invoice::find()
+            ->select(['user.username', 'sales.purchase_date', 'sales.total'])
+            ->innerJoin('user', 'user.id = invoices.user')
+            ->innerJoin('sales', 'sales.id = invoices.sales_id')
+            ->where(['invoices.user' => Yii::$app->user->id])
+            ->all();*/
 
-        // Render the index view, passing the data provider and search model
+        $dataProvider = $searchModel->search($this->request->queryParams);
+        $dataProvider->query->joinWith('sales')
+            ->andWhere(['user' => Yii::$app->user->id]);
+
+
+
         return $this->render('index', [
-            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
 
     /**
-     * Displays a single Activity model.
+     * Displays a single Invoice model.
      * @param int $id ID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
@@ -65,14 +73,13 @@ class ActivityController extends Controller
     }
 
     /**
-     * Creates a new Activity model.
+     * Creates a new Invoice model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
     public function actionCreate()
     {
-        $model = new Activity();
-
+        $model = new Invoice();
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
                 return $this->redirect(['view', 'id' => $model->id]);
@@ -87,7 +94,7 @@ class ActivityController extends Controller
     }
 
     /**
-     * Updates an existing Activity model.
+     * Updates an existing Invoice model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param int $id ID
      * @return string|\yii\web\Response
@@ -107,7 +114,7 @@ class ActivityController extends Controller
     }
 
     /**
-     * Deletes an existing Activity model.
+     * Deletes an existing Invoice model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param int $id ID
      * @return \yii\web\Response
@@ -121,18 +128,20 @@ class ActivityController extends Controller
     }
 
     /**
-     * Finds the Activity model based on its primary key value.
+     * Finds the Invoice model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param int $id ID
-     * @return Activity the loaded model
+     * @return Invoice the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Activity::findOne(['id' => $id])) !== null) {
+        if (($model = Invoice::findOne(['id' => $id])) !== null) {
             return $model;
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
+
+
 }

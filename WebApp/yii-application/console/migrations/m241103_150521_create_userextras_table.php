@@ -19,7 +19,7 @@ class m241103_150521_create_userextras_table extends Migration
             'id' => $this->primaryKey(),
             'user' => $this->integer()->notNull(),
             'phone' => $this->string(20)->notnull(),
-            'supplier' => $this->integer()->notnull()->defaultValue(0),
+            'supplier' => $this->integer()->null()->defaultValue(0),
         ]);
 
         // creates index for column `user`

@@ -2,17 +2,16 @@
 
 namespace frontend\controllers;
 
-use common\models\Activity;
-use common\models\ActivitySearch;
-use Yii;
+use common\models\Calendar;
+use yii\data\ActiveDataProvider;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
 /**
- * ActivityController implements the CRUD actions for Activity model.
+ * CalendarController implements the CRUD actions for Calendar model.
  */
-class ActivityController extends Controller
+class CalendarController extends Controller
 {
     /**
      * @inheritDoc
@@ -33,26 +32,33 @@ class ActivityController extends Controller
     }
 
     /**
-     * Lists all Activity models.
+     * Lists all Calendar models.
      *
      * @return string
      */
     public function actionIndex()
     {
-        $searchModel = new ActivitySearch();
+        $dataProvider = new ActiveDataProvider([
+            'query' => Calendar::find(),
+            /*
+            'pagination' => [
+                'pageSize' => 50
+            ],
+            'sort' => [
+                'defaultOrder' => [
+                    'id' => SORT_DESC,
+                ]
+            ],
+            */
+        ]);
 
-        // Pass the query parameters (including the search term) to the search model
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
-        // Render the index view, passing the data provider and search model
         return $this->render('index', [
-            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
 
     /**
-     * Displays a single Activity model.
+     * Displays a single Calendar model.
      * @param int $id ID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
@@ -65,13 +71,13 @@ class ActivityController extends Controller
     }
 
     /**
-     * Creates a new Activity model.
+     * Creates a new Calendar model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
     public function actionCreate()
     {
-        $model = new Activity();
+        $model = new Calendar();
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
@@ -87,7 +93,7 @@ class ActivityController extends Controller
     }
 
     /**
-     * Updates an existing Activity model.
+     * Updates an existing Calendar model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param int $id ID
      * @return string|\yii\web\Response
@@ -107,7 +113,7 @@ class ActivityController extends Controller
     }
 
     /**
-     * Deletes an existing Activity model.
+     * Deletes an existing Calendar model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param int $id ID
      * @return \yii\web\Response
@@ -121,15 +127,15 @@ class ActivityController extends Controller
     }
 
     /**
-     * Finds the Activity model based on its primary key value.
+     * Finds the Calendar model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param int $id ID
-     * @return Activity the loaded model
+     * @return Calendar the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Activity::findOne(['id' => $id])) !== null) {
+        if (($model = Calendar::findOne(['id' => $id])) !== null) {
             return $model;
         }
 

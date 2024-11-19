@@ -1,28 +1,22 @@
 <?php
 
-namespace frontend\models;
+namespace common\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 
 /**
- * ActivitySearch represents the model behind the search form of `app\models\Activity`.
+ * InvoiceSearch represents the model behind the search form of `frontend\models\Invoice`.
  */
-class ActivitySearch extends Activity
+class InvoiceSearch extends Invoice
 {
-
-    public $search;
-
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['search'], 'safe'],
-            [['id', 'maxpax'], 'integer'],
-            [['name', 'description', 'photo', 'address'], 'safe'],
-            [['priceperpax'], 'number'],
+            [['id', 'user', 'sales_id'], 'integer'],
         ];
     }
 
@@ -44,25 +38,28 @@ class ActivitySearch extends Activity
      */
     public function search($params)
     {
+        $query = Invoice::find();
 
-        $query = Activity::find();
+        // add conditions that should always apply here
 
-        // Initialize ActiveDataProvider
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
 
-        // Load the search term
         $this->load($params);
 
         if (!$this->validate()) {
-            // If validation fails, return unfiltered data
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
             return $dataProvider;
         }
 
-        // Apply filtering conditions based on the `search` attribute
-        $query->andFilterWhere(['like', 'name', $this->search])
-            ->orFilterWhere(['like', 'description', $this->search]);
+        // grid filtering conditions
+        $query->andFilterWhere([
+            'id' => $this->id,
+            'user' => $this->user,
+            'sales_id' => $this->sales_id,
+        ]);
 
         return $dataProvider;
     }
