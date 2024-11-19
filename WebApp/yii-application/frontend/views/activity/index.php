@@ -15,10 +15,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-
-    <!--    --><?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
-
     <?php
     foreach ($dataProvider->models as $activity) {
         $imgPath = Url::to('@web/assets/uploads/' . $activity->user_id . '/');
@@ -36,10 +32,13 @@ $this->params['breadcrumbs'][] = $this->title;
             }
         }
 
+        echo '<div class="d-flex justify-content-between p-3">';
         echo '<a href="' . Url::to(['activity/view', 'id' => $activity->id]) . '" class="btn btn-primary">View</a>';
+        echo '<a href="' . Url::to(['review/index' ,'id' => $activity->id]) . '" class="btn btn-outline-success">Reviews</a>';
+        echo '</div>';
+
         echo '</div>';
         echo '</div>';
     }
     ?>
-
 </div>
