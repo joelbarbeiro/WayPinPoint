@@ -1,25 +1,23 @@
 <?php
 
-namespace backend\models;
-
-use Yii;
+namespace common\models;
 
 /**
- * This is the model class for table "times".
+ * This is the model class for table "dates".
  *
  * @property int $id
- * @property string $hour
+ * @property string $date
  *
  * @property Calendar[] $calendars
  */
-class Times extends \yii\db\ActiveRecord
+class Dates extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return 'times';
+        return 'dates';
     }
 
     /**
@@ -28,8 +26,8 @@ class Times extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['hour'], 'required'],
-            [['hour'], 'safe'],
+            [['date'], 'required'],
+            [['date'], 'safe'],
         ];
     }
 
@@ -40,7 +38,7 @@ class Times extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'hour' => 'Hour',
+            'date' => 'Date',
         ];
     }
 
@@ -51,6 +49,6 @@ class Times extends \yii\db\ActiveRecord
      */
     public function getCalendars()
     {
-        return $this->hasMany(Calendar::class, ['time_id' => 'id']);
+        return $this->hasMany(Calendar::class, ['date_id' => 'id']);
     }
 }

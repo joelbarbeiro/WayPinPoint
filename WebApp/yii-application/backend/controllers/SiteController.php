@@ -26,21 +26,21 @@ class SiteController extends Controller
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        'actions' => ['login', 'error', 'register', 'view'],
+                        'actions' => ['login', 'error', 'register'],
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['index', 'create', 'update', 'delete', 'view'], // Backoffice actions
+                        'actions' => ['index', 'create', 'update', 'delete', 'view', 'update-status'], // Backoffice actions
                         'allow' => false,
                         'roles' => ['client'], // Explicitly deny client access to backoffice
                     ],
                     [
-                        'actions' => ['index', 'create', 'update', 'delete', 'view'],
+                        'actions' => ['index', 'create', 'update', 'delete', 'view', 'update-status'],
                         'allow' => true,
                         'roles' => ['admin', 'supplier', 'manager', 'salesperson', 'guide'],
                     ],
                     [
-                        'actions' => ['logout', 'index', 'view'],
+                        'actions' => ['logout', 'index'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],

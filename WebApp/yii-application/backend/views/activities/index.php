@@ -1,45 +1,62 @@
 <?php
 
-use backend\models\Activities;
-use backend\models\Calendar;
-use backend\models\Times;
-use backend\models\Dates;
-
 use yii\helpers\Html;
 use yii\helpers\Url;
-use yii\grid\ActionColumn;
-use yii\grid\GridView;
 
 /** @var yii\web\View $this */
-/** @var backend\models\ActivitiesSearch $searchModel */
+/** @var \common\models\ActivitiesSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
 $this->title = 'Activities';
 $this->params['breadcrumbs'][] = $this->title;
 
-$imgPath = Url::to('@web/assets/uploads/'.Yii::$app->user->id.'/');
+$imgPath = Url::to('@web/assets/uploads/' . Yii::$app->user->id . '/');
+
+$this->registerCssFile('@web/css/site.css', [
+    'depends' => [\yii\web\YiiAsset::class],
+]);
 
 ?>
 <div class="activities-index">
-
-    <?php
+    <div class="row">
+        <?php
+        $counter = 0;
         foreach ($dataProvider->models as $activity) {
-
-            echo '<div class="card m-5" >';
-            echo '<img src="'.$imgPath.$activity->photo.'" class="card-img-top" alt="...">';
+            echo '<div class="col-md-6 d-flex align-items-stretch">';
+            echo '<div class="card m-3 w-100" >';
+            echo '<img src="' . $imgPath . $activity->photo . '" class="card-img-top card-img-container" alt="' . $activity->name . '">';
             echo '<div class="card-body">';
-            echo '<h5 class="card-title">'.$activity->name.'</h5>';
-            echo '<p class="card-text">'.$activity->description.'</p>';
+            echo '<h5 class="card-title">' . $activity->name . '</h5>';
+            echo '<p class="card-text">' . $activity->description . '</p>';
 
+            $dropdownOptions = [];
             foreach ($activity->calendars as $calendar) {
-                if($calendar->status != 0) {
-                    echo '<p class="card-text"> Date: ' . $calendar->date->date . ' Time: ' . $calendar->time->hour . '</p>';
+                if ($calendar->status != 0) {
+                    //echo '<p class="card-text"> Date: ' . $calendar->date->date . ' Time: ' . $calendar->time->hour . '</p>';
+                    $dropdownOptions[$calendar->id] = $calendar->date->date . ' - ' . $calendar->time->hour;
                 }
             }
+            echo Html::dropDownList(
+                'calendar',
+                null,
+                $dropdownOptions,
+                [
+                    'class' => 'card-link',
+                    'prompt' => 'Select a date',
+                ]
+            );
 
-            echo '<a href="' . Url::to(['activities/view', 'id' => $activity->id]) . '" class="btn btn-primary">View</a>';
+
+            echo '<p class="card-text mt-3"><a href="' . Url::to(['activities/view', 'id' => $activity->id]) . '" class="btn btn-primary">View</a></p>';
             echo '</div>';
             echo '</div>';
+            echo '</div>';
+
+            $counter++;
+            if ($counter % 2 == 0) {
+                echo '</div><div class="row">';
+            }
         }
-    ?>
+        ?>
+    </div>
 </div>

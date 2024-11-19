@@ -2,7 +2,7 @@
 
 namespace backend\models;
 
-use Yii;
+use common\models\Activities;
 
 /**
  * This is the model class for table "pictures".

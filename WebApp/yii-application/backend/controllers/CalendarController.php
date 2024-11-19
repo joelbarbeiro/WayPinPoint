@@ -2,12 +2,15 @@
 
 namespace backend\controllers;
 
-use backend\models\Calendar;
-use backend\models\CalendarSearch;
+use common\models\Activities;
+use common\models\ActivitiesSearch;
+use common\models\Calendar;
+use Yii;
 use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
+use yii\web\Response;
 
 /**
  * CalendarController implements the CRUD actions for Calendar model.
@@ -26,7 +29,7 @@ class CalendarController extends Controller
                     'class' => AccessControl::class,
                     'rules' => [
                         [
-                            'actions' => ['index', 'create', 'update', 'delete'],
+                            'actions' => ['index', 'create', 'update', 'delete', 'update-status'],
                             'allow' => true,
                         ],
                         [
@@ -53,8 +56,14 @@ class CalendarController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new CalendarSearch();
+        $searchModel = new ActivitiesSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
+
+        $userId = Yii::$app->user->identity->id;
+
+        $dataProvider->query->joinWith('calendars')
+            ->andWhere(['user_id' => $userId])
+            ->andWhere(['activities.status' => 1]);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -68,10 +77,18 @@ class CalendarController extends Controller
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id)
+    public function actionView($id, $id_calendar)
     {
+        $model = new Activities();
+        $model = $this->findModel($id);
+
+        $calendar = Calendar::find()
+            ->where(['activity_id' => $id, 'id' => $id_calendar])
+            ->one();
+
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $model,
+            'calendar' => $calendar,
         ]);
     }
 
@@ -116,6 +133,31 @@ class CalendarController extends Controller
             'model' => $model,
         ]);
     }
+
+    public function actionUpdateStatus()
+    {
+        if (Yii::$app->request->isAjax) {
+            $calendarId = Yii::$app->request->post('id');
+            $status = Yii::$app->request->post('status');
+
+            $calendar = Calendar::findOne($calendarId);
+
+            if ($calendar) {
+                $calendar->status = $status;
+                if ($calendar->save()) {
+                    Yii::$app->response->format = Response::FORMAT_JSON;
+                    return ['success' => true];
+                }
+            } else {
+
+                Yii::$app->response->format = Response::FORMAT_JSON;
+                return ['success' => false];
+            }
+        }
+
+        throw new BadRequestHttpException('Invalid request.');
+    }
+
 
     /**
      * Deletes an existing Calendar model.

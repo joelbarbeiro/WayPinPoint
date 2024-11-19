@@ -2,21 +2,17 @@
 
 namespace backend\controllers;
 
-use backend\models\Activities;
-use backend\models\ActivitiesSearch;
-use backend\models\Calendar;
-
-use backend\models\CalendarSearch;
-use backend\models\Dates;
-use backend\models\Times;
+use common\models\Activities;
+use common\models\ActivitiesSearch;
+use common\models\Calendar;
+use common\models\Dates;
+use common\models\Times;
 use Yii;
-use yii\data\ActiveDataProvider;
-use yii\helpers\ArrayHelper;
 use yii\filters\AccessControl;
-
+use yii\filters\VerbFilter;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
  * ActivitiesController implements the CRUD actions for Activities model.
@@ -159,12 +155,16 @@ class ActivitiesController extends Controller
     {
         $model = $this->findModel($id);
 
+        $hoursQuery = Times::find()->select(['id', 'hour'])->asArray()->all();
+        $hoursList = ArrayHelper::map($hoursQuery, 'id', 'hour');
+
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('update', [
             'model' => $model,
+            'hourList' => $hoursList,
         ]);
     }
 

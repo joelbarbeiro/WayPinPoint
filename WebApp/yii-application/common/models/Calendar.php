@@ -1,8 +1,8 @@
 <?php
 
-namespace backend\models;
+namespace common\models;
 
-use Yii;
+use backend\models\Bookings;
 
 /**
  * This is the model class for table "calendar".
@@ -38,6 +38,7 @@ class Calendar extends \yii\db\ActiveRecord
             [['activities_id'], 'exist', 'skipOnError' => true, 'targetClass' => Activities::class, 'targetAttribute' => ['activities_id' => 'id']],
             [['date_id'], 'exist', 'skipOnError' => true, 'targetClass' => Dates::class, 'targetAttribute' => ['date_id' => 'id']],
             [['time_id'], 'exist', 'skipOnError' => true, 'targetClass' => Times::class, 'targetAttribute' => ['time_id' => 'id']],
+            [['status'], 'integer'],
         ];
     }
 
@@ -51,8 +52,10 @@ class Calendar extends \yii\db\ActiveRecord
             'activities_id' => 'Activities ID',
             'date_id' => 'Date ID',
             'time_id' => 'Time ID',
+            'status' => 'Status',
         ];
     }
+
 
     /**
      * Gets query for [[Activities]].

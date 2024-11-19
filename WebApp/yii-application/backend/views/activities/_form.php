@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /** @var yii\web\View $this */
-/** @var backend\models\Activities $model */
+/** @var \common\models\Activities $model */
 /** @var yii\widgets\ActiveForm $form */
 /** @var backend\controllers\ActivitiesController $hoursList */
 
@@ -27,6 +27,8 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'address')->textInput(['maxlength' => true]) ?>
 
     <div class="date-inputs">
+
+        foreach(
         <div class="form-group">
             <div class="date-field">
                 <?= $form->field($model, 'dates[]')->input('date') ?>
@@ -36,6 +38,8 @@ use yii\widgets\ActiveForm;
                 ]); ?>
             </div>
         </div>
+
+
     </div>
 
     <button type="button" id="add-date-btn" class="btn btn-primary">Add another date and hour

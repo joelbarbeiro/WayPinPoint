@@ -2,7 +2,8 @@
 
 namespace backend\models;
 
-use Yii;
+use common\models\Activities;
+use common\models\Calendar;
 
 /**
  * This is the model class for table "bookings".

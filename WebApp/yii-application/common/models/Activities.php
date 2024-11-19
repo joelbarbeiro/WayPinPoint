@@ -1,8 +1,11 @@
 <?php
 
-namespace backend\models;
+namespace common\models;
 
-use common\models\User;
+use backend\models\Bookings;
+use backend\models\Pictures;
+use backend\models\Sales;
+use backend\models\Tickets;
 use Yii;
 use yii\web\UploadedFile;
 

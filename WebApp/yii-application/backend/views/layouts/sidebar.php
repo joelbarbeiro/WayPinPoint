@@ -45,7 +45,7 @@ $logo = Url::to('@web/assets/logo/waypinpoint.png');
             <?php
             echo \hail812\adminlte\widgets\Menu::widget([
                 'items' => [
-                    [
+                    /*[
                         'label' => 'Starter Pages',
                         'icon' => 'tachometer-alt',
                         'badge' => '<span class="right badge badge-info">2</span>',
@@ -53,22 +53,21 @@ $logo = Url::to('@web/assets/logo/waypinpoint.png');
                             ['label' => 'Active Page', 'url' => ['site/index'], 'iconStyle' => 'far'],
                             ['label' => 'Inactive Page', 'iconStyle' => 'far'],
                         ]
-                    ],
+                    ],*/
                     ['label' => 'Employee Management', 'header' => true],
                     ['label' => 'User', 'icon' => 'user', 'url' => Url::to(['role-register/role-register'])],
-                    //['label' => 'Simple Link', 'icon' => 'th', 'badge' => '<span class="right
-                    // badge badge-danger">New</span>'],
                     ['label' => 'Activities', 'header' => true],
                     //['label' => 'Bookings', 'url' => ['site/login'], 'icon' => 'sign-in-alt',
                     // 'visible' => Yii::$app->user->isGuest],
-                    ['label' => 'Bookings', 'icon' => 'file-code', 'url' => ['/gii'], 'target' =>
-                        '_blank'],
-                    ['label' => 'Create activity', 'icon' => '', 'url' => ['activities/create'], 'iconStyle' => 'far',],
-                    ['label' => 'Manage activity', 'icon' => 'map', 'url' => ['activities/index'], 'iconStyle' => 'far',],
+                    ['label' => 'Bookings', 'icon' => 'file-code', 'url' => ['booking/index']],
+                    ['label' => 'Manage Calendar', 'icon' => 'file-code', 'url' => ['calendar/index']],
+                    ['label' => 'Create activity', 'icon' => 'plus', 'url' => ['activities/create']],
+                    ['label' => 'Manage activity', 'icon' => 'map', 'url' => ['activities/index']],
                     ['label' => 'Selling Points', 'header' => true],
-                    ['label' => 'My Selling Points', 'icon' => 'map', 'url' => Url::to(['localsellpoint/index'])],
-                    ['label' => 'Add Selling Point', 'icon' => 'plus', 'url' => Url::to(['localsellpoint/create'])],
+                    ['label' => 'My Selling Points', 'icon' => 'map', 'url' =>['localsellpoint/index']],
+                    ['label' => 'Add Selling Point', 'icon' => 'plus', 'url' => ['localsellpoint/create']],
                     ['label' => 'Sales', 'header' => true],
+                    ['label' => 'Manage sales', 'icon' => 'plus', 'url' => Url::to(['sales/index'])],
                 ],
             ]);
             ?>

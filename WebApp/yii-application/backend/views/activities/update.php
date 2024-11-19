@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
-/** @var backend\models\Activities $model */
+/** @var \common\models\Activities $model */
 
 $this->title = 'Update Activities: ' . $model->name;
 $this->params['breadcrumbs'][] = ['label' => 'Activities', 'url' => ['index']];
