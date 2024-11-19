@@ -2,6 +2,7 @@
 
 namespace backend\models;
 
+use common\models\User;
 use Yii;
 use yii\web\UploadedFile;
 
@@ -15,6 +16,8 @@ use yii\web\UploadedFile;
  * @property int $maxpax
  * @property float $priceperpax
  * @property string $address
+ * @property int $status
+ * @property int $user_id
  *
  * @property Bookings[] $bookings
  * @property Calendar[] $calendars
@@ -49,6 +52,8 @@ class Activities extends \yii\db\ActiveRecord
             [['description'], 'string', 'max' => 255],
             [['photo'], 'string', 'max' => 250],
             [['address'], 'string', 'max' => 400],
+            [['user_id'], 'integer'],
+            [['status'], 'integer'],
             [['photoFile'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, jpeg'],
             [['dates', 'hours'], 'required'],
             [['dates'], 'each', 'rule' => ['date', 'format' => 'php:Y-m-d']],
@@ -69,6 +74,8 @@ class Activities extends \yii\db\ActiveRecord
             'maxpax' => 'Maxpax',
             'priceperpax' => 'Priceperpax',
             'address' => 'Address',
+            'user_id' => 'User ID',
+            'status' => 'Status',
             'photoFile' => 'Upload Photo',
             'dates' => 'Dates',
             'hours' => 'Custom Hours',
@@ -77,17 +84,46 @@ class Activities extends \yii\db\ActiveRecord
 
     public function uploadPhoto()
     {
+        $uploadBackendPath = $this->checkBackendUploadFolder();
+        $uploadFrontendPath = $this->checkFrontendUploadFolder();
+
         $binaryFile = UploadedFile::getInstance($this, 'photoFile');
         if ($binaryFile) {
-            $filePath = Yii::getAlias('@backend/web/uploads/') . $binaryFile->baseName . '.' . $binaryFile->extension;
-            if ($binaryFile->saveAs($filePath, true)) {
-                $this->photo = $binaryFile->baseName . '.' . $binaryFile->extension;
+            $changeFileName = Yii::$app->security->generateRandomString(16) . '.' . $binaryFile->extension;
+            $fileBackendPath = $uploadBackendPath . $changeFileName;
+            $fileFrontendPath = $uploadFrontendPath . $changeFileName;
+
+            if ($binaryFile->saveAs($fileBackendPath)) {
+                // Copy the file to the frontend directory
+                if (!copy($fileBackendPath, $fileFrontendPath)) {
+                    Yii::error("Failed to copy file to frontend directory");
+                }
+
+                $this->photo = $changeFileName;
             } else {
-                Yii::error("File save failed");
+                Yii::error("File save failed at: " . $fileBackendPath);
             }
         } else {
             Yii::error("No file uploaded");
         }
+    }
+
+    public function checkBackendUploadFolder()
+    {
+        $uploadPath = Yii::getAlias('@backend/web/assets/uploads/' . Yii::$app->user->id . '/');
+        if (!is_dir($uploadPath)) {
+            mkdir($uploadPath, 0775, true);
+        }
+        return $uploadPath;
+    }
+
+    public function checkFrontendUploadFolder()
+    {
+        $uploadPath = Yii::getAlias('@frontend/web/assets/uploads/' . Yii::$app->user->id . '/');
+        if (!is_dir($uploadPath)) {
+            mkdir($uploadPath, 0775, true);
+        }
+        return $uploadPath;
     }
 
     public function getCalendarArray()
@@ -152,5 +188,10 @@ class Activities extends \yii\db\ActiveRecord
     public function getTickets()
     {
         return $this->hasMany(Tickets::class, ['activities_id' => 'id']);
+    }
+
+    public function getUser()
+    {
+        return $this->hasOne(User::class, ['user_id' => 'id']);
     }
 }

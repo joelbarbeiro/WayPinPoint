@@ -1,18 +1,18 @@
 <?php
 
-namespace backend\controllers;
+namespace frontend\controllers;
 
-use backend\models\Calendar;
-use backend\models\CalendarSearch;
-use yii\filters\AccessControl;
+use backend\models\Activities;
+use frontend\models\Reviews;
+use frontend\models\ReviewSearch;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
- * CalendarController implements the CRUD actions for Calendar model.
+ * ReviewController implements the CRUD actions for Reviews model.
  */
-class CalendarController extends Controller
+class ReviewController extends Controller
 {
     /**
      * @inheritDoc
@@ -22,20 +22,6 @@ class CalendarController extends Controller
         return array_merge(
             parent::behaviors(),
             [
-                'access' => [
-                    'class' => AccessControl::class,
-                    'rules' => [
-                        [
-                            'actions' => ['index', 'create', 'update', 'delete'],
-                            'allow' => true,
-                        ],
-                        [
-                            'actions' => ['logout', 'index'],
-                            'allow' => true,
-                            'roles' => ['@'],
-                        ],
-                    ],
-                ],
                 'verbs' => [
                     'class' => VerbFilter::className(),
                     'actions' => [
@@ -47,23 +33,34 @@ class CalendarController extends Controller
     }
 
     /**
-     * Lists all Calendar models.
+     * Lists all Reviews models.
      *
      * @return string
      */
-    public function actionIndex()
+    public function actionIndex($id)
     {
-        $searchModel = new CalendarSearch();
+        $searchModel = new ReviewSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
+        $activity = Activities::findOne($id);
+
+        $activitiesReview = Reviews::find()
+            ->select(['*'])
+            ->where(['activity_id' => $id])
+            ->asArray()
+            ->all();
+
+
         return $this->render('index', [
+            'activityId' => $id,
+            'activitiesReview' => $activitiesReview,
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
 
     /**
-     * Displays a single Calendar model.
+     * Displays a single Reviews model.
      * @param int $id ID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
@@ -76,13 +73,14 @@ class CalendarController extends Controller
     }
 
     /**
-     * Creates a new Calendar model.
+     * Creates a new Reviews model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
-    public function actionCreate()
+    public function actionCreate($id)
     {
-        $model = new Calendar();
+        $model = new Reviews();
+        $model->activity_id = $id;
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
@@ -98,7 +96,7 @@ class CalendarController extends Controller
     }
 
     /**
-     * Updates an existing Calendar model.
+     * Updates an existing Reviews model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param int $id ID
      * @return string|\yii\web\Response
@@ -118,7 +116,7 @@ class CalendarController extends Controller
     }
 
     /**
-     * Deletes an existing Calendar model.
+     * Deletes an existing Reviews model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param int $id ID
      * @return \yii\web\Response
@@ -132,15 +130,15 @@ class CalendarController extends Controller
     }
 
     /**
-     * Finds the Calendar model based on its primary key value.
+     * Finds the Reviews model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param int $id ID
-     * @return Calendar the loaded model
+     * @return Reviews the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Calendar::findOne(['id' => $id])) !== null) {
+        if (($model = Reviews::findOne(['id' => $id])) !== null) {
             return $model;
         }
 

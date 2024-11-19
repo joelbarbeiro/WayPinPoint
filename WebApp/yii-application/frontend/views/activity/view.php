@@ -1,7 +1,6 @@
 <?php
 
-use yii\helpers\Html;
-use yii\widgets\DetailView;
+use yii\helpers\Url;
 
 /** @var yii\web\View $this */
 /** @var frontend\models\Activity $model */
@@ -13,18 +12,29 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="activity-view">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <?php $imgPath = Url::to('@web/assets/uploads/' . $model->user_id . '/'); ?>
 
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'name',
-            'description',
-            'photo',
-            'maxpax',
-            'priceperpax',
-            'address',
-        ],
-    ]) ?>
+    <div class="activities-view">
+
+        <?php
+        echo '<div class="card m-5" >';
+        echo '<img src="' . $imgPath . $model->photo . '" class="card-img-top" alt="...">';
+        echo '<div class="card-body">';
+        echo '<h5 class="card-title">' . $model->name . '</h5>';
+        echo '<p class="card-text">' . $model->description . '</p>';
+
+        foreach ($model->calendars as $calendar) {
+            if ($calendar->status != 0) {
+                echo '<p class="card-text"> Date: ' . $calendar->date->date . ' Time: ' . $calendar->time->hour . '</p>';
+            }
+        }
+
+        echo '<a href="' . Url::to(['activities/update', 'id' => $model->id]) . '" class="btn btn-primary mr-3">Edit</a>';
+        echo '<a href="' . Url::to(['activities/delete', 'id' => $model->id]) . '" class="btn btn-danger" data-method="post">Delete</a>';
+
+        echo '</div>';
+        echo '</div>';
+        ?>
+    </div>
 
 </div>
