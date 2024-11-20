@@ -8,7 +8,7 @@ use Yii;
  * This is the model class for table "tickets".
  *
  * @property int $id
- * @property int $activities_id
+ * @property int $activity_id
  * @property int $participant
  * @property string $qr
  * @property int $status
@@ -20,7 +20,7 @@ class Ticket extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'tickets';
+        return 'ticket';
     }
 
     /**
@@ -29,8 +29,8 @@ class Ticket extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['activities_id', 'participant', 'qr'], 'required'],
-            [['activities_id', 'participant', 'status'], 'integer'],
+            [['activity_id', 'participant', 'qr'], 'required'],
+            [['activity_id', 'participant', 'status'], 'integer'],
             [['qr'], 'string', 'max' => 250],
         ];
     }
@@ -42,7 +42,7 @@ class Ticket extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'activities_id' => 'Activities ID',
+            'activity_id' => 'activity ID',
             'participant' => 'Participant',
             'qr' => 'Qr',
             'status' => 'Status',
@@ -52,7 +52,7 @@ class Ticket extends \yii\db\ActiveRecord
     public static function createTicket($activityId, $qrCode){
         $model = new Ticket();
         $userId = Yii::$app->user->id;
-        $model->activities_id = $activityId;
+        $model->activity_id = $activityId;
         $model->participant = $userId;
         $model->qr = $qrCode->getText();
         $model->status = 0;

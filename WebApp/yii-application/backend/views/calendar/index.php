@@ -3,7 +3,7 @@
 use yii\helpers\Url;
 
 /** @var yii\web\View $this */
-/** @var \common\models\CalendarSearch $searchModel */
+/** @var common\models\CalendarSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
 $this->title = 'Calendars';
@@ -30,16 +30,16 @@ $this->params['breadcrumbs'][] = $this->title;
         foreach ($dataProvider->getModels() as $activities) {
 
             echo '<tr>';
-            echo '<th scope="row" rowspan="' . count($activities->calendars) . '">' . $activities->name . '</th>';
+            echo '<th scope="row" rowspan="' . count($activities->calendar) . '">' . $activities->name . '</th>';
             $first = false;
-            foreach ($activities->calendars as $calendar) {
+            foreach ($activities->calendar as $calendar) {
                 if ($first) {
                     echo '<tr>';
                 }
                 echo '<td>' . $calendar->date->date . '</td>';
                 echo '<td>' . $calendar->time->hour . '</td>';
                 echo '<td><input type="checkbox" class="btn-check" id="checkbox-' . $calendar->id . '" data-id="' . $calendar->id . '" ' . ($calendar->status ? 'checked' : '') . ' autocomplete="off"></td>';
-                //echo '<td><a href="' . Url::to(['activities/update', 'id' => $activities->id, 'cal' => $calendar->id]) . '" class="btn btn-warning mr-3">Update</a></td>';
+                //echo '<td><a href="' . Url::to(['activity/update', 'id' => $activity->id, 'cal' => $calendar->id]) . '" class="btn btn-warning mr-3">Update</a></td>';
                 echo '</tr>';
 
                 $first = true;

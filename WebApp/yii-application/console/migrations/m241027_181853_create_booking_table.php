@@ -3,56 +3,56 @@
 use yii\db\Migration;
 
 /**
- * Handles the creation of table `{{%bookings}}`.
+ * Handles the creation of table `{{%booking}}`.
  * Has foreign keys to the tables:
  *
- * - `{{%activities}}`
+ * - `{{%activity}}`
  * - `{{%calendar}}`
  * - `{{%user}}`
  */
-class m241027_181853_create_bookings_table extends Migration
+class m241027_181853_create_booking_table extends Migration
 {
     /**
      * {@inheritdoc}
      */
     public function safeUp()
     {
-        $this->createTable('{{%bookings}}', [
+        $this->createTable('{{%booking}}', [
             'id' => $this->primaryKey(),
-            'activities_id' => $this->integer()->notNull(),
+            'activity_id' => $this->integer()->notNull(),
             'calendar_id' => $this->integer()->notNull(),
             'user_id' => $this->integer()->notNull(),
             'numberpax' => $this->integer()->notNull(),
         ]);
 
-        // creates index for column `activities_id`
+        // creates index for column `activity_id`
         $this->createIndex(
-            '{{%idx-bookings-activities_id}}',
-            '{{%bookings}}',
-            'activities_id'
+            '{{%idx-booking-activity_id}}',
+            '{{%booking}}',
+            'activity_id'
         );
 
-        // add foreign key for table `{{%activities}}`
+        // add foreign key for table `{{%activity}}`
         $this->addForeignKey(
-            '{{%fk-bookings-activities_id}}',
-            '{{%bookings}}',
-            'activities_id',
-            '{{%activities}}',
+            '{{%fk-booking-activity_id}}',
+            '{{%booking}}',
+            'activity_id',
+            '{{%activity}}',
             'id',
             'CASCADE'
         );
 
         // creates index for column `calendar_id`
         $this->createIndex(
-            '{{%idx-bookings-calendar_id}}',
-            '{{%bookings}}',
+            '{{%idx-booking-calendar_id}}',
+            '{{%booking}}',
             'calendar_id'
         );
 
         // add foreign key for table `{{%calendar}}`
         $this->addForeignKey(
-            '{{%fk-bookings-calendar_id}}',
-            '{{%bookings}}',
+            '{{%fk-booking-calendar_id}}',
+            '{{%booking}}',
             'calendar_id',
             '{{%calendar}}',
             'id',
@@ -61,15 +61,15 @@ class m241027_181853_create_bookings_table extends Migration
 
         // creates index for column `user_id`
         $this->createIndex(
-            '{{%idx-bookings-user_id}}',
-            '{{%bookings}}',
+            '{{%idx-booking-user_id}}',
+            '{{%booking}}',
             'user_id'
         );
 
         // add foreign key for table `{{%user}}`
         $this->addForeignKey(
-            '{{%fk-bookings-user_id}}',
-            '{{%bookings}}',
+            '{{%fk-booking-user_id}}',
+            '{{%booking}}',
             'user_id',
             '{{%user}}',
             'id',
@@ -82,42 +82,42 @@ class m241027_181853_create_bookings_table extends Migration
      */
     public function safeDown()
     {
-        // drops foreign key for table `{{%activities}}`
+        // drops foreign key for table `{{%activity}}`
         $this->dropForeignKey(
-            '{{%fk-bookings-activities_id}}',
-            '{{%bookings}}'
+            '{{%fk-booking-activity_id}}',
+            '{{%booking}}'
         );
 
-        // drops index for column `activities_id`
+        // drops index for column `activity_id`
         $this->dropIndex(
-            '{{%idx-bookings-activities_id}}',
-            '{{%bookings}}'
+            '{{%idx-booking-activity_id}}',
+            '{{%booking}}'
         );
 
         // drops foreign key for table `{{%calendar}}`
         $this->dropForeignKey(
-            '{{%fk-bookings-calendar_id}}',
-            '{{%bookings}}'
+            '{{%fk-booking-calendar_id}}',
+            '{{%booking}}'
         );
 
         // drops index for column `calendar_id`
         $this->dropIndex(
-            '{{%idx-bookings-calendar_id}}',
-            '{{%bookings}}'
+            '{{%idx-booking-calendar_id}}',
+            '{{%booking}}'
         );
 
         // drops foreign key for table `{{%user}}`
         $this->dropForeignKey(
-            '{{%fk-bookings-user_id}}',
-            '{{%bookings}}'
+            '{{%fk-booking-user_id}}',
+            '{{%booking}}'
         );
 
         // drops index for column `user_id`
         $this->dropIndex(
-            '{{%idx-bookings-user_id}}',
-            '{{%bookings}}'
+            '{{%idx-booking-user_id}}',
+            '{{%booking}}'
         );
 
-        $this->dropTable('{{%bookings}}');
+        $this->dropTable('{{%booking}}');
     }
 }

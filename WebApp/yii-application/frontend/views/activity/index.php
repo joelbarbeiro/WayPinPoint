@@ -29,7 +29,7 @@ $this->params['breadcrumbs'][] = $this->title;
         echo '<p class="card-text">' . $activity->description . '</p>';
         echo '<p class="card-text">'. $activity->priceperpax .'€' .'</p>';
 
-        foreach ($activity->calendars as $calendar) {
+        foreach ($activity->calendar as $calendar) {
             if ($calendar->status != 0) {
                 echo '<p class="card-text"> Date: ' . $calendar->date->date . ' Time: ' . $calendar->time->hour . '</p>';
             }
@@ -37,7 +37,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
         echo '<div class="d-flex justify-content-between p-3">';
         echo '<a href="' . Url::to(['activity/view', 'id' => $activity->id]) . '" class="btn btn-primary">View</a>';
-        echo '<a href="' . Url::to(['review/index' ,'id' => $activity->id]) . '" class="btn btn-outline-warning">Reviews</a>';
+        echo '<a href="' . Url::to(['review/index' ,'id' => $activity->id]) . '" class="btn btn-outline-warning">Review</a>';
         echo '<a href="' . Url::to(['cart/create' ,'activityId' => $activity->id]) . '" class="btn btn-outline-success">Buy</a>';
 
         echo '</div>';

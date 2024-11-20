@@ -81,7 +81,6 @@ class CartController extends Controller
         $model = new Cart();
         $activity = Activity::findOne($activityId);
         $userId = Yii::$app->user->id;
-        echo '----->'. $userId;
         $model->user_id = $userId;
         $model->product_id = $activityId;
             if ($model->load($this->request->post())) {

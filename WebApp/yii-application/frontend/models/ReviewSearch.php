@@ -6,9 +6,9 @@ use yii\base\Model;
 use yii\data\ActiveDataProvider;
 
 /**
- * ReviewSearch represents the model behind the search form of `frontend\models\Reviews`.
+ * ReviewSearch represents the model behind the search form of `frontend\models\Review`.
  */
-class ReviewSearch extends Reviews
+class ReviewSearch extends Review
 {
     /**
      * {@inheritdoc}
@@ -39,7 +39,7 @@ class ReviewSearch extends Reviews
      */
     public function search($params)
     {
-        $query = Reviews::find();
+        $query = Review::find();
 
         // add conditions that should always apply here
 

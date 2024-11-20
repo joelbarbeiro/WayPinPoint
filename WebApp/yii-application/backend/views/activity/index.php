@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 
 /** @var yii\web\View $this */
-/** @var \common\models\ActivitiesSearch $searchModel */
+/** @var common\models\ActivitySearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
 $this->title = 'Activities';
@@ -15,7 +15,6 @@ $imgPath = Url::to('@web/assets/uploads/' . Yii::$app->user->id . '/');
 $this->registerCssFile('@web/css/site.css', [
     'depends' => [\yii\web\YiiAsset::class],
 ]);
-
 ?>
 <div class="activities-index">
     <div class="row">
@@ -30,7 +29,7 @@ $this->registerCssFile('@web/css/site.css', [
             echo '<p class="card-text">' . $activity->description . '</p>';
 
             $dropdownOptions = [];
-            foreach ($activity->calendars as $calendar) {
+            foreach ($activity->calendar as $calendar) {
                 if ($calendar->status != 0) {
                     //echo '<p class="card-text"> Date: ' . $calendar->date->date . ' Time: ' . $calendar->time->hour . '</p>';
                     $dropdownOptions[$calendar->id] = $calendar->date->date . ' - ' . $calendar->time->hour;
@@ -47,7 +46,7 @@ $this->registerCssFile('@web/css/site.css', [
             );
 
 
-            echo '<p class="card-text mt-3"><a href="' . Url::to(['activities/view', 'id' => $activity->id]) . '" class="btn btn-primary">View</a></p>';
+            echo '<p class="card-text mt-3"><a href="' . Url::to(['activity/view', 'id' => $activity->id]) . '" class="btn btn-primary">View</a></p>';
             echo '</div>';
             echo '</div>';
             echo '</div>';

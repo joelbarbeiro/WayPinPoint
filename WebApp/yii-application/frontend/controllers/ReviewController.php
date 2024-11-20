@@ -3,14 +3,14 @@
 namespace frontend\controllers;
 
 use common\models\Activity;
-use frontend\models\Reviews;
+use frontend\models\Review;
 use frontend\models\ReviewSearch;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
 /**
- * ReviewController implements the CRUD actions for Reviews model.
+ * ReviewController implements the CRUD actions for Review model.
  */
 class ReviewController extends Controller
 {
@@ -33,7 +33,7 @@ class ReviewController extends Controller
     }
 
     /**
-     * Lists all Reviews models.
+     * Lists all Review models.
      *
      * @return string
      */
@@ -44,7 +44,7 @@ class ReviewController extends Controller
 
         $activity = Activity::findOne($id);
 
-        $activitiesReview = Reviews::find()
+        $activitiesReview = Review::find()
             ->select(['*'])
             ->where(['activity_id' => $id])
             ->asArray()
@@ -60,7 +60,7 @@ class ReviewController extends Controller
     }
 
     /**
-     * Displays a single Reviews model.
+     * Displays a single Review model.
      * @param int $id ID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
@@ -73,13 +73,13 @@ class ReviewController extends Controller
     }
 
     /**
-     * Creates a new Reviews model.
+     * Creates a new Review model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
     public function actionCreate($id)
     {
-        $model = new Reviews();
+        $model = new Review();
         $model->activity_id = $id;
 
         if ($this->request->isPost) {
@@ -96,7 +96,7 @@ class ReviewController extends Controller
     }
 
     /**
-     * Updates an existing Reviews model.
+     * Updates an existing Review model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param int $id ID
      * @return string|\yii\web\Response
@@ -116,7 +116,7 @@ class ReviewController extends Controller
     }
 
     /**
-     * Deletes an existing Reviews model.
+     * Deletes an existing Review model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param int $id ID
      * @return \yii\web\Response
@@ -130,15 +130,15 @@ class ReviewController extends Controller
     }
 
     /**
-     * Finds the Reviews model based on its primary key value.
+     * Finds the Review model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param int $id ID
-     * @return Reviews the loaded model
+     * @return Review the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Reviews::findOne(['id' => $id])) !== null) {
+        if (($model = Review::findOne(['id' => $id])) !== null) {
             return $model;
         }
 

@@ -23,14 +23,14 @@ $this->params['breadcrumbs'][] = $this->title;
         echo '<h5 class="card-title">' . $model->name . '</h5>';
         echo '<p class="card-text">' . $model->description . '</p>';
 
-        foreach ($model->calendars as $calendar) {
+        foreach ($model->calendar as $calendar) {
             if ($calendar->status != 0) {
                 echo '<p class="card-text"> Date: ' . $calendar->date->date . ' Time: ' . $calendar->time->hour . '</p>';
             }
         }
 
-        echo '<a href="' . Url::to(['activities/update', 'id' => $model->id]) . '" class="btn btn-primary mr-3">Edit</a>';
-        echo '<a href="' . Url::to(['activities/delete', 'id' => $model->id]) . '" class="btn btn-danger" data-method="post">Delete</a>';
+        echo '<a href="' . Url::to(['activity/update', 'id' => $model->id]) . '" class="btn btn-primary mr-3">Edit</a>';
+        echo '<a href="' . Url::to(['activity/delete', 'id' => $model->id]) . '" class="btn btn-danger" data-method="post">Delete</a>';
 
         echo '</div>';
         echo '</div>';

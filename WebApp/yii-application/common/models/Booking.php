@@ -8,7 +8,7 @@ use Yii;
  * This is the model class for table "bookings".
  *
  * @property int $id
- * @property int $activities_id
+ * @property int $activity_id
  * @property int $calendar_id
  * @property int $user_id
  * @property int $numberpax
@@ -20,7 +20,7 @@ class Booking extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'bookings';
+        return 'booking';
     }
 
     /**
@@ -29,8 +29,8 @@ class Booking extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['activities_id', 'calendar_id', 'user_id', 'numberpax'], 'required'],
-            [['activities_id', 'calendar_id', 'user_id', 'numberpax'], 'integer'],
+            [['activity_id', 'calendar_id', 'user_id', 'numberpax'], 'required'],
+            [['activity_id', 'calendar_id', 'user_id', 'numberpax'], 'integer'],
         ];
     }
 
@@ -41,7 +41,7 @@ class Booking extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'activities_id' => 'Activities ID',
+            'activity_id' => 'activity ID',
             'calendar_id' => 'Calendar ID',
             'user_id' => 'User ID',
             'numberpax' => 'Numberpax',
@@ -54,7 +54,7 @@ class Booking extends \yii\db\ActiveRecord
             ->where(['user_id' => $userId , 'product_id' => $activityId])
             ->one();
         $model = new Booking();
-        $model->activities_id = $activityId;
+        $model->activity_id = $activityId;
         $userId = Yii::$app->user->id;
         $model->user_id = $userId;
         $model->numberpax = $cart->quantity;

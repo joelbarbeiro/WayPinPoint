@@ -20,7 +20,7 @@ class m241110_160548_seed_time_intervals extends Migration
             }
         }
 
-        $this->batchInsert('times', ['hour'], $timeIntervals);
+        $this->batchInsert('time', ['hour'], $timeIntervals);
     }
 
     /**

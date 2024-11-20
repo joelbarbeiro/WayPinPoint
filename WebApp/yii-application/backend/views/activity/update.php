@@ -3,10 +3,10 @@
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
-/** @var \common\models\Activities $model */
+/** @var \common\models\Activity $model */
 
 $this->title = 'Update Activities: ' . $model->name;
-$this->params['breadcrumbs'][] = ['label' => 'Activities', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Activity', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->name, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = 'Update';
 ?>

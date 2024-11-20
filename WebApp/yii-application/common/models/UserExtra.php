@@ -8,7 +8,7 @@ use Yii;
 use yii\db\Query;
 
 /**
- * This is the model class for table "userextras".
+ * This is the model class for table "userextra".
  *
  * @property int $id
  * @property int $user_id
@@ -19,7 +19,7 @@ use yii\db\Query;
  * @property int $supplier
  *
  * @property Localsellpoint $localsellpoint
- * @property LocalsellpointUserextra[] $localsellpointUserextras
+ * @property LocalsellpointUserextra[] $localsellpointuserextra
  * @property User $user
  */
 class UserExtra extends \yii\db\ActiveRecord
@@ -29,7 +29,7 @@ class UserExtra extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'userextras';
+        return 'userextra';
     }
 
     /**
@@ -93,7 +93,7 @@ class UserExtra extends \yii\db\ActiveRecord
             ->where(['id' => $managerIds])
             ->andWhere(['id' => (new Query())
                 ->select('user_id')
-                ->from('userextras')
+                ->from('userextra')
                 ->where(['supplier' => $userId])
             ])
             ->asArray()
@@ -104,9 +104,9 @@ class UserExtra extends \yii\db\ActiveRecord
     public static function getEmployeesForSupplier($userId): array
     {
         return UserExtra::find()
-            ->select(['userextras.id', 'userextras.user_id', 'userextras.supplier', 'user.username'])
-            ->innerJoin('user', 'user.id = userextras.user_id')
-            ->where(['userextras.supplier' => $userId])
+            ->select(['userextra.id', 'userextra.user_id', 'userextra.supplier', 'user.username'])
+            ->innerJoin('user', 'user.id = userextra.user_id')
+            ->where(['userextra.supplier' => $userId])
             ->andWhere(['user.status'=> 10])
             ->asArray()
             ->all();

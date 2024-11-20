@@ -4,10 +4,10 @@ use yii\helpers\Url;
 use yii\web\YiiAsset;
 
 /** @var yii\web\View $this */
-/** @var \common\models\Calendar $model */
+/** @var common\models\Activity $model */
 
-$this->title = "View Activitie";
-$this->params['breadcrumbs'][] = ['label' => 'Activities', 'url' => ['index']];
+$this->title = "View Activity";
+$this->params['breadcrumbs'][] = ['label' => 'Activity', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 YiiAsset::register($this);
 
@@ -26,14 +26,14 @@ $this->registerCssFile('@web/css/site.css', [
     echo '<h5 class="card-title">' . $model->name . '</h5>';
     echo '<p class="card-text">' . $model->description . '</p>';
 
-    foreach ($model->calendars as $calendar) {
+    foreach ($model->calendar as $calendar) {
         if ($calendar->status != 0) {
             echo '<p class="card-text"> Date: ' . $calendar->date->date . ' Time: ' . $calendar->time->hour . '</p>';
         }
     }
 
-    echo '<a href="' . Url::to(['activities/update', 'id' => $model->id]) . '" class="btn btn-warning mr-3">Update</a>';
-    echo '<a href="' . Url::to(['activities/delete', 'id' => $model->id]) . '" class="btn btn-danger" data-method="post">Delete</a>';
+    echo '<a href="' . Url::to(['activity/update', 'id' => $model->id]) . '" class="btn btn-warning mr-3">Update</a>';
+    echo '<a href="' . Url::to(['activity/delete', 'id' => $model->id]) . '" class="btn btn-danger" data-method="post">Delete</a>';
 
     echo '</div>';
     echo '</div>';

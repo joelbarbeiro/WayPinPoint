@@ -12,7 +12,7 @@ use common\models\Activities;
  * @property int $buyer
  * @property float $total
  *
- * @property Activities $activities
+ * @property Activities $activity
  * @property User $buyer0
  * @property Invoices[] $invoices
  */

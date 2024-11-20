@@ -3,19 +3,19 @@
 use yii\db\Migration;
 
 /**
- * Handles the creation of table `{{%userextras}}`.
+ * Handles the creation of table `{{%userextra}}`.
  * Has foreign keys to the tables:
  *
  * - `{{%user}}`
  */
-class m241103_150521_create_userextras_table extends Migration
+class m241103_150521_create_userextra_table extends Migration
 {
     /**
      * {@inheritdoc}
      */
     public function safeUp()
     {
-        $this->createTable('{{%userextras}}', [
+        $this->createTable('{{%userextra}}', [
             'id' => $this->primaryKey(),
             'user' => $this->integer()->notNull(),
             'phone' => $this->string(20)->notnull(),
@@ -24,15 +24,15 @@ class m241103_150521_create_userextras_table extends Migration
 
         // creates index for column `user`
         $this->createIndex(
-            '{{%idx-userextras-user}}',
-            '{{%userextras}}',
+            '{{%idx-userextra-user}}',
+            '{{%userextra}}',
             'user'
         );
 
         // add foreign key for table `{{%user}}`
         $this->addForeignKey(
-            '{{%fk-userextras-user}}',
-            '{{%userextras}}',
+            '{{%fk-userextra-user}}',
+            '{{%userextra}}',
             'user',
             '{{%user}}',
             'id',
@@ -47,16 +47,16 @@ class m241103_150521_create_userextras_table extends Migration
     {
         // drops foreign key for table `{{%user}}`
         $this->dropForeignKey(
-            '{{%fk-userextras-user}}',
-            '{{%userextras}}'
+            '{{%fk-userextra-user}}',
+            '{{%userextra}}'
         );
 
         // drops index for column `user`
         $this->dropIndex(
-            '{{%idx-userextras-user}}',
-            '{{%userextras}}'
+            '{{%idx-userextra-user}}',
+            '{{%userextra}}'
         );
 
-        $this->dropTable('{{%userextras}}');
+        $this->dropTable('{{%userextra}}');
     }
 }

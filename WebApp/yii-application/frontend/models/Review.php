@@ -15,14 +15,14 @@ use common\models\Activity;
  *
  * @property Activity $activity
  */
-class Reviews extends \yii\db\ActiveRecord
+class Review extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return 'reviews';
+        return 'review';
     }
 
     /**

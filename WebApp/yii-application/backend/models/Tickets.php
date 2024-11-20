@@ -13,7 +13,7 @@ use common\models\Activities;
  * @property string $qr
  * @property int $status
  *
- * @property Activities $activities
+ * @property Activities $activity
  * @property User $participant0
  */
 class Tickets extends \yii\db\ActiveRecord

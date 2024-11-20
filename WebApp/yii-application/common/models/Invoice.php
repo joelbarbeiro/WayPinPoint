@@ -9,7 +9,7 @@ use Yii;
  *
  * @property int $id
  * @property int $user
- * @property int $sales_id
+ * @property int $sale_id
  */
 class Invoice extends \yii\db\ActiveRecord
 {
@@ -18,7 +18,7 @@ class Invoice extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'invoices';
+        return 'invoice';
     }
 
     /**
@@ -27,8 +27,8 @@ class Invoice extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user', 'sales_id'], 'required'],
-            [['user', 'sales_id'], 'integer'],
+            [['user', 'sale_id'], 'required'],
+            [['user', 'sale_id'], 'integer'],
         ];
     }
 
@@ -40,12 +40,12 @@ class Invoice extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'user' => 'User',
-            'sales_id' => 'Sales ID',
+            'sale_id' => 'Sales ID',
         ];
     }
     public function getSales()
     {
-        return $this->hasOne(Sale::class, ['id' => 'sales_id']);
+        return $this->hasOne(Sale::class, ['id' => 'sale_id']);
     }
     public function getUsers()
     {
@@ -55,11 +55,11 @@ class Invoice extends \yii\db\ActiveRecord
     {
         $userId = Yii::$app->user->id;
         $sale = Sale::find()
-            ->where(['buyer' => $userId , 'activities_id' => $activityId])
+            ->where(['buyer' => $userId , 'activity_id' => $activityId])
             ->one();
         $model = new Invoice();
         $model->user = $userId;
-        $model->sales_id = $sale->id;
+        $model->sale_id = $sale->id;
         $sale->save();
         $model->save();
     }

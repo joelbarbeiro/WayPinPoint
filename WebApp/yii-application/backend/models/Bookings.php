@@ -14,7 +14,7 @@ use common\models\Calendar;
  * @property int $user_id
  * @property int $numberpax
  *
- * @property Activities $activities
+ * @property Activities $activity
  * @property Calendar $calendar
  * @property User $user
  */

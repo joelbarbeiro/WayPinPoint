@@ -6,7 +6,7 @@ use yii\db\Migration;
  * Handles the creation of table `{{%calendar}}`.
  * Has foreign keys to the tables:
  *
- * - `{{%activities}}`
+ * - `{{%activity}}`
  * - `{{%dates}}`
  * - `{{%times}}`
  */
@@ -19,24 +19,24 @@ class m241027_181850_create_calendar_table extends Migration
     {
         $this->createTable('{{%calendar}}', [
             'id' => $this->primaryKey(),
-            'activities_id' => $this->integer()->notNull(),
+            'activity_id' => $this->integer()->notNull(),
             'date_id' => $this->integer()->notNull(),
             'time_id' => $this->integer()->notNull(),
         ]);
 
-        // creates index for column `activities_id`
+        // creates index for column `activity_id`
         $this->createIndex(
-            '{{%idx-calendar-activities_id}}',
+            '{{%idx-calendar-activity_id}}',
             '{{%calendar}}',
-            'activities_id'
+            'activity_id'
         );
 
-        // add foreign key for table `{{%activities}}`
+        // add foreign key for table `{{%activity}}`
         $this->addForeignKey(
-            '{{%fk-calendar-activities_id}}',
+            '{{%fk-calendar-activity_id}}',
             '{{%calendar}}',
-            'activities_id',
-            '{{%activities}}',
+            'activity_id',
+            '{{%activity}}',
             'id',
             'CASCADE'
         );
@@ -53,7 +53,7 @@ class m241027_181850_create_calendar_table extends Migration
             '{{%fk-calendar-date_id}}',
             '{{%calendar}}',
             'date_id',
-            '{{%dates}}',
+            '{{%date}}',
             'id',
             'CASCADE'
         );
@@ -64,15 +64,15 @@ class m241027_181850_create_calendar_table extends Migration
      */
     public function safeDown()
     {
-        // drops foreign key for table `{{%activities}}`
+        // drops foreign key for table `{{%activity}}`
         $this->dropForeignKey(
-            '{{%fk-calendar-activities_id}}',
+            '{{%fk-calendar-activity_id}}',
             '{{%calendar}}'
         );
 
-        // drops index for column `activities_id`
+        // drops index for column `activity_id`
         $this->dropIndex(
-            '{{%idx-calendar-activities_id}}',
+            '{{%idx-calendar-activity_id}}',
             '{{%calendar}}'
         );
 

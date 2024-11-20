@@ -41,7 +41,7 @@ class m241105_185209_add_foreign_keys_to_cart_table extends Migration
             '{{%fk-cart-product_id}}',
             '{{%cart}}',
             'product_id',
-            '{{%activities}}',
+            '{{%activity}}',
             'id',
             'CASCADE',
             'CASCADE'
@@ -54,23 +54,13 @@ class m241105_185209_add_foreign_keys_to_cart_table extends Migration
     public function safeDown()
     {
         // Drop foreign keys
-        $this->dropForeignKey('fk-cart-user_id', 'cart_items');
-        $this->dropForeignKey('fk-cart-product_id', 'cart_items');
+        $this->dropForeignKey('fk-cart-user_id', 'cart');
+        $this->dropForeignKey('fk-cart-product_id', 'cart');
+        $this->dropTable('{{%cart}}');
+
     }
 
     /**
      * Drop foreign key if it exists
      */
-    private function dropForeignKeyIfExists($name, $table)
-    {
-        $db = $this->db;
-        if ($db->getSchema()->getTableSchema($table, true) && $db->getSchema()->getTableSchema($table, true)->foreignKeys) {
-            $foreignKeys = $db->getSchema()->getTableSchema($table, true)->foreignKeys;
-            foreach ($foreignKeys as $fkName => $foreignKey) {
-                if ($fkName === $name) {
-                    $this->dropForeignKey($name, $table);
-                }
-            }
-        }
-    }
 }

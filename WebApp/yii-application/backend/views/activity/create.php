@@ -5,7 +5,7 @@
 
 
 $this->title = 'Create Activities';
-$this->params['breadcrumbs'][] = ['label' => 'Activities', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Activity', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="activities-create">

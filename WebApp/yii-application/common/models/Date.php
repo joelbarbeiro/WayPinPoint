@@ -8,16 +8,16 @@ namespace common\models;
  * @property int $id
  * @property string $date
  *
- * @property Calendar[] $calendars
+ * @property Calendar[] $calendar
  */
-class Dates extends \yii\db\ActiveRecord
+class Date extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return 'dates';
+        return 'date';
     }
 
     /**
@@ -47,7 +47,7 @@ class Dates extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getCalendars()
+    public function getCalendar()
     {
         return $this->hasMany(Calendar::class, ['date_id' => 'id']);
     }

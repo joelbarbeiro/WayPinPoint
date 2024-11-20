@@ -3,18 +3,18 @@
 use yii\db\Migration;
 
 /**
- * Handles the creation of table `{{%dates}}`.
+ * Handles the creation of table `{{%times}}`.
  */
-class m241027_181846_create_dates_table extends Migration
+class m241027_181849_create_time_table extends Migration
 {
     /**
      * {@inheritdoc}
      */
     public function safeUp()
     {
-        $this->createTable('{{%dates}}', [
+        $this->createTable('{{%time}}', [
             'id' => $this->primaryKey(),
-            'date' => $this->date()->notNull(),
+            'hour' => $this->time()->notNull(),
         ]);
     }
 
@@ -23,6 +23,6 @@ class m241027_181846_create_dates_table extends Migration
      */
     public function safeDown()
     {
-        $this->dropTable('{{%dates}}');
+        $this->dropTable('{{%time}}');
     }
 }

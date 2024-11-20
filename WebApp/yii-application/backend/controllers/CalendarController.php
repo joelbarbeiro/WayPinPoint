@@ -61,9 +61,9 @@ class CalendarController extends Controller
 
         $userId = Yii::$app->user->identity->id;
 
-        $dataProvider->query->joinWith('calendars')
+        $dataProvider->query->joinWith('calendar')
             ->andWhere(['user_id' => $userId])
-            ->andWhere(['activities.status' => 1]);
+            ->andWhere(['activity.status' => 1]);
 
         return $this->render('index', [
             'searchModel' => $searchModel,

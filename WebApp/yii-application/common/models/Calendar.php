@@ -2,20 +2,20 @@
 
 namespace common\models;
 
-use common\models\Bookings;
+use common\models\Booking;
 
 /**
  * This is the model class for table "calendar".
  *
  * @property int $id
- * @property int $activities_id
+ * @property int $activity_id
  * @property int $date_id
  * @property int $time_id
  * @property int $status
  *
  * @property Activity $activity
- * @property Bookings[] $bookings
- * @property Dates $date
+ * @property Booking[] $booking
+ * @property Date $date
  * @property Time $time
  *
  */
@@ -35,10 +35,10 @@ class Calendar extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['activities_id', 'date_id', 'time_id'], 'required'],
-            [['activities_id', 'date_id', 'time_id'], 'integer'],
-            [['activities_id'], 'exist', 'skipOnError' => true, 'targetClass' => Activity::class, 'targetAttribute' => ['activities_id' => 'id']],
-            [['date_id'], 'exist', 'skipOnError' => true, 'targetClass' => Dates::class, 'targetAttribute' => ['date_id' => 'id']],
+            [['activity_id', 'date_id', 'time_id'], 'required'],
+            [['activity_id', 'date_id', 'time_id'], 'integer'],
+            [['activity_id'], 'exist', 'skipOnError' => true, 'targetClass' => Activity::class, 'targetAttribute' => ['activity_id' => 'id']],
+            [['date_id'], 'exist', 'skipOnError' => true, 'targetClass' => Date::class, 'targetAttribute' => ['date_id' => 'id']],
             [['time_id'], 'exist', 'skipOnError' => true, 'targetClass' => Time::class, 'targetAttribute' => ['time_id' => 'id']],
             [['status'], 'integer'],
         ];
@@ -51,7 +51,7 @@ class Calendar extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'activities_id' => 'Activities ID',
+            'activity_id' => 'activity ID',
             'date_id' => 'Date ID',
             'time_id' => 'Time ID',
             'status' => 'Status',
@@ -60,13 +60,13 @@ class Calendar extends \yii\db\ActiveRecord
 
 
     /**
-     * Gets query for [[Activities]].
+     * Gets query for [[activity]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getActivitiy()
+    public function getactivity()
     {
-        return $this->hasOne(Activity::class, ['id' => 'activities_id']);
+        return $this->hasOne(Activity::class, ['id' => 'activity_id']);
     }
 
     /**
@@ -76,7 +76,7 @@ class Calendar extends \yii\db\ActiveRecord
      */
     public function getBookings()
     {
-        return $this->hasMany(Bookings::class, ['calendar_id' => 'id']);
+        return $this->hasMany(Booking::class, ['calendar_id' => 'id']);
     }
 
     /**
@@ -86,7 +86,7 @@ class Calendar extends \yii\db\ActiveRecord
      */
     public function getDate()
     {
-        return $this->hasOne(Dates::class, ['id' => 'date_id']);
+        return $this->hasOne(Date::class, ['id' => 'date_id']);
     }
 
     /**

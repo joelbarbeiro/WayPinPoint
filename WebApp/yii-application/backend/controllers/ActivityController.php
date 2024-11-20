@@ -5,7 +5,7 @@ namespace backend\controllers;
 use common\models\Activity;
 use common\models\ActivitySearch;
 use common\models\Calendar;
-use common\models\Dates;
+use common\models\Date;
 use common\models\Time;
 use Yii;
 use yii\filters\AccessControl;
@@ -16,9 +16,9 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
 /**
- * ActivitiesController implements the CRUD actions for Activities model.
+ * ActivityController implements the CRUD actions for activity model.
  */
-class ActivitiesController extends Controller
+class ActivityController extends Controller
 {
     /**
      * @inheritDoc
@@ -64,7 +64,7 @@ class ActivitiesController extends Controller
     }
 
     /**
-     * Lists all Activities models.
+     * Lists all activity models.
      *
      * @return string
      */
@@ -75,9 +75,9 @@ class ActivitiesController extends Controller
 
         $userId = Yii::$app->user->id;
 
-        $dataProvider->query->joinWith('calendars')
+        $dataProvider->query->joinWith('calendar')
             ->andWhere(['user_id' => $userId])
-            ->andWhere(['activities.status' => 1])
+            ->andWhere(['activity.status' => 1])
             ->andWhere(['calendar.status' => 1]);
 
         $dataProvider->query->all();
@@ -100,10 +100,10 @@ class ActivitiesController extends Controller
         $userId = Yii::$app->user->id;
 
         $model = Activity::find()
-            ->joinWith('calendars')
+            ->joinWith('calendar')
             ->where([
-                'activities.id' => $id,
-                'activities.user_id' => $userId,
+                'activity.id' => $id,
+                'activity.user_id' => $userId,
                 'calendar.status' => 1
             ])
             ->one();
@@ -135,14 +135,14 @@ class ActivitiesController extends Controller
             $model->user_id = Yii::$app->user->id;
 
             if ($model->validate() && $model->save()) {
-                foreach ($getDateTimes as $date => $timeId) {
-                    $dates = new Dates();
-                    $dates->date = $date;
-                    $dates->save();
+                foreach ($getDateTimes as $dateVal => $timeId) {
+                    $date = new Date();
+                    $date->date = $dateVal;
+                    $date->save();
                     foreach ($timeId as $time) {
                         $calendarModel = new Calendar();
-                        $calendarModel->activities_id = $model->id;
-                        $calendarModel->date_id = $dates->id;
+                        $calendarModel->activity_id = $model->id;
+                        $calendarModel->date_id = $date->id;
                         $calendarModel->time_id = $time;
                         $calendarModel->save();
                     }
