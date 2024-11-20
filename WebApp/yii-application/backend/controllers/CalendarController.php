@@ -2,8 +2,8 @@
 
 namespace backend\controllers;
 
-use common\models\Activities;
-use common\models\ActivitiesSearch;
+use common\models\Activity;
+use common\models\ActivitySearch;
 use common\models\Calendar;
 use Yii;
 use yii\filters\AccessControl;
@@ -56,7 +56,7 @@ class CalendarController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new ActivitiesSearch();
+        $searchModel = new ActivitySearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         $userId = Yii::$app->user->identity->id;
@@ -79,11 +79,11 @@ class CalendarController extends Controller
      */
     public function actionView($id, $id_calendar)
     {
-        $model = new Activities();
+        $model = new Activity();
         $model = $this->findModel($id);
 
         $calendar = Calendar::find()
-            ->where(['activity_id' => $id, 'id' => $id_calendar])
+            ->where(['activities_id' => $id, 'id' => $id_calendar])
             ->one();
 
         return $this->render('view', [

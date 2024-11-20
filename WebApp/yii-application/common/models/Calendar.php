@@ -11,11 +11,13 @@ use common\models\Bookings;
  * @property int $activities_id
  * @property int $date_id
  * @property int $time_id
+ * @property int $status
  *
- * @property Activities $activities
+ * @property Activity $activity
  * @property Bookings[] $bookings
  * @property Dates $date
- * @property Times $time
+ * @property Time $time
+ *
  */
 class Calendar extends \yii\db\ActiveRecord
 {
@@ -35,9 +37,9 @@ class Calendar extends \yii\db\ActiveRecord
         return [
             [['activities_id', 'date_id', 'time_id'], 'required'],
             [['activities_id', 'date_id', 'time_id'], 'integer'],
-            [['activities_id'], 'exist', 'skipOnError' => true, 'targetClass' => Activities::class, 'targetAttribute' => ['activities_id' => 'id']],
+            [['activities_id'], 'exist', 'skipOnError' => true, 'targetClass' => Activity::class, 'targetAttribute' => ['activities_id' => 'id']],
             [['date_id'], 'exist', 'skipOnError' => true, 'targetClass' => Dates::class, 'targetAttribute' => ['date_id' => 'id']],
-            [['time_id'], 'exist', 'skipOnError' => true, 'targetClass' => Times::class, 'targetAttribute' => ['time_id' => 'id']],
+            [['time_id'], 'exist', 'skipOnError' => true, 'targetClass' => Time::class, 'targetAttribute' => ['time_id' => 'id']],
             [['status'], 'integer'],
         ];
     }
@@ -62,9 +64,9 @@ class Calendar extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getActivities()
+    public function getActivitiy()
     {
-        return $this->hasOne(Activities::class, ['id' => 'activities_id']);
+        return $this->hasOne(Activity::class, ['id' => 'activities_id']);
     }
 
     /**
@@ -94,6 +96,6 @@ class Calendar extends \yii\db\ActiveRecord
      */
     public function getTime()
     {
-        return $this->hasOne(Times::class, ['id' => 'time_id']);
+        return $this->hasOne(Time::class, ['id' => 'time_id']);
     }
 }

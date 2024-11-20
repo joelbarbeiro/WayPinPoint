@@ -2,11 +2,11 @@
 
 namespace backend\controllers;
 
-use common\models\Activities;
-use common\models\ActivitiesSearch;
+use common\models\Activity;
+use common\models\ActivitySearch;
 use common\models\Calendar;
 use common\models\Dates;
-use common\models\Times;
+use common\models\Time;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
@@ -70,7 +70,7 @@ class ActivitiesController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new ActivitiesSearch();
+        $searchModel = new ActivitySearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         $userId = Yii::$app->user->id;
@@ -90,7 +90,7 @@ class ActivitiesController extends Controller
     }
 
     /**
-     * Displays a single Activities model.
+     * Displays a single Activity model.
      * @param int $id ID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
@@ -99,7 +99,7 @@ class ActivitiesController extends Controller
     {
         $userId = Yii::$app->user->id;
 
-        $model = Activities::find()
+        $model = Activity::find()
             ->joinWith('calendars')
             ->where([
                 'activities.id' => $id,
@@ -118,21 +118,22 @@ class ActivitiesController extends Controller
     }
 
     /**
-     * Creates a new Activities model.
+     * Creates a new Activity model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
     public function actionCreate()
     {
-        $model = new Activities();
+        $model = new Activity();
 
-        $hoursQuery = Times::find()->select(['id', 'hour'])->asArray()->all();
+        $hoursQuery = Time::find()->select(['id', 'hour'])->asArray()->all();
         $hoursList = ArrayHelper::map($hoursQuery, 'id', 'hour');
 
         if ($model->load($this->request->post())) {
             $getDateTimes = $model->getCalendarArray();
             $model->uploadPhoto();
             $model->user_id = Yii::$app->user->id;
+
             if ($model->validate() && $model->save()) {
                 foreach ($getDateTimes as $date => $timeId) {
                     $dates = new Dates();
@@ -157,7 +158,7 @@ class ActivitiesController extends Controller
     }
 
     /**
-     * Updates an existing Activities model.
+     * Updates an existing Activity model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param int $id ID
      * @return string|\yii\web\Response
@@ -167,7 +168,7 @@ class ActivitiesController extends Controller
     {
         $model = $this->findModel($id);
 
-        $hoursQuery = Times::find()->select(['id', 'hour'])->asArray()->all();
+        $hoursQuery = Time::find()->select(['id', 'hour'])->asArray()->all();
         $hoursList = ArrayHelper::map($hoursQuery, 'id', 'hour');
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
@@ -181,7 +182,7 @@ class ActivitiesController extends Controller
     }
 
     /**
-     * Deletes an existing Activities model.
+     * Deletes an existing Activity model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param int $id ID
      * @return \yii\web\Response
@@ -199,15 +200,15 @@ class ActivitiesController extends Controller
     }
 
     /**
-     * Finds the Activities model based on its primary key value.
+     * Finds the Activity model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param int $id ID
-     * @return Activities the loaded model
+     * @return Activity the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Activities::findOne(['id' => $id])) !== null) {
+        if (($model = Activity::findOne(['id' => $id])) !== null) {
             return $model;
         }
 

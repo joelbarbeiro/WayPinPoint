@@ -81,6 +81,7 @@ class CartController extends Controller
         $model = new Cart();
         $activity = Activity::findOne($activityId);
         $userId = Yii::$app->user->id;
+        echo '----->'. $userId;
         $model->user_id = $userId;
         $model->product_id = $activityId;
             if ($model->load($this->request->post())) {
@@ -89,6 +90,8 @@ class CartController extends Controller
                     if ($model->save()) {
                         return $this->redirect(['view', 'user_id' => $model->user_id, 'product_id' => $model->product_id]);
                     }
+                    dd($model->errors);
+
                 }
             }
          else {

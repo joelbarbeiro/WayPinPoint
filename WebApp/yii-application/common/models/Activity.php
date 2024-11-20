@@ -2,10 +2,10 @@
 
 namespace common\models;
 
-use frontend\models\Picture;
+use common\models\Picture;
 
 use backend\models\Bookings;
-use backend\models\Calendar;
+use common\models\Calendar;
 use backend\models\Pictures;
 use backend\models\Sales;
 use backend\models\Tickets;
@@ -24,6 +24,8 @@ use yii\web\UploadedFile;
  * @property int $maxpax
  * @property float $priceperpax
  * @property string $address
+ * @property int $status
+ * @property int $user_id
  *
  * @property Bookings[] $bookings
  * @property Calendar[] $calendars
@@ -33,6 +35,10 @@ use yii\web\UploadedFile;
  */
 class Activity extends \yii\db\ActiveRecord
 {
+    public $photoFile;
+    public $hours = [];
+    public $dates = [];
+
     /**
      * {@inheritdoc}
      */
@@ -83,7 +89,49 @@ class Activity extends \yii\db\ActiveRecord
             'hours' => 'Custom Hours',
         ];
     }
+    public function uploadPhoto()
+    {
+        $uploadBackendPath = $this->checkBackendUploadFolder();
+        $uploadFrontendPath = $this->checkFrontendUploadFolder();
 
+        $binaryFile = UploadedFile::getInstance($this, 'photoFile');
+        if ($binaryFile) {
+            $changeFileName = Yii::$app->security->generateRandomString(16) . '.' . $binaryFile->extension;
+            $fileBackendPath = $uploadBackendPath . $changeFileName;
+            $fileFrontendPath = $uploadFrontendPath . $changeFileName;
+
+            if ($binaryFile->saveAs($fileBackendPath)) {
+                // Copy the file to the frontend directory
+                if (!copy($fileBackendPath, $fileFrontendPath)) {
+                    Yii::error("Failed to copy file to frontend directory");
+                }
+
+                $this->photo = $changeFileName;
+            } else {
+                Yii::error("File save failed at: " . $fileBackendPath);
+            }
+        } else {
+            Yii::error("No file uploaded");
+        }
+    }
+
+    public function checkBackendUploadFolder()
+    {
+        $uploadPath = Yii::getAlias('@backend/web/assets/uploads/' . Yii::$app->user->id . '/');
+        if (!is_dir($uploadPath)) {
+            mkdir($uploadPath, 0775, true);
+        }
+        return $uploadPath;
+    }
+
+    public function checkFrontendUploadFolder()
+    {
+        $uploadPath = Yii::getAlias('@frontend/web/assets/uploads/' . Yii::$app->user->id . '/');
+        if (!is_dir($uploadPath)) {
+            mkdir($uploadPath, 0775, true);
+        }
+        return $uploadPath;
+    }
     public function getCalendarArray()
     {
         // Create the array of date => array of hours

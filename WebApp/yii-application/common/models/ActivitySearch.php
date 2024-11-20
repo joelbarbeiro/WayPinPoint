@@ -60,9 +60,17 @@ class ActivitySearch extends Activity
             return $dataProvider;
         }
 
+        $query->andFilterWhere([
+            'id' => $this->id,
+            'maxpax' => $this->maxpax,
+            'priceperpax' => $this->priceperpax,
+        ]);
+
         // Apply filtering conditions based on the `search` attribute
         $query->andFilterWhere(['like', 'name', $this->search])
-            ->orFilterWhere(['like', 'description', $this->search]);
+            ->orFilterWhere(['like', 'description', $this->search])
+            ->andFilterWhere(['like', 'photo', $this->photo])
+            ->andFilterWhere(['like', 'address', $this->address]);
 
         return $dataProvider;
     }

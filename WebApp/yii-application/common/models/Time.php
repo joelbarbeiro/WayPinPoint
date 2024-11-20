@@ -10,7 +10,7 @@ namespace common\models;
  *
  * @property Calendar[] $calendars
  */
-class Times extends \yii\db\ActiveRecord
+class Time extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}

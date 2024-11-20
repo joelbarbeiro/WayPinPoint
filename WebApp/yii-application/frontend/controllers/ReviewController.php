@@ -2,7 +2,7 @@
 
 namespace frontend\controllers;
 
-use backend\models\Activities;
+use common\models\Activity;
 use frontend\models\Reviews;
 use frontend\models\ReviewSearch;
 use yii\filters\VerbFilter;
@@ -42,7 +42,7 @@ class ReviewController extends Controller
         $searchModel = new ReviewSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
-        $activity = Activities::findOne($id);
+        $activity = Activity::findOne($id);
 
         $activitiesReview = Reviews::find()
             ->select(['*'])

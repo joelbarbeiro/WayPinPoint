@@ -1,9 +1,8 @@
 <?php
 
 /** @var yii\web\View $this */
-/** @var \common\models\Activities $model */
+/** @var \common\models\Activity $model */
 
-public $hoursList = [];
 
 $this->title = 'Create Activities';
 $this->params['breadcrumbs'][] = ['label' => 'Activities', 'url' => ['index']];

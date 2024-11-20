@@ -2,7 +2,7 @@
 
 namespace frontend\models;
 
-use backend\models\Activities;
+use common\models\Activity;
 
 /**
  * This is the model class for table "reviews".
@@ -13,7 +13,7 @@ use backend\models\Activities;
  * @property string|null $message
  * @property string|null $created_at
  *
- * @property Activities $activity
+ * @property Activity $activity
  */
 class Reviews extends \yii\db\ActiveRecord
 {
@@ -60,6 +60,6 @@ class Reviews extends \yii\db\ActiveRecord
      */
     public function getActivity()
     {
-        return $this->hasOne(Activities::class, ['id' => 'activity_id']);
+        return $this->hasOne(Activity::class, ['id' => 'activity_id']);
     }
 }
