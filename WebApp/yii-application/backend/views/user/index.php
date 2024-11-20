@@ -4,7 +4,7 @@ use backend\models\backendregister;
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
-/** @var \common\models\ActivitiesSearch $searchModel */
+/** @var common\models\ActivitySearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
 $this->title = 'Activities';
