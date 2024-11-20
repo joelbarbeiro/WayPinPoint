@@ -9,7 +9,7 @@ use yii\db\Expression;
  * This is the model class for table "sales".
  *
  * @property int $id
- * @property int $activities_id
+ * @property int $activity_id
  * @property int $buyer
  * @property float $total
  * @property string $purchase_date
@@ -21,7 +21,7 @@ class Sale extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'sales';
+        return 'sale';
     }
 
     /**
@@ -30,8 +30,8 @@ class Sale extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['activities_id', 'buyer', 'total', 'purchase_date'], 'required'],
-            [['activities_id', 'buyer'], 'integer'],
+            [['activity_id', 'buyer', 'total', 'purchase_date'], 'required'],
+            [['activity_id', 'buyer'], 'integer'],
             [['total'], 'number'],
             [['purchase_date'], 'safe'],
         ];
@@ -44,7 +44,7 @@ class Sale extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'activities_id' => 'Activities ID',
+            'activity_id' => 'activity ID',
             'buyer' => 'Buyer',
             'total' => 'Total',
             'purchase_date' => 'Purchase Date',
@@ -66,7 +66,7 @@ class Sale extends \yii\db\ActiveRecord
             ->where(['user_id' => $userId , 'product_id' => $activityId])
             ->one();
         $model = new Sale();
-        $model->activities_id = $activityId;
+        $model->activity_id = $activityId;
         $model->buyer = $userId;
         $model->total = $activity->priceperpax * $cart->quantity;
         $model->purchase_date = new Expression('NOW()');

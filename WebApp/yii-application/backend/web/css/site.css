@@ -101,3 +101,12 @@ a.desc:after {
 .nav > li > form > button.logout:focus {
     outline: none;
 }
+
+.card-img-container{
+    height:400px;
+    object-fit: cover;
+}
+.card-title{
+    font-size: 2rem;
+    font-weight: bold;
+}

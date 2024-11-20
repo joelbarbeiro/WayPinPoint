@@ -2,20 +2,18 @@
 
 namespace common\models;
 
-use frontend\models\Picture;
-
-use backend\models\Bookings;
-use backend\models\Calendar;
-use backend\models\Pictures;
-use backend\models\Sales;
-use backend\models\Tickets;
+use common\models\Picture;
+use common\models\Booking;
+use common\models\Calendar;
+use backend\models\Sale;
+use backend\models\Ticket;
 use common\models\User;
 use Yii;
 use yii\web\UploadedFile;
 
 
 /**
- * This is the model class for table "activities".
+ * This is the model class for table "activity".
  *
  * @property int $id
  * @property string $name
@@ -24,21 +22,27 @@ use yii\web\UploadedFile;
  * @property int $maxpax
  * @property float $priceperpax
  * @property string $address
+ * @property int $status
+ * @property int $user_id
  *
- * @property Bookings[] $bookings
- * @property Calendar[] $calendars
- * @property Pictures[] $pictures
- * @property Sales[] $sales
- * @property Tickets[] $tickets
+ * @property Bookings[] $booking
+ * @property Calendar[] $calendar
+ * @property Picture[] $picture
+ * @property Sales[] $sale
+ * @property Tickets[] $ticket
  */
 class Activity extends \yii\db\ActiveRecord
 {
+    public $photoFile;
+    public $hour = [];
+    public $date = [];
+
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return 'activities';
+        return 'activity';
     }
 
     /**
@@ -57,9 +61,9 @@ class Activity extends \yii\db\ActiveRecord
             [['user_id'], 'integer'],
             [['status'], 'integer'],
             [['photoFile'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, jpeg'],
-            [['dates', 'hours'], 'required'],
-            [['dates'], 'each', 'rule' => ['date', 'format' => 'php:Y-m-d']],
-            [['hours'], 'each', 'rule' => ['integer']],
+            [['date', 'hour'], 'required'],
+            [['date'], 'each', 'rule' => ['date', 'format' => 'php:Y-m-d']],
+            [['hour'], 'each', 'rule' => ['integer']],
         ];
     }
 
@@ -79,20 +83,61 @@ class Activity extends \yii\db\ActiveRecord
             'user_id' => 'User ID',
             'status' => 'Status',
             'photoFile' => 'Upload Photo',
-            'dates' => 'Dates',
-            'hours' => 'Custom Hours',
+            'date' => 'Date',
+            'hour' => 'Custom Hours',
         ];
     }
+    public function uploadPhoto()
+    {
+        $uploadBackendPath = $this->checkBackendUploadFolder();
+        $uploadFrontendPath = $this->checkFrontendUploadFolder();
 
+        $binaryFile = UploadedFile::getInstance($this, 'photoFile');
+        if ($binaryFile) {
+            $changeFileName = Yii::$app->security->generateRandomString(16) . '.' . $binaryFile->extension;
+            $fileBackendPath = $uploadBackendPath . $changeFileName;
+            $fileFrontendPath = $uploadFrontendPath . $changeFileName;
+
+            if ($binaryFile->saveAs($fileBackendPath)) {
+                // Copy the file to the frontend directory
+                if (!copy($fileBackendPath, $fileFrontendPath)) {
+                    Yii::error("Failed to copy file to frontend directory");
+                }
+
+                $this->photo = $changeFileName;
+            } else {
+                Yii::error("File save failed at: " . $fileBackendPath);
+            }
+        } else {
+            Yii::error("No file uploaded");
+        }
+    }
+
+    public function checkBackendUploadFolder()
+    {
+        $uploadPath = Yii::getAlias('@backend/web/assets/uploads/' . Yii::$app->user->id . '/');
+        if (!is_dir($uploadPath)) {
+            mkdir($uploadPath, 0775, true);
+        }
+        return $uploadPath;
+    }
+
+    public function checkFrontendUploadFolder()
+    {
+        $uploadPath = Yii::getAlias('@frontend/web/assets/uploads/' . Yii::$app->user->id . '/');
+        if (!is_dir($uploadPath)) {
+            mkdir($uploadPath, 0775, true);
+        }
+        return $uploadPath;
+    }
     public function getCalendarArray()
     {
-        // Create the array of date => array of hours
         $calendar = [];
-        foreach ($this->dates as $index => $date) {
+        foreach ($this->date as $index => $date) {
             if (!isset($calendar[$date])) {
                 $calendar[$date] = [];
             }
-            $calendar[$date][] = $this->hours[$index] ?? 0;
+            $calendar[$date][] = $this->hour[$index] ?? 0;
         }
 
         return $calendar;
@@ -103,29 +148,29 @@ class Activity extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getBookings()
+    public function getBooking()
     {
-        return $this->hasMany(Bookings::class, ['activities_id' => 'id']);
+        return $this->hasMany(Bookings::class, ['activity_id' => 'id']);
     }
 
     /**
-     * Gets query for [[Calendars]].
+     * Gets query for [[Calendar]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getCalendars()
+    public function getCalendar()
     {
-        return $this->hasMany(Calendar::class, ['activities_id' => 'id']);
+        return $this->hasMany(Calendar::class, ['activity_id' => 'id']);
     }
 
     /**
-     * Gets query for [[Pictures]].
+     * Gets query for [[Picture]].
      *
      * @return \yii\db\ActiveQuery
      */
     public function getPictures()
     {
-        return $this->hasMany(Pictures::class, ['activities_id' => 'id']);
+        return $this->hasMany(Picture::class, ['activity_id' => 'id']);
     }
 
     /**
@@ -133,9 +178,9 @@ class Activity extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getSales()
+    public function getSale()
     {
-        return $this->hasMany(Sales::class, ['activities_id' => 'id']);
+        return $this->hasMany(Sales::class, ['activity_id' => 'id']);
     }
 
     /**
@@ -143,9 +188,9 @@ class Activity extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getTickets()
+    public function getTicket()
     {
-        return $this->hasMany(Tickets::class, ['activities_id' => 'id']);
+        return $this->hasMany(Tickets::class, ['activity_id' => 'id']);
     }
 
     public function getUser()

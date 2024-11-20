@@ -7,14 +7,14 @@ use yii\helpers\Url;
 /** @var frontend\models\ReviewSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Reviews';
+$this->title = 'Review';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="reviews-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
     <p>
-        <?= Html::a('Create Reviews', ['create', 'id' => $activityId], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Create Review', ['create', 'id' => $activityId], ['class' => 'btn btn-success']) ?>
     </p>
 
     <?php

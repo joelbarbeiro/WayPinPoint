@@ -3,55 +3,55 @@
 use yii\db\Migration;
 
 /**
- * Handles the creation of table `{{%tickets}}`.
+ * Handles the creation of table `{{%ticket}}`.
  * Has foreign keys to the tables:
  *
- * - `{{%activities}}`
+ * - `{{%activity}}`
  * - `{{%user}}`
  */
-class m241027_181851_create_tickets_table extends Migration
+class m241027_181851_create_ticket_table extends Migration
 {
     /**
      * {@inheritdoc}
      */
     public function safeUp()
     {
-        $this->createTable('{{%tickets}}', [
+        $this->createTable('{{%ticket}}', [
             'id' => $this->primaryKey(),
-            'activities_id' => $this->integer()->notNull(),
+            'activity_id' => $this->integer()->notNull(),
             'participant' => $this->integer()->notNull(),
             'qr' => $this->string(250)->notNull(),
             'status' => $this->integer()->defaultValue(0)->notNull(),
         ]);
 
-        // creates index for column `activities_id`
+        // creates index for column `activity_id`
         $this->createIndex(
-            '{{%idx-tickets-activities_id}}',
-            '{{%tickets}}',
-            'activities_id'
+            '{{%idx-ticket-activity_id}}',
+            '{{%ticket}}',
+            'activity_id'
         );
 
-        // add foreign key for table `{{%activities}}`
+        // add foreign key for table `{{%activity}}`
         $this->addForeignKey(
-            '{{%fk-tickets-activities_id}}',
-            '{{%tickets}}',
-            'activities_id',
-            '{{%activities}}',
+            '{{%fk-ticket-activity_id}}',
+            '{{%ticket}}',
+            'activity_id',
+            '{{%activity}}',
             'id',
             'CASCADE'
         );
 
         // creates index for column `participant`
         $this->createIndex(
-            '{{%idx-tickets-participant}}',
-            '{{%tickets}}',
+            '{{%idx-ticket-participant}}',
+            '{{%ticket}}',
             'participant'
         );
 
         // add foreign key for table `{{%user}}`
         $this->addForeignKey(
-            '{{%fk-tickets-participant}}',
-            '{{%tickets}}',
+            '{{%fk-ticket-participant}}',
+            '{{%ticket}}',
             'participant',
             '{{%user}}',
             'id',
@@ -64,30 +64,30 @@ class m241027_181851_create_tickets_table extends Migration
      */
     public function safeDown()
     {
-        // drops foreign key for table `{{%activities}}`
+        // drops foreign key for table `{{%activity}}`
         $this->dropForeignKey(
-            '{{%fk-tickets-activities_id}}',
-            '{{%tickets}}'
+            '{{%fk-ticket-activity_id}}',
+            '{{%ticket}}'
         );
 
-        // drops index for column `activities_id`
+        // drops index for column `activity_id`
         $this->dropIndex(
-            '{{%idx-tickets-activities_id}}',
-            '{{%tickets}}'
+            '{{%idx-ticket-activity_id}}',
+            '{{%ticket}}'
         );
 
         // drops foreign key for table `{{%user}}`
         $this->dropForeignKey(
-            '{{%fk-tickets-participant}}',
-            '{{%tickets}}'
+            '{{%fk-ticket-participant}}',
+            '{{%ticket}}'
         );
 
         // drops index for column `participant`
         $this->dropIndex(
-            '{{%idx-tickets-participant}}',
-            '{{%tickets}}'
+            '{{%idx-ticket-participant}}',
+            '{{%ticket}}'
         );
 
-        $this->dropTable('{{%tickets}}');
+        $this->dropTable('{{%ticket}}');
     }
 }

@@ -72,7 +72,7 @@ class RoleRegisterForm extends ActiveRecord
     public function roleRegister()
     {
         $nifExists = (new Query())
-            ->from('userextras')
+            ->from('userextra')
             ->where(['nif' => $this->nif])
             ->exists();
 
@@ -114,7 +114,7 @@ class RoleRegisterForm extends ActiveRecord
         $user = $userExtra->user;
 
         $nifExists = (new Query())
-            ->from('userextras')
+            ->from('userextra')
             ->where(['nif' => $this->nif])
             ->exists();
 

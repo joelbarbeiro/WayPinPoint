@@ -2,7 +2,7 @@
 
 namespace common\models;
 
-use backend\models\Activities;
+use common\models\Activity;
 
 /**
  * This is the model class for table "cart".
@@ -12,7 +12,7 @@ use backend\models\Activities;
  * @property int $quantity
  * @property int $id
  *
- * @property Activities $product
+ * @property Activity $product
  * @property User $user
  */
 class Cart extends \yii\db\ActiveRecord
@@ -33,7 +33,7 @@ class Cart extends \yii\db\ActiveRecord
         return [
             [['user_id', 'product_id', 'quantity'], 'required'],
             [['user_id', 'product_id', 'quantity'], 'integer'],
-            [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Activities::class, 'targetAttribute' => ['product_id' => 'id']],
+            [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Activity::class, 'targetAttribute' => ['product_id' => 'id']],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
         ];
     }
@@ -58,7 +58,7 @@ class Cart extends \yii\db\ActiveRecord
      */
     public function getActivity()
     {
-        return $this->hasOne(Activities::class, ['id' => 'product_id']);
+        return $this->hasOne(Activity::class, ['id' => 'product_id']);
     }
 
     /**

@@ -2,7 +2,7 @@
 
 namespace backend\models;
 
-use Yii;
+use common\models\Activities;
 
 /**
  * This is the model class for table "tickets".
@@ -13,7 +13,7 @@ use Yii;
  * @property string $qr
  * @property int $status
  *
- * @property Activities $activities
+ * @property Activities $activity
  * @property User $participant0
  */
 class Tickets extends \yii\db\ActiveRecord

@@ -1,8 +1,6 @@
 <?php
 
-namespace backend\models;
-
-use Yii;
+namespace common\models;
 
 /**
  * This is the model class for table "times".
@@ -10,16 +8,16 @@ use Yii;
  * @property int $id
  * @property string $hour
  *
- * @property Calendar[] $calendars
+ * @property Calendar[] $calendar
  */
-class Times extends \yii\db\ActiveRecord
+class Time extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return 'times';
+        return 'time';
     }
 
     /**

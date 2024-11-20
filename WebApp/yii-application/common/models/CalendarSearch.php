@@ -1,10 +1,9 @@
 <?php
 
-namespace backend\models;
+namespace common\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use backend\models\Calendar;
 
 /**
  * CalendarSearch represents the model behind the search form of `backend\models\Calendar`.
@@ -17,7 +16,7 @@ class CalendarSearch extends Calendar
     public function rules()
     {
         return [
-            [['id', 'activities_id', 'date_id'], 'integer'],
+            [['id', 'activity_id', 'date_id'], 'integer'],
         ];
     }
 
@@ -58,7 +57,7 @@ class CalendarSearch extends Calendar
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'activities_id' => $this->activities_id,
+            'activity_id' => $this->activity_id,
             'date_id' => $this->date_id,
         ]);
 

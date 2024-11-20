@@ -14,9 +14,9 @@ use yii\db\Query;
  * @property string $address
  * @property string $name
  *
- * @property LocalsellpointUserextra[] $localsellpointUserextras
+ * @property LocalsellpointUserextra[] $localsellpointUserextra
  * @property User $user
- * @property UserExtra[] $userextras
+ * @property UserExtra[] $userextra
  */
 class Localsellpoint extends \yii\db\ActiveRecord
 {
@@ -73,7 +73,7 @@ class Localsellpoint extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getLocalsellpointUserextras()
+    public function getLocalsellpointUserextra()
     {
         return $this->hasMany(LocalsellpointUserextra::class, ['localsellpoint_id' => 'id']);
     }
@@ -96,7 +96,7 @@ class Localsellpoint extends \yii\db\ActiveRecord
     public function getUserextras()
     {
         return $this->hasMany(UserExtra::class, ['id' => 'userextra_id'])
-            ->via('localsellpointUserextras');
+            ->via('localsellpointUserextra');
     }
     public static function getLocalStoreForSupplier($userId): array
     {
@@ -115,7 +115,7 @@ class Localsellpoint extends \yii\db\ActiveRecord
             ->where(['status' => 10])
             ->andWhere(['id' => (new Query())
                 ->select('user_id')
-                ->from('userextras')
+                ->from('userextra')
                 ->where(['supplier' => $userId])
                 ->andWhere(['localsellpoint_id' => $localStore->id])
             ])

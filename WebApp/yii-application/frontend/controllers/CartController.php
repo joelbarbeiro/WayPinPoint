@@ -89,6 +89,8 @@ class CartController extends Controller
                     if ($model->save()) {
                         return $this->redirect(['view', 'user_id' => $model->user_id, 'product_id' => $model->product_id]);
                     }
+                    dd($model->errors);
+
                 }
             }
          else {

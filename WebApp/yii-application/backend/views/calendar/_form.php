@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /** @var yii\web\View $this */
-/** @var backend\models\Calendar $model */
+/** @var \common\models\Calendar $model */
 /** @var yii\widgets\ActiveForm $form */
 ?>
 
@@ -17,6 +17,8 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'date_id')->textInput() ?>
 
     <?= $form->field($model, 'time_id')->textInput() ?>
+
+    <?= $form->field($model, 'status')->textInput() ?>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>

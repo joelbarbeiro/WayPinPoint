@@ -3,9 +3,9 @@
 use yii\db\Migration;
 
 /**
- * Class m241118_214239_seed_users_table
+ * Class m241118_214239_seed_user_table
  */
-class m241118_214239_seed_users_userextras_localsellpoint_table extends Migration
+class m241118_214239_seed_user_userextra_localsellpoint_table extends Migration
 {
     /**
      * {@inheritdoc}
@@ -41,7 +41,7 @@ class m241118_214239_seed_users_userextras_localsellpoint_table extends Migratio
         $localsellpointId2 = (new \yii\db\Query())->select('id')->from('localsellpoint')->where(['user_id' => $userIdSupplier2])->scalar();
 
 
-        // Step 4: Insert userextras records
+        // Step 4: Insert userextra records
         $usersData = [
             'supplier1' => ['nif' => 987654321, 'address' => 'Supplier1 Address', 'phone' => '0987654321', 'supplier' => $userIdSupplier1, 'localsellpoint_id' => $localsellpointId1],
             'supplier2' => ['nif' => 567890123, 'address' => 'Supplier2 Address', 'phone' => '5678901234', 'supplier' => $userIdSupplier2, 'localsellpoint_id' => $localsellpointId2],
@@ -63,7 +63,7 @@ class m241118_214239_seed_users_userextras_localsellpoint_table extends Migratio
                 ->scalar();
 
             if ($user) {
-                $this->insert('userextras', [
+                $this->insert('userextra', [
                     'user_id' => $user,
                     'localsellpoint_id' => $data['localsellpoint_id'],
                     'nif' => $data['nif'],
@@ -128,7 +128,7 @@ class m241118_214239_seed_users_userextras_localsellpoint_table extends Migratio
             }
         }
 
-        // Step 3: Delete userextras records
+        // Step 3: Delete userextra records
         foreach ($users as $username) {
             $userId = (new \yii\db\Query())
                 ->select('id')
@@ -137,8 +137,8 @@ class m241118_214239_seed_users_userextras_localsellpoint_table extends Migratio
                 ->scalar();
 
             if ($userId) {
-                // Delete the corresponding userextras record
-                $this->delete('userextras', ['user_id' => $userId]);
+                // Delete the corresponding userextra record
+                $this->delete('userextra', ['user_id' => $userId]);
             }
         }
 
@@ -164,19 +164,4 @@ class m241118_214239_seed_users_userextras_localsellpoint_table extends Migratio
 
         return true;
     }
-
-    /*
-    // Use up()/down() to run migration code without a transaction.
-    public function up()
-    {
-
-    }
-
-    public function down()
-    {
-        echo "m241118_214239_seed_users_table cannot be reverted.\n";
-
-        return false;
-    }
-    */
 }

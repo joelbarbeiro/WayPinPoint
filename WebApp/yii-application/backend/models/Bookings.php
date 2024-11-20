@@ -2,7 +2,8 @@
 
 namespace backend\models;
 
-use Yii;
+use common\models\Activities;
+use common\models\Calendar;
 
 /**
  * This is the model class for table "bookings".
@@ -13,7 +14,7 @@ use Yii;
  * @property int $user_id
  * @property int $numberpax
  *
- * @property Activities $activities
+ * @property Activities $activity
  * @property Calendar $calendar
  * @property User $user
  */

@@ -2,7 +2,7 @@
 
 namespace backend\models;
 
-use Yii;
+use common\models\Activities;
 
 /**
  * This is the model class for table "sales".
@@ -12,7 +12,7 @@ use Yii;
  * @property int $buyer
  * @property float $total
  *
- * @property Activities $activities
+ * @property Activities $activity
  * @property User $buyer0
  * @property Invoices[] $invoices
  */

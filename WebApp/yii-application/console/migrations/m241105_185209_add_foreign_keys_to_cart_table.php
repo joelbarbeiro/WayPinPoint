@@ -12,33 +12,36 @@ class m241105_185209_add_foreign_keys_to_cart_table extends Migration
      */
     public function safeUp()
     {
-        // Drop foreign keys if they already exist
-        $this->dropForeignKeyIfExists('fk-cart-user_id', 'cart_items');
-        $this->dropForeignKeyIfExists('fk-cart-product_id', 'cart_items');
+        $this->renameTable('{{%cart_items}}', '{{%cart}}');
 
-        // Ensure cart_items uses InnoDB engine if needed
-        $this->execute('ALTER TABLE cart_items ENGINE=InnoDB');
+        $this->dropIndex('{{%idx-cart_items-user_id}}', '{{%cart}}');
+        $this->dropIndex('{{%idx-cart_items-product_id}}', '{{%cart}}');
 
-        // Ensure activities uses InnoDB engine if needed
-        $this->execute('ALTER TABLE activities ENGINE=InnoDB');
+        $this->dropPrimaryKey('{{%user_id}}', '{{%cart}}');
 
-        // Add foreign key for User_id
+        $this->alterColumn('{{%cart}}', 'user_id', $this->integer()->notNull());
+        $this->alterColumn('{{%cart}}', 'product_id', $this->integer()->notNull());
+        $this->alterColumn('{{%cart}}', 'quantity', $this->integer()->notNull());
+
+        $this->addColumn('{{%cart}}', 'id', $this->primaryKey()->notNull());
+
+
+
         $this->addForeignKey(
-            'fk-cart-user_id',
-            'cart_items',
-            'User_id',
-            'user',
+            '{{%fk-cart-user_id}}',
+            '{{%cart}}',
+            'user_id',
+            '{{%user}}',
             'id',
             'CASCADE',
             'CASCADE'
         );
 
-        // Add foreign key for Product_id
         $this->addForeignKey(
-            'fk-cart-product_id',
-            'cart_items',
-            'Product_id',
-            'activities',
+            '{{%fk-cart-product_id}}',
+            '{{%cart}}',
+            'product_id',
+            '{{%activity}}',
             'id',
             'CASCADE',
             'CASCADE'
@@ -51,23 +54,13 @@ class m241105_185209_add_foreign_keys_to_cart_table extends Migration
     public function safeDown()
     {
         // Drop foreign keys
-        $this->dropForeignKey('fk-cart-user_id', 'cart_items');
-        $this->dropForeignKey('fk-cart-product_id', 'cart_items');
+        $this->dropForeignKey('fk-cart-user_id', 'cart');
+        $this->dropForeignKey('fk-cart-product_id', 'cart');
+        $this->dropTable('{{%cart}}');
+
     }
 
     /**
      * Drop foreign key if it exists
      */
-    private function dropForeignKeyIfExists($name, $table)
-    {
-        $db = $this->db;
-        if ($db->getSchema()->getTableSchema($table, true) && $db->getSchema()->getTableSchema($table, true)->foreignKeys) {
-            $foreignKeys = $db->getSchema()->getTableSchema($table, true)->foreignKeys;
-            foreach ($foreignKeys as $fkName => $foreignKey) {
-                if ($fkName === $name) {
-                    $this->dropForeignKey($name, $table);
-                }
-            }
-        }
-    }
 }

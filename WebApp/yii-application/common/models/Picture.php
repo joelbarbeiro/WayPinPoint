@@ -1,22 +1,22 @@
 <?php
 
-namespace backend\models;
+namespace common\models;
 
-use Yii;
+use common\models\User;
 
 /**
  * This is the model class for table "pictures".
  *
  * @property int $id
- * @property int $activities_id
+ * @property int $activity_id
  * @property int $user_id
  * @property string $reviews
  * @property string $uri
  *
- * @property Activities $activities
+ * @property Activity $activity
  * @property User $user
  */
-class Pictures extends \yii\db\ActiveRecord
+class Picture extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -32,11 +32,11 @@ class Pictures extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['activities_id', 'user_id', 'reviews', 'uri'], 'required'],
-            [['activities_id', 'user_id'], 'integer'],
+            [['activity_id', 'user_id', 'reviews', 'uri'], 'required'],
+            [['activity_id', 'user_id'], 'integer'],
             [['reviews'], 'string', 'max' => 500],
             [['uri'], 'string', 'max' => 250],
-            [['activities_id'], 'exist', 'skipOnError' => true, 'targetClass' => Activities::class, 'targetAttribute' => ['activities_id' => 'id']],
+            [['activity_id'], 'exist', 'skipOnError' => true, 'targetClass' => Activity::class, 'targetAttribute' => ['activity_id' => 'id']],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
         ];
     }
@@ -48,21 +48,21 @@ class Pictures extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'activities_id' => 'Activities ID',
+            'activity_id' => 'Activity ID',
             'user_id' => 'User ID',
-            'reviews' => 'Reviews',
+            'reviews' => 'Review',
             'uri' => 'Uri',
         ];
     }
 
     /**
-     * Gets query for [[Activities]].
+     * Gets query for [[activity]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getActivities()
+    public function getactivity()
     {
-        return $this->hasOne(Activities::class, ['id' => 'activities_id']);
+        return $this->hasOne(activity::class, ['id' => 'activity_id']);
     }
 
     /**

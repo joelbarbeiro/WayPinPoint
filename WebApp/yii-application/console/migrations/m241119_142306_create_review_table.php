@@ -3,16 +3,16 @@
 use yii\db\Migration;
 
 /**
- * Handles the creation of table `{{%reviews}}`.
+ * Handles the creation of table `{{%review}}`.
  */
-class m241119_142306_create_reviews_table extends Migration
+class m241119_142306_create_review_table extends Migration
 {
     /**
      * {@inheritdoc}
      */
     public function safeUp()
     {
-        $this->createTable('{{%reviews}}', [
+        $this->createTable('{{%review}}', [
             'id' => $this->primaryKey(),
             'activity_id' => $this->integer()->notNull(),
             'score' => $this->tinyInteger(1)->notNull()->check('score BETWEEN 1 AND 5'),
@@ -21,10 +21,10 @@ class m241119_142306_create_reviews_table extends Migration
         ]);
 
         $this->addForeignKey(
-            'fk-reviews-activity_id',
-            '{{%reviews}}',
+            'fk-review-activity_id',
+            '{{%review}}',
             'activity_id',
-            '{{%activities}}',
+            '{{%activity}}',
             'id',
             'CASCADE'
         );
@@ -36,7 +36,7 @@ class m241119_142306_create_reviews_table extends Migration
      */
     public function safeDown()
     {
-        $this->dropForeignKey('fk-reviews-activity_id', 'reviews');
-        $this->dropTable('{{%reviews}}');
+        $this->dropForeignKey('fk-review-activity_id', 'review');
+        $this->dropTable('{{%review}}');
     }
 }
