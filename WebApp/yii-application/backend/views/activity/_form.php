@@ -27,8 +27,6 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'address')->textInput(['maxlength' => true]) ?>
 
     <div class="date-inputs">
-
-        foreach(
         <div class="form-group">
             <div class="date-field">
                 <?= $form->field($model, 'date[]')->input('date') ?>
@@ -38,7 +36,6 @@ use yii\widgets\ActiveForm;
                 ]); ?>
             </div>
         </div>
-
 
     </div>
 
