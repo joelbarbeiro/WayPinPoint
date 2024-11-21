@@ -25,7 +25,6 @@ $this->params['breadcrumbs'][] = $this->title;
             ['attribute' => 'username',
                 'label' => 'User',
                 'value' => function ($model) {
-                    //dd($model);
                     return Yii::$app->user->identity->username;
                 }
             ],
@@ -41,10 +40,20 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'class' => ActionColumn::className(),
-                'urlCreator' => function ($action, Invoice $model, $key, $index, $column) {
-                    return Url::toRoute([$action, 'id' => $model->id]);
-                }
-            ],
+                'template' => '{print}',
+                'buttons' => [
+                    'print' => function ($url, $model) {
+                        return Html::a(
+                            'Print Invoice',
+                            ['invoice/print', 'id' => $model->id], // Pass the invoice ID
+                            [
+                                'class' => 'btn btn-primary',
+                                'title' => 'Print Invoice',
+                            ]
+                        );
+                    }
+                ]
+            ]
         ],
     ]); ?>
 

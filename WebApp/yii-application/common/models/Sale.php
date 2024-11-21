@@ -50,13 +50,18 @@ class Sale extends \yii\db\ActiveRecord
             'purchase_date' => 'Purchase Date',
         ];
     }
-    public function getInvoices()
+    public function getInvoice()
     {
         return $this->hasMany(Invoice::class, ['sales_id' => 'id']);
     }
     public function getUsers()
     {
         return $this->hasOne(User::class, ['user' => 'buyer']);
+    }
+
+    public function getActivity()
+    {
+        return $this->hasOne(Activity::class, ['id' => 'activity_id']);
     }
     public static function createSale($activityId)
     {
@@ -71,5 +76,14 @@ class Sale extends \yii\db\ActiveRecord
         $model->total = $activity->priceperpax * $cart->quantity;
         $model->purchase_date = new Expression('NOW()');
         $model->save();
+    }
+
+    public static function calcTotal()
+    {
+        $sale = new Sale();
+        $cart = new Cart();
+        $quantity = $cart->quantity;
+        $price = $sale->total / $quantity;
+        return $price * $quantity;
     }
 }

@@ -2,8 +2,14 @@
 
 namespace frontend\controllers;
 
+use common\models\Activity;
+use common\models\Calendar;
+use common\models\Cart;
 use common\models\Invoice;
 use common\models\InvoiceSearch;
+use common\models\Sale;
+use common\models\User;
+use Mpdf\Mpdf;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
@@ -40,18 +46,9 @@ class InvoiceController extends Controller
     public function actionIndex()
     {
         $searchModel = new InvoiceSearch();
-
-        /* $invoices = Invoice::find()
-             ->select(['user.username', 'sales.purchase_date', 'sales.total'])
-             ->innerJoin('user', 'user.id = invoices.user')
-             ->innerJoin('sales', 'sales.id = invoices.sales_id')
-             ->where(['invoices.user' => Yii::$app->user->id])
-             ->all();*/
-
         $dataProvider = $searchModel->search($this->request->queryParams);
         $dataProvider->query->joinWith('sale')
             ->andWhere(['user' => Yii::$app->user->id]);
-
 
         return $this->render('index', [
             'dataProvider' => $dataProvider,
@@ -141,4 +138,49 @@ class InvoiceController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
+    public function actionPrint($id)
+    {
+        $invoice = Invoice::findOne($id);
+        if(!$invoice){
+            Yii::$app->session->setFlash('error', "Invoice not found");
+            return $this->redirect(['index']);
+        }
+        $saleId = $invoice->sale_id;
+        $sale = Sale::findOne($saleId);
+        $activity = Activity::findOne($sale->activity_id);
+        if(!$saleId){
+            Yii::$app->session->setFlash('error', "Sale not found");
+            return $this->redirect(['index']);
+        }
+
+        if (!$activity) {
+            Yii::$app->session->setFlash('error', 'Activity not found for this sale.');
+            return $this->redirect(['index']);
+        }
+        $userId = $invoice->user;
+        $user = User::findOne($userId);
+
+        if (!$user) {
+            Yii::$app->session->setFlash('error', 'Activity not found for this sale.');
+            return $this->redirect(['index']);
+        }
+        $calendar = Calendar::find()->where(['activity_id' => $activity->id])->all();
+        $content = $this->renderPartial('printinvoice', [
+            'user' => $user,
+            'activity' => $activity,
+            'calendar' => $calendar,
+            'sale' => $sale,
+        ]);
+        $this->generatePdf($content, $user, $activity);
+
+    }
+    public function generatePdf($content, $user, $activity)
+    {
+        $pdf = new Mpdf();
+        $pdf->WriteHTML($content);
+        return Yii::$app->response->sendContentAsFile($pdf->Output('', 'S'), "receipt_{$user->username}_{$activity->description}.pdf", [
+            'mimeType' => 'application/pdf',
+        ]);
+    }
+
 }
