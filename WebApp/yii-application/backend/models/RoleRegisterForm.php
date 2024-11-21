@@ -58,17 +58,6 @@ class RoleRegisterForm extends ActiveRecord
         ];
     }
 
-    public function saveUserRoleAssignment($userExtraId, $localsellpointId)
-    {
-        $localsellpointUserextra = new LocalsellpointUserextra();
-        $localsellpointUserextra->localsellpoint_id = $localsellpointId;
-        $localsellpointUserextra->userextra_id = $userExtraId;
-        $localsellpointUserextra->role = $this->role;
-
-        return $localsellpointUserextra->save(false); // Save without validation if validations are in place in RoleRegisterForm
-    }
-
-
     public function roleRegister()
     {
         $nifExists = (new Query())
@@ -116,6 +105,7 @@ class RoleRegisterForm extends ActiveRecord
         $nifExists = (new Query())
             ->from('userextra')
             ->where(['nif' => $this->nif])
+            ->andWhere(['!=', 'user_id', $user->id])
             ->exists();
 
         if ($nifExists) {
@@ -158,5 +148,4 @@ class RoleRegisterForm extends ActiveRecord
             throw $e;
         }
     }
-
 }

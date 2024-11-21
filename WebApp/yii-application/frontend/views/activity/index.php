@@ -25,9 +25,9 @@ $this->params['breadcrumbs'][] = $this->title;
 
         echo '<img src="' . $imgPath . $activity->photo . '" class="card-img-top" alt="...">';
         echo '<div class="card-body">';
-        echo '<h5 class="card-title">' . $activity->name . '</h5>';
-        echo '<p class="card-text">' . $activity->description . '</p>';
-        echo '<p class="card-text">'. $activity->priceperpax .'€' .'</p>';
+        echo '<h5 class="card-title">' . 'Activity Name: ' . $activity->name . '</h5>';
+        echo '<p class="card-text">' . 'Description: ' . $activity->description . '</p>';
+        echo '<p class="card-text">' . 'Price per Ticket: ' . $activity->priceperpax . '€' . '</p>';
 
         foreach ($activity->calendar as $calendar) {
             if ($calendar->status != 0) {
@@ -37,8 +37,8 @@ $this->params['breadcrumbs'][] = $this->title;
 
         echo '<div class="d-flex justify-content-between p-3">';
         echo '<a href="' . Url::to(['activity/view', 'id' => $activity->id]) . '" class="btn btn-primary">View</a>';
-        echo '<a href="' . Url::to(['review/index' ,'id' => $activity->id]) . '" class="btn btn-outline-warning">Review</a>';
-        echo '<a href="' . Url::to(['cart/create' ,'activityId' => $activity->id]) . '" class="btn btn-outline-success">Buy</a>';
+        echo '<a href="' . Url::to(['review/index', 'id' => $activity->id]) . '" class="btn btn-outline-warning">Review</a>';
+        echo '<a href="' . Url::to(['cart/create', 'activityId' => $activity->id]) . '" class="btn btn-outline-success">Buy</a>';
 
         echo '</div>';
 

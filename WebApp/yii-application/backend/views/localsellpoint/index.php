@@ -29,6 +29,7 @@ $this->registerCssFile('@web/css/site.css');
                     <th>Shop Name</th>
                     <th>Address</th>
                     <th>Owner</th>
+                    <th>Manager</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -36,7 +37,6 @@ $this->registerCssFile('@web/css/site.css');
                     <td><?= Html::encode($local->name) ?></td>
                     <td><?= Html::encode($local->address) ?></td>
                     <td><?= Html::encode($local->user->username) ?></td>
-
                     <td>
                         <?= Html::a('Edit Shop', ['localsellpoint/update', 'id' => $local->id],
                             ['class' => 'btn btn-warning']) ?>
