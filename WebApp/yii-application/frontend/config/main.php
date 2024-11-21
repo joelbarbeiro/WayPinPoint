@@ -54,7 +54,7 @@ return [
                 'productFieldPrice' => 'price',
             ],
         ],
-
     ],
+    'defaultRoute' => 'activity/index',
     'params' => $params,
 ];

@@ -43,19 +43,22 @@ class Invoice extends \yii\db\ActiveRecord
             'sale_id' => 'Sales ID',
         ];
     }
-    public function getSales()
+
+    public function getSale()
     {
         return $this->hasOne(Sale::class, ['id' => 'sale_id']);
     }
+
     public function getUsers()
     {
         return $this->hasOne(User::class, ['user' => 'id']);
     }
+
     public static function createInvoice($activityId)
     {
         $userId = Yii::$app->user->id;
         $sale = Sale::find()
-            ->where(['buyer' => $userId , 'activity_id' => $activityId])
+            ->where(['buyer' => $userId, 'activity_id' => $activityId])
             ->one();
         $model = new Invoice();
         $model->user = $userId;

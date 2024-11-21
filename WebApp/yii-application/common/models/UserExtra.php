@@ -98,19 +98,20 @@ class UserExtra extends \yii\db\ActiveRecord
             ])
             ->asArray()
             ->all();
-
     }
 
     public static function getEmployeesForSupplier($userId): array
     {
+        $managerIds = Yii::$app->authManager->getUserIdsByRole('manager');
+
         return UserExtra::find()
             ->select(['userextra.id', 'userextra.user_id', 'userextra.supplier', 'user.username'])
             ->innerJoin('user', 'user.id = userextra.user_id')
             ->where(['userextra.supplier' => $userId])
-            ->andWhere(['user.status'=> 10])
+            ->andWhere(['user.status' => 10])
+            ->andWhere(['!=', 'userextra.user_id', $userId])
+            ->andWhere(['not in', 'userextra.user_id', $managerIds])
             ->asArray()
             ->all();
     }
-
-
 }

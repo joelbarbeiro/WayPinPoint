@@ -73,16 +73,17 @@ class RoleRegisterController extends \yii\web\Controller
 
         $model->username = $user->username;
         $model->email = $user->email;
-        $model->phone = $userExtra->phone ;
+        $model->phone = $userExtra->phone;
         $model->address = $userExtra->address;
-        $model->nif = $userExtra->nif ;
-        $model->localsellpoint = $userExtra->localsellpoint_id ;
+        $model->nif = $userExtra->nif;
+        $model->localsellpoint = $userExtra->localsellpoint_id;
         $model->role = $user->getRole();
 
         $localsellpoints = Localsellpoint::find()
             ->select(['id', 'name'])
             ->asArray()
             ->all();
+
         $localsellpointsMap = ArrayHelper::map($localsellpoints, 'id', 'name');
 
         if ($this->request->isPost && $model->load($this->request->post())) {
@@ -125,7 +126,7 @@ class RoleRegisterController extends \yii\web\Controller
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        'actions' => ['role-register', 'index', 'delete', 'view', 'update'],
+                        'actions' => ['role-register', 'index', 'delete', 'view', 'update', 'role-update'],
                         'allow' => true,
                         'roles' => ['supplier'],
                     ],

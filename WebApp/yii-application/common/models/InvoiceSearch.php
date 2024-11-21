@@ -16,7 +16,7 @@ class InvoiceSearch extends Invoice
     public function rules()
     {
         return [
-            [['id', 'user', 'sales_id'], 'integer'],
+            [['id', 'user', 'sale_id'], 'integer'],
         ];
     }
 
@@ -58,7 +58,7 @@ class InvoiceSearch extends Invoice
         $query->andFilterWhere([
             'id' => $this->id,
             'user' => $this->user,
-            'sales_id' => $this->sales_id,
+            'sale_id' => $this->sale_id,
         ]);
 
         return $dataProvider;

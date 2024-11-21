@@ -2,8 +2,6 @@
 
 namespace common\models;
 
-use common\models\User;
-
 /**
  * This is the model class for table "pictures".
  *
@@ -23,7 +21,7 @@ class Picture extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'pictures';
+        return 'picture';
     }
 
     /**

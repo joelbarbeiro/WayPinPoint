@@ -41,17 +41,16 @@ class InvoiceController extends Controller
     {
         $searchModel = new InvoiceSearch();
 
-       /* $invoices = Invoice::find()
-            ->select(['user.username', 'sales.purchase_date', 'sales.total'])
-            ->innerJoin('user', 'user.id = invoices.user')
-            ->innerJoin('sales', 'sales.id = invoices.sales_id')
-            ->where(['invoices.user' => Yii::$app->user->id])
-            ->all();*/
+        /* $invoices = Invoice::find()
+             ->select(['user.username', 'sales.purchase_date', 'sales.total'])
+             ->innerJoin('user', 'user.id = invoices.user')
+             ->innerJoin('sales', 'sales.id = invoices.sales_id')
+             ->where(['invoices.user' => Yii::$app->user->id])
+             ->all();*/
 
         $dataProvider = $searchModel->search($this->request->queryParams);
-        $dataProvider->query->joinWith('sales')
+        $dataProvider->query->joinWith('sale')
             ->andWhere(['user' => Yii::$app->user->id]);
-
 
 
         return $this->render('index', [
@@ -142,6 +141,4 @@ class InvoiceController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
-
-
 }

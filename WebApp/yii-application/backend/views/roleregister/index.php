@@ -1,10 +1,6 @@
 <?php
 
-use common\models\UserExtra;
 use yii\helpers\Html;
-use yii\helpers\Url;
-use yii\grid\ActionColumn;
-use yii\grid\GridView;
 
 /** @var yii\web\View $this */
 /** @var common\models\UserExtraSearch $searchModel */
@@ -26,7 +22,11 @@ $this->registerCssFile('@web/css/site.css');
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <?php foreach ($dataProvider->models as $employee): ?>
-    <?php if($employee->user->status == 0 || $employee->supplier != Yii::$app->user->id) continue; ?>
+        <?php
+        if ($employee->user->status == 0 ||
+            $employee->supplier != Yii::$app->user->id ||
+            $employee->user->getRole() == 'supplier') continue;
+        ?>
         <div class="employees">
             <table>
                 <thead>
@@ -59,28 +59,28 @@ $this->registerCssFile('@web/css/site.css');
         </div>
     <?php endforeach ?>
 
-<!--    --><?php //= GridView::widget([
-//        'dataProvider' => $dataProvider,
-//        'filterModel' => $searchModel,
-//        'columns' => [
-//            ['class' => 'yii\grid\SerialColumn'],
-//            [
-//                'label' => 'Username',
-//                'value' => function ($model) {
-//                    return $model->user->username;
-//                }
-//            ],
-//            'nif',
-//            'address',
-//            'phone',
-//            [
-//                'class' => ActionColumn::className(),
-//                'urlCreator' => function ($action, UserExtra $model, $key, $index, $column) {
-//                    return Url::toRoute([$action, 'id' => $model->user_id]);
-//                 }
-//            ],
-//        ],
-//    ]); ?>
+    <!--    --><?php //= GridView::widget([
+    //        'dataProvider' => $dataProvider,
+    //        'filterModel' => $searchModel,
+    //        'columns' => [
+    //            ['class' => 'yii\grid\SerialColumn'],
+    //            [
+    //                'label' => 'Username',
+    //                'value' => function ($model) {
+    //                    return $model->user->username;
+    //                }
+    //            ],
+    //            'nif',
+    //            'address',
+    //            'phone',
+    //            [
+    //                'class' => ActionColumn::className(),
+    //                'urlCreator' => function ($action, UserExtra $model, $key, $index, $column) {
+    //                    return Url::toRoute([$action, 'id' => $model->user_id]);
+    //                 }
+    //            ],
+    //        ],
+    //    ]); ?>
 
 
 </div>

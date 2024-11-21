@@ -35,17 +35,24 @@ $this->params['breadcrumbs'][] = $this->title;
             'address',
             'name',
             [
+                'label' => 'Manager',
+                'value' => function ($model) use ($manager) {
+                    if ($manager) {
+                        return $manager[0];
+                    }
+                    return "No Manager";
+                }
+            ],
+            [
                 'label' => 'Employees',
-                'value' => function ($model) use ($employeesMap) {
+                'value' => function ($model) use ($employees) {
                     $usernames = [];
-
-                    foreach ($employeesMap as $user) {
-                        array_push($usernames, $user);
+                    foreach ($employees as $user) {
+                        $usernames[] = $user;
                     }
                     return !empty($usernames) ? implode(', ', $usernames) : "No Employees";
                 }
             ],
         ],
     ]) ?>
-
 </div>
