@@ -4,7 +4,6 @@ namespace frontend\controllers;
 
 use common\models\Activity;
 use common\models\Calendar;
-use common\models\Cart;
 use common\models\Invoice;
 use common\models\InvoiceSearch;
 use common\models\Sale;
@@ -138,28 +137,27 @@ class InvoiceController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
+
     public function actionPrint($id)
     {
         $invoice = Invoice::findOne($id);
-        if(!$invoice){
+        if (!$invoice) {
             Yii::$app->session->setFlash('error', "Invoice not found");
             return $this->redirect(['index']);
         }
         $saleId = $invoice->sale_id;
         $sale = Sale::findOne($saleId);
         $activity = Activity::findOne($sale->activity_id);
-        if(!$saleId){
+        if (!$saleId) {
             Yii::$app->session->setFlash('error', "Sale not found");
             return $this->redirect(['index']);
         }
-
         if (!$activity) {
             Yii::$app->session->setFlash('error', 'Activity not found for this sale.');
             return $this->redirect(['index']);
         }
         $userId = $invoice->user;
         $user = User::findOne($userId);
-
         if (!$user) {
             Yii::$app->session->setFlash('error', 'Activity not found for this sale.');
             return $this->redirect(['index']);
@@ -172,7 +170,6 @@ class InvoiceController extends Controller
             'sale' => $sale,
         ]);
         $this->generatePdf($content, $user, $activity);
-
     }
     public function generatePdf($content, $user, $activity)
     {
