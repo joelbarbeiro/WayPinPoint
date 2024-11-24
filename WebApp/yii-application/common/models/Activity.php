@@ -9,6 +9,7 @@ use backend\models\Sale;
 use backend\models\Ticket;
 use common\models\User;
 use Yii;
+use yii\helpers\ArrayHelper;
 use yii\web\UploadedFile;
 
 
@@ -87,6 +88,7 @@ class Activity extends \yii\db\ActiveRecord
             'hour' => 'Custom Hours',
         ];
     }
+
     public function uploadPhoto()
     {
         $uploadBackendPath = $this->checkBackendUploadFolder();
@@ -130,17 +132,58 @@ class Activity extends \yii\db\ActiveRecord
         }
         return $uploadPath;
     }
-    public function getCalendarArray()
+
+    public function getCalendarArray($id)
     {
         $calendar = [];
+        $availableCalendar = Calendar::find()->where(['activity_id' => $id])->all();
+        $existingCombinations = [];
+
+        foreach ($availableCalendar as $dateAvailable) {
+            $existingCombinations[$dateAvailable->date->date][] = $dateAvailable->time_id;
+        }
         foreach ($this->date as $index => $date) {
+            $time = $this->hour[$index] ?? 0;
+            if (isset($existingCombinations[$date]) && in_array($time, $existingCombinations[$date])) {
+                continue;
+            }
             if (!isset($calendar[$date])) {
                 $calendar[$date] = [];
             }
-            $calendar[$date][] = $this->hour[$index] ?? 0;
+            $calendar[$date][] = $time;
         }
-
         return $calendar;
+    }
+
+
+
+    public function getSupplierActivities($userId)
+    {
+        return Activity::find()
+            ->joinWith('calendar')
+            ->andWhere(['user_id' => $userId])
+            ->andWhere(['activity.status' => 1])
+            ->andWhere(['calendar.status' => 1])
+            ->all();
+    }
+
+    public function getActivity($id, $userId)
+    {
+        return Activity::find()
+            ->joinWith('calendar')
+            ->where([
+                'activity.id' => $id,
+                'activity.user_id' => $userId,
+                'calendar.status' => 1
+            ])
+            ->one();
+    }
+
+    public function getTimeList()
+    {
+        $hoursQuery = Time::find()->select(['id', 'hour'])->asArray()->all();
+        return ArrayHelper::map($hoursQuery, 'id', 'hour');
+
     }
 
     /**

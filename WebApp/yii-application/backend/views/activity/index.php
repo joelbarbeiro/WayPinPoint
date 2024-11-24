@@ -20,7 +20,7 @@ $this->registerCssFile('@web/css/site.css', [
     <div class="row">
         <?php
         $counter = 0;
-        foreach ($dataProvider->models as $activity) {
+        foreach ($dataProvider as $activity) {
             echo '<div class="col-md-6 d-flex align-items-stretch">';
             echo '<div class="card m-3 w-100" >';
             echo '<img src="' . $imgPath . $activity->photo . '" class="card-img-top card-img-container" alt="' . $activity->name . '">';
