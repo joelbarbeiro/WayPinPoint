@@ -50,7 +50,11 @@ class Sale extends \yii\db\ActiveRecord
             'purchase_date' => 'Purchase Date',
         ];
     }
-    public function getInvoice()
+    public function getBuyer()
+    {
+        return $this->hasOne(User::class, ['id' => 'buyer']);
+    }
+    public function getInvoices()
     {
         return $this->hasMany(Invoice::class, ['sales_id' => 'id']);
     }

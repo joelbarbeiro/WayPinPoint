@@ -34,7 +34,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 }],
             [
                 'class' => ActionColumn::className(),
-                'template' => '{view},{delete}, {print}',
+                'template' => '{view} {delete} {print}',
                 'buttons' => [
                     'print' => function ($url, $model) {
                         return Html::a(

@@ -49,10 +49,11 @@ class Invoice extends \yii\db\ActiveRecord
         return $this->hasOne(Sale::class, ['id' => 'sale_id']);
     }
 
-    public function getUsers()
+    public function getUser()
     {
-        return $this->hasOne(User::class, ['user' => 'id']);
+        return $this->hasOne(User::class, ['id' => 'user']); //????
     }
+
 
     public static function createInvoice($activityId)
     {

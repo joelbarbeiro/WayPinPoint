@@ -44,6 +44,7 @@ class InvoiceController extends Controller
      */
     public function actionIndex()
     {
+
         $searchModel = new InvoiceSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
         $dataProvider->query->joinWith('sale')

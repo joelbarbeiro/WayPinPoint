@@ -6,7 +6,9 @@ use yii\helpers\Html;
 
 /** @var yii\web\View $this */
 /** @var yii\data\ActiveDataProvider $dataProvider */
-/** @var \common\models\Invoice $model */
+/** @var Invoice $model */
+
+use common\models\Invoice;
 
 $this->title = 'Invoices';
 $this->params['breadcrumbs'][] = $this->title;
@@ -15,14 +17,15 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
             ['attribute' => 'username',
                 'label' => 'User',
-                'value' => function ($model) {
+                'value' =>
+                    function ($model) {
+
                     return Yii::$app->user->identity->username;
                 }
             ],
@@ -36,6 +39,10 @@ $this->params['breadcrumbs'][] = $this->title;
                     return $model->sale->total . "€";
                 }
             ],
+            ['attribute' => 'Seller',
+            'value' => function ($model) {
+                        return $model->user;
+            }],
             [
                 'class' => ActionColumn::className(),
                 'template' => '{print}',
@@ -43,7 +50,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'print' => function ($url, $model) {
                         return Html::a(
                             'Print Invoice',
-                            ['invoice/print', 'id' => $model->id], // Pass the invoice ID
+                            ['invoice/print', 'id' => $model->id],
                             [
                                 'class' => 'btn btn-primary',
                                 'title' => 'Print Invoice',
