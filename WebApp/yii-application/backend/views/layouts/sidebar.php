@@ -16,24 +16,24 @@ $imgPath = Url::to('@web/assets/uploads/' . Yii::$app->user->id . '/');
         img-circle elevation-3" style="opacity: .8">
         <span class="brand-text font-weight-light">WayPinPoint</span>
     </a>
-
     <!-- Sidebar -->
     <div class="sidebar">
         <!-- Sidebar user panel (optional) -->
-        <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-            <!--            <div class="image">-->
-            <!--                <img src="-->
-            <?php //= $imgPath . $user->getUserExtra()->photo ?><!--" class="img-fluid rounded-circle " style="min-height: 40px; min-width: 40px">-->
-            <!--            </div>-->
+        <div class="user-panel mt-3 pb-3 mb-3 d-flex align-items-center">
+            <div class="image me-2">
+                <img src="<?= $imgPath . $user->getUserExtra()->photo ?>"
+                     class="img-fluid rounded-circle"
+                     style="min-height: 40px; min-width: 40px">
+            </div>
             <div class="info">
                 <?= Html::a($user->username, ['role-register/update', 'id' => $user->id],
-                    ['class' => 'd-block']) ?>
+                    ['class' => 'd-block text-decoration-none']) ?>
             </div>
         </div>
 
         <!-- SidebarSearch Form -->
         <!-- href be escaped -->
-        <!-- <div class="form-inline">
+        <div class="form-inline">
             <div class="input-group" data-widget="sidebar-search">
                 <input class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search">
                 <div class="input-group-append">
@@ -42,7 +42,7 @@ $imgPath = Url::to('@web/assets/uploads/' . Yii::$app->user->id . '/');
                     </button>
                 </div>
             </div>
-        </div> -->
+        </div>
 
         <!-- Sidebar Menu -->
         <nav class="mt-2">
