@@ -14,7 +14,7 @@ use yii\bootstrap5\Html;
 <div class="signup-form">
 
     <?php $form = ActiveForm::begin(['id' => 'form-signup']); ?>
-
+    <?= $form->field($model, 'photoFile')->fileInput(['multiple' => false, 'accept' => 'image/*']) ?>
     <?= $form->field($model->user, 'username')->textInput(['autofocus' => true]) ?>
     <?= $form->field($model->user, 'email')->input('email') ?>
     <?= $form->field($model, 'phone')->textInput() ?>
@@ -29,7 +29,6 @@ use yii\bootstrap5\Html;
         'salesperson' => 'salesperson',
         'guide' => 'guide',
     ], ['prompt' => 'Select Role']) ?>
-
     <div class="form-group">
         <?= Html::submitButton('Save Changes', ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
     </div>

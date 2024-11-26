@@ -10,7 +10,6 @@ use yii\helpers\Url;
 /** @var Activity $model title */
 
 $this->title = 'Activities';
-$this->params['breadcrumbs'][] = $this->title;
 $this->registerCssFile('@web/css/site.css');
 ?>
 <div class="activity-index">

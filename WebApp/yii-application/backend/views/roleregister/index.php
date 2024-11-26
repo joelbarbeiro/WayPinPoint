@@ -1,6 +1,7 @@
 <?php
 
 use yii\helpers\Html;
+use yii\helpers\Url;
 
 /** @var yii\web\View $this */
 /** @var common\models\UserExtraSearch $searchModel */
@@ -14,12 +15,9 @@ $this->registerCssFile('@web/css/site.css');
 
 <div class="user-extra-index">
 
-
     <p>
         <?= Html::a('Register an Employee', ['role-register'], ['class' => 'btn btn-success']) ?>
     </p>
-
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <?php foreach ($dataProvider->models as $employee): ?>
         <?php
@@ -27,60 +25,41 @@ $this->registerCssFile('@web/css/site.css');
             $employee->supplier != Yii::$app->user->id ||
             $employee->user->getRole() == 'supplier') continue;
         ?>
-        <div class="employees">
-            <table>
-                <thead>
-                <tr>
-                    <th>Username</th>
-                    <th>NIF</th>
-                    <th>Address</th>
-                    <th>Phone</th>
-                    <th>Position</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td><?= Html::encode($employee->user->username) ?></td>
-                    <td><?= Html::encode($employee->nif) ?></td>
-                    <td><?= Html::encode($employee->address) ?></td>
-                    <td><?= Html::encode($employee->phone) ?></td>
-                    <td><?= Html::encode($employee->user->getRole()) ?></td>
-                    <td>
-                        <?= Html::a('Edit Employee', ['role-register/update', 'id' => $employee->id],
-                            ['class' => 'btn btn-warning']) ?>
-                    </td>
-                    <td>
-                        <?= Html::a('Remove Employee', ['role-register/delete', 'id' => $employee->user->id],
-                            ['class' => 'btn btn-danger']) ?>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+        <?php $imgPath = Url::to('@web/assets/uploads/' . $employee->user_id . '/'); ?>
+
+        <div class="user-view">
+
+            <div class="card m-5">
+                <div class="row g-0 align-items-center">
+                    <!-- Profile Photo Section -->
+                    <div class="col-md-4 text-center p-3">
+                        <img src="<?= $imgPath . $employee->photo ?>" class="img-fluid rounded-circle m-4"
+                             alt="Profile Photo" style="max-height: 120px; object-fit: cover;">
+                    </div>
+
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title mb-2"><?= 'Username: ' . $employee->user->username ?></h5>
+                            <p class="card-text mb-1"><strong>Email:</strong> <?= $employee->user->email ?></p>
+                            <p class="card-text mb-1"><strong>Phone:</strong> <?= $employee->phone ?></p>
+                            <p class="card-text mb-1"><strong>NIF:</strong> <?= $employee->nif ?></p>
+                            <p class="card-text mb-3"><strong>Address:</strong> <?= $employee->address ?></p>
+
+                            <div class="d-flex flex-wrap gap-2">
+                                <?= Html::a('Edit Employee', ['role-register/update', 'id' => $employee->id],
+                                    ['class' => 'btn btn-warning btn-sm m-2']) ?>
+                                <?= Html::a('Remove Employee', ['role-register/delete', 'id' => $employee->user->id],
+                                    ['class' => 'btn btn-danger btn-sm m-2',
+                                        'data' => [
+                                            'confirm' => 'Are you sure you want to remove this employee?',
+                                            'method' => 'post',
+                                        ],
+                                    ]) ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    <?php endforeach ?>
-
-    <!--    --><?php //= GridView::widget([
-    //        'dataProvider' => $dataProvider,
-    //        'filterModel' => $searchModel,
-    //        'columns' => [
-    //            ['class' => 'yii\grid\SerialColumn'],
-    //            [
-    //                'label' => 'Username',
-    //                'value' => function ($model) {
-    //                    return $model->user->username;
-    //                }
-    //            ],
-    //            'nif',
-    //            'address',
-    //            'phone',
-    //            [
-    //                'class' => ActionColumn::className(),
-    //                'urlCreator' => function ($action, UserExtra $model, $key, $index, $column) {
-    //                    return Url::toRoute([$action, 'id' => $model->user_id]);
-    //                 }
-    //            ],
-    //        ],
-    //    ]); ?>
-
-
+    <?php endforeach; ?>
 </div>
