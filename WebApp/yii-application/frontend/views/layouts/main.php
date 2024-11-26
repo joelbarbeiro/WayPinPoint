@@ -56,8 +56,7 @@ TemplateAsset::register($this);
             'brandLabel' => Html::tag(
                 'div',
                 Html::a(
-                    '<span class="h1 text-uppercase text-primary bg-dark px-2">WayPin</span>
-                <span class="h1 text-uppercase text-dark bg-primary px-2 ml-n1">Point</span>',
+                    Html::img('@web/assets/logo/waypinpointFRONT.png', ['alt' => 'Logo', 'class' => 'logo-class']),
                     Yii::$app->homeUrl,
                     ['class' => 'text-decoration-none']
                 ),

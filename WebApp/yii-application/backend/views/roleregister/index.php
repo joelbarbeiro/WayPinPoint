@@ -55,6 +55,8 @@ $this->registerCssFile('@web/css/site.css');
                                             'method' => 'post',
                                         ],
                                     ]) ?>
+                                <?= Html::a('Change Password', ['role-register/update-password', 'id' => $employee->id],
+                                    ['class' => 'btn btn-info btn-sm m-2']) ?>
                             </div>
                         </div>
                     </div>

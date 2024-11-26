@@ -96,9 +96,29 @@ class RoleRegisterController extends \yii\web\Controller
             }
         }
 
-        return $this->render('@backend/views/roleregister/roleregister', [
-            'userExtra' => $model,
-            'localsellpoints' => $localsellpointsMap,
+        return $this->render('@backend/views/roleregister/update', [
+            'userExtra' => $userExtra,
+            'localsellpointsMap' => $localsellpointsMap,
+            'model' => $model
+        ]);
+    }
+
+    public function actionUpdatePassword($id)
+    {
+        $model = new RoleRegisterForm();
+        $userExtra = $this->findModel($id);
+
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            if ($model->roleUpdatePassword($id)) {
+                \Yii::$app->session->setFlash('success', 'User updated successfully with role: ' . $model->role);
+                return $this->redirect(['view', 'id' => $id]);
+            } else {
+                \Yii::$app->session->setFlash('error', 'Failed to update user');
+            }
+        }
+
+        return $this->render('@backend/views/roleregister/_password', [
+            'userExtra' => $userExtra,
             'model' => $model
         ]);
     }
@@ -139,7 +159,7 @@ class RoleRegisterController extends \yii\web\Controller
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        'actions' => ['role-register', 'index', 'delete', 'view', 'update', 'role-update'],
+                        'actions' => ['role-register', 'index', 'delete', 'view', 'update', 'role-update', 'update-password'],
                         'allow' => true,
                         'roles' => ['supplier'],
                     ],

@@ -18,6 +18,7 @@ use yii\web\UploadedFile;
  * @property string $address
  * @property string $phone
  * @property string $photo
+ * @property string $photoFile
  * @property int $supplier
  *
  * @property Localsellpoint $localsellpoint

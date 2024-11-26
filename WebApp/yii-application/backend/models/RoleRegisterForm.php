@@ -126,9 +126,6 @@ class RoleRegisterForm extends ActiveRecord
 
             $user->username = $this->username;
             $user->email = $this->email;
-            if ($this->password) {
-                $user->setPassword($this->password);
-            }
             $userExtra->phone = $this->phone;
             $userExtra->address = $this->address;
             $userExtra->nif = $this->nif;
@@ -142,6 +139,33 @@ class RoleRegisterForm extends ActiveRecord
                 throw new \Exception("Role not found");
             }
             $auth->assign($newRole, $user->id);
+
+            if ($user->save(false) && $userExtra->save(false)) {
+                $transaction->commit();
+                return true;
+            } else {
+                $transaction->rollBack();
+                return false;
+            }
+        } catch (\Exception $e) {
+            $transaction->rollBack();
+            throw $e;
+        }
+    }
+
+    public function roleUpdatePassword($userId)
+    {
+        $userExtra = UserExtra::findOne($userId);
+        $user = $userExtra->user;
+
+        $transaction = Yii::$app->db->beginTransaction();
+        try {
+            if (!$user) {
+                throw new \Exception("User not found");
+            }
+
+            $user->setPassword($this->password);
+            $user->generateAuthKey();
 
             if ($user->save(false) && $userExtra->save(false)) {
                 $transaction->commit();

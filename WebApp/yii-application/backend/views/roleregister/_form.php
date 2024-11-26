@@ -13,10 +13,10 @@ use yii\bootstrap5\Html;
 
 <div class="signup-form">
 
-    <?php $form = ActiveForm::begin(['id' => 'form-signup']); ?>
+    <?php $form = ActiveForm::begin(['id' => 'form-update']); ?>
     <?= $form->field($model, 'photoFile')->fileInput(['multiple' => false, 'accept' => 'image/*']) ?>
-    <?= $form->field($model->user, 'username')->textInput(['autofocus' => true]) ?>
-    <?= $form->field($model->user, 'email')->input('email') ?>
+    <?= $form->field($model, 'username')->textInput(['autofocus' => true]) ?>
+    <?= $form->field($model, 'email')->input('email') ?>
     <?= $form->field($model, 'phone')->textInput() ?>
     <?= $form->field($model, 'address')->textInput() ?>
     <?= $form->field($model, 'nif')->input('number') ?>
@@ -24,7 +24,7 @@ use yii\bootstrap5\Html;
         $localsellpointsMap,
         ['prompt' => 'Select a Local Shop for employee to be assigned']
     ); ?>
-    <?= $form->field($model->user, 'role')->dropDownList([
+    <?= $form->field($model, 'role')->dropDownList([
         'manager' => 'manager',
         'salesperson' => 'salesperson',
         'guide' => 'guide',

@@ -1,10 +1,12 @@
 <?php
 
+use yii\helpers\Html;
 use yii\helpers\Url;
 
 /** @var yii\backend\assets $assetDir */
 
 $logo = Url::to('@web/assets/logo/waypinpoint.png');
+$imgPath = Url::to('@web/assets/uploads/' . Yii::$app->user->id . '/');
 ?>
 
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
@@ -19,11 +21,13 @@ $logo = Url::to('@web/assets/logo/waypinpoint.png');
     <div class="sidebar">
         <!-- Sidebar user panel (optional) -->
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-            <div class="image">
-                <img src="<?= $assetDir ?>/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
-            </div>
+            <!--            <div class="image">-->
+            <!--                <img src="-->
+            <?php //= $imgPath . $user->getUserExtra()->photo ?><!--" class="img-fluid rounded-circle " style="min-height: 40px; min-width: 40px">-->
+            <!--            </div>-->
             <div class="info">
-                <a href="#" class="d-block"><?= $user->username ?></a>
+                <?= Html::a($user->username, ['role-register/update', 'id' => $user->id],
+                    ['class' => 'd-block']) ?>
             </div>
         </div>
 
@@ -64,7 +68,7 @@ $logo = Url::to('@web/assets/logo/waypinpoint.png');
                     ['label' => 'Create activity', 'icon' => 'plus', 'url' => ['activity/create']],
                     ['label' => 'Manage activity', 'icon' => 'map', 'url' => ['activity/index']],
                     ['label' => 'Selling Points', 'header' => true],
-                    ['label' => 'My Local Shops', 'icon' => 'map', 'url' =>['localsellpoint/index']],
+                    ['label' => 'My Local Shops', 'icon' => 'map', 'url' => ['localsellpoint/index']],
                     ['label' => 'Add Local Shop', 'icon' => 'plus', 'url' => ['localsellpoint/create']],
                     ['label' => 'Sales', 'header' => true],
                     ['label' => 'Manage sales', 'icon' => 'plus', 'url' => Url::to(['sales/index'])],
