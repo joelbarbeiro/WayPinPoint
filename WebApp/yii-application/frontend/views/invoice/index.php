@@ -1,14 +1,14 @@
 <?php
 
+use common\models\Invoice;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
 /** @var yii\data\ActiveDataProvider $dataProvider */
-/** @var Invoice $model */
 
-use common\models\Invoice;
+/** @var Invoice $model */
 
 $this->title = 'Invoices';
 $this->params['breadcrumbs'][] = $this->title;
@@ -26,8 +26,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value' =>
                     function ($model) {
 
-                    return Yii::$app->user->identity->username;
-                }
+                        return Yii::$app->user->identity->username;
+                    }
             ],
             ['attribute' => 'Purchase Date',
                 'value' => function ($model) {
@@ -40,9 +40,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 }
             ],
             ['attribute' => 'Seller',
-            'value' => function ($model) {
-                        return $model->user;
-            }],
+                'value' => function ($model) {
+                    return $model->user;
+                }],
             [
                 'class' => ActionColumn::className(),
                 'template' => '{print}',

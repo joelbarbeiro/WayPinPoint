@@ -87,6 +87,7 @@ class Activity extends \yii\db\ActiveRecord
             'hour' => 'Custom Hours',
         ];
     }
+
     public function uploadPhoto()
     {
         $uploadBackendPath = $this->checkBackendUploadFolder();
@@ -130,6 +131,7 @@ class Activity extends \yii\db\ActiveRecord
         }
         return $uploadPath;
     }
+
     public function getCalendarArray()
     {
         $calendar = [];
@@ -196,5 +198,26 @@ class Activity extends \yii\db\ActiveRecord
     public function getUser()
     {
         return $this->hasOne(User::class, ['user_id' => 'id']);
+    }
+
+    public static function getSupplierActivities($userId)
+    {
+        return Activity::find()
+            ->joinWith('calendar')
+            ->where(['user_id' => $userId])
+            ->andWhere(['activity.status' => '1'])
+            ->andWhere(['calendar.status' => '1'])
+            ->all();
+    }
+
+    public static function getSupplierActivityNames($userId): array
+    {
+        return Activity::find()
+            ->select('name')
+            ->joinWith('calendar')
+            ->where(['user_id' => $userId])
+            ->andWhere(['activity.status' => '1'])
+            ->andWhere(['calendar.status' => '1'])
+            ->column();
     }
 }

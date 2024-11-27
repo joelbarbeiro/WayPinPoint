@@ -21,6 +21,6 @@ class m241115_205458_add_status_to_activity extends Migration
     public function safeDown()
     {
         echo "m241115_205458_add_status_to_activity cannot be reverted.\n";
-        $this->dropColumn('activitiy', 'status');
+        $this->dropColumn('activity', 'status');
     }
 }

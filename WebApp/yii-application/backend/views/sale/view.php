@@ -34,6 +34,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'buyer',
             'total',
             'purchase_date',
+            'seller_id',
         ],
     ]) ?>
 

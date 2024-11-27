@@ -160,8 +160,14 @@ class CartController extends Controller
         $user = User::findOne($userId);
         $activity = Activity::findOne($activityId);
         Booking::createBooking($activityId);
-        Sale::createSale($activityId);
-        Invoice::createInvoice($activityId);
+        $sale = Sale::createSale($activityId);
+        if ($sale->hasErrors()) {
+            dd($sale);
+        }
+        $invoice = Invoice::createInvoice($sale);
+        if ($invoice->hasErrors()) {
+            dd($invoice);
+        }
         $qrCode = $this->generateQrCode($user, $activity);
         Ticket::createTicket($activityId, $qrCode);
 
@@ -196,4 +202,5 @@ class CartController extends Controller
             'mimeType' => 'application/pdf',
         ]);
     }
+
 }
