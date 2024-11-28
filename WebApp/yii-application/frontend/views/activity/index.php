@@ -34,6 +34,7 @@ $this->registerCssFile('@web/css/site.css');
                     echo '<div class="card-body">';
                     echo '<h5 class="card-title">Activity Name: ' . Html::encode($activity->name) . '</h5>';
                     echo '<p class="card-text">Description: ' . Html::encode($activity->description) . '</p>';
+                    echo '<p class="card-text">Category: ' . Html::encode($activity->category->description) . '</p>';
                     echo '<p class="card-text">Price per Ticket: ' . Html::encode($activity->priceperpax) . '€</p>';
 
                     $dropdownOptions = [];

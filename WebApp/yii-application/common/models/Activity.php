@@ -45,7 +45,7 @@ class Activity extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'description', 'photo', 'maxpax', 'priceperpax', 'address'], 'required'],
+            [['name', 'description', 'photo', 'maxpax', 'priceperpax', 'address', 'category_id'], 'required'],
             [['maxpax'], 'integer'],
             [['priceperpax'], 'number'],
             [['name'], 'string', 'max' => 200],
@@ -58,6 +58,8 @@ class Activity extends \yii\db\ActiveRecord
             [['date', 'hour'], 'required'],
             [['date'], 'each', 'rule' => ['date', 'format' => 'php:Y-m-d']],
             [['hour'], 'each', 'rule' => ['integer']],
+            [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => Category::class,
+                'targetAttribute' => ['category_id' => 'id']],
         ];
     }
 
@@ -79,6 +81,7 @@ class Activity extends \yii\db\ActiveRecord
             'photoFile' => 'Upload Photo',
             'date' => 'Date',
             'hour' => 'Custom Hours',
+            'category_id' => 'Category',
         ];
     }
 
@@ -124,6 +127,11 @@ class Activity extends \yii\db\ActiveRecord
             mkdir($uploadPath, 0775, true);
         }
         return $uploadPath;
+    }
+
+    public function getCategory()
+    {
+        return $this->hasOne(Category::class, ['id' => 'category_id']);
     }
 
     public function getCalendarArray()
