@@ -44,6 +44,10 @@ class ActivityController extends Controller
         // Pass the query parameters (including the search term) to the search model
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
+        $dataProvider->query->joinWith('calendar')
+            ->andWhere(['activity.status' => 1])
+            ->andWhere(['calendar.status' => 1]);
+
         // Render the index view, passing the data provider and search model
         return $this->render('index', [
             'searchModel' => $searchModel,

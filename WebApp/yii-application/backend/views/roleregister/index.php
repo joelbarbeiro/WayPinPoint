@@ -25,7 +25,7 @@ $this->registerCssFile('@web/css/site.css');
             $employee->supplier != Yii::$app->user->id ||
             $employee->user->getRole() == 'supplier') continue;
         ?>
-        <?php $imgPath = Url::to('@web/assets/uploads/' . $employee->user_id . '/'); ?>
+        <?php $imgPath = Url::to('@web/img/user/' . $employee->user_id . '/'); ?>
 
         <div class="user-view">
 

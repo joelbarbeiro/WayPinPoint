@@ -26,7 +26,7 @@ $this->registerCssFile('@web/css/site.css');
                 echo '<h1>' . Html::encode($this->title) . '</h1>';
                 foreach ($dataProvider->models as $activity) {
 
-                    $imgPath = Url::to('@web/assets/uploads/' . $activity->user_id . '/');
+                    $imgPath = Url::to('@web/img/activity/' . $activity->user_id . '/');
 
                     echo '<div class="col-md-6 d-flex align-items-stretch mb-4">';
                     echo '<div class="card w-100">';

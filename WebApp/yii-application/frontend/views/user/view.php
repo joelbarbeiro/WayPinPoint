@@ -17,7 +17,7 @@ $this->registerCssFile('@frontend/web/css/site.css');
     <h1><?= Html::encode($this->title) ?></h1>
 
     <div class="user-view">
-        <?php $imgPath = Url::to('@web/assets/uploads/' . $model->id . '/'); ?>
+        <?php $imgPath = Url::to('@web/img/user/' . $model->id . '/'); ?>
 
         <div class="card m-5">
             <div class="row g-0 align-items-center">

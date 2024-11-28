@@ -5,8 +5,8 @@ use yii\helpers\Url;
 
 /** @var yii\backend\assets $assetDir */
 
-$logo = Url::to('@web/assets/logo/waypinpoint.png');
-$imgPath = Url::to('@web/assets/uploads/' . Yii::$app->user->id . '/');
+$logo = Url::to('@web/img/logo/waypinpoint.png');
+$imgUserPath = Url::to('@web/img/user/' . Yii::$app->user->id . '/');
 ?>
 
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
@@ -21,7 +21,7 @@ $imgPath = Url::to('@web/assets/uploads/' . Yii::$app->user->id . '/');
         <!-- Sidebar user panel (optional) -->
         <div class="user-panel mt-3 pb-3 mb-3 d-flex align-items-center">
             <div class="image me-2">
-                <img src="<?= $imgPath . $user->getUserExtra()->photo ?>"
+                <img src="<?= $imgUserPath . $user->getUserExtra()->photo ?>"
                      class="img-fluid rounded-circle"
                      style="min-height: 40px; min-width: 40px">
             </div>

@@ -110,7 +110,7 @@ class Activity extends \yii\db\ActiveRecord
 
     public function checkBackendUploadFolder()
     {
-        $uploadPath = Yii::getAlias('@backend/web/assets/uploads/' . Yii::$app->user->id . '/');
+        $uploadPath = Yii::getAlias('@backend/web/img/activity/' . Yii::$app->user->id . '/');
         if (!is_dir($uploadPath)) {
             mkdir($uploadPath, 0775, true);
         }
@@ -119,7 +119,7 @@ class Activity extends \yii\db\ActiveRecord
 
     public function checkFrontendUploadFolder()
     {
-        $uploadPath = Yii::getAlias('@frontend/web/assets/uploads/' . Yii::$app->user->id . '/');
+        $uploadPath = Yii::getAlias('@frontend/web/img/activity/' . Yii::$app->user->id . '/');
         if (!is_dir($uploadPath)) {
             mkdir($uploadPath, 0775, true);
         }

@@ -106,7 +106,7 @@ class UserExtra extends \yii\db\ActiveRecord
 
     public function checkBackendUploadFolder()
     {
-        $uploadPath = Yii::getAlias('@backend/web/assets/uploads/' . $this->user->id . '/');
+        $uploadPath = Yii::getAlias('@backend/web/img/user/' . $this->user->id . '/');
         if (!is_dir($uploadPath)) {
             mkdir($uploadPath, 0775, true);
         }
@@ -115,7 +115,7 @@ class UserExtra extends \yii\db\ActiveRecord
 
     public function checkFrontendUploadFolder()
     {
-        $uploadPath = Yii::getAlias('@frontend/web/assets/uploads/' . $this->user->id . '/');
+        $uploadPath = Yii::getAlias('@frontend/web/img/user/' . $this->user->id . '/');
         if (!is_dir($uploadPath)) {
             mkdir($uploadPath, 0775, true);
         }

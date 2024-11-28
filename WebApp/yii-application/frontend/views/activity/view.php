@@ -12,7 +12,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="activity-view">
 
-    <?php $imgPath = Url::to('@web/assets/uploads/' . $model->user_id . '/'); ?>
+    <?php $imgPath = Url::to('@web/img/activity/' . $model->user_id . '/'); ?>
 
     <div class="activities-view">
 
