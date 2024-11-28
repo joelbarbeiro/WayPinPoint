@@ -141,8 +141,9 @@ class UserController extends Controller
 
     public function actionDelete($id)
     {
+        $userExtra = UserExtra::findOne(['user_id' => $id]);
+        $userExtra->delete();
         $this->findModel($id)->delete();
-        //TODO DELETE USEREXTRA AS WELL OR DISABLE IT ( DISABLING IT MIGHT NOT BE THE WAY BECAUSE USER MAY NOT GET ANOTHER WAY TO REGISTER BECAUSE OF NIF)
         return $this->redirect(['activity/index']);
     }
 
