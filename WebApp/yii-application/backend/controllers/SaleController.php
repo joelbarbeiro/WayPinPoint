@@ -2,17 +2,15 @@
 
 namespace backend\controllers;
 
-use backend\models\SaleSearch;
 use common\models\Activity;
 use common\models\ActivitySearch;
 use common\models\Sale;
 use common\models\UserExtra;
 use Yii;
-use yii\data\ActiveDataProvider;
-use yii\helpers\ArrayHelper;
+use yii\db\Expression;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
  * SaleController implements the CRUD actions for Sale model.
@@ -84,16 +82,28 @@ class SaleController extends Controller
     {
         $model = new Sale();
         $userId = Yii::$app->user->id;
-        $supplier = UserExtra::findOne(['user_id' => $userId]);
-        $activities = Activity::getSupplierActivityNames($supplier->supplier);
-        $localsellPointId = Sale::getLocalSellPoints();
-        if (!$supplier || !$supplier->supplier) {
+
+        $seller = UserExtra::findOne(['user_id' => $userId]);
+        $activities = Activity::getSupplierActivityNames($seller->supplier);
+        //$localsellPointId = Sale::getLocalSellPoints();
+        $model->buyer = 1;
+        $model->seller_id = $seller->id;
+        $model->localsellpoint_id = $seller->localsellpoint_id;
+        if (!$seller || !$seller->supplier) {
             throw new NotFoundHttpException('Supplier information is missing.');
         }
 
         if ($this->request->isPost) {
-            $model->localsellpoint = $localsellPointId;
-            if ($model->load($this->request->post()) && $model->save()) {
+            //$activityId = $model->activity_id;
+            $activity = Activity::findOne($this->request->post('Sale')['activity_id']);
+            if (!$activity) {
+                throw new NotFoundHttpException('Activity not found.');
+            }
+            $model->activity_id = $activity->id;
+            $model->purchase_date = new Expression('NOW()');
+            $model->quantity = $this->request->post('Sale')['quantity'];
+            $model->total = $activity->priceperpax * $model->quantity;
+            if ($model->save()) {
                 return $this->redirect(['view', 'id' => $model->id]);
             }
         } else {
@@ -104,7 +114,6 @@ class SaleController extends Controller
         return $this->render('create', [
             'model' => $model,
             'activities' => $activities,
-            'localsellPointId' => $localsellPointId,
         ]);
     }
 

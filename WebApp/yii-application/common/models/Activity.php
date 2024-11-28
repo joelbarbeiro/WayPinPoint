@@ -2,13 +2,10 @@
 
 namespace common\models;
 
-use common\models\Picture;
-use common\models\Booking;
-use common\models\Calendar;
 use backend\models\Sale;
 use backend\models\Ticket;
-use common\models\User;
 use Yii;
+use yii\helpers\ArrayHelper;
 use yii\web\UploadedFile;
 
 
@@ -212,12 +209,14 @@ class Activity extends \yii\db\ActiveRecord
 
     public static function getSupplierActivityNames($userId): array
     {
-        return Activity::find()
-            ->select('name')
-            ->joinWith('calendar')
-            ->where(['user_id' => $userId])
-            ->andWhere(['activity.status' => '1'])
-            ->andWhere(['calendar.status' => '1'])
-            ->column();
+        $activities =
+            Activity::find()
+                ->joinWith('calendar')
+                ->where(['activity.user_id' => $userId])
+                ->andWhere(['activity.status' => '1'])
+                ->andWhere(['calendar.status' => '1'])
+                ->all();
+
+        return ArrayHelper::map($activities, 'id', 'name');
     }
 }

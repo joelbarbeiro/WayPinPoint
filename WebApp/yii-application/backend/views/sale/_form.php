@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+
 /** @var yii\web\View $this */
 /** @var common\models\Sale $model */
 /** @var yii\widgets\ActiveForm $form */
@@ -12,18 +13,17 @@ use yii\widgets\ActiveForm;
     <?php $form = ActiveForm::begin(); ?>
 
     <?= $form->field($model, 'activity_id')->dropDownList(
-            $activities,
+        $activities,
         ['prompt' => 'Select Activity']
     ); ?>
 
-    <?= $form->field($model, 'buyer')->textInput() ?>
+    <?= $form->field($model, 'quantity')->textInput([
+        'type' => 'number',
+        'min' => 1,
+        'value' => 1,
+    ]) ?>
 
-    <?= $form->field($model, 'total')->textInput() ?>
-    <?= $form->field($model, 'localsellpoint_id')->textInput([
-        'value' => $localsellPointId,
-        'readonly' => true,
-    ]); ?>
-
+    <?= $form->field($model, 'total')->hiddenInput(['readonly' => true]) ?>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>

@@ -3,8 +3,6 @@
 namespace common\models;
 
 use Yii;
-use yii\db\Expression;
-use yii\db\Query;
 
 /**
  * This is the model class for table "sale".
@@ -15,12 +13,14 @@ use yii\db\Query;
  * @property float $total
  * @property string $purchase_date
  * @property int $seller_id
+ * @property int $localsellpoint_id
+ * @property int $quantity
  *
  * @property Activity $activity
  * @property User $buyer0
  * @property Invoice[] $invoices
- * @property User $seller
  * @property Userextra $localsellpoint
+ * @property User $seller
  */
 class Sale extends \yii\db\ActiveRecord
 {
@@ -38,14 +38,14 @@ class Sale extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['activity_id', 'buyer', 'total', 'purchase_date'], 'required'],
-            [['activity_id', 'buyer', 'seller_id'], 'integer'],
+            [['activity_id', 'buyer', 'purchase_date', 'seller_id', 'localsellpoint_id', 'quantity'], 'required'],
+            [['activity_id', 'buyer', 'seller_id', 'localsellpoint_id', 'quantity'], 'integer'],
             [['total'], 'number'],
             [['purchase_date'], 'safe'],
             [['activity_id'], 'exist', 'skipOnError' => true, 'targetClass' => Activity::class, 'targetAttribute' => ['activity_id' => 'id']],
             [['buyer'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['buyer' => 'id']],
-            [['seller_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['seller_id' => 'id']],
             [['localsellpoint_id'], 'exist', 'skipOnError' => true, 'targetClass' => Userextra::class, 'targetAttribute' => ['localsellpoint_id' => 'localsellpoint_id']],
+            [['seller_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['seller_id' => 'id']],
         ];
     }
 
@@ -62,6 +62,7 @@ class Sale extends \yii\db\ActiveRecord
             'purchase_date' => 'Purchase Date',
             'seller_id' => 'Seller ID',
             'localsellpoint_id' => 'Localsellpoint ID',
+            'quantity' => 'Quantity',
         ];
     }
 
@@ -96,6 +97,16 @@ class Sale extends \yii\db\ActiveRecord
     }
 
     /**
+     * Gets query for [[Localsellpoint]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getLocalsellpoint()
+    {
+        return $this->hasOne(Userextra::class, ['localsellpoint_id' => 'localsellpoint_id']);
+    }
+
+    /**
      * Gets query for [[Seller]].
      *
      * @return \yii\db\ActiveQuery
@@ -105,12 +116,6 @@ class Sale extends \yii\db\ActiveRecord
         return $this->hasOne(User::class, ['id' => 'seller_id']);
     }
 
-    public function getLocalsellpoint()
-    {
-        return $this->hasOne(Userextra::class, ['localsellpoint_id' => 'localsellpoint_id']);
-    }
-
-
     public static function createSale($activityId)
     {
         $activity = Activity::findOne($activityId);
@@ -119,10 +124,11 @@ class Sale extends \yii\db\ActiveRecord
             ->where(['user_id' => $userId, 'product_id' => $activityId])
             ->one();
         $model = new Sale();
-        $model->seller_id = $userId;
+        $model->seller_id = 1;
         $model->activity_id = $activityId;
         $model->buyer = $userId;
         $model->total = $activity->priceperpax * $cart->quantity;
+        $model->localsellpoint_id = 1;
         $model->purchase_date = new Expression('NOW()');
         $model->save();
         return $model;
@@ -138,4 +144,5 @@ class Sale extends \yii\db\ActiveRecord
             ->where(['user_id' => Yii::$app->user->id])
             ->scalar(); // Returns a single `localsellpoint_id` value
     }
+
 }
