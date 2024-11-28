@@ -2,12 +2,6 @@
 
 namespace common\models;
 
-use common\models\Picture;
-use common\models\Booking;
-use common\models\Calendar;
-use backend\models\Sale;
-use backend\models\Ticket;
-use common\models\User;
 use Yii;
 use yii\web\UploadedFile;
 
@@ -25,11 +19,11 @@ use yii\web\UploadedFile;
  * @property int $status
  * @property int $user_id
  *
- * @property Bookings[] $booking
+ * @property Booking[] $booking
  * @property Calendar[] $calendar
  * @property Picture[] $picture
- * @property Sales[] $sale
- * @property Tickets[] $ticket
+ * @property Sale[] $sale
+ * @property Ticket[] $ticket
  */
 class Activity extends \yii\db\ActiveRecord
 {
@@ -87,6 +81,7 @@ class Activity extends \yii\db\ActiveRecord
             'hour' => 'Custom Hours',
         ];
     }
+
     public function uploadPhoto()
     {
         $uploadBackendPath = $this->checkBackendUploadFolder();
@@ -115,7 +110,7 @@ class Activity extends \yii\db\ActiveRecord
 
     public function checkBackendUploadFolder()
     {
-        $uploadPath = Yii::getAlias('@backend/web/assets/uploads/' . Yii::$app->user->id . '/');
+        $uploadPath = Yii::getAlias('@backend/web/img/activity/' . Yii::$app->user->id . '/');
         if (!is_dir($uploadPath)) {
             mkdir($uploadPath, 0775, true);
         }
@@ -124,12 +119,13 @@ class Activity extends \yii\db\ActiveRecord
 
     public function checkFrontendUploadFolder()
     {
-        $uploadPath = Yii::getAlias('@frontend/web/assets/uploads/' . Yii::$app->user->id . '/');
+        $uploadPath = Yii::getAlias('@frontend/web/img/activity/' . Yii::$app->user->id . '/');
         if (!is_dir($uploadPath)) {
             mkdir($uploadPath, 0775, true);
         }
         return $uploadPath;
     }
+
     public function getCalendarArray()
     {
         $calendar = [];
@@ -150,7 +146,7 @@ class Activity extends \yii\db\ActiveRecord
      */
     public function getBooking()
     {
-        return $this->hasMany(Bookings::class, ['activity_id' => 'id']);
+        return $this->hasMany(Booking::class, ['activity_id' => 'id']);
     }
 
     /**
@@ -180,7 +176,7 @@ class Activity extends \yii\db\ActiveRecord
      */
     public function getSale()
     {
-        return $this->hasMany(Sales::class, ['activity_id' => 'id']);
+        return $this->hasMany(Sale::class, ['activity_id' => 'id']);
     }
 
     /**
@@ -190,7 +186,7 @@ class Activity extends \yii\db\ActiveRecord
      */
     public function getTicket()
     {
-        return $this->hasMany(Tickets::class, ['activity_id' => 'id']);
+        return $this->hasMany(Ticket::class, ['activity_id' => 'id']);
     }
 
     public function getUser()

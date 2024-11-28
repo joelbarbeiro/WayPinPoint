@@ -6,6 +6,7 @@ use backend\models\Localsellpoint;
 use backend\models\LocalsellpointUserextra;
 use Yii;
 use yii\db\Query;
+use yii\web\UploadedFile;
 
 /**
  * This is the model class for table "userextra".
@@ -16,6 +17,8 @@ use yii\db\Query;
  * @property int $nif
  * @property string $address
  * @property string $phone
+ * @property string $photo
+ * @property string $photoFile
  * @property int $supplier
  *
  * @property Localsellpoint $localsellpoint
@@ -45,6 +48,9 @@ class UserExtra extends \yii\db\ActiveRecord
             [['nif'], 'unique'],
             [['localsellpoint_id'], 'exist', 'skipOnError' => true, 'targetClass' => Localsellpoint::class, 'targetAttribute' => ['localsellpoint_id' => 'id']],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
+            [['photo'], 'string', 'max' => 250],
+            ['status', 'default', 'value' => 1],
+            ['status', 'in', 'range' => [0, 1]],
         ];
     }
 
@@ -60,6 +66,8 @@ class UserExtra extends \yii\db\ActiveRecord
             'nif' => 'Nif',
             'address' => 'Address',
             'phone' => 'Phone',
+            'photoFile' => 'Upload Photo',
+            'photo' => 'Photo',
             'supplier' => 'Supplier',
         ];
     }
@@ -69,6 +77,51 @@ class UserExtra extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
+
+    public function uploadUserPhoto($signupForm)
+    {
+        $uploadBackendPath = $this->checkBackendUploadFolder();
+        $uploadFrontendPath = $this->checkFrontendUploadFolder();
+
+        $binaryFile = UploadedFile::getInstance($signupForm, 'photoFile');
+        if ($binaryFile) {
+            $changeFileName = Yii::$app->security->generateRandomString(16) . '.' . $binaryFile->extension;
+            $fileBackendPath = $uploadBackendPath . $changeFileName;
+            $fileFrontendPath = $uploadFrontendPath . $changeFileName;
+
+            if ($binaryFile->saveAs($fileBackendPath)) {
+                // Copy the file to the frontend directory
+                if (!copy($fileBackendPath, $fileFrontendPath)) {
+                    Yii::error("Failed to copy file to frontend directory");
+                }
+
+                $this->photo = $changeFileName;
+            } else {
+                Yii::error("File save failed at: " . $fileBackendPath);
+            }
+        } else {
+            Yii::error("No file uploaded");
+        }
+    }
+
+    public function checkBackendUploadFolder()
+    {
+        $uploadPath = Yii::getAlias('@backend/web/img/user/' . $this->user->id . '/');
+        if (!is_dir($uploadPath)) {
+            mkdir($uploadPath, 0775, true);
+        }
+        return $uploadPath;
+    }
+
+    public function checkFrontendUploadFolder()
+    {
+        $uploadPath = Yii::getAlias('@frontend/web/img/user/' . $this->user->id . '/');
+        if (!is_dir($uploadPath)) {
+            mkdir($uploadPath, 0775, true);
+        }
+        return $uploadPath;
+    }
+
     public function getLocalsellpoint()
     {
         return $this->hasOne(Localsellpoint::class, ['id' => 'localsellpoint_id']);

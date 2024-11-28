@@ -19,6 +19,25 @@ main > .container, main > .container-fluid
     font-style: italic;
 }
 
+.user-details table{
+    width: 100%;
+}
+
+.user-details th, .user-details td{
+    width: 10%;
+    text-align: center;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.card-img-container {
+    width: 100%;
+    max-height: 200px; /* Set a fixed height */
+    object-fit: cover; /* Ensures the image covers the container proportionally */
+    object-position: center; /* Centers the cropped part of the image */
+    border-radius: 5px; /* Optional: Adds rounded corners */
+}
+
 /* add sorting icons to gridview sort links */
 a.asc:after, a.desc:after {
     content: '';

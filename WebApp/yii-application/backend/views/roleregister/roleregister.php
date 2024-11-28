@@ -16,6 +16,7 @@ use yii\bootstrap5\Html;
 
     <?php $form = ActiveForm::begin(['id' => 'form-signup']); ?>
 
+    <?= $form->field($model, 'photoFile')->fileInput(['multiple' => false, 'accept' => 'image/*']) ?>
     <?= $form->field($model, 'username')->textInput(['autofocus' => true]) ?>
     <?= $form->field($model, 'email')->input('email') ?>
     <?= $form->field($model, 'password')->passwordInput() ?>
