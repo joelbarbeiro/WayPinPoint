@@ -13,6 +13,7 @@ use yii\helpers\Url;
 use yii\widgets\Breadcrumbs;
 
 TemplateAsset::register($this);
+$this->registerCssFile('@web/css/style.css');
 
 ?>
 <?php $this->beginPage() ?>
@@ -27,7 +28,6 @@ TemplateAsset::register($this);
         <!-- Font Awesome -->
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
 
-        <link href="img/favicon.ico" rel="icon">
 
         <!-- Google Web Fonts -->
         <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -36,14 +36,6 @@ TemplateAsset::register($this);
         <!-- Font Awesome -->
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
 
-        <!-- Libraries Stylesheet -->
-        <link href="lib/animate/animate.min.css" rel="stylesheet">
-        <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
-
-        <!-- Customized Bootstrap Stylesheet -->
-        <link href="css/style.css" rel="stylesheet">
-        <!-- Customized Bootstrap Stylesheet -->
-        <link href="../../web/template-assets/css/style.css" rel="stylesheet">
 
         <?php $this->head() ?>
     </head>
@@ -88,7 +80,7 @@ TemplateAsset::register($this);
         echo Html::endForm();
 
         echo Html::a(
-            '<i class="fa fa-shopping-cart "></i>',
+            '<i class="fa fa-shopping-cart"></i>',
             ['/cart/index'],
             ['class' => 'btn btn-outline-primary me-2']
         );

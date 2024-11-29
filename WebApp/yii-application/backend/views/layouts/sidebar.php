@@ -26,7 +26,7 @@ $imgUserPath = Url::to('@web/img/user/' . Yii::$app->user->id . '/');
                      style="min-height: 40px; min-width: 40px">
             </div>
             <div class="info">
-                <?= Html::a($user->username, ['role-register/update', 'id' => $user->id],
+                <?= Html::a($user->username, ['role-register/view', 'id' => $user->id],
                     ['class' => 'd-block text-decoration-none']) ?>
             </div>
         </div>

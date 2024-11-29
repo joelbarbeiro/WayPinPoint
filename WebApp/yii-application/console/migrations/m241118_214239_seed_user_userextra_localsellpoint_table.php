@@ -45,7 +45,7 @@ class m241118_214239_seed_user_userextra_localsellpoint_table extends Migration
         $usersData = [
             'admin' => ['nif' => 987654222, 'address' => 'Admin Address', 'phone' => '0987654321','photo'=> 'E35moiq2WSjIUs6T.jpeg', 'supplier' => null, 'localsellpoint_id' => null],
             'supplier1' => ['nif' => 987654321, 'address' => 'Supplier1 Address', 'phone' => '0987654321','photo'=> 'P8Sx4JRg_2S5_zni.jpeg', 'supplier' => $userIdSupplier1, 'localsellpoint_id' => $localsellpointId1],
-            'supplier2' => ['nif' => 567890123, 'address' => 'Supplier2 Address', 'phone' => '5678901234', 'photo'=> 'EFDpa6zx_kY1FdXH.jpg','supplier' => $userIdSupplier2, 'localsellpoint_id' => $localsellpointId2],
+            'supplier2' => ['nif' => 567890123, 'address' => 'Supplier2 Address', 'phone' => '5678901234', 'photo'=> 'kXVn4GehTmqUMez3.jpg','supplier' => $userIdSupplier2, 'localsellpoint_id' => $localsellpointId2],
             'manager1' => ['nif' => 345678901, 'address' => 'Manager1 Address', 'phone' => '3456789012','photo'=> 'rLB2CUDgIzhuja5t.jpg', 'supplier' => $userIdSupplier1, 'localsellpoint_id' => $localsellpointId1],
             'manager2' => ['nif' => 234567890, 'address' => 'Manager2 Address', 'phone' => '2345678901','photo'=> 'X4vuAZjVLs9TZlkt.jpeg', 'supplier' => $userIdSupplier2, 'localsellpoint_id' => $localsellpointId2],
             'salesperson1' => ['nif' => 876543210, 'address' => 'Salesperson1 Address', 'phone' => '8765432109','photo'=> '5sWR4L_-iVSMrG4T.jpg', 'supplier' => $userIdSupplier1, 'localsellpoint_id' => $localsellpointId1],

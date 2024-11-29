@@ -24,11 +24,13 @@ use yii\bootstrap5\Html;
         $localsellpointsMap,
         ['prompt' => 'Select a Local Shop for employee to be assigned']
     ); ?>
-    <?= $form->field($model, 'role')->dropDownList([
-        'manager' => 'manager',
-        'salesperson' => 'salesperson',
-        'guide' => 'guide',
-    ], ['prompt' => 'Select Role']) ?>
+    <?php if ($userRole != 'supplier') { ?>
+        <?= $form->field($model, 'role')->dropDownList([
+            'manager' => 'manager',
+            'salesperson' => 'salesperson',
+            'guide' => 'guide',
+        ], ['prompt' => 'Select Role']) ?>
+    <?php } ?>
     <div class="form-group">
         <?= Html::submitButton('Save Changes', ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
     </div>
