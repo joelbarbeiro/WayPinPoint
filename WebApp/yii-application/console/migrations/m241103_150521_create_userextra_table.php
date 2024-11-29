@@ -20,7 +20,7 @@ class m241103_150521_create_userextra_table extends Migration
             'user' => $this->integer()->notNull(),
             'phone' => $this->string(20)->notnull(),
             'photo' => $this->string(250)->notNull(),
-            'status', $this->integer()->notNull()->defaultValue('1'),
+            'status'=> $this->integer()->notNull()->defaultValue(1),
             'supplier' => $this->integer()->null()->defaultValue(0),
         ]);
 

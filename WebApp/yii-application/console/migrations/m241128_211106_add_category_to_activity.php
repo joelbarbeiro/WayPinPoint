@@ -30,9 +30,8 @@ class m241128_211106_add_category_to_activity extends Migration
      */
     public function safeDown()
     {
-        echo "m241128_211106_add_category_to_activity cannot be reverted.\n";
-
-        return false;
+        $this->dropForeignKey('fk-activity-category_id','activity');
+        $this->dropColumn('category_id','activity');
     }
 
     /*
