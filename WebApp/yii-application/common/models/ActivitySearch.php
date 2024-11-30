@@ -60,11 +60,14 @@ class ActivitySearch extends Activity
             return $dataProvider;
         }
 
+        if (!empty($this->category_id)) {
+            $query->andFilterWhere(['category_id' => $this->category_id]);
+        }
+
         $query->andFilterWhere([
             'id' => $this->id,
             'maxpax' => $this->maxpax,
             'priceperpax' => $this->priceperpax,
-            'category_id' => $this->category_id
         ]);
 
         // Apply filtering conditions based on the `search` attribute

@@ -7,6 +7,7 @@
 use common\models\Category;
 use common\widgets\Alert;
 use frontend\assets\TemplateAsset;
+use yii\bootstrap5\BootstrapAsset;
 use yii\bootstrap5\Nav;
 use yii\bootstrap5\NavBar;
 use yii\helpers\Html;
@@ -14,7 +15,7 @@ use yii\helpers\Url;
 use yii\widgets\Breadcrumbs;
 
 TemplateAsset::register($this);
-$this->registerCssFile('@web/css/style.css');
+$this->registerCssFile('@web/css/site.css', ['depends' => [BootstrapAsset::class]]);
 
 ?>
 <?php $this->beginPage() ?>
@@ -63,6 +64,8 @@ $this->registerCssFile('@web/css/style.css');
 
         $categories = Category::find()->select(['id', 'description'])->asArray()->all();
 
+        $categories[0] = ['id' => 0, 'description' => 'All Activities'];
+
         $categoryDropdownItems = [];
         foreach ($categories as $category) {
             $categoryDropdownItems[] = [
@@ -70,9 +73,14 @@ $this->registerCssFile('@web/css/style.css');
                 'url' => ['/activity/index', 'ActivitySearch[category_id]' => $category['id']],
             ];
         }
+
         $menuItems[] = [
             'label' => 'Categories',
-            'items' => $categoryDropdownItems,
+            'options' => ['class' => 'nav-item dropdown'],
+            'items' => $categoryDropdownItems, 'All',
+            'dropdownOptions' => [
+                'class' => 'dropdown-menu custom-dropdown-menu', // Add custom class
+            ],
         ];
 
         if (Yii::$app->user->isGuest) {
