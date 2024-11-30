@@ -20,7 +20,7 @@ class ActivitySearch extends Activity
     {
         return [
             [['search'], 'safe'],
-            [['id', 'maxpax'], 'integer'],
+            [['id', 'category_id', 'maxpax'], 'integer'],
             [['name', 'description', 'photo', 'address'], 'safe'],
             [['priceperpax'], 'number'],
         ];
@@ -64,6 +64,7 @@ class ActivitySearch extends Activity
             'id' => $this->id,
             'maxpax' => $this->maxpax,
             'priceperpax' => $this->priceperpax,
+            'category_id' => $this->category_id
         ]);
 
         // Apply filtering conditions based on the `search` attribute
@@ -71,6 +72,7 @@ class ActivitySearch extends Activity
             ->orFilterWhere(['like', 'description', $this->search])
             ->andFilterWhere(['like', 'photo', $this->photo])
             ->andFilterWhere(['like', 'address', $this->address]);
+
 
         return $dataProvider;
     }
