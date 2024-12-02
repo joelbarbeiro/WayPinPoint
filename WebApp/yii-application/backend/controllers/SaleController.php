@@ -4,11 +4,14 @@ namespace backend\controllers;
 
 use common\models\Activity;
 use common\models\ActivitySearch;
+use common\models\Calendar;
 use common\models\Sale;
 use common\models\UserExtra;
 use Yii;
 use yii\db\Expression;
 use yii\filters\VerbFilter;
+use yii\helpers\ArrayHelper;
+use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
@@ -78,15 +81,14 @@ class SaleController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
-    public function actionCreate()
+    public function actionCreate($calendar_id)
     {
         $model = new Sale();
         $userId = Yii::$app->user->id;
-
         $seller = UserExtra::findOne(['user_id' => $userId]);
         $activities = Activity::getSupplierActivityNames($seller->supplier);
-        //$localsellPointId = Sale::getLocalSellPoints();
-        $model->buyer = 1;
+        $clients = Sale::getAllClients();
+        $clientsMap = ArrayHelper::map($clients, 'id', 'username');
         $model->seller_id = $seller->id;
         $model->localsellpoint_id = $seller->localsellpoint_id;
         if (!$seller || !$seller->supplier) {
@@ -95,25 +97,39 @@ class SaleController extends Controller
 
         if ($this->request->isPost) {
             //$activityId = $model->activity_id;
+            //$calendar_id = Yii::$app->request->post('calendar_id');
+            $model->load($this->request->post());
+            if($model->buyer === null)
+            {
+                throw new BadRequestHttpException('Buyer information is missing.');
+            }
+            if ($calendar_id === null) {
+                throw new BadRequestHttpException('Calendar ID is required.');
+            }
             $activity = Activity::findOne($this->request->post('Sale')['activity_id']);
             if (!$activity) {
                 throw new NotFoundHttpException('Activity not found.');
             }
-            $model->activity_id = $activity->id;
+//            $model->activity_id = $activity->id;
             $model->purchase_date = new Expression('NOW()');
-            $model->quantity = $this->request->post('Sale')['quantity'];
+//            $model->quantity = $this->request->post('Sale')['quantity'];
             $model->total = $activity->priceperpax * $model->quantity;
             if ($model->save()) {
+                Sale::createBooking($activity, $model->buyer, $calendar_id, $model->quantity);
                 return $this->redirect(['view', 'id' => $model->id]);
+            }
+            else {
+                var_dump($model->getErrors());
             }
         } else {
             $model->loadDefaultValues();
         }
 
-
         return $this->render('create', [
             'model' => $model,
             'activities' => $activities,
+            'calendar_id' => $calendar_id,
+            'clients' => $clientsMap,
         ]);
     }
 

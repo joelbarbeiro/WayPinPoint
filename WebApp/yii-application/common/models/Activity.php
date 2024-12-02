@@ -197,6 +197,11 @@ class Activity extends \yii\db\ActiveRecord
         return $this->hasOne(User::class, ['user_id' => 'id']);
     }
 
+    public function getCalendars()
+    {
+        return $this->hasMany(Calendar::class, ['activity_id' => 'id']);
+    }
+
     public static function getSupplierActivities($userId)
     {
         return Activity::find()

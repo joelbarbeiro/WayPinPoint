@@ -1,5 +1,6 @@
 <?php
 
+use common\models\Calendar;
 use common\models\Sale;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -11,6 +12,7 @@ use yii\helpers\Url;
 $this->title = 'Sales';
 $this->params['breadcrumbs'][] = $this->title;
 $imgPath = Url::to('@web/assets/uploads/' . Yii::$app->user->id . '/');
+$calendar = new Calendar();
 ?>
 <div class="sale-index">
 
@@ -49,7 +51,12 @@ $imgPath = Url::to('@web/assets/uploads/' . Yii::$app->user->id . '/');
 
 
                 echo '<p class="card-text mt-3"><a href="' . Url::to(['activity/view', 'id' => $activity->id]) . '" class="btn btn-primary">View</a></p>';
-                echo '<p class="card-text mt-3"><a href="' . Url::to(['sale/create', 'id' => $activity->id]) . '" class="btn btn-primary">Buy</a></p>';
+                echo '<p class="card-text mt-3"><a href="' . Url::to(['sale/create', 'id' => $activity->id, 'calendar_id' => $calendar->id]) . '" class="btn btn-primary">Buy</a></p>';
+//                foreach ($activity->calendar as $calendar) {
+//                    if ($calendar->status != 0) {
+//                        echo '<p class="card-text mt-3"><a href="' . Url::to(['sale/create', 'id' => $activity->id, 'calendar_id' => $calendar->id]) . '" class="btn btn-primary">Buy for ' . $calendar->date->date . ' - ' . $calendar->time->hour . '</a></p>';
+//                    }
+//                }
 
                 echo '</div>';
                 echo '</div>';

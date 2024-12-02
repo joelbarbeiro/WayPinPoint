@@ -17,11 +17,17 @@ use yii\widgets\ActiveForm;
         ['prompt' => 'Select Activity']
     ); ?>
 
+    <?= $form->field($model, 'buyer')->dropDownList(
+        $clients,
+        ['prompt' => 'Select Buyer']
+    ); ?>
+
     <?= $form->field($model, 'quantity')->textInput([
         'type' => 'number',
         'min' => 1,
         'value' => 1,
     ]) ?>
+
 
     <?= $form->field($model, 'total')->hiddenInput(['readonly' => true]) ?>
 

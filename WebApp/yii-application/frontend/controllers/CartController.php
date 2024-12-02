@@ -162,11 +162,11 @@ class CartController extends Controller
         Booking::createBooking($activityId);
         $sale = Sale::createSale($activityId);
         if ($sale->hasErrors()) {
-            dd($sale);
+            dd($sale);  //TODO
         }
         $invoice = Invoice::createInvoice($sale);
         if ($invoice->hasErrors()) {
-            dd($invoice);
+            dd($invoice); //TODO
         }
         $qrCode = $this->generateQrCode($user, $activity);
         Ticket::createTicket($activityId, $qrCode);

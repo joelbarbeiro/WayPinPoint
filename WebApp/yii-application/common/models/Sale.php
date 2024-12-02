@@ -3,6 +3,10 @@
 namespace common\models;
 
 use Yii;
+use yii\db\Expression;
+use yii\db\Query;
+use yii\helpers\ArrayHelper;
+use yii\web\ServerErrorHttpException;
 
 /**
  * This is the model class for table "sale".
@@ -56,7 +60,7 @@ class Sale extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'activity_id' => 'Activity ID',
+            'activity_id' => 'Activity',
             'buyer' => 'Buyer',
             'total' => 'Total',
             'purchase_date' => 'Purchase Date',
@@ -127,6 +131,7 @@ class Sale extends \yii\db\ActiveRecord
         $model->seller_id = 1;
         $model->activity_id = $activityId;
         $model->buyer = $userId;
+        $model->quantity = $cart->quantity;
         $model->total = $activity->priceperpax * $cart->quantity;
         $model->localsellpoint_id = 1;
         $model->purchase_date = new Expression('NOW()');
@@ -135,14 +140,25 @@ class Sale extends \yii\db\ActiveRecord
 
     }
 
-
-    public static function getLocalSellPoints()
+    public static function createBooking($activity, $buyer, $calendar_id, $quantity)
     {
-        return (new Query())
-            ->select(['localsellpoint_id'])
-            ->from('userextra')
-            ->where(['user_id' => Yii::$app->user->id])
-            ->scalar(); // Returns a single `localsellpoint_id` value
+        $booking = new Booking();
+        $booking->activity_id = $activity->id;
+        $booking->calendar_id = $calendar_id;
+        $booking->user_id = $buyer;
+        $booking->numberpax = $quantity;
+        if (!$booking->save()) {
+            Yii::error('Failed to create booking: ' . json_encode($booking->errors));
+            throw new ServerErrorHttpException('Failed to create booking.');
+        }
     }
-
+    public static function getAllClients() : array
+    {
+        $clients = Yii::$app->authManager->getUserIdsByRole('client');
+        return User::find()
+            ->select(['id', 'username'])
+            ->where(['id' => $clients])
+            ->asArray()
+            ->all();
+    }
 }

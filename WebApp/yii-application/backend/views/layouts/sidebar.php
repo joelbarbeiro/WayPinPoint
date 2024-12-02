@@ -68,6 +68,7 @@ $logo = Url::to('@web/assets/logo/waypinpoint.png');
                     ['label' => 'Add Local Shop', 'icon' => 'plus', 'url' => ['localsellpoint/create']],
                     ['label' => 'Sales', 'header' => true],
                     ['label' => 'Manage sales', 'icon' => 'plus', 'url' => ['sale/index']],
+                    ['label' => 'All Sales', 'icon' => 'map', 'url' => ['sale/allsales']],
                 ],
             ]);
             ?>
