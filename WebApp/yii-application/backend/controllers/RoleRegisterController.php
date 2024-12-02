@@ -85,7 +85,6 @@ class RoleRegisterController extends \yii\web\Controller
             ->select(['id', 'name'])
             ->asArray()
             ->all();
-
         $localsellpointsMap = ArrayHelper::map($localsellpoints, 'id', 'name');
 
         if ($this->request->isPost && $model->load($this->request->post())) {
@@ -112,7 +111,7 @@ class RoleRegisterController extends \yii\web\Controller
 
         if ($this->request->isPost && $model->load($this->request->post())) {
             if ($model->roleUpdatePassword($id)) {
-                \Yii::$app->session->setFlash('success', 'User updated successfully with role: ');
+                \Yii::$app->session->setFlash('success', 'Password updated succesfull: ');
                 return $this->redirect(['view', 'id' => $id]);
             } else {
                 \Yii::$app->session->setFlash('error', 'Failed to update user');

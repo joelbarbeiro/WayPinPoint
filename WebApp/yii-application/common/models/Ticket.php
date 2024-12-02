@@ -49,7 +49,28 @@ class Ticket extends \yii\db\ActiveRecord
         ];
     }
 
-    public static function createTicket($activityId, $qrCode){
+    /**
+     * Gets query for [[Activity]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getActivity()
+    {
+        return $this->hasOne(Activity::class, ['id' => 'activity_id']);
+    }
+
+    /**
+     * Gets query for [[Participant0]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getParticipant()
+    {
+        return $this->hasOne(User::class, ['id' => 'participant']);
+    }
+
+    public static function createTicket($activityId, $qrCode)
+    {
         $model = new Ticket();
         $userId = Yii::$app->user->id;
         $model->activity_id = $activityId;

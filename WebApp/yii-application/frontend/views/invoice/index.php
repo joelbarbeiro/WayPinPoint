@@ -4,11 +4,11 @@ use common\models\Invoice;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
 use yii\helpers\Html;
-use yii\helpers\Url;
 
 /** @var yii\web\View $this */
 /** @var yii\data\ActiveDataProvider $dataProvider */
-/** @var \common\models\Invoice $model */
+
+/** @var Invoice $model */
 
 $this->title = 'Invoices';
 $this->params['breadcrumbs'][] = $this->title;
@@ -17,17 +17,17 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
             ['attribute' => 'username',
                 'label' => 'User',
-                'value' => function ($model) {
-                    //dd($model);
-                    return Yii::$app->user->identity->username;
-                }
+                'value' =>
+                    function ($model) {
+
+                        return Yii::$app->user->identity->username;
+                    }
             ],
             ['attribute' => 'Purchase Date',
                 'value' => function ($model) {
@@ -39,14 +39,26 @@ $this->params['breadcrumbs'][] = $this->title;
                     return $model->sale->total . "€";
                 }
             ],
+            ['attribute' => 'Seller',
+                'value' => function ($model) {
+                    return $model->user;
+                }],
             [
                 'class' => ActionColumn::className(),
-                'urlCreator' => function ($action, Invoice $model, $key, $index, $column) {
-                    return Url::toRoute([$action, 'id' => $model->id]);
-                }
-            ],
+                'template' => '{print}',
+                'buttons' => [
+                    'print' => function ($url, $model) {
+                        return Html::a(
+                            'Print Invoice',
+                            ['invoice/print', 'id' => $model->id],
+                            [
+                                'class' => 'btn btn-primary',
+                                'title' => 'Print Invoice',
+                            ]
+                        );
+                    }
+                ]
+            ]
         ],
     ]); ?>
-
-
 </div>

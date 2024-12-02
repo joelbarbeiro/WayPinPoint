@@ -83,17 +83,15 @@ class CartController extends Controller
         $userId = Yii::$app->user->id;
         $model->user_id = $userId;
         $model->product_id = $activityId;
-            if ($model->load($this->request->post())) {
-                if($model->quantity < $activity->maxpax)
-                {
-                    if ($model->save()) {
-                        return $this->redirect(['view', 'user_id' => $model->user_id, 'product_id' => $model->product_id]);
-                    }
-                    dd($model->errors);
-
+        if ($model->load($this->request->post())) {
+            if ($model->quantity < $activity->maxpax) {
+                if ($model->save()) {
+                    return $this->redirect(['view', 'user_id' => $model->user_id, 'product_id' => $model->product_id]);
                 }
+                dd($model->errors);
+
             }
-         else {
+        } else {
             Yii::$app->session->setFlash('Not enough tickets available');
         }
 
@@ -162,8 +160,14 @@ class CartController extends Controller
         $user = User::findOne($userId);
         $activity = Activity::findOne($activityId);
         Booking::createBooking($activityId);
-        Sale::createSale($activityId);
-        Invoice::createInvoice($activityId);
+        $sale = Sale::createSale($activityId);
+        if ($sale->hasErrors()) {
+            dd($sale);  //TODO
+        }
+        $invoice = Invoice::createInvoice($sale);
+        if ($invoice->hasErrors()) {
+            dd($invoice); //TODO
+        }
         $qrCode = $this->generateQrCode($user, $activity);
         Ticket::createTicket($activityId, $qrCode);
 
@@ -179,7 +183,7 @@ class CartController extends Controller
         $this->generatePdf($content, $user, $activity);
     }
 
-    public function generateQrCode($user, $activity)
+    public static function generateQrCode($user, $activity)
     {
         $qrCodeData = "User: $user->username, Activity: $activity->description, Price: $activity->priceperpax"; //IGUALAR A VARIAVEL QR NO TICKET
         $qrCode = (new QrCode($qrCodeData))
@@ -198,4 +202,5 @@ class CartController extends Controller
             'mimeType' => 'application/pdf',
         ]);
     }
+
 }

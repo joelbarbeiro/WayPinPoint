@@ -26,7 +26,7 @@ $imgUserPath = Url::to('@web/img/user/' . Yii::$app->user->id . '/');
                      style="min-height: 40px; min-width: 40px">
             </div>
             <div class="info">
-                <?= Html::a($user->username, ['role-register/view', 'id' => $user->id],
+                <?= Html::a($user->username, ['role-register/update', 'id' => $user->id],
                     ['class' => 'd-block text-decoration-none']) ?>
             </div>
         </div>
@@ -71,7 +71,7 @@ $imgUserPath = Url::to('@web/img/user/' . Yii::$app->user->id . '/');
                     ['label' => 'My Local Shops', 'icon' => 'map', 'url' => ['localsellpoint/index']],
                     ['label' => 'Add Local Shop', 'icon' => 'plus', 'url' => ['localsellpoint/create']],
                     ['label' => 'Sales', 'header' => true],
-                    ['label' => 'Manage sales', 'icon' => 'plus', 'url' => Url::to(['sales/index'])],
+                    ['label' => 'Manage sales', 'icon' => 'plus', 'url' => ['sale/index']],
                 ],
             ]);
             ?>

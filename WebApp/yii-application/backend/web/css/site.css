@@ -9,12 +9,14 @@ main > .container {
 }
 
 .user-extra-index table,
+.sale-index table,
 .localsellpoint-index table {
     width: 100%;
 }
 
 .user-extra-index th, .user-extra-index td,
-.localsellpoint-index th, .localsellpoint-index td{
+.sale-index th, .sale-index td,
+.localsellpoint-index th, .localsellpoint-index td {
     width: 10%;
     text-align: center;
     padding: 10px;
@@ -83,9 +85,9 @@ a.desc:after {
     color: rgba(255, 255, 255, 0.5);
 }
 
-@media(max-width:767px) {
+@media (max-width: 767px) {
     .nav li > form > button.logout {
-        display:block;
+        display: block;
         text-align: left;
         width: 100%;
         padding: 10px 0;
@@ -102,11 +104,12 @@ a.desc:after {
     outline: none;
 }
 
-.card-img-container{
-    height:400px;
+.card-img-container {
+    height: 400px;
     object-fit: cover;
 }
-.card-title{
+
+.card-title {
     font-size: 2rem;
     font-weight: bold;
 }
