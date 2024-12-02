@@ -112,7 +112,7 @@ class RoleRegisterController extends \yii\web\Controller
 
         if ($this->request->isPost && $model->load($this->request->post())) {
             if ($model->roleUpdatePassword($id)) {
-                \Yii::$app->session->setFlash('success', 'User updated successfully with role: ' . $model->role);
+                \Yii::$app->session->setFlash('success', 'User updated successfully with role: ');
                 return $this->redirect(['view', 'id' => $id]);
             } else {
                 \Yii::$app->session->setFlash('error', 'Failed to update user');
@@ -143,8 +143,7 @@ class RoleRegisterController extends \yii\web\Controller
         }
     }
 
-    protected
-    function findModel($id)
+    protected function findModel($id)
     {
         if (($model = UserExtra::findOne(['id' => $id])) !== null) {
             return $model;
@@ -153,8 +152,7 @@ class RoleRegisterController extends \yii\web\Controller
         throw new NotFoundHttpException('The requested page does not exist.');
     }
 
-    public
-    function behaviors()
+    public function behaviors()
     {
         return [
             'access' => [

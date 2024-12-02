@@ -53,7 +53,7 @@ main > .container, main > .container-fluid
 }
 
 .navbar .custom-dropdown-menu .dropdown-item:hover {
-    background-color: rgba(255, 183, 0, 0.61); /* Highlight color */
+    background-color: rgba(20, 31, 105, 0.53); /* Highlight color */
     color: #ffffff; /* Keep text white */
 }
 

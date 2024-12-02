@@ -11,10 +11,17 @@ return [
     'basePath' => dirname(__DIR__),
     'controllerNamespace' => 'backend\controllers',
     'bootstrap' => ['log'],
-    'modules' => [],
+    'modules' => [
+        'api' => [
+            'class' => 'backend\modules\api\ModuleAPI',
+        ],
+    ],
     'components' => [
         'request' => [
             'csrfParam' => '_csrf-backend',
+            'parsers' => [
+                'application/json' => 'yii\web\JsonParser',
+            ]
         ],
         'user' => [
             'identityClass' => 'common\models\User',
@@ -49,6 +56,19 @@ return [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                ['class' => 'yii\rest\UrlRule', 'controller' => 'api/user',
+                    'extraPatterns' => [
+                        'GET count' => 'count',
+                        'GET usernames' => 'usernames',
+                        'GET extras' => 'extras',
+                        'GET employees' => 'employees',
+                        'DELETE {username}' => 'delbyusername',
+                    ],
+                    'tokens' => [
+                        '{id}' => '<id:\\d+>',
+                        '{username}' => '<username:\\w+>', //[a-zA-Z0-9_] 1 ou + vezes (char)
+                    ],
+                ],
             ],
         ],
     ],
