@@ -24,12 +24,14 @@ $this->registerCssFile('@web/css/site.css', [
     echo '<img src="' . $imgPath . $model->photo . '" class="card-img-top card-img-container" alt="' . $model->name . '">';
     echo '<div class="card-body">';
     echo '<h5 class="card-title">' . $model->name . '</h5>';
-    echo '<p class="card-text">' . $model->description . '</p>';
-    echo '<p class="card-text">' . $model->category->description . '</p>';
+    echo '<p class="card-text">Description: ' . $model->description . '</p>';
+    echo '<p class="card-text">Category: ' . $model->category->description . ' People ' . '</p>';
+    echo '<p class="card-text">Capacity: ' . $model->maxpax . ' People ' . '</p>';
+    echo '<p class="card-text">Price per Ticket: ' . $model->priceperpax . '€' . '</p>';
 
     foreach ($model->calendar as $calendar) {
         if ($calendar->status != 0) {
-            echo '<p class="card-text"> Date: ' . $calendar->date->date . ' Time: ' . $calendar->time->hour . '</p>';
+            echo '<p class="card-text">Date: ' . $calendar->date->date . ' Time: ' . $calendar->time->hour . '</p>';
         }
     }
 
