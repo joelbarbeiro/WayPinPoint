@@ -159,12 +159,14 @@ class ActivityController extends Controller
         $model = $model->getActivity($id, $userId);
         $hoursList = $model->getTimeList();
 
+
         $calendarValidator = count($model->calendar);
         if ($model->load($this->request->post())) {
             $getDateTimeUpdate = $model->getCalendarArray($model->id);
             $model->uploadPhoto();
             if ($model->validate() && $model->save()) {
-                if ($calendarValidator != $getDateTimeUpdate) {
+                $model->setCalendar($model->id, $model->date, $model->hour);
+                /*if ($calendarValidator != $getDateTimeUpdate) {
                     foreach ($getDateTimeUpdate as $dateVal => $timeId) {
                         $date = new Date();
                         $date->date = $dateVal;
@@ -177,7 +179,7 @@ class ActivityController extends Controller
                             $calendarModel->save();
                         }
                     }
-                }
+                }*/
             }
             return $this->redirect(['index']);
         }

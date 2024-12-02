@@ -106,12 +106,28 @@ class Activity extends \yii\db\ActiveRecord
                     Yii::error("Failed to copy file to frontend directory");
                 }
 
+                $this->deletePhoto($this->photo);
+
                 $this->photo = $changeFileName;
             } else {
                 Yii::error("File save failed at: " . $fileBackendPath);
             }
         } else {
             Yii::error("No file uploaded");
+        }
+    }
+
+    public function deletePhoto($fileName)
+    {
+        $deleteBackendPath = Yii::getAlias('@backend/web/assets/uploads/' . Yii::$app->user->id . '/' . $fileName);
+        $deleteFrontendPath = Yii::getAlias('@frontend/web/assets/uploads/' . Yii::$app->user->id . '/' . $fileName);
+
+        if (file_exists($deleteBackendPath)) {
+            unlink($deleteBackendPath);
+
+        }
+        if (file_exists($deleteFrontendPath)) {
+            unlink($deleteFrontendPath);
         }
     }
 
@@ -131,6 +147,51 @@ class Activity extends \yii\db\ActiveRecord
             mkdir($uploadPath, 0775, true);
         }
         return $uploadPath;
+    }
+
+    public function setCalendar($id, $date, $hour)
+    {
+        $newCalendar = new Calendar();
+        $currentCalendar = Calendar::find()->where(['activity_id' => $id])->all();
+        foreach ($currentCalendar as $entry) {
+            $existingCalendar[] = [
+                'date' => $entry->date->date,
+                'hour_id' => $entry->time_id
+            ];
+        }
+        foreach ($date as $key => $dateValue)
+        {
+            $newEntries[] = [
+                'date' => $dateValue,
+                'hour_id' => $hour[$key],
+            ];
+        }
+
+
+        dd($existingCalendar, $newEntries);
+        /*
+        echo count($date) . '</br>';
+        foreach ($currentCalendar as $calendar) {
+            for ($i = 0; $i < count($date); $i++) {
+                if (($calendar->date->date != $date[$i] && $calendar->time_id != $hour[$i]) && $calendar->status == 1) {
+                    echo "Update </br>";
+                    echo $calendar->date->date . " - " . $hour[$i] . "</br>";
+                    $opcao = 1;
+                } else {
+                    $opcao = 0;
+                }
+            }
+            if ($opcao == 1) {
+                $modelDate = new Date();
+                $modelDate->date = $date[$i];
+                $modelDate->save();
+                $newCalendar->activity_id = $id;
+                $newCalendar->time_id = $hour[$i];
+                $newCalendar->date_id = $modelDate->id;
+                $newCalendar->save();
+                $opcao = 0;
+            }
+        }*/
     }
 
     public function getCalendarArray($id)
@@ -154,7 +215,6 @@ class Activity extends \yii\db\ActiveRecord
         }
         return $calendar;
     }
-
 
 
     public function getSupplierActivities($userId)
