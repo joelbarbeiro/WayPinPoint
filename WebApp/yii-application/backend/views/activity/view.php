@@ -24,13 +24,35 @@ $this->registerCssFile('@web/css/site.css', [
     echo '<img src="' . $imgPath . $model->photo . '" class="card-img-top card-img-container" alt="' . $model->name . '">';
     echo '<div class="card-body">';
     echo '<h5 class="card-title">' . $model->name . '</h5>';
-    echo '<p class="card-text">' . $model->description . '</p>';
+    echo '<table class="table">';
+            echo '<tr>';
+                echo '<th>Description</th>';
+                echo '<td colspan="3">' . $model->description . '</td>';
+            echo '</tr>';
+            echo '<tr>';
+                echo '<th>Max participants</th>';
+                echo '<td colspan="3">' . $model->maxpax . '</td>';
+            echo '</tr>';
+            echo '<tr>';
+                echo '<th>Price Per Pax</th>';
+                echo '<td colspan="3">' . $model->priceperpax . '</td>';
+            echo '</tr>';
+            echo '<tr>';
+                echo '<th>Location</th>';
+                echo '<td colspan="3">' . $model->address . '</td>';
+            echo '</tr>';
 
     foreach ($model->calendar as $calendar) {
         if ($calendar->status != 0) {
-            echo '<p class="card-text"> Date: ' . $calendar->date->date . ' Time: ' . $calendar->time->hour . '</p>';
+            echo '<tr>';
+                echo '<td>Date</td>';
+                echo '<td>' . $calendar->date->date . '</td>';
+                echo '<td>time</td>';
+                echo '<td>' . $calendar->time->hour . '</td>';
+            echo '</tr>';
         }
     }
+    echo '</table>';
 
     echo '<a href="' . Url::to(['activity/update', 'id' => $model->id]) . '" class="btn btn-warning mr-3">Update</a>';
     echo '<a href="' . Url::to(['activity/delete', 'id' => $model->id]) . '" class="btn btn-danger" data-method="post">Delete</a>';
