@@ -1,7 +1,8 @@
 <?php
 
 namespace common\models;
-
+use backend\models\Sale;
+use backend\models\Ticket;
 use Yii;
 use yii\helpers\ArrayHelper;
 use yii\web\UploadedFile;
@@ -147,6 +148,7 @@ class Activity extends \yii\db\ActiveRecord
         }
         return $uploadPath;
     }
+
 
     public function setCalendar($id, $date, $hour)
     {
@@ -314,5 +316,33 @@ class Activity extends \yii\db\ActiveRecord
     public function getUser()
     {
         return $this->hasOne(User::class, ['user_id' => 'id']);
+    }
+
+    public function getCalendars()
+    {
+        return $this->hasMany(Calendar::class, ['activity_id' => 'id']);
+    }
+
+    public static function getSupplierActivities($userId)
+    {
+        return Activity::find()
+            ->joinWith('calendar')
+            ->where(['user_id' => $userId])
+            ->andWhere(['activity.status' => '1'])
+            ->andWhere(['calendar.status' => '1'])
+            ->all();
+    }
+
+    public static function getSupplierActivityNames($userId): array
+    {
+        $activities =
+            Activity::find()
+                ->joinWith('calendar')
+                ->where(['activity.user_id' => $userId])
+                ->andWhere(['activity.status' => '1'])
+                ->andWhere(['calendar.status' => '1'])
+                ->all();
+
+        return ArrayHelper::map($activities, 'id', 'name');
     }
 }

@@ -16,26 +16,39 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <p>
-        <?= Html::a('Create Ticket', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
-
-
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-
-            'id',
-            'activities_id',
-            'participant',
-            'qr',
-            'status',
+            ['attribute' => 'Activity',
+                'value' => function ($model) {
+                    return $model->activity->description;
+                }],
+            ['attribute' => 'Participant',
+                'value' => function ($model) {
+                    return Yii::$app->user->identity->username;
+                }],
+            ['attribute' => 'Status',
+                'value' => function ($model) {
+                    return $model->status;
+                }],
             [
                 'class' => ActionColumn::className(),
+                'template' => '{view} {delete} {print}',
+                'buttons' => [
+                    'print' => function ($url, $model) {
+                        return Html::a(
+                            'Print Ticket',
+                            ['ticket/print', 'id' => $model->id],
+                            [
+                                'class' => 'btn btn-primary',
+                                'title' => 'Print Ticket',
+                            ]);
+                    }
+                ],
                 'urlCreator' => function ($action, Ticket $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'id' => $model->id]);
-                 }
+                }
             ],
         ],
     ]); ?>

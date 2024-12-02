@@ -2,8 +2,6 @@
 
 namespace common\models;
 
-use common\models\Activity;
-
 /**
  * This is the model class for table "cart".
  *

@@ -1,23 +1,23 @@
 <?php
 
-namespace frontend\controllers;
+namespace backend\controllers;
 
+use backend\models\SaleSearch;
 use common\models\Activity;
-use common\models\Calendar;
-use common\models\Invoice;
-use common\models\InvoiceSearch;
 use common\models\Sale;
-use common\models\User;
-use Mpdf\Mpdf;
+use common\models\UserExtra;
 use Yii;
+use yii\db\Expression;
 use yii\filters\VerbFilter;
+use yii\helpers\ArrayHelper;
+use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
 /**
- * InvoiceController implements the CRUD actions for Invoice model.
+ * SaleController implements the CRUD actions for Sale model.
  */
-class InvoiceController extends Controller
+class SaleController extends Controller
 {
     /**
      * @inheritDoc
@@ -38,25 +38,27 @@ class InvoiceController extends Controller
     }
 
     /**
-     * Lists all Invoice models.
+     * Lists all Sale models.
      *
      * @return string
      */
     public function actionIndex()
     {
-
-        $searchModel = new InvoiceSearch();
+        $searchModel = new SaleSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
-        $dataProvider->query->joinWith('sale')
-            ->andWhere(['user' => Yii::$app->user->id]);
+
+        $userId = Yii::$app->user->id;
+
+        $dataProvider = Sale::getSupplierSales($userId);
 
         return $this->render('index', [
+            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
 
     /**
-     * Displays a single Invoice model.
+     * Displays a single Sale model.
      * @param int $id ID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
@@ -69,16 +71,42 @@ class InvoiceController extends Controller
     }
 
     /**
-     * Creates a new Invoice model.
+     * Creates a new Sale model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
-    public function actionCreate()
+    public function actionCreate($calendar_id)
     {
-        $model = new Invoice();
+        $model = new Sale();
+        $userId = Yii::$app->user->id;
+        $seller = UserExtra::findOne(['user_id' => $userId]);
+        $activities = Activity::getSupplierActivityNames($seller->supplier);
+        $clients = Sale::getAllClients();
+        $clientsMap = ArrayHelper::map($clients, 'id', 'username');
+        $model->seller_id = $seller->id;
+        $model->localsellpoint_id = $seller->localsellpoint_id;
+        if (!$seller || !$seller->supplier) {
+            throw new NotFoundHttpException('Supplier information is missing.');
+        }
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
+            $model->load($this->request->post());
+            if ($model->buyer === null) {
+                throw new BadRequestHttpException('Buyer information is missing.');
+            }
+            if ($calendar_id === null) {
+                throw new BadRequestHttpException('Calendar ID is required.');
+            }
+            $activity = Activity::findOne($this->request->post('Sale')['activity_id']);
+            if (!$activity) {
+                throw new NotFoundHttpException('Activity not found.');
+            }
+            $model->purchase_date = new Expression('NOW()');
+            $model->total = $activity->priceperpax * $model->quantity;
+            if ($model->save()) {
+                Sale::createBooking($activity, $model->buyer, $calendar_id, $model->quantity);
                 return $this->redirect(['view', 'id' => $model->id]);
+            } else {
+                var_dump($model->getErrors());
             }
         } else {
             $model->loadDefaultValues();
@@ -86,11 +114,14 @@ class InvoiceController extends Controller
 
         return $this->render('create', [
             'model' => $model,
+            'activities' => $activities,
+            'calendar_id' => $calendar_id,
+            'clients' => $clientsMap,
         ]);
     }
 
     /**
-     * Updates an existing Invoice model.
+     * Updates an existing Sale model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param int $id ID
      * @return string|\yii\web\Response
@@ -110,7 +141,7 @@ class InvoiceController extends Controller
     }
 
     /**
-     * Deletes an existing Invoice model.
+     * Deletes an existing Sale model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param int $id ID
      * @return \yii\web\Response
@@ -124,61 +155,18 @@ class InvoiceController extends Controller
     }
 
     /**
-     * Finds the Invoice model based on its primary key value.
+     * Finds the Sale model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param int $id ID
-     * @return Invoice the loaded model
+     * @return Sale the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Invoice::findOne(['id' => $id])) !== null) {
+        if (($model = Sale::findOne(['id' => $id])) !== null) {
             return $model;
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
-
-    public function actionPrint($id)
-    {
-        $invoice = Invoice::findOne($id);
-        if (!$invoice) {
-            Yii::$app->session->setFlash('error', "Invoice not found");
-            return $this->redirect(['index']);
-        }
-        $saleId = $invoice->sale_id;
-        $sale = Sale::findOne($saleId);
-        $activity = Activity::findOne($sale->activity_id);
-        if (!$saleId) {
-            Yii::$app->session->setFlash('error', "Sale not found");
-            return $this->redirect(['index']);
-        }
-        if (!$activity) {
-            Yii::$app->session->setFlash('error', 'Activity not found for this sale.');
-            return $this->redirect(['index']);
-        }
-        $userId = $invoice->user;
-        $user = User::findOne($userId);
-        if (!$user) {
-            Yii::$app->session->setFlash('error', 'Activity not found for this sale.');
-            return $this->redirect(['index']);
-        }
-        $calendar = Calendar::find()->where(['activity_id' => $activity->id])->all();
-        $content = $this->renderPartial('printinvoice', [
-            'user' => $user,
-            'activity' => $activity,
-            'calendar' => $calendar,
-            'sale' => $sale,
-        ]);
-        $this->generatePdf($content, $user, $activity);
-    }
-    public function generatePdf($content, $user, $activity)
-    {
-        $pdf = new Mpdf();
-        $pdf->WriteHTML($content);
-        return Yii::$app->response->sendContentAsFile($pdf->Output('', 'S'), "receipt_{$user->username}_{$activity->description}.pdf", [
-            'mimeType' => 'application/pdf',
-        ]);
-    }
-
 }

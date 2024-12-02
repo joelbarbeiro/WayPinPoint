@@ -27,8 +27,8 @@ $this->registerCssFile('@web/css/site.css', [
             echo '<div class="card-body">';
             echo '<h5 class="card-title">' . $activity->name . '</h5>';
             echo '<p class="card-text">' . $activity->description . '</p>';
-            echo '<p class="card-text">' . $activity->category->description . '</p>';
 
+            echo '<p class="card-text">' . $activity->category->description . '</p>';
             $dropdownOptions = [];
             foreach ($activity->calendar as $calendar) {
                 if ($calendar->status != 0) {
@@ -45,12 +45,11 @@ $this->registerCssFile('@web/css/site.css', [
                     'prompt' => 'Select a date',
                 ]
             );
-
             echo '<p class="card-text mt-3"><a href="' . Url::to(['activity/view', 'id' => $activity->id]) . '" class="btn btn-primary">View</a></p>';
+            echo '<p class="card-text mt-3"><a href="' . Url::to(['sale/create', 'id' => $activity->id, 'calendar_id' => $calendar->id]) . '" class="btn btn-primary">Buy</a></p>';
             echo '</div>';
             echo '</div>';
             echo '</div>';
-
             $counter++;
             if ($counter % 2 == 0) {
                 echo '</div><div class="row">';
