@@ -10,7 +10,7 @@ use yii\helpers\Url;
 $this->title = 'Activities';
 $this->params['breadcrumbs'][] = $this->title;
 
-$imgPath = Url::to('@web/assets/uploads/' . Yii::$app->user->id . '/');
+$imgPath = Url::to('@web/img/activity/' . Yii::$app->user->id . '/');
 
 $this->registerCssFile('@web/css/site.css', [
     'depends' => [\yii\web\YiiAsset::class],

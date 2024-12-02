@@ -145,12 +145,12 @@ class Activity extends \yii\db\ActiveRecord
 
     public function setCalendar($id, $date, $hour)
     {
-        $newCalendar = new Calendar();
+        $newDates = [];
         $currentCalendar = Calendar::find()->where(['activity_id' => $id])->all();
         foreach ($currentCalendar as $entry) {
             $existingCalendar[] = [
                 'date' => $entry->date->date,
-                'hour_id' => $entry->time_id
+                'hour_id' => (string)$entry->time_id
             ];
         }
         foreach ($date as $key => $dateValue)
@@ -160,57 +160,60 @@ class Activity extends \yii\db\ActiveRecord
                 'hour_id' => $hour[$key],
             ];
         }
-
-
-        dd($existingCalendar, $newEntries);
-        /*
-        echo count($date) . '</br>';
-        foreach ($currentCalendar as $calendar) {
-            for ($i = 0; $i < count($date); $i++) {
-                if (($calendar->date->date != $date[$i] && $calendar->time_id != $hour[$i]) && $calendar->status == 1) {
-                    echo "Update </br>";
-                    echo $calendar->date->date . " - " . $hour[$i] . "</br>";
-                    $opcao = 1;
+        $test = 0;
+        foreach($newEntries as $entry){
+            foreach($existingCalendar as $calendar){
+                if($entry['date'] == $calendar['date'] && $entry['hour_id'] == $calendar['hour_id']){
+                    $test = 0;
+                    break;
                 } else {
-                    $opcao = 0;
+                    $test = 1;
                 }
             }
-            if ($opcao == 1) {
-                $modelDate = new Date();
-                $modelDate->date = $date[$i];
-                $modelDate->save();
-                $newCalendar->activity_id = $id;
-                $newCalendar->time_id = $hour[$i];
-                $newCalendar->date_id = $modelDate->id;
-                $newCalendar->save();
-                $opcao = 0;
+            if($test == 1){
+                $newDates[$entry['date']][] = $entry['hour_id'];    
+                $test = 0;  
             }
-        }*/
+        }
+        return $newDates;
     }
 
-    public function getCalendarArray($id)
+    public function getCalendarArray()
     {
         $calendar = [];
-        $availableCalendar = Calendar::find()->where(['activity_id' => $id])->all();
-        $existingCombinations = [];
-
-        foreach ($availableCalendar as $dateAvailable) {
-            $existingCombinations[$dateAvailable->date->date][] = $dateAvailable->time_id;
-        }
+        
         foreach ($this->date as $index => $date) {
             $time = $this->hour[$index] ?? 0;
-            if (isset($existingCombinations[$date]) && in_array($time, $existingCombinations[$date])) {
-                continue;
-            }
-            if (!isset($calendar[$date])) {
-                $calendar[$date] = [];
-            }
             $calendar[$date][] = $this->hour[$index] ?? 0;
         }
 
         return $calendar;
     }
 
+    public function getDateIfExists($date){
+        Calendar::find()
+            ->joinWith('date')
+            ->where(['date.date' => $date])
+            ->one()->date ?? 0;
+    }
+
+    public function updateStatusActivity(){
+        $activities = Activity::find()
+                        ->joinWith('calendar')
+                        ->Where(['activity.status' => 1])
+                        ->andWhere(['calendar.status' => 1])
+                        ->all();
+        
+        $currentDay = date('y-m-d');
+        $currentHour = date('H:i:s');
+        foreach($activities as $activity){
+            if($activity->calendar->date->date <= $currentDay && $activity->calendar->time->hour <= $currentHour){
+                $activity->status = 0;
+                $activity->calendar->status = 0;
+                $activity->save(false);
+            }
+        }
+    }
 
     public function getSupplierActivities($userId)
     {
@@ -238,7 +241,6 @@ class Activity extends \yii\db\ActiveRecord
     {
         $hoursQuery = Time::find()->select(['id', 'hour'])->asArray()->all();
         return ArrayHelper::map($hoursQuery, 'id', 'hour');
-
     }
 
     /**

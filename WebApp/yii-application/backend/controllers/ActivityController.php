@@ -159,27 +159,25 @@ class ActivityController extends Controller
         $model = $model->getActivity($id, $userId);
         $hoursList = $model->getTimeList();
 
-
-        $calendarValidator = count($model->calendar);
         if ($model->load($this->request->post())) {
-            $getDateTimeUpdate = $model->getCalendarArray($model->id);
+            $getDateTimeUpdate = $model->setCalendar($model->id, $model->date, $model->hour);
             $model->uploadPhoto();
             if ($model->validate() && $model->save()) {
-                $model->setCalendar($model->id, $model->date, $model->hour);
-                /*if ($calendarValidator != $getDateTimeUpdate) {
-                    foreach ($getDateTimeUpdate as $dateVal => $timeId) {
+                foreach ($getDateTimeUpdate as $dateVal => $timeId) {
+                    $date = $model->getDateIfExists($dateVal);
+                    if($date == null){
                         $date = new Date();
                         $date->date = $dateVal;
                         $date->save();
-                        foreach ($timeId as $time) {
-                            $calendarModel = new Calendar();
-                            $calendarModel->activity_id = $model->id;
-                            $calendarModel->date_id = $date->id;
-                            $calendarModel->time_id = $time;
-                            $calendarModel->save();
-                        }
                     }
-                }*/
+                    foreach ($timeId as $time) {
+                        $calendarModel = new Calendar();
+                        $calendarModel->activity_id = $model->id;
+                        $calendarModel->date_id = $date->id;
+                        $calendarModel->time_id = $time;
+                        $calendarModel->save();
+                    }
+                }
             }
             return $this->redirect(['index']);
         }

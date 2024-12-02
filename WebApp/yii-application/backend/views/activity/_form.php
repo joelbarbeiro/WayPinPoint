@@ -24,7 +24,7 @@ use yii\widgets\ActiveForm;
         <!-- Small window to preview the image -->
         <div id="photoPreview" style="margin-top: 10px;">
             <?php if ($model->photo): ?>
-                <img src="<?= Yii::getAlias('@web/assets/uploads/' . $model->user_id . '/' . $model->photo) ?>"
+                <img src="<?= Yii::getAlias('@web/img/activity/' . $model->user_id . '/' . $model->photo) ?>"
                      alt="Current Image"
                      style="max-width: 150px; max-height: 150px; display: block;">
             <?php else: ?>
