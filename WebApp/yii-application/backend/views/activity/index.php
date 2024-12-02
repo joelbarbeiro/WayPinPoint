@@ -10,7 +10,7 @@ use yii\helpers\Url;
 $this->title = 'Activities';
 $this->params['breadcrumbs'][] = $this->title;
 
-$imgPath = Url::to('@web/assets/uploads/' . Yii::$app->user->id . '/');
+$imgPath = Url::to('@web/img/activity/' . Yii::$app->user->id . '/');
 
 $this->registerCssFile('@web/css/site.css', [
     'depends' => [\yii\web\YiiAsset::class],
@@ -20,13 +20,15 @@ $this->registerCssFile('@web/css/site.css', [
     <div class="row">
         <?php
         $counter = 0;
-        foreach ($dataProvider->models as $activity) {
+        foreach ($dataProvider as $activity) {
             echo '<div class="col-md-6 d-flex align-items-stretch">';
             echo '<div class="card m-3 w-100" >';
             echo '<img src="' . $imgPath . $activity->photo . '" class="card-img-top card-img-container" alt="' . $activity->name . '">';
             echo '<div class="card-body">';
             echo '<h5 class="card-title">' . $activity->name . '</h5>';
             echo '<p class="card-text">' . $activity->description . '</p>';
+
+            echo '<p class="card-text">' . $activity->category->description . '</p>';
             $dropdownOptions = [];
             foreach ($activity->calendar as $calendar) {
                 if ($calendar->status != 0) {

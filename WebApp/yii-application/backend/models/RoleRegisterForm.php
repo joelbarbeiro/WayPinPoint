@@ -19,6 +19,8 @@ class RoleRegisterForm extends ActiveRecord
     public $nif;
     public $localsellpoint;
     public $role;
+    public $photoFile;
+    public $photo;
 
     /**
      * @var mixed|null
@@ -53,6 +55,9 @@ class RoleRegisterForm extends ActiveRecord
             ['localsellpoint', 'required'],
             ['localsellpoint', 'string'],
 
+            [['photo'], 'string', 'max' => 250],
+            [['photoFile'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, jpeg'],
+
             ['role', 'required'],
             ['role', 'in', 'range' => ['manager', 'guide', 'salesperson']],
         ];
@@ -84,6 +89,7 @@ class RoleRegisterForm extends ActiveRecord
                 $userExtra->address = $this->address;
                 $userExtra->nif = $this->nif;
                 $userExtra->localsellpoint_id = $this->localsellpoint;
+                $userExtra->uploadUserPhoto($this);
                 $userExtra->supplier = $supplierId;
                 $userExtra->save(false);
             }
@@ -120,12 +126,10 @@ class RoleRegisterForm extends ActiveRecord
 
             $user->username = $this->username;
             $user->email = $this->email;
-            if ($this->password) {
-                $user->setPassword($this->password);
-            }
             $userExtra->phone = $this->phone;
             $userExtra->address = $this->address;
             $userExtra->nif = $this->nif;
+            $userExtra->uploadUserPhoto($this);
             $userExtra->localsellpoint_id = $this->localsellpoint;
 
             $auth = \Yii::$app->authManager;
@@ -135,6 +139,33 @@ class RoleRegisterForm extends ActiveRecord
                 throw new \Exception("Role not found");
             }
             $auth->assign($newRole, $user->id);
+
+            if ($user->save(false) && $userExtra->save(false)) {
+                $transaction->commit();
+                return true;
+            } else {
+                $transaction->rollBack();
+                return false;
+            }
+        } catch (\Exception $e) {
+            $transaction->rollBack();
+            throw $e;
+        }
+    }
+
+    public function roleUpdatePassword($userId)
+    {
+        $userExtra = UserExtra::findOne($userId);
+        $user = $userExtra->user;
+
+        $transaction = Yii::$app->db->beginTransaction();
+        try {
+            if (!$user) {
+                throw new \Exception("User not found");
+            }
+
+            $user->setPassword($this->password);
+            $user->generateAuthKey();
 
             if ($user->save(false) && $userExtra->save(false)) {
                 $transaction->commit();

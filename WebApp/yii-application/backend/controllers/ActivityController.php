@@ -5,13 +5,13 @@ namespace backend\controllers;
 use common\models\Activity;
 use common\models\ActivitySearch;
 use common\models\Calendar;
+use common\models\Category;
 use common\models\Date;
 use common\models\Time;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
-
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
@@ -70,17 +70,11 @@ class ActivityController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new ActivitySearch();
-        $dataProvider = $searchModel->search($this->request->queryParams);
-
         $userId = Yii::$app->user->id;
 
-        $dataProvider->query->joinWith('calendar')
-            ->andWhere(['user_id' => $userId])
-            ->andWhere(['activity.status' => 1])
-            ->andWhere(['calendar.status' => 1]);
+        $searchModel = new Activity();
+        $dataProvider = $searchModel->getSupplierActivities($userId);
 
-        $dataProvider->query->all();
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -99,21 +93,15 @@ class ActivityController extends Controller
     {
         $userId = Yii::$app->user->id;
 
-        $model = Activity::find()
-            ->joinWith('calendar')
-            ->where([
-                'activity.id' => $id,
-                'activity.user_id' => $userId,
-                'calendar.status' => 1
-            ])
-            ->one();
+        $model = new Activity();
+        $activity = $model->getActivity($id, $userId);
 
-        if (!$model) {
+        if (!$activity) {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
 
         return $this->render('view', [
-            'model' => $model,
+            'model' => $activity,
         ]);
     }
 
@@ -126,8 +114,9 @@ class ActivityController extends Controller
     {
         $model = new Activity();
 
-        $hoursQuery = Time::find()->select(['id', 'hour'])->asArray()->all();
-        $hoursList = ArrayHelper::map($hoursQuery, 'id', 'hour');
+        $hoursList = $model->getTimeList();
+
+        $categories = $model->getCatories();
 
         if ($model->load($this->request->post())) {
             $getDateTimes = $model->getCalendarArray();
@@ -153,6 +142,7 @@ class ActivityController extends Controller
 
         return $this->render('create', [
             'model' => $model,
+            'categories' => $categories,
             'hoursList' => $hoursList,
         ]);
     }
@@ -166,18 +156,40 @@ class ActivityController extends Controller
      */
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id);
+        $model = new Activity();
+        $userId = Yii::$app->user->id;
 
-        $hoursQuery = Time::find()->select(['id', 'hour'])->asArray()->all();
-        $hoursList = ArrayHelper::map($hoursQuery, 'id', 'hour');
+        $model = $model->getActivity($id, $userId);
+        $hoursList = $model->getTimeList();
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        $categories = $model->getCatories();
+
+        if ($model->load($this->request->post())) {
+            $getDateTimeUpdate = $model->setCalendar($model->id, $model->date, $model->hour);
+            $model->uploadPhoto();
+            if ($model->validate() && $model->save()) {
+                foreach ($getDateTimeUpdate as $dateVal => $timeId) {
+                    $date = $model->getDateIfExists($dateVal);
+                    if($date == null){
+                        $date = new Date();
+                        $date->date = $dateVal;
+                        $date->save();
+                    }
+                    foreach ($timeId as $time) {
+                        $calendarModel = new Calendar();
+                        $calendarModel->activity_id = $model->id;
+                        $calendarModel->date_id = $date->id;
+                        $calendarModel->time_id = $time;
+                        $calendarModel->save();
+                    }
+                }
+            }
+            return $this->redirect(['index']);
         }
-
         return $this->render('update', [
             'model' => $model,
-            'hourList' => $hoursList,
+            'categories' => $categories,
+            'hoursList' => $hoursList,
         ]);
     }
 

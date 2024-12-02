@@ -1,7 +1,6 @@
 <?php
 
 namespace common\models;
-
 use backend\models\Sale;
 use backend\models\Ticket;
 use Yii;
@@ -22,11 +21,11 @@ use yii\web\UploadedFile;
  * @property int $status
  * @property int $user_id
  *
- * @property Bookings[] $booking
+ * @property Booking[] $booking
  * @property Calendar[] $calendar
  * @property Picture[] $picture
- * @property Sales[] $sale
- * @property Tickets[] $ticket
+ * @property Sale[] $sale
+ * @property Ticket[] $ticket
  */
 class Activity extends \yii\db\ActiveRecord
 {
@@ -48,7 +47,7 @@ class Activity extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'description', 'photo', 'maxpax', 'priceperpax', 'address'], 'required'],
+            [['name', 'description', 'photo', 'maxpax', 'priceperpax', 'address', 'category_id'], 'required'],
             [['maxpax'], 'integer'],
             [['priceperpax'], 'number'],
             [['name'], 'string', 'max' => 200],
@@ -61,6 +60,8 @@ class Activity extends \yii\db\ActiveRecord
             [['date', 'hour'], 'required'],
             [['date'], 'each', 'rule' => ['date', 'format' => 'php:Y-m-d']],
             [['hour'], 'each', 'rule' => ['integer']],
+            [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => Category::class,
+                'targetAttribute' => ['category_id' => 'id']],
         ];
     }
 
@@ -82,6 +83,7 @@ class Activity extends \yii\db\ActiveRecord
             'photoFile' => 'Upload Photo',
             'date' => 'Date',
             'hour' => 'Custom Hours',
+            'category_id' => 'Category',
         ];
     }
 
@@ -102,6 +104,10 @@ class Activity extends \yii\db\ActiveRecord
                     Yii::error("Failed to copy file to frontend directory");
                 }
 
+                if($this->photo != null){
+                    $this->deletePhoto($this->photo);
+                }
+
                 $this->photo = $changeFileName;
             } else {
                 Yii::error("File save failed at: " . $fileBackendPath);
@@ -111,9 +117,23 @@ class Activity extends \yii\db\ActiveRecord
         }
     }
 
+    public function deletePhoto($fileName)
+    {
+        $deleteBackendPath = Yii::getAlias('@backend/web/assets/uploads/' . Yii::$app->user->id . '/' . $fileName);
+        $deleteFrontendPath = Yii::getAlias('@frontend/web/assets/uploads/' . Yii::$app->user->id . '/' . $fileName);
+
+        if (file_exists($deleteBackendPath)) {
+            unlink($deleteBackendPath);
+
+        }
+        if (file_exists($deleteFrontendPath)) {
+            unlink($deleteFrontendPath);
+        }
+    }
+
     public function checkBackendUploadFolder()
     {
-        $uploadPath = Yii::getAlias('@backend/web/assets/uploads/' . Yii::$app->user->id . '/');
+        $uploadPath = Yii::getAlias('@backend/web/img/activity/' . Yii::$app->user->id . '/');
         if (!is_dir($uploadPath)) {
             mkdir($uploadPath, 0775, true);
         }
@@ -122,24 +142,125 @@ class Activity extends \yii\db\ActiveRecord
 
     public function checkFrontendUploadFolder()
     {
-        $uploadPath = Yii::getAlias('@frontend/web/assets/uploads/' . Yii::$app->user->id . '/');
+        $uploadPath = Yii::getAlias('@frontend/web/img/activity/' . Yii::$app->user->id . '/');
         if (!is_dir($uploadPath)) {
             mkdir($uploadPath, 0775, true);
         }
         return $uploadPath;
     }
 
+
+    public function setCalendar($id, $date, $hour)
+    {
+        $newDates = [];
+        $currentCalendar = Calendar::find()->where(['activity_id' => $id])->all();
+        foreach ($currentCalendar as $entry) {
+            $existingCalendar[] = [
+                'date' => $entry->date->date,
+                'hour_id' => (string)$entry->time_id
+            ];
+        }
+        foreach ($date as $key => $dateValue)
+        {
+            $newEntries[] = [
+                'date' => $dateValue,
+                'hour_id' => $hour[$key],
+            ];
+        }
+        $test = 0;
+        foreach($newEntries as $entry){
+            foreach($existingCalendar as $calendar){
+                if($entry['date'] == $calendar['date'] && $entry['hour_id'] == $calendar['hour_id']){
+                    $test = 0;
+                    break;
+                } else {
+                    $test = 1;
+                }
+            }
+            if($test == 1){
+                $newDates[$entry['date']][] = $entry['hour_id'];
+                $test = 0;
+            }
+        }
+        return $newDates;
+    }
+
+    public function getCatories(){
+        $categories = Category::find()
+            ->select(['id', 'description'])
+            ->asArray()
+            ->all();
+
+        return ArrayHelper::map($categories, 'id', 'description');
+    }
+
+    public function getCategory()
+    {
+        return $this->hasOne(Category::class, ['id' => 'category_id']);
+    }
+
     public function getCalendarArray()
     {
         $calendar = [];
         foreach ($this->date as $index => $date) {
-            if (!isset($calendar[$date])) {
-                $calendar[$date] = [];
-            }
+            $time = $this->hour[$index] ?? 0;
             $calendar[$date][] = $this->hour[$index] ?? 0;
         }
 
         return $calendar;
+    }
+
+    public function getDateIfExists($date){
+        Calendar::find()
+            ->joinWith('date')
+            ->where(['date.date' => $date])
+            ->one()->date ?? 0;
+    }
+
+    public function updateStatusActivity(){
+        $activities = Activity::find()
+                        ->joinWith('calendar')
+                        ->Where(['activity.status' => 1])
+                        ->andWhere(['calendar.status' => 1])
+                        ->all();
+
+        $currentDay = date('y-m-d');
+        $currentHour = date('H:i:s');
+        foreach($activities as $activity){
+            if($activity->calendar->date->date <= $currentDay && $activity->calendar->time->hour <= $currentHour){
+                $activity->status = 0;
+                $activity->calendar->status = 0;
+                $activity->save(false);
+            }
+        }
+    }
+
+    public function getSupplierActivities($userId)
+    {
+        return Activity::find()
+            ->joinWith('calendar')
+            ->andWhere(['user_id' => $userId])
+            ->andWhere(['activity.status' => 1])
+            ->andWhere(['calendar.status' => 1])
+            ->all();
+    }
+
+    public function getActivity($id, $userId)
+    {
+        return Activity::find()
+            ->joinWith('calendar')
+            ->where([
+                'activity.id' => $id,
+                'activity.user_id' => $userId,
+                'calendar.status' => 1
+            ])
+            ->one();
+    }
+
+    public function getTimeList()
+    {
+        $hoursQuery = Time::find()->select(['id', 'hour'])->asArray()->all();
+        return ArrayHelper::map($hoursQuery, 'id', 'hour');
     }
 
     /**
@@ -149,7 +270,7 @@ class Activity extends \yii\db\ActiveRecord
      */
     public function getBooking()
     {
-        return $this->hasMany(Bookings::class, ['activity_id' => 'id']);
+        return $this->hasMany(Booking::class, ['activity_id' => 'id']);
     }
 
     /**
@@ -179,7 +300,7 @@ class Activity extends \yii\db\ActiveRecord
      */
     public function getSale()
     {
-        return $this->hasMany(Sales::class, ['activity_id' => 'id']);
+        return $this->hasMany(Sale::class, ['activity_id' => 'id']);
     }
 
     /**
@@ -189,7 +310,7 @@ class Activity extends \yii\db\ActiveRecord
      */
     public function getTicket()
     {
-        return $this->hasMany(Tickets::class, ['activity_id' => 'id']);
+        return $this->hasMany(Ticket::class, ['activity_id' => 'id']);
     }
 
     public function getUser()

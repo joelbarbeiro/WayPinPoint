@@ -12,7 +12,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="activity-view">
 
-    <?php $imgPath = Url::to('@web/assets/uploads/' . $model->user_id . '/'); ?>
+    <?php $imgPath = Url::to('@web/img/activity/' . $model->user_id . '/'); ?>
 
     <div class="activities-view">
 
@@ -22,6 +22,7 @@ $this->params['breadcrumbs'][] = $this->title;
         echo '<div class="card-body">';
         echo '<h5 class="card-title">' . 'Activity Name: ' . $model->name . '</h5>';
         echo '<p class="card-text">' . 'Description: ' . $model->description . '</p>';
+        echo '<p class="card-text">' . 'Category: ' . $model->category->description . ' People ' . '</p>';
         echo '<p class="card-text">' . 'Capacity: ' . $model->maxpax . ' People ' . '</p>';
         echo '<p class="card-text">' . 'Price per Ticket: ' . $model->priceperpax . '€' . '</p>';
 

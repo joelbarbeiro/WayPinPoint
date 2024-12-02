@@ -1,10 +1,12 @@
 <?php
 
+use yii\helpers\Html;
 use yii\helpers\Url;
 
 /** @var yii\backend\assets $assetDir */
 
-$logo = Url::to('@web/assets/logo/waypinpoint.png');
+$logo = Url::to('@web/img/logo/waypinpoint.png');
+$imgUserPath = Url::to('@web/img/user/' . Yii::$app->user->id . '/');
 ?>
 
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
@@ -14,22 +16,24 @@ $logo = Url::to('@web/assets/logo/waypinpoint.png');
         img-circle elevation-3" style="opacity: .8">
         <span class="brand-text font-weight-light">WayPinPoint</span>
     </a>
-
     <!-- Sidebar -->
     <div class="sidebar">
         <!-- Sidebar user panel (optional) -->
-        <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-            <div class="image">
-                <img src="<?= $assetDir ?>/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
+        <div class="user-panel mt-3 pb-3 mb-3 d-flex align-items-center">
+            <div class="image me-2">
+                <img src="<?= $imgUserPath . $user->getUserExtra()->photo ?>"
+                     class="img-fluid rounded-circle"
+                     style="min-height: 40px; min-width: 40px">
             </div>
             <div class="info">
-                <a href="#" class="d-block"><?= $user->username ?></a>
+                <?= Html::a($user->username, ['role-register/update', 'id' => $user->id],
+                    ['class' => 'd-block text-decoration-none']) ?>
             </div>
         </div>
 
         <!-- SidebarSearch Form -->
         <!-- href be escaped -->
-        <!-- <div class="form-inline">
+        <div class="form-inline">
             <div class="input-group" data-widget="sidebar-search">
                 <input class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search">
                 <div class="input-group-append">
@@ -38,7 +42,7 @@ $logo = Url::to('@web/assets/logo/waypinpoint.png');
                     </button>
                 </div>
             </div>
-        </div> -->
+        </div>
 
         <!-- Sidebar Menu -->
         <nav class="mt-2">
