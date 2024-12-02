@@ -4,10 +4,8 @@ namespace backend\controllers;
 
 use backend\models\Localsellpoint;
 use backend\models\LocalsellpointSearch;
-use common\models\User;
 use common\models\UserExtra;
 use Yii;
-use yii\db\Query;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
@@ -34,9 +32,9 @@ class LocalsellpointController extends Controller
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['index', 'create', 'update', 'delete', 'view'], // Backoffice actions
+                        'actions' => ['index', 'create', 'update', 'delete', 'view'],
                         'allow' => false,
-                        'roles' => ['client'], // Explicitly deny client access to backoffice
+                        'roles' => ['client'],
                     ],
                     [
                         'actions' => ['index', 'create', 'update', 'delete', 'view'],
@@ -89,13 +87,33 @@ class LocalsellpointController extends Controller
     public function actionView($id)
     {
         $userId = Yii::$app->user->id;
+        $authManager = Yii::$app->authManager;
 
-        $users = Localsellpoint::getEmployeesForLocalStore($id,$userId);
+        $users = Localsellpoint::getEmployeesForLocalStore($id, $userId);
 
-        $employeesMap = ArrayHelper::map($users, 'id', 'username');
+        $manager = [];
+
+        $employees = [];
+
+        foreach ($users as $user) {
+            $roles = $authManager->getRolesByUser($user['id']); // Fetch roles for the user
+            if (!isset($roles['manager']) && !isset($roles['supplier'])) { // Only add users who are NOT managers or Suppliers
+                $employees[] = $user['username'];
+            }
+        }
+
+        foreach ($users as $user) {
+            $roles = $authManager->getRolesByUser($user['id']); // Fetch roles for the user
+            if (isset($roles['manager'])) { // Check if 'manager' exists in roles
+                $manager[] = $user['username'];
+            }
+        }
+
         return $this->render('view', [
             'model' => $this->findModel($id),
-            'employeesMap' => $employeesMap,
+            'users' => $users,
+            'manager' => $manager,
+            'employees' => $employees,
         ]);
     }
 
@@ -149,11 +167,16 @@ class LocalsellpointController extends Controller
         $model->user_id = $userId;
 
         if ($this->request->isPost && $model->load($this->request->post())) {
+
             $selectedEmployeeIds = $model->assignedEmployees;
             $usersToAssign = UserExtra::find()->where(['id' => $selectedEmployeeIds])->all();
-            foreach ($usersToAssign as $user) {
-                $user->localsellpoint_id = $model->id;
-                $user->save();
+
+            if (!empty($usersToAssign)) {
+
+                foreach ($usersToAssign as $user) {
+                    $user->localsellpoint_id = $model->id;
+                    $user->save();
+                }
             }
             return $this->redirect(['view', 'id' => $model->id]);
         }

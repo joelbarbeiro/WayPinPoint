@@ -2,7 +2,6 @@
 
 namespace frontend\controllers;
 
-use common\models\Activity;
 use frontend\models\Review;
 use frontend\models\ReviewSearch;
 use yii\filters\VerbFilter;
@@ -42,14 +41,7 @@ class ReviewController extends Controller
         $searchModel = new ReviewSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
-        $activity = Activity::findOne($id);
-
-        $activitiesReview = Review::find()
-            ->select(['*'])
-            ->where(['activity_id' => $id])
-            ->asArray()
-            ->all();
-
+        $activitiesReview = Review::findAll(['activity_id' => $id]);
 
         return $this->render('index', [
             'activityId' => $id,
@@ -84,7 +76,7 @@ class ReviewController extends Controller
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+                return $this->redirect(['index', 'id' => $id]);
             }
         } else {
             $model->loadDefaultValues();

@@ -7,6 +7,7 @@ use yii\widgets\ActiveForm;
 /** @var common\models\Activity $model */
 /** @var yii\widgets\ActiveForm $form */
 /** @var backend\controllers\ActivityController $hoursList */
+/** @var backend\controllers\ActivityController $categories */
 
 ?>
 
@@ -32,9 +33,21 @@ use yii\widgets\ActiveForm;
             <?php endif; ?>
         </div>
     </div>
-    <?= $form->field($model, 'category_id')->dropDownList($categories, [
-        'prompt' => 'Select the category',
-    ]); ?>
+
+    <?php
+
+    if ($model->category_id != null) {
+        echo $form->field($model, 'category_id')->dropDownList($categories, [
+            'prompt' => 'Select the category',
+            'value' => $model->category_id,
+        ]);
+    } else {
+        echo $form->field($model, 'category_id')->dropDownList($categories, [
+            'prompt' => 'Select the category',
+        ]);
+    }
+
+    ?>
 
     <?= $form->field($model, 'maxpax')->textInput() ?>
 
@@ -44,9 +57,9 @@ use yii\widgets\ActiveForm;
 
     <div class="date-inputs row row-cols-1 row-cols-md-4">
         <?php
-        if (!$model->calendar == null) {
+        if ($model->calendar != null) {
             foreach ($model->calendar as $date) {
-                if($date->status == 1) {
+                if ($date->status == 1) {
                     echo '<div class="col">';
                     echo '<div class="form-group">';
                     echo '<div class="date-field">';

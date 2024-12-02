@@ -82,6 +82,7 @@ class Activity extends \yii\db\ActiveRecord
             'photoFile' => 'Upload Photo',
             'date' => 'Date',
             'hour' => 'Custom Hours',
+            'category_id' => 'Category',
         ];
     }
 
@@ -102,7 +103,9 @@ class Activity extends \yii\db\ActiveRecord
                     Yii::error("Failed to copy file to frontend directory");
                 }
 
-                $this->deletePhoto($this->photo);
+                if($this->photo != null){
+                    $this->deletePhoto($this->photo);
+                }
 
                 $this->photo = $changeFileName;
             } else {
@@ -178,6 +181,15 @@ class Activity extends \yii\db\ActiveRecord
             }
         }
         return $newDates;
+    }
+
+    public function getCatories(){
+        $categories = Category::find()
+            ->select(['id', 'description'])
+            ->asArray()
+            ->all();
+
+        return ArrayHelper::map($categories, 'id', 'description');
     }
 
     public function getCategory()

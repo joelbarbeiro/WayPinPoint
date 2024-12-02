@@ -116,12 +116,7 @@ class ActivityController extends Controller
 
         $hoursList = $model->getTimeList();
 
-        $categoriesId = Category::find()
-            ->select(['id', 'description'])
-            ->asArray()
-            ->all();
-
-        $categories = ArrayHelper::map($categoriesId, 'id', 'description');
+        $categories = $model->getCatories();
 
         if ($model->load($this->request->post())) {
             $getDateTimes = $model->getCalendarArray();
@@ -167,6 +162,8 @@ class ActivityController extends Controller
         $model = $model->getActivity($id, $userId);
         $hoursList = $model->getTimeList();
 
+        $categories = $model->getCatories();
+
         if ($model->load($this->request->post())) {
             $getDateTimeUpdate = $model->setCalendar($model->id, $model->date, $model->hour);
             $model->uploadPhoto();
@@ -191,6 +188,7 @@ class ActivityController extends Controller
         }
         return $this->render('update', [
             'model' => $model,
+            'categories' => $categories,
             'hoursList' => $hoursList,
         ]);
     }

@@ -70,6 +70,7 @@ class m241118_214239_seed_user_userextra_localsellpoint_table extends Migration
                     'nif' => $data['nif'],
                     'address' => $data['address'],
                     'phone' => $data['phone'],
+                    'photo' => $data['photo'],
                     'supplier' => $data['supplier'],
                 ]);
             }

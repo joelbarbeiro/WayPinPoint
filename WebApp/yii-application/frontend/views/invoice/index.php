@@ -30,13 +30,13 @@ $this->params['breadcrumbs'][] = $this->title;
                 }
             ],
             ['attribute' => 'Purchase Date',
-                'value' => function ($model)  {
-                    return $model->sales->purchase_date;
+                'value' => function ($model) {
+                    return $model->sale->purchase_date;
                 }
             ],
             ['attribute' => 'Total',
-                'value' => function ($model)  {
-                    return $model->sales->total . "€";
+                'value' => function ($model) {
+                    return $model->sale->total . "€";
                 }
             ],
             [

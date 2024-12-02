@@ -238,6 +238,6 @@ class User extends ActiveRecord implements IdentityInterface
 
     public function getUserExtra()
     {
-        return $this->hasOne(UserExtra::class, ['user_id' => 'id']);
+        return UserExtra::findOne(['user_id' => Yii::$app->user->id]);
     }
 }
