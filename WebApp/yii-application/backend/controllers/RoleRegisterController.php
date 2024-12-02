@@ -46,7 +46,7 @@ class RoleRegisterController extends \yii\web\Controller
         $localsellpointsMap = ArrayHelper::map($localsellpoints, 'id', 'name');
 
         if ($model->load($this->request->post()) && $model->roleRegister()) {
-            \Yii::$app->session->setFlash('success', 'User registered successfully with roleregister: ' . $model->role);
+            \Yii::$app->session->setFlash('success', 'User registered successfully with role: ' . $model->role);
             return $this->redirect(['site/index']); // Adjust to where you want to redirect
         }
         return $this->render('@backend/views/roleregister/roleregister', [
@@ -70,13 +70,15 @@ class RoleRegisterController extends \yii\web\Controller
         $model = new RoleRegisterForm();
         $userExtra = $this->findModel($id);
         $user = $userExtra->user;
+        $userRole = $user->getRole();
 
+        $model->photo = $userExtra->photo;
         $model->username = $user->username;
         $model->email = $user->email;
-        $model->phone = $userExtra->phone ;
+        $model->phone = $userExtra->phone;
         $model->address = $userExtra->address;
-        $model->nif = $userExtra->nif ;
-        $model->localsellpoint = $userExtra->localsellpoint_id ;
+        $model->nif = $userExtra->nif;
+        $model->localsellpoint = $userExtra->localsellpoint_id;
         $model->role = $user->getRole();
 
         $localsellpoints = Localsellpoint::find()
@@ -94,9 +96,30 @@ class RoleRegisterController extends \yii\web\Controller
             }
         }
 
-        return $this->render('@backend/views/roleregister/roleregister', [
-            'userExtra' => $model,
-            'localsellpoints' => $localsellpointsMap,
+        return $this->render('@backend/views/roleregister/update', [
+            'userExtra' => $userExtra,
+            'userRole' => $userRole,
+            'localsellpointsMap' => $localsellpointsMap,
+            'model' => $model
+        ]);
+    }
+
+    public function actionUpdatePassword($id)
+    {
+        $model = new RoleRegisterForm();
+        $userExtra = $this->findModel($id);
+
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            if ($model->roleUpdatePassword($id)) {
+                \Yii::$app->session->setFlash('success', 'Password updated succesfull: ');
+                return $this->redirect(['view', 'id' => $id]);
+            } else {
+                \Yii::$app->session->setFlash('error', 'Failed to update user');
+            }
+        }
+
+        return $this->render('@backend/views/roleregister/_password', [
+            'userExtra' => $userExtra,
             'model' => $model
         ]);
     }
@@ -104,9 +127,19 @@ class RoleRegisterController extends \yii\web\Controller
     public function actionDelete($id)
     {
         $user = User::findOne($id);
+        $userextra = UserExtra::findOne(['user_id' => $user->id]);
         $user->status = 0;
-        $user->save();
-        return $this->redirect(['index']);
+        $userextra->status = 0;
+        $userextra->photo = null;
+        if ($userextra->validate()) {
+            if ($userextra->save() && $user->save()) {
+                return $this->redirect(['role-register/index']);
+            } else {
+                dd($user->getErrors(), $userextra->getErrors());
+            }
+        } else {
+            dd($user->getErrors(), $userextra->getErrors());
+        }
     }
 
     protected function findModel($id)
@@ -125,7 +158,7 @@ class RoleRegisterController extends \yii\web\Controller
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        'actions' => ['role-register', 'index', 'delete', 'view', 'update'],
+                        'actions' => ['role-register', 'index', 'delete', 'view', 'update', 'role-update', 'update-password'],
                         'allow' => true,
                         'roles' => ['supplier'],
                     ],

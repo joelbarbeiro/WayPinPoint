@@ -11,7 +11,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Activity', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 YiiAsset::register($this);
 
-$imgPath = Url::to('@web/img/activity/'.Yii::$app->user->id.'/');
+$imgPath = Url::to('@web/img/activity/' . Yii::$app->user->id . '/');
 
 $this->registerCssFile('@web/css/site.css', [
     'depends' => [\yii\web\YiiAsset::class],
@@ -41,6 +41,8 @@ $this->registerCssFile('@web/css/site.css', [
                 echo '<th>Location</th>';
                 echo '<td colspan="3">' . $model->address . '</td>';
             echo '</tr>';
+    echo '<p class="card-text">' . $model->description . '</p>';
+    echo '<p class="card-text">' . $model->category->description . '</p>';
 
     foreach ($model->calendar as $calendar) {
         if ($calendar->status != 0) {

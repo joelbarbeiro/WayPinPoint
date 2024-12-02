@@ -4,14 +4,17 @@
 
 /** @var string $content */
 
+use common\models\Category;
 use common\widgets\Alert;
 use frontend\assets\TemplateAsset;
+use yii\bootstrap5\BootstrapAsset;
 use yii\bootstrap5\Nav;
 use yii\bootstrap5\NavBar;
 use yii\helpers\Html;
 use yii\widgets\Breadcrumbs;
 
 TemplateAsset::register($this);
+$this->registerCssFile('@web/css/site.css', ['depends' => [BootstrapAsset::class]]);
 
 ?>
 <?php $this->beginPage() ?>
@@ -26,7 +29,6 @@ TemplateAsset::register($this);
         <!-- Font Awesome -->
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
 
-        <link href="img/favicon.ico" rel="icon">
 
         <!-- Google Web Fonts -->
         <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -35,14 +37,6 @@ TemplateAsset::register($this);
         <!-- Font Awesome -->
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
 
-        <!-- Libraries Stylesheet -->
-        <link href="lib/animate/animate.min.css" rel="stylesheet">
-        <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
-
-        <!-- Customized Bootstrap Stylesheet -->
-        <link href="css/style.css" rel="stylesheet">
-        <!-- Customized Bootstrap Stylesheet -->
-        <link href="../../web/template-assets/css/style.css" rel="stylesheet">
 
         <?php $this->head() ?>
     </head>
@@ -51,6 +45,7 @@ TemplateAsset::register($this);
 
     <header>
         <?php
+
         NavBar::begin([
             'brandLabel' => Html::tag(
                 'div',
@@ -63,44 +58,62 @@ TemplateAsset::register($this);
                 ['class' => 'navbar-brand', 'style' => 'margin-right: 100px;']
             ),
             'options' => [
-                'class' => 'navbar navbar-expand-md navbar-dark bg-dark ',
+                'class' => 'navbar navbar-expand-md navbar-dark bg-dark',
             ],
         ]);
 
-        // Define the menu items
-        $menuItems = [
-            ['label' => 'Activities', 'url' => ['/activity/index']],
+        $categories = Category::find()->select(['id', 'description'])->asArray()->all();
+
+        $categories[0] = ['id' => 0, 'description' => 'All Activities'];
+
+        $categoryDropdownItems = [];
+        foreach ($categories as $category) {
+            $categoryDropdownItems[] = [
+                'label' => $category['description'],
+                'url' => ['/activity/index', 'ActivitySearch[category_id]' => $category['id']],
+            ];
+        }
+
+        $menuItems[] = [
+            'label' => 'Categories',
+            'options' => ['class' => 'nav-item dropdown'],
+            'items' => $categoryDropdownItems, 'All',
+            'dropdownOptions' => [
+                'class' => 'dropdown-menu custom-dropdown-menu', // Add custom class
+            ],
         ];
+
         if (Yii::$app->user->isGuest) {
             $menuItems[] = ['label' => 'Signup', 'url' => ['/site/signup']];
         }
 
-        // Create the navbar structure
         echo '<div class="container-fluid">';
         echo Nav::widget([
             'options' => ['class' => 'navbar-nav me-auto mb-2 mb-md-0'], // Left aligned items
             'items' => $menuItems,
         ]);
 
+        // Search bar
         echo Html::beginForm(['/activity/index'], 'get', ['class' => 'form-inline me-2']);
         echo Html::textInput('ActivitySearch[search]', '', ['class' => 'form-control', 'placeholder' => 'Search for Activities']);
         echo Html::submitButton('<i class="fa fa-search"></i>', ['class' => 'btn btn-outline-primary']);
         echo Html::endForm();
 
+        // Other user actions
         echo Html::a(
-            '<i class="fa fa-shopping-cart "></i>',
+            '<i class="fa fa-shopping-cart"></i>',
             ['/cart/index'],
             ['class' => 'btn btn-outline-primary me-2']
         );
 
-        if (!Yii::$app->user->isGuest):
+        if (!Yii::$app->user->isGuest) {
             $userId = Yii::$app->user->identity->id;
             echo Html::a(
                 '<i class="fa fa-user-alt"></i>',
                 ['/user/view', 'id' => $userId],
                 ['class' => 'btn btn-outline-primary']
             );
-        endif;
+        }
 
         if (Yii::$app->user->isGuest) {
             echo Html::tag('div', Html::a('Login', ['/site/login'], ['class' => 'btn btn-link text-decoration-none']), ['class' => 'ms-2']);
@@ -118,6 +131,7 @@ TemplateAsset::register($this);
         NavBar::end();
         ?>
     </header>
+
 
     <main role="main" class="flex-shrink-0" style="padding-top: 10px">
         <div class="container">

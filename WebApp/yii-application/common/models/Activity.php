@@ -46,7 +46,7 @@ class Activity extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'description', 'photo', 'maxpax', 'priceperpax', 'address'], 'required'],
+            [['name', 'description', 'photo', 'maxpax', 'priceperpax', 'address', 'category_id'], 'required'],
             [['maxpax'], 'integer'],
             [['priceperpax'], 'number'],
             [['name'], 'string', 'max' => 200],
@@ -59,6 +59,8 @@ class Activity extends \yii\db\ActiveRecord
             [['date', 'hour'], 'required'],
             [['date'], 'each', 'rule' => ['date', 'format' => 'php:Y-m-d']],
             [['hour'], 'each', 'rule' => ['integer']],
+            [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => Category::class,
+                'targetAttribute' => ['category_id' => 'id']],
         ];
     }
 
@@ -171,17 +173,21 @@ class Activity extends \yii\db\ActiveRecord
                 }
             }
             if($test == 1){
-                $newDates[$entry['date']][] = $entry['hour_id'];    
-                $test = 0;  
+                $newDates[$entry['date']][] = $entry['hour_id'];
+                $test = 0;
             }
         }
         return $newDates;
     }
 
+    public function getCategory()
+    {
+        return $this->hasOne(Category::class, ['id' => 'category_id']);
+    }
+
     public function getCalendarArray()
     {
         $calendar = [];
-        
         foreach ($this->date as $index => $date) {
             $time = $this->hour[$index] ?? 0;
             $calendar[$date][] = $this->hour[$index] ?? 0;
@@ -203,7 +209,7 @@ class Activity extends \yii\db\ActiveRecord
                         ->Where(['activity.status' => 1])
                         ->andWhere(['calendar.status' => 1])
                         ->all();
-        
+
         $currentDay = date('y-m-d');
         $currentHour = date('H:i:s');
         foreach($activities as $activity){

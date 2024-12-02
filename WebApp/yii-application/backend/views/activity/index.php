@@ -27,6 +27,7 @@ $this->registerCssFile('@web/css/site.css', [
             echo '<div class="card-body">';
             echo '<h5 class="card-title">' . $activity->name . '</h5>';
             echo '<p class="card-text">' . $activity->description . '</p>';
+            echo '<p class="card-text">' . $activity->category->description . '</p>';
 
             $dropdownOptions = [];
             foreach ($activity->calendar as $calendar) {
@@ -44,7 +45,6 @@ $this->registerCssFile('@web/css/site.css', [
                     'prompt' => 'Select a date',
                 ]
             );
-
 
             echo '<p class="card-text mt-3"><a href="' . Url::to(['activity/view', 'id' => $activity->id]) . '" class="btn btn-primary">View</a></p>';
             echo '</div>';

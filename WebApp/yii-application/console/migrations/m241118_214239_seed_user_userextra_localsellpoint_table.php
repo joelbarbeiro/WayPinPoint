@@ -43,16 +43,17 @@ class m241118_214239_seed_user_userextra_localsellpoint_table extends Migration
 
         // Step 4: Insert userextra records
         $usersData = [
-            'supplier1' => ['nif' => 987654321, 'address' => 'Supplier1 Address', 'phone' => '0987654321', 'supplier' => $userIdSupplier1, 'localsellpoint_id' => $localsellpointId1],
-            'supplier2' => ['nif' => 567890123, 'address' => 'Supplier2 Address', 'phone' => '5678901234', 'supplier' => $userIdSupplier2, 'localsellpoint_id' => $localsellpointId2],
-            'manager1' => ['nif' => 345678901, 'address' => 'Manager1 Address', 'phone' => '3456789012', 'supplier' => $userIdSupplier1, 'localsellpoint_id' => $localsellpointId1],
-            'manager2' => ['nif' => 234567890, 'address' => 'Manager2 Address', 'phone' => '2345678901', 'supplier' => $userIdSupplier2, 'localsellpoint_id' => $localsellpointId2],
-            'salesperson1' => ['nif' => 876543210, 'address' => 'Salesperson1 Address', 'phone' => '8765432109', 'supplier' => $userIdSupplier1, 'localsellpoint_id' => $localsellpointId1],
-            'salesperson2' => ['nif' => 765432109, 'address' => 'Salesperson2 Address', 'phone' => '7654321098', 'supplier' => $userIdSupplier2, 'localsellpoint_id' => $localsellpointId2],
-            'guide1' => ['nif' => 654321098, 'address' => 'Guide1 Address', 'phone' => '6543210987', 'supplier' => $userIdSupplier1, 'localsellpoint_id' => $localsellpointId1],
-            'guide2' => ['nif' => 543210987, 'address' => 'Guide2 Address', 'phone' => '5432109876', 'supplier' => $userIdSupplier2, 'localsellpoint_id' => $localsellpointId2],
-            'client1' => ['nif' => 432109876, 'address' => 'Client1 Address', 'phone' => '4321098765', 'supplier' => null, 'localsellpoint_id' => null],
-            'client2' => ['nif' => 321098765, 'address' => 'Client2 Address', 'phone' => '3210987654', 'supplier' => null, 'localsellpoint_id' => null],
+            'admin' => ['nif' => 987654222, 'address' => 'Admin Address', 'phone' => '0987654321','photo'=> 'E35moiq2WSjIUs6T.jpeg', 'supplier' => null, 'localsellpoint_id' => null],
+            'supplier1' => ['nif' => 987654321, 'address' => 'Supplier1 Address', 'phone' => '0987654321','photo'=> 'P8Sx4JRg_2S5_zni.jpeg', 'supplier' => $userIdSupplier1, 'localsellpoint_id' => $localsellpointId1],
+            'supplier2' => ['nif' => 567890123, 'address' => 'Supplier2 Address', 'phone' => '5678901234', 'photo'=> 'kXVn4GehTmqUMez3.jpg','supplier' => $userIdSupplier2, 'localsellpoint_id' => $localsellpointId2],
+            'manager1' => ['nif' => 345678901, 'address' => 'Manager1 Address', 'phone' => '3456789012','photo'=> 'rLB2CUDgIzhuja5t.jpg', 'supplier' => $userIdSupplier1, 'localsellpoint_id' => $localsellpointId1],
+            'manager2' => ['nif' => 234567890, 'address' => 'Manager2 Address', 'phone' => '2345678901','photo'=> 'X4vuAZjVLs9TZlkt.jpeg', 'supplier' => $userIdSupplier2, 'localsellpoint_id' => $localsellpointId2],
+            'salesperson1' => ['nif' => 876543210, 'address' => 'Salesperson1 Address', 'phone' => '8765432109','photo'=> '5sWR4L_-iVSMrG4T.jpg', 'supplier' => $userIdSupplier1, 'localsellpoint_id' => $localsellpointId1],
+            'salesperson2' => ['nif' => 765432109, 'address' => 'Salesperson2 Address', 'phone' => '7654321098', 'photo'=> 'zJ4MUbJrB9KfwYN7.jpeg','supplier' => $userIdSupplier2, 'localsellpoint_id' => $localsellpointId2],
+            'guide1' => ['nif' => 654321098, 'address' => 'Guide1 Address', 'phone' => '6543210987','photo'=> 'dNB5yZv8IgGoVm4D.jpg', 'supplier' => $userIdSupplier1, 'localsellpoint_id' => $localsellpointId1],
+            'guide2' => ['nif' => 543210987, 'address' => 'Guide2 Address', 'phone' => '5432109876','photo'=> 'sOaAX7bSet74Myea.jpg', 'supplier' => $userIdSupplier2, 'localsellpoint_id' => $localsellpointId2],
+            'client1' => ['nif' => 432109876, 'address' => 'Client1 Address', 'phone' => '4321098765','photo'=> 'OyvGbaj69i9ZjLAk.jpeg', 'supplier' => null, 'localsellpoint_id' => null],
+            'client2' => ['nif' => 321098765, 'address' => 'Client2 Address', 'phone' => '3210987654','photo'=> 'elQNDZvUmyavSxMS.jpg', 'supplier' => null, 'localsellpoint_id' => null],
         ];
 
         foreach ($usersData as $username => $data) {

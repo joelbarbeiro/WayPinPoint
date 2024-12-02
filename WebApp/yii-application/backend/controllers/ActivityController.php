@@ -5,13 +5,13 @@ namespace backend\controllers;
 use common\models\Activity;
 use common\models\ActivitySearch;
 use common\models\Calendar;
+use common\models\Category;
 use common\models\Date;
 use common\models\Time;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
-
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
@@ -116,6 +116,13 @@ class ActivityController extends Controller
 
         $hoursList = $model->getTimeList();
 
+        $categoriesId = Category::find()
+            ->select(['id', 'description'])
+            ->asArray()
+            ->all();
+
+        $categories = ArrayHelper::map($categoriesId, 'id', 'description');
+
         if ($model->load($this->request->post())) {
             $getDateTimes = $model->getCalendarArray();
             $model->uploadPhoto();
@@ -140,6 +147,7 @@ class ActivityController extends Controller
 
         return $this->render('create', [
             'model' => $model,
+            'categories' => $categories,
             'hoursList' => $hoursList,
         ]);
     }

@@ -32,6 +32,9 @@ use yii\widgets\ActiveForm;
             <?php endif; ?>
         </div>
     </div>
+    <?= $form->field($model, 'category_id')->dropDownList($categories, [
+        'prompt' => 'Select the category',
+    ]); ?>
 
     <?= $form->field($model, 'maxpax')->textInput() ?>
 
