@@ -56,7 +56,6 @@ class RbacController extends Controller
         $auth->addChild($supplier, $viewActivity);
         $auth->addChild($supplier, $createActivity);
         $auth->addChild($supplier, $updateActivity);
-        $auth->addChild($supplier, $viewActivity);
         $auth->addChild($supplier, $deleteActivity);
         $auth->addChild($supplier, $createShop);
         $auth->addChild($supplier, $updateShop);
