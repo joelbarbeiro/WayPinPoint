@@ -18,6 +18,10 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'description')->textInput(['maxlength' => true]) ?>
 
+    <?= $form->field($model, 'category_id')->dropDownList($categories, [
+        'prompt' => 'Select the category',
+    ]); ?>
+
     <?= $form->field($model, 'photoFile')->fileInput(['multiple' => false, 'accept' => 'image/*']) ?>
 
     <?= $form->field($model, 'maxpax')->textInput() ?>

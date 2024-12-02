@@ -8,6 +8,7 @@
 
     <?= $this->render('_form', [
         'localsellpointsMap' => $localsellpointsMap,
+        'userRole' => $userRole,
         'userExtra' => $userExtra,
         'model' => $model,
     ]) ?>

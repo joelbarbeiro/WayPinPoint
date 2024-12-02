@@ -13,7 +13,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="user-extra-view">
 
-    <?php $imgPath = Url::to('@web/assets/uploads/' . $model->user_id . '/'); ?>
+    <?php $imgPath = Url::to('@web/img/user/' . $model->user_id . '/'); ?>
 
     <div class="user-view">
         <div class="user-view">

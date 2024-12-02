@@ -25,6 +25,7 @@ $this->registerCssFile('@web/css/site.css', [
     echo '<div class="card-body">';
     echo '<h5 class="card-title">' . $model->name . '</h5>';
     echo '<p class="card-text">' . $model->description . '</p>';
+    echo '<p class="card-text">' . $model->category->description . '</p>';
 
     foreach ($model->calendar as $calendar) {
         if ($calendar->status != 0) {

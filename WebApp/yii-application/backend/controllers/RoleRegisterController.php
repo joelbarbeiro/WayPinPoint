@@ -70,6 +70,7 @@ class RoleRegisterController extends \yii\web\Controller
         $model = new RoleRegisterForm();
         $userExtra = $this->findModel($id);
         $user = $userExtra->user;
+        $userRole = $user->getRole();
 
         $model->photo = $userExtra->photo;
         $model->username = $user->username;
@@ -98,6 +99,7 @@ class RoleRegisterController extends \yii\web\Controller
 
         return $this->render('@backend/views/roleregister/update', [
             'userExtra' => $userExtra,
+            'userRole' => $userRole,
             'localsellpointsMap' => $localsellpointsMap,
             'model' => $model
         ]);

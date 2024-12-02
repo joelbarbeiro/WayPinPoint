@@ -20,7 +20,7 @@ class ActivitySearch extends Activity
     {
         return [
             [['search'], 'safe'],
-            [['id', 'maxpax'], 'integer'],
+            [['id', 'category_id', 'maxpax'], 'integer'],
             [['name', 'description', 'photo', 'address'], 'safe'],
             [['priceperpax'], 'number'],
         ];
@@ -60,6 +60,10 @@ class ActivitySearch extends Activity
             return $dataProvider;
         }
 
+        if (!empty($this->category_id)) {
+            $query->andFilterWhere(['category_id' => $this->category_id]);
+        }
+
         $query->andFilterWhere([
             'id' => $this->id,
             'maxpax' => $this->maxpax,
@@ -71,6 +75,7 @@ class ActivitySearch extends Activity
             ->orFilterWhere(['like', 'description', $this->search])
             ->andFilterWhere(['like', 'photo', $this->photo])
             ->andFilterWhere(['like', 'address', $this->address]);
+
 
         return $dataProvider;
     }
