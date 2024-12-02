@@ -43,16 +43,16 @@ class m241118_214239_seed_user_userextra_localsellpoint_table extends Migration
 
         // Step 4: Insert userextra records
         $usersData = [
-            'supplier1' => ['nif' => 987654321, 'address' => 'Supplier1 Address', 'phone' => '0987654321', 'supplier' => $userIdSupplier1, 'localsellpoint_id' => $localsellpointId1],
-            'supplier2' => ['nif' => 567890123, 'address' => 'Supplier2 Address', 'phone' => '5678901234', 'supplier' => $userIdSupplier2, 'localsellpoint_id' => $localsellpointId2],
-            'manager1' => ['nif' => 345678901, 'address' => 'Manager1 Address', 'phone' => '3456789012', 'supplier' => $userIdSupplier1, 'localsellpoint_id' => $localsellpointId1],
-            'manager2' => ['nif' => 234567890, 'address' => 'Manager2 Address', 'phone' => '2345678901', 'supplier' => $userIdSupplier2, 'localsellpoint_id' => $localsellpointId2],
-            'salesperson1' => ['nif' => 876543210, 'address' => 'Salesperson1 Address', 'phone' => '8765432109', 'supplier' => $userIdSupplier1, 'localsellpoint_id' => $localsellpointId1],
-            'salesperson2' => ['nif' => 765432109, 'address' => 'Salesperson2 Address', 'phone' => '7654321098', 'supplier' => $userIdSupplier2, 'localsellpoint_id' => $localsellpointId2],
-            'guide1' => ['nif' => 654321098, 'address' => 'Guide1 Address', 'phone' => '6543210987', 'supplier' => $userIdSupplier1, 'localsellpoint_id' => $localsellpointId1],
-            'guide2' => ['nif' => 543210987, 'address' => 'Guide2 Address', 'phone' => '5432109876', 'supplier' => $userIdSupplier2, 'localsellpoint_id' => $localsellpointId2],
-            'client1' => ['nif' => 432109876, 'address' => 'Client1 Address', 'phone' => '4321098765', 'supplier' => null, 'localsellpoint_id' => null],
-            'client2' => ['nif' => 321098765, 'address' => 'Client2 Address', 'phone' => '3210987654', 'supplier' => null, 'localsellpoint_id' => null],
+            'supplier1' => ['nif' => 987654321, 'address' => 'Supplier1 Address', 'phone' => '0987654321', 'photo' => "", 'supplier' => $userIdSupplier1, 'status' => 1, 'localsellpoint_id' => $localsellpointId1],
+            'supplier2' => ['nif' => 567890123, 'address' => 'Supplier2 Address', 'phone' => '5678901234', 'photo' => "", 'supplier' => $userIdSupplier2, 'status' => 1, 'localsellpoint_id' => $localsellpointId2],
+            'manager1' => ['nif' => 345678901, 'address' => 'Manager1 Address', 'phone' => '3456789012', 'photo' => "", 'supplier' => $userIdSupplier1, 'status' => 1, 'localsellpoint_id' => $localsellpointId1],
+            'manager2' => ['nif' => 234567890, 'address' => 'Manager2 Address', 'phone' => '2345678901', 'photo' => "", 'supplier' => $userIdSupplier2, 'status' => 1, 'localsellpoint_id' => $localsellpointId2],
+            'salesperson1' => ['nif' => 876543210, 'address' => 'Salesperson1 Address', 'phone' => '8765432109', 'photo' => "", 'supplier' => $userIdSupplier1, 'status' => 1, 'localsellpoint_id' => $localsellpointId1],
+            'salesperson2' => ['nif' => 765432109, 'address' => 'Salesperson2 Address', 'phone' => '7654321098', 'photo' => "", 'supplier' => $userIdSupplier2, 'status' => 1, 'localsellpoint_id' => $localsellpointId2],
+            'guide1' => ['nif' => 654321098, 'address' => 'Guide1 Address', 'phone' => '6543210987', 'photo' => "", 'supplier' => $userIdSupplier1, 'status' => 1, 'localsellpoint_id' => $localsellpointId1],
+            'guide2' => ['nif' => 543210987, 'address' => 'Guide2 Address', 'phone' => '5432109876', 'photo' => "", 'supplier' => $userIdSupplier2, 'status' => 1, 'localsellpoint_id' => $localsellpointId2],
+            'client1' => ['nif' => 432109876, 'address' => 'Client1 Address', 'phone' => '4321098765', 'photo' => "", 'supplier' => null, 'status' => 1, 'localsellpoint_id' => null],
+            'client2' => ['nif' => 321098765, 'address' => 'Client2 Address', 'phone' => '3210987654', 'photo' => "", 'supplier' => null, 'status' => 1, 'localsellpoint_id' => null],
         ];
 
         foreach ($usersData as $username => $data) {
