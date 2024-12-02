@@ -2,9 +2,8 @@
 
 namespace backend\controllers;
 
+use backend\models\SaleSearch;
 use common\models\Activity;
-use common\models\ActivitySearch;
-use common\models\Calendar;
 use common\models\Sale;
 use common\models\UserExtra;
 use Yii;
@@ -45,17 +44,12 @@ class SaleController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new ActivitySearch();
+        $searchModel = new SaleSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         $userId = Yii::$app->user->id;
 
-        $dataProvider->query->joinWith('calendar')
-            ->andWhere(['user_id' => $userId])
-            ->andWhere(['activity.status' => 1])
-            ->andWhere(['calendar.status' => 1]);
-
-        $dataProvider->query->all();
+        $dataProvider = Sale::getSupplierSales($userId);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -94,13 +88,9 @@ class SaleController extends Controller
         if (!$seller || !$seller->supplier) {
             throw new NotFoundHttpException('Supplier information is missing.');
         }
-
         if ($this->request->isPost) {
-            //$activityId = $model->activity_id;
-            //$calendar_id = Yii::$app->request->post('calendar_id');
             $model->load($this->request->post());
-            if($model->buyer === null)
-            {
+            if ($model->buyer === null) {
                 throw new BadRequestHttpException('Buyer information is missing.');
             }
             if ($calendar_id === null) {
@@ -110,15 +100,12 @@ class SaleController extends Controller
             if (!$activity) {
                 throw new NotFoundHttpException('Activity not found.');
             }
-//            $model->activity_id = $activity->id;
             $model->purchase_date = new Expression('NOW()');
-//            $model->quantity = $this->request->post('Sale')['quantity'];
             $model->total = $activity->priceperpax * $model->quantity;
             if ($model->save()) {
                 Sale::createBooking($activity, $model->buyer, $calendar_id, $model->quantity);
                 return $this->redirect(['view', 'id' => $model->id]);
-            }
-            else {
+            } else {
                 var_dump($model->getErrors());
             }
         } else {

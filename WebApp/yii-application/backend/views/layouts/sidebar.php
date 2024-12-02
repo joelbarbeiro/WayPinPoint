@@ -64,11 +64,10 @@ $logo = Url::to('@web/assets/logo/waypinpoint.png');
                     ['label' => 'Create activity', 'icon' => 'plus', 'url' => ['activity/create']],
                     ['label' => 'Manage activity', 'icon' => 'map', 'url' => ['activity/index']],
                     ['label' => 'Selling Points', 'header' => true],
-                    ['label' => 'My Local Shops', 'icon' => 'map', 'url' =>['localsellpoint/index']],
+                    ['label' => 'My Local Shops', 'icon' => 'map', 'url' => ['localsellpoint/index']],
                     ['label' => 'Add Local Shop', 'icon' => 'plus', 'url' => ['localsellpoint/create']],
                     ['label' => 'Sales', 'header' => true],
                     ['label' => 'Manage sales', 'icon' => 'plus', 'url' => ['sale/index']],
-                    ['label' => 'All Sales', 'icon' => 'map', 'url' => ['sale/allsales']],
                 ],
             ]);
             ?>

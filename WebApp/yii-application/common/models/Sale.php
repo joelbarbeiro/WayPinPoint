@@ -4,8 +4,6 @@ namespace common\models;
 
 use Yii;
 use yii\db\Expression;
-use yii\db\Query;
-use yii\helpers\ArrayHelper;
 use yii\web\ServerErrorHttpException;
 
 /**
@@ -152,13 +150,24 @@ class Sale extends \yii\db\ActiveRecord
             throw new ServerErrorHttpException('Failed to create booking.');
         }
     }
-    public static function getAllClients() : array
+
+    public static function getAllClients(): array
     {
         $clients = Yii::$app->authManager->getUserIdsByRole('client');
         return User::find()
             ->select(['id', 'username'])
             ->where(['id' => $clients])
             ->asArray()
+            ->all();
+    }
+
+    public static function getSupplierSales($id)
+    {
+        return Sale::find()
+            ->joinWith('activity')
+            ->where([
+                'activity.user_id' => $id,
+            ])
             ->all();
     }
 }

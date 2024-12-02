@@ -12,64 +12,37 @@ use yii\helpers\Url;
 $this->title = 'Sales';
 $this->params['breadcrumbs'][] = $this->title;
 $imgPath = Url::to('@web/assets/uploads/' . Yii::$app->user->id . '/');
-$calendar = new Calendar();
+$this->registerCssFile('@web/css/site.css');
+
 ?>
 <div class="sale-index">
-
-    <p>
-        <?= Html::a('Register new Sale', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
-
-    <div class="activities-index">
-        <div class="row">
-            <?php
-            $counter = 0;
-            foreach ($dataProvider->models as $activity) {
-                echo '<div class="col-md-6 d-flex align-items-stretch">';
-                echo '<div class="card m-3 w-100" >';
-                echo '<img src="' . $imgPath . $activity->photo . '" class="card-img-top card-img-container" alt="' . $activity->name . '">';
-                echo '<div class="card-body">';
-                echo '<h5 class="card-title">' . $activity->name . '</h5>';
-                echo '<p class="card-text">' . $activity->description . '</p>';
-
-                $dropdownOptions = [];
-                foreach ($activity->calendar as $calendar) {
-                    if ($calendar->status != 0) {
-                        //echo '<p class="card-text"> Date: ' . $calendar->date->date . ' Time: ' . $calendar->time->hour . '</p>';
-                        $dropdownOptions[$calendar->id] = $calendar->date->date . ' - ' . $calendar->time->hour;
-                    }
-                }
-                echo Html::dropDownList(
-                    'calendar',
-                    null,
-                    $dropdownOptions,
-                    [
-                        'class' => 'card-link',
-                        'prompt' => 'Select a date',
-                    ]
-                );
-
-
-                echo '<p class="card-text mt-3"><a href="' . Url::to(['activity/view', 'id' => $activity->id]) . '" class="btn btn-primary">View</a></p>';
-                echo '<p class="card-text mt-3"><a href="' . Url::to(['sale/create', 'id' => $activity->id, 'calendar_id' => $calendar->id]) . '" class="btn btn-primary">Buy</a></p>';
-//                foreach ($activity->calendar as $calendar) {
-//                    if ($calendar->status != 0) {
-//                        echo '<p class="card-text mt-3"><a href="' . Url::to(['sale/create', 'id' => $activity->id, 'calendar_id' => $calendar->id]) . '" class="btn btn-primary">Buy for ' . $calendar->date->date . ' - ' . $calendar->time->hour . '</a></p>';
-//                    }
-//                }
-
-                echo '</div>';
-                echo '</div>';
-                echo '</div>';
-
-                $counter++;
-                if ($counter % 2 == 0) {
-                    echo '</div><div class="row">';
-                }
-            }
-            ?>
+    <div class="row">
+        <div class="sales w-100">
+            <table>
+                <thead>
+                <tr>
+                    <th>Activity</th>
+                    <th>Client</th>
+                    <th>Seller</th>
+                    <th>Purchase Date</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php foreach ($dataProvider as $sale): ?>
+                    <tr>
+                        <td><?= Html::encode($sale->activity->name) ?></td>
+                        <td><?= Html::encode($sale->buyer0->username) ?></td>
+                        <td><?= Html::encode($sale->seller->username) ?></td>
+                        <td><?= Html::encode($sale->purchase_date) ?></td>
+                        <td><?= Html::encode($sale->quantity) ?></td>
+                        <td><?= Html::encode($sale->total) ?></td>
+                    </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
         </div>
     </div>
-
-
 </div>
+
