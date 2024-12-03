@@ -16,6 +16,8 @@ use yii\widgets\Breadcrumbs;
 
 TemplateAsset::register($this);
 $this->registerCssFile('@web/css/site.css', ['depends' => [BootstrapAsset::class]]);
+$this->registerCssFile('@web/css/style.css', ['depends' => [BootstrapAsset::class]]);
+
 
 ?>
 <?php $this->beginPage() ?>
@@ -51,7 +53,7 @@ $this->registerCssFile('@web/css/site.css', ['depends' => [BootstrapAsset::class
             'brandLabel' => Html::tag(
                 'div',
                 Html::a(
-                    Html::img('@web/assets/logo/waypinpointFRONT.png', ['alt' => 'Logo', 'class' => 'logo-class']),
+                    Html::img('@web/img/logo/waypinpointFRONT.png', ['alt' => 'Logo', 'class' => 'logo-class']),
                     Yii::$app->homeUrl,
                     ['class' => 'text-decoration-none']
                 ),
@@ -77,7 +79,7 @@ $this->registerCssFile('@web/css/site.css', ['depends' => [BootstrapAsset::class
         $menuItems[] = [
             'label' => 'Categories',
             'options' => ['class' => 'nav-item dropdown'],
-            'items' => $categoryDropdownItems, 'All',
+            'items' => $categoryDropdownItems,
             'dropdownOptions' => [
                 'class' => 'dropdown-menu custom-dropdown-menu', // Add custom class
             ],

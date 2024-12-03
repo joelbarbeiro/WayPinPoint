@@ -2,6 +2,8 @@
 
 namespace common\models;
 
+use backend\models\Localsellpoint;
+use frontend\models\Review;
 use Yii;
 use yii\base\NotSupportedException;
 use yii\db\ActiveRecord;
@@ -292,6 +294,10 @@ class User extends ActiveRecord implements IdentityInterface
         return $this->hasMany(Localsellpoint::class, ['user_id' => 'id']);
     }
 
+    public function getReviews()
+    {
+        return $this->hasMany(Review::class, ['user_id' => 'id']);
+    }
     /**
      * Gets query for [[Pictures]].
      *

@@ -3,6 +3,7 @@
 namespace frontend\models;
 
 use common\models\Activity;
+use common\models\User;
 
 /**
  * This is the model class for table "reviews".
@@ -61,5 +62,10 @@ class Review extends \yii\db\ActiveRecord
     public function getActivity()
     {
         return $this->hasOne(Activity::class, ['id' => 'activity_id']);
+    }
+
+    public function getUser()
+    {
+        return $this->hasOne(User::class, ['id' => 'user_id']);
     }
 }

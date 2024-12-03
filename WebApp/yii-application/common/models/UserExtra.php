@@ -41,7 +41,7 @@ class UserExtra extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'localsellpoint_id', 'nif', 'address', 'phone'], 'required'],
+            [['user_id', 'nif', 'address', 'phone'], 'required'],
             [['user_id', 'localsellpoint_id', 'nif', 'supplier'], 'integer'],
             [['address'], 'string', 'max' => 255],
             [['phone'], 'string', 'max' => 20],
