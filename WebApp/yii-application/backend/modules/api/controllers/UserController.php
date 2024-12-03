@@ -181,8 +181,7 @@ class UserController extends ActiveController
     public function actionDelbyusername($username)
     {
         $userModel = new $this->modelClass;
-        $recs = $userModel::deleteAll(['username' => $username]);
-        return $recs;
+        $userModel::deleteAll(['username' => $username]);
     }
 
 }
