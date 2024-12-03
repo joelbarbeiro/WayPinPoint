@@ -257,6 +257,19 @@ class Activity extends \yii\db\ActiveRecord
             ->one();
     }
 
+    public static function getSupplierActivityNames($userId): array
+    {
+        $activities =
+            Activity::find()
+                ->joinWith('calendar')
+                ->where(['activity.user_id' => $userId])
+                ->andWhere(['activity.status' => '1'])
+                ->andWhere(['calendar.status' => '1'])
+                ->all();
+
+        return ArrayHelper::map($activities, 'id', 'name');
+    }
+
     public function getTimeList()
     {
         $hoursQuery = Time::find()->select(['id', 'hour'])->asArray()->all();
@@ -323,26 +336,5 @@ class Activity extends \yii\db\ActiveRecord
         return $this->hasMany(Calendar::class, ['activity_id' => 'id']);
     }
 
-    public static function getSupplierActivities($userId)
-    {
-        return Activity::find()
-            ->joinWith('calendar')
-            ->where(['user_id' => $userId])
-            ->andWhere(['activity.status' => '1'])
-            ->andWhere(['calendar.status' => '1'])
-            ->all();
-    }
 
-    public static function getSupplierActivityNames($userId): array
-    {
-        $activities =
-            Activity::find()
-                ->joinWith('calendar')
-                ->where(['activity.user_id' => $userId])
-                ->andWhere(['activity.status' => '1'])
-                ->andWhere(['calendar.status' => '1'])
-                ->all();
-
-        return ArrayHelper::map($activities, 'id', 'name');
-    }
 }

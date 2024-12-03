@@ -48,7 +48,8 @@ class CartController extends Controller
      */
     public function actionIndex()
     {
-        $query = Cart::find()->where(['user_id' => Yii::$app->user->id]);
+        $query = Cart::find()->where(['user_id' => Yii::$app->user->id])
+        ->andWhere(['status' => 0]);
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
@@ -157,6 +158,7 @@ class CartController extends Controller
         $userId = Yii::$app->request->post('user_id');
         $activityId = Yii::$app->request->post('activity_id');
         // Fetch user and activity data
+        $cartItem = Cart::findOne(['user_id' => $userId, 'product_id' => $activityId]);
         $user = User::findOne($userId);
         $activity = Activity::findOne($activityId);
         Booking::createBooking($activityId);
@@ -170,17 +172,25 @@ class CartController extends Controller
         }
         $qrCode = $this->generateQrCode($user, $activity);
         Ticket::createTicket($activityId, $qrCode);
+        $cartItem->status = 1;
+        if ($cartItem->save()) {
+            Yii::$app->session->setFlash('success', 'Checkout completed successfully.');
+        } else {
+            Yii::$app->session->setFlash('error', 'Failed to Checkout');
+        }
 
         if (!$user || !$activity) {
             Yii::$app->session->setFlash('error', 'User or Activity not found.');
             return $this->redirect(['index']);
         }
+
         $content = $this->renderPartial('receipt', [
             'user' => $user,
             'activity' => $activity,
             'qrCode' => $qrCode,
         ]);
         $this->generatePdf($content, $user, $activity);
+        return $this->redirect(['index']);
     }
 
     public static function generateQrCode($user, $activity)
