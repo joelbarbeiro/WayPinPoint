@@ -53,7 +53,7 @@ $this->registerCssFile('@web/css/style.css', ['depends' => [BootstrapAsset::clas
             'brandLabel' => Html::tag(
                 'div',
                 Html::a(
-                    Html::img('@web/assets/logo/waypinpointFRONT.png', ['alt' => 'Logo', 'class' => 'logo-class']),
+                    Html::img('@web/img/logo/waypinpointFRONT.png', ['alt' => 'Logo', 'class' => 'logo-class']),
                     Yii::$app->homeUrl,
                     ['class' => 'text-decoration-none']
                 ),

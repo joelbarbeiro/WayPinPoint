@@ -63,6 +63,8 @@ return [
                         'GET extras' => 'extras',
                         'GET employees' => 'employees',
                         'DELETE {username}' => 'delbyusername',
+                        'POST userextras' => 'userextras',
+                        'PUT {id}' => 'edituserextras'
                     ],
                     'tokens' => [
                         '{id}' => '<id:\\d+>',

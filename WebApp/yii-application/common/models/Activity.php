@@ -1,6 +1,7 @@
 <?php
 
 namespace common\models;
+
 use backend\models\Sale;
 use backend\models\Ticket;
 use Yii;
@@ -321,16 +322,6 @@ class Activity extends \yii\db\ActiveRecord
     public function getCalendars()
     {
         return $this->hasMany(Calendar::class, ['activity_id' => 'id']);
-    }
-
-    public static function getSupplierActivities($userId)
-    {
-        return Activity::find()
-            ->joinWith('calendar')
-            ->where(['user_id' => $userId])
-            ->andWhere(['activity.status' => '1'])
-            ->andWhere(['calendar.status' => '1'])
-            ->all();
     }
 
     public static function getSupplierActivityNames($userId): array

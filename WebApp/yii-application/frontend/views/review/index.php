@@ -27,7 +27,7 @@ $this->registerCssFile('@web/css/site.css');
                 echo '</div>';
             } else {
                 foreach ($activitiesReview as $review) {
-                    $imgPath = Url::to('@web/assets/uploads/' . $review->activity->user_id . '/');
+                    $imgPath = Url::to('@web/img/activity/' . $review->activity->user_id . '/');
                     echo '<div class="col-md-12 col-sm-12 d-flex align-items-stretch mb-12 px-3">';
                     echo '<div class="card w-100 ">';
                     echo '<img src="' . $imgPath . $review->activity->photo . '" class="card-img-top card-img-container" alt="Activity Image">';
@@ -36,6 +36,9 @@ $this->registerCssFile('@web/css/site.css');
                     echo '<p class="card-text">' . 'Score: ' . Html::encode($review->score) . ' out of 5.</p>';
                     echo '<p class="card-text">' . 'Comment: ' . Html::encode($review->message) . '</p>';
                     echo '<p class="card-text">' . 'Creation Date: ' . Html::encode($review->created_at) . '</p>';
+                    if($review->user->id == Yii::$app->user->id){
+                        echo '<a href="' . Url::to(['review/update', 'id' => $review->id]) . '" class="btn btn-warning">Edit</a>';
+                    }
                     echo '</div>';
                     echo '</div>';
                     echo '</div>';
