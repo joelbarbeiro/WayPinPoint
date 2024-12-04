@@ -41,7 +41,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             ['attribute' => 'Seller',
                 'value' => function ($model) {
-                    return $model->user;
+                    return $model->user_id;
                 }],
             [
                 'class' => ActionColumn::className(),

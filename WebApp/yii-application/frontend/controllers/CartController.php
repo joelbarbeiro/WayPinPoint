@@ -8,11 +8,9 @@ use common\models\Cart;
 use common\models\Invoice;
 use common\models\Sale;
 use common\models\Ticket;
-use common\models\User;
 use Da\QrCode\QrCode;
 use Mpdf\Mpdf;
 use Yii;
-use yii\data\ActiveDataProvider;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -48,10 +46,12 @@ class CartController extends Controller
      */
     public function actionIndex()
     {
-        $query = Cart::find()->where(['user_id' => Yii::$app->user->id]);
-        $dataProvider = new ActiveDataProvider([
-            'query' => $query,
-        ]);
+        $dataProvider = Cart::find()
+            ->where(['user_id' => Yii::$app->user->id])
+            ->andWhere(['status' => 0])
+            ->all();
+
+
         return $this->render('index', [
             'dataProvider' => $dataProvider,
         ]);
@@ -76,20 +76,20 @@ class CartController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
-    public function actionCreate($activityId)
+    public function actionCreate($activityId, $calendarId)
     {
         $model = new Cart();
         $activity = Activity::findOne($activityId);
         $userId = Yii::$app->user->id;
+        $model->calendar_id = $calendarId;
         $model->user_id = $userId;
         $model->product_id = $activityId;
         if ($model->load($this->request->post())) {
             if ($model->quantity < $activity->maxpax) {
                 if ($model->save()) {
-                    return $this->redirect(['view', 'user_id' => $model->user_id, 'product_id' => $model->product_id]);
+                    return $this->redirect(['cart/index', 'user_id' => $model->user_id, 'product_id' => $model->product_id, 'calendar_id' => $model->calendar_id]);
                 }
                 dd($model->errors);
-
             }
         } else {
             Yii::$app->session->setFlash('Not enough tickets available');
@@ -97,6 +97,8 @@ class CartController extends Controller
 
         return $this->render('create', [
             'model' => $model,
+            'calendarId' => $calendarId,
+
         ]);
     }
 
@@ -152,55 +154,48 @@ class CartController extends Controller
         throw new NotFoundHttpException('The requested page does not exist.');
     }
 
-    public function actionCheckout()
+    public function actionCheckout($id)
     {
-        $userId = Yii::$app->request->post('user_id');
-        $activityId = Yii::$app->request->post('activity_id');
-        // Fetch user and activity data
-        $user = User::findOne($userId);
-        $activity = Activity::findOne($activityId);
-        Booking::createBooking($activityId);
-        $sale = Sale::createSale($activityId);
-        if ($sale->hasErrors()) {
-            dd($sale);  //TODO
-        }
-        $invoice = Invoice::createInvoice($sale);
-        if ($invoice->hasErrors()) {
-            dd($invoice); //TODO
-        }
-        $qrCode = $this->generateQrCode($user, $activity);
-        Ticket::createTicket($activityId, $qrCode);
+        $cart = Cart::findOne(['id' => $id]);
+        if ($bookingId = Booking::createBooking($cart)) {
+            if ($saleId = Sale::createSale($cart)) {
+                if (Invoice::createInvoice($cart, $saleId, $bookingId)) {
+                    $qrCode = $this->generateQrCode($cart->user, $cart->activity);
+                    Ticket::createTicket($cart, $qrCode);
+                    $cart->status = 0;
+                    if ($cart->save()) {
+                        Yii::$app->session->setFlash('success', 'Checkout completed successfully.');
+                    } else {
+                        Yii::$app->session->setFlash('error', 'Failed to Checkout');
+                    }
+                    $content = $this->renderPartial('receipt', [
+                        'cart' => $cart,
+                    ]);
+                    $this->generatePdf($content);
 
-        if (!$user || !$activity) {
-            Yii::$app->session->setFlash('error', 'User or Activity not found.');
-            return $this->redirect(['index']);
+                }
+            }
         }
-        $content = $this->renderPartial('receipt', [
-            'user' => $user,
-            'activity' => $activity,
-            'qrCode' => $qrCode,
-        ]);
-        $this->generatePdf($content, $user, $activity);
+        return $this->redirect(['index']); //FIX THIS
     }
 
     public static function generateQrCode($user, $activity)
     {
-        $qrCodeData = "User: $user->username, Activity: $activity->description, Price: $activity->priceperpax"; //IGUALAR A VARIAVEL QR NO TICKET
+        $qrCodeData = "User: $user->username, Activity: $activity->description, Price: $activity->priceperpax";
         $qrCode = (new QrCode($qrCodeData))
             ->setSize(250)
             ->setMargin(5)
             ->setBackgroundColor(51, 153, 255);
-
         return $qrCode;
     }
 
-    public function generatePdf($content, $user, $activity)
+    public function generatePdf($content)
     {
         $pdf = new Mpdf();
         $pdf->WriteHTML($content);
-        return Yii::$app->response->sendContentAsFile($pdf->Output('', 'S'), "receipt_{$user->username}_{$activity->description}.pdf", [
+        return Yii::$app->response->sendContentAsFile($pdf->Output('', 'S'), "receipt.pdf", [
             'mimeType' => 'application/pdf',
-        ]);
+        ])->send();
     }
 
 }

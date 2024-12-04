@@ -2,14 +2,17 @@
 
 namespace common\models;
 
-use Yii;
-
 /**
- * This is the model class for table "invoices".
+ * This is the model class for table "invoice".
  *
  * @property int $id
- * @property int $user
+ * @property int $user_id
  * @property int $sale_id
+ * @property int $booking_id
+ *
+ * @property Booking $booking
+ * @property Sale $sale
+ * @property User $user
  */
 class Invoice extends \yii\db\ActiveRecord
 {
@@ -27,8 +30,11 @@ class Invoice extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user', 'sale_id'], 'required'],
-            [['user', 'sale_id'], 'integer'],
+            [['user_id', 'sale_id', 'booking_id'], 'required'],
+            [['user_id', 'sale_id', 'booking_id'], 'integer'],
+            [['booking_id'], 'exist', 'skipOnError' => true, 'targetClass' => Booking::class, 'targetAttribute' => ['booking_id' => 'id']],
+            [['sale_id'], 'exist', 'skipOnError' => true, 'targetClass' => Sale::class, 'targetAttribute' => ['sale_id' => 'id']],
+            [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
         ];
     }
 
@@ -39,30 +45,54 @@ class Invoice extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'user' => 'User',
-            'sale_id' => 'Sales ID',
+            'user_id' => 'User ID',
+            'sale_id' => 'Sale ID',
+            'booking_id' => 'Booking ID',
         ];
     }
 
+    /**
+     * Gets query for [[Booking]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getBooking()
+    {
+        return $this->hasOne(Booking::class, ['id' => 'booking_id']);
+    }
+
+    /**
+     * Gets query for [[Sale]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
     public function getSale()
     {
         return $this->hasOne(Sale::class, ['id' => 'sale_id']);
     }
 
+    /**
+     * Gets query for [[User]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
     public function getUser()
     {
-        return $this->hasOne(User::class, ['id' => 'user']);
+        return $this->hasOne(User::class, ['id' => 'user_id']);
     }
 
 
-    public static function createInvoice($sale)
+    public static function createInvoice($cart, $saleId, $bookingId)
     {
-        $userId = Yii::$app->user->id;
         $model = new Invoice();
-        $model->user = $userId;
-        $model->sale_id = $sale->id;
-        $model->save();
-        return $model;
+        $model->user_id = $cart->user_id;
+        $model->sale_id = $saleId;
+        $model->booking_id = $bookingId;
+        if ($model->save()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }

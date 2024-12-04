@@ -9,7 +9,9 @@ namespace common\models;
  * @property int $product_id
  * @property int $quantity
  * @property int $id
+ * @property int $calendar_id
  *
+ * @property Calendar $calendar
  * @property Activity $product
  * @property User $user
  */
@@ -29,8 +31,9 @@ class Cart extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'product_id', 'quantity'], 'required'],
-            [['user_id', 'product_id', 'quantity'], 'integer'],
+            [['user_id', 'product_id', 'quantity', 'calendar_id'], 'required'],
+            [['user_id', 'product_id', 'quantity', 'calendar_id'], 'integer'],
+            [['calendar_id'], 'exist', 'skipOnError' => true, 'targetClass' => Calendar::class, 'targetAttribute' => ['calendar_id' => 'id']],
             [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Activity::class, 'targetAttribute' => ['product_id' => 'id']],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
         ];
@@ -44,8 +47,10 @@ class Cart extends \yii\db\ActiveRecord
         return [
             'user_id' => 'User ID',
             'product_id' => 'Product ID',
-            'quantity' => 'Quantity',
+            'quantity' => 'Number of tickets',
             'id' => 'ID',
+            'status' => 'Status',
+            'calendar_id' => 'Date of Activity',
         ];
     }
 
@@ -67,5 +72,10 @@ class Cart extends \yii\db\ActiveRecord
     public function getUser()
     {
         return $this->hasOne(User::class, ['id' => 'user_id']);
+    }
+
+    public function getCalendar()
+    {
+        return $this->hasOne(Calendar::class, ['id' => 'calendar_id']);
     }
 }

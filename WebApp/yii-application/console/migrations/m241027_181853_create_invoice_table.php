@@ -18,22 +18,22 @@ class m241027_181853_create_invoice_table extends Migration
     {
         $this->createTable('{{%invoice}}', [
             'id' => $this->primaryKey(),
-            'user' => $this->integer()->notNull(),
+            'user_id' => $this->integer()->notNull(),
             'sale_id' => $this->integer()->notNull(),
         ]);
 
         // creates index for column `user`
         $this->createIndex(
-            '{{%idx-invoice-user}}',
+            '{{%idx-invoice-user_id}}',
             '{{%invoice}}',
-            'user'
+            'user_id'
         );
 
         // add foreign key for table `{{%user}}`
         $this->addForeignKey(
-            '{{%fk-invoice-user}}',
+            '{{%fk-invoice-user_id}}',
             '{{%invoice}}',
-            'user',
+            'user_id',
             '{{%user}}',
             'id',
             'CASCADE'
@@ -64,13 +64,13 @@ class m241027_181853_create_invoice_table extends Migration
     {
         // drops foreign key for table `{{%user}}`
         $this->dropForeignKey(
-            '{{%fk-invoice-user}}',
+            '{{%fk-invoice-user_id}}',
             '{{%invoice}}'
         );
 
         // drops index for column `user`
         $this->dropIndex(
-            '{{%idx-invoice-user}}',
+            '{{%idx-invoice-user_id}}',
             '{{%invoice}}'
         );
 

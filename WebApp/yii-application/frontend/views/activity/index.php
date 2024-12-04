@@ -35,7 +35,7 @@ $this->registerCssFile('@web/css/site.css');
                     echo '<h5 class="card-title">Activity Name: ' . Html::encode($activity->name) . '</h5>';
                     echo '<p class="card-text">Description: ' . Html::encode($activity->description) . '</p>';
                     echo '<p class="card-text">Category: ' . Html::encode($activity->category->description) . '</p>';
-                    echo '<p class="card-text">Price per Ticket: ' . Html::encode($activity->priceperpax) . '€</p>';
+                    echo '<p class="card-text">Price per Ticket: ' . Html::encode($activity->priceperpax . "€") . '</p>';
 
                     $dropdownOptions = [];
                     foreach ($activity->calendar as $calendar) {
@@ -56,7 +56,7 @@ $this->registerCssFile('@web/css/site.css');
                     echo '<div class="d-flex justify-content-between">';
                     echo '<a href="' . Url::to(['activity/view', 'id' => $activity->id]) . '" class="btn btn-primary">View</a>';
                     echo '<a href="' . Url::to(['review/index', 'id' => $activity->id]) . '" class="btn btn-outline-warning">Review</a>';
-                    echo '<a href="' . Url::to(['cart/create', 'activityId' => $activity->id]) . '" class="btn btn-outline-success">Buy</a>';
+                    echo '<a href="' . Url::to(['cart/create', 'activityId' => $activity->id, 'calendarId' => $calendar->id]) . '" class="btn btn-outline-success">Buy</a>';
                     echo '</div>';
 
                     echo '</div>';

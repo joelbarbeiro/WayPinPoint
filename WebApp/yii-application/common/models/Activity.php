@@ -1,7 +1,6 @@
 <?php
 
 namespace common\models;
-
 use backend\models\Sale;
 use backend\models\Ticket;
 use Yii;
@@ -258,6 +257,19 @@ class Activity extends \yii\db\ActiveRecord
             ->one();
     }
 
+    public static function getSupplierActivityNames($userId): array
+    {
+        $activities =
+            Activity::find()
+                ->joinWith('calendar')
+                ->where(['activity.user_id' => $userId])
+                ->andWhere(['activity.status' => '1'])
+                ->andWhere(['calendar.status' => '1'])
+                ->all();
+
+        return ArrayHelper::map($activities, 'id', 'name');
+    }
+
     public function getTimeList()
     {
         $hoursQuery = Time::find()->select(['id', 'hour'])->asArray()->all();
@@ -299,7 +311,7 @@ class Activity extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getSale()
+    public function getSales()
     {
         return $this->hasMany(Sale::class, ['activity_id' => 'id']);
     }
@@ -323,7 +335,7 @@ class Activity extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Calendar::class, ['activity_id' => 'id']);
     }
-
+  
     public static function getSupplierActivityNames($userId): array
     {
         $activities =
@@ -334,6 +346,4 @@ class Activity extends \yii\db\ActiveRecord
                 ->andWhere(['calendar.status' => '1'])
                 ->all();
 
-        return ArrayHelper::map($activities, 'id', 'name');
-    }
 }
