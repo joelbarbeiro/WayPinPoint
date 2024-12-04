@@ -4,6 +4,7 @@ namespace frontend\controllers;
 
 use frontend\models\Review;
 use frontend\models\ReviewSearch;
+use Yii;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -73,6 +74,8 @@ class ReviewController extends Controller
     {
         $model = new Review();
         $model->activity_id = $id;
+        $userId = Yii::$app->user->id;
+        $model->user_id = $userId;
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
@@ -97,9 +100,10 @@ class ReviewController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $activityId = $model->activity_id;
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['index', 'id' => $activityId]);
         }
 
         return $this->render('update', [
