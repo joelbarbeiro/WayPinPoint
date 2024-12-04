@@ -1,19 +1,18 @@
 <?php
 
-namespace frontend\controllers;
+namespace backend\controllers;
 
-use common\models\Invoice;
-use common\models\InvoiceSearch;
-use Mpdf\Mpdf;
-use Yii;
-use yii\filters\VerbFilter;
+use common\models\Booking;
+use common\models\Sale;
+use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\filters\VerbFilter;
 
 /**
- * InvoiceController implements the CRUD actions for Invoice model.
+ * BookingController implements the CRUD actions for Booking model.
  */
-class InvoiceController extends Controller
+class BookingController extends Controller
 {
     /**
      * @inheritDoc
@@ -34,17 +33,24 @@ class InvoiceController extends Controller
     }
 
     /**
-     * Lists all Invoice models.
+     * Lists all Booking models.
      *
      * @return string
      */
     public function actionIndex()
     {
+        $query = Booking::find()
+            ->joinWith(['activity', 'calendar', 'calendar.time', 'user'])
+            ->with('activity', 'calendar', 'user')
+            ->orderBy(['calendar.date_id' => SORT_ASC, 'calendar.time_id' => SORT_ASC
+            ]);
 
-        $searchModel = new InvoiceSearch();
-        $dataProvider = $searchModel->search($this->request->queryParams);
-        $dataProvider->query->joinWith('sale')
-            ->andWhere(['user_id' => Yii::$app->user->id]);
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => [
+                'pageSize' => 10,
+            ],
+        ]);
 
         return $this->render('index', [
             'dataProvider' => $dataProvider,
@@ -52,7 +58,7 @@ class InvoiceController extends Controller
     }
 
     /**
-     * Displays a single Invoice model.
+     * Displays a single Booking model.
      * @param int $id ID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
@@ -65,13 +71,14 @@ class InvoiceController extends Controller
     }
 
     /**
-     * Creates a new Invoice model.
+     * Creates a new Booking model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
     public function actionCreate()
     {
-        $model = new Invoice();
+        $model = new Booking();
+
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
                 return $this->redirect(['view', 'id' => $model->id]);
@@ -86,7 +93,7 @@ class InvoiceController extends Controller
     }
 
     /**
-     * Updates an existing Invoice model.
+     * Updates an existing Booking model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param int $id ID
      * @return string|\yii\web\Response
@@ -106,7 +113,7 @@ class InvoiceController extends Controller
     }
 
     /**
-     * Deletes an existing Invoice model.
+     * Deletes an existing Booking model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param int $id ID
      * @return \yii\web\Response
@@ -120,37 +127,26 @@ class InvoiceController extends Controller
     }
 
     /**
-     * Finds the Invoice model based on its primary key value.
+     * Finds the Booking model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param int $id ID
-     * @return Invoice the loaded model
+     * @return Booking the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Invoice::findOne(['id' => $id])) !== null) {
+        if (($model = Booking::findOne(['id' => $id])) !== null) {
             return $model;
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
 
-    public function actionPrint($id)
+    public static function getBuyers()
     {
-        $invoice = Invoice::findOne($id);
-        $content = $this->renderPartial('printinvoice', [
-            'invoice' => $invoice,
-        ]);
-        $this->generatePdf($content, $invoice);
+        $booking = new Booking();
+        return Sale::find()
+            ->where(['activity_id' => $booking->activity_id])
+            ->all();
     }
-
-    public function generatePdf($content, $invoice)
-    {
-        $pdf = new Mpdf();
-        $pdf->WriteHTML($content);
-        return Yii::$app->response->sendContentAsFile($pdf->Output('', 'S'), "receipt_{$invoice->sale->purchase_date}.pdf", [
-            'mimeType' => 'application/pdf',
-        ])->send();
-    }
-
 }

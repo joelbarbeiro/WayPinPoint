@@ -1,8 +1,9 @@
 <?php
 /** @var User $user */
 
-/** @var \common\models\Activity $activity */
+/** @var Cart $cart */
 
+use common\models\Cart;
 use common\models\User;
 
 ?>
@@ -26,14 +27,14 @@ use common\models\User;
         }
     </style>
 </head>
-<body>
+<p>
 <h1>Receipt</h1>
-<p><strong>User:</strong> <?= $user->username ?></p>
-<p><strong>Activity:</strong> <?= $activity->description ?></p>
-<p><strong>Price per Pax:</strong> <?= ($activity->priceperpax) . "€" ?></p>
-<p><strong>Quantity:</strong> <?= $activity->maxpax ?></p>
-<!-- QR Code Image -->
-<!--    <p><strong>QR Code:</strong></p>-->
-<!--    <img src="--><?php //= $qrCode->writeDataUri() ?><!--" alt="QR Code">-->
+<p><strong>User:</strong> <?= $cart->user->username ?></p>
+<p><strong>Activity Name:</strong> <?= $cart->activity->name ?></p>
+<p><strong>Activity Description:</strong> <?= $cart->activity->description ?></p>
+<p><strong>Price per Pax:</strong> <?= ($cart->activity->priceperpax) . "€" ?></p>
+<p><strong>Day:</strong> <?= $cart->calendar->date->date ?> </p>
+<p><strong>Hour:</strong> <?= $cart->calendar->time->hour ?> </p>
+<p><strong>Quantity:</strong> <?= $cart->quantity ?></p>
 </body>
 </html>

@@ -1,8 +1,6 @@
 <?php
 
 namespace common\models;
-use backend\models\Sale;
-use backend\models\Ticket;
 use Yii;
 use yii\helpers\ArrayHelper;
 use yii\web\UploadedFile;
@@ -311,7 +309,7 @@ class Activity extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getSale()
+    public function getSales()
     {
         return $this->hasMany(Sale::class, ['activity_id' => 'id']);
     }
