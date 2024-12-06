@@ -1,5 +1,7 @@
 package pt.ipleiria.estg.dei.waypinpoint;
 
+import static Model.User.DEFAULT_IMG;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Patterns;
@@ -11,21 +13,28 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.Objects;
 
+import Model.SingletonManager;
+import Model.User;
+
 public class RegisterActivity extends AppCompatActivity {
 
     public static final String EMAIL = "EMAIL";
-    private String email = "";
-    private EditText etEmail;
-    private EditText etPassword;
-    private EditText etConfirmPassword;
+    private User user;
+    private String username,address,email,password,photo = "";
+    private int nif,phone;
+    private EditText etConfirmPassword, etPassword, etEmail, etUsername, etAddress, etNif, etPhone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+        etUsername = findViewById(R.id.registerTvUsername);
         etEmail = findViewById(R.id.registerTvEmail);
         etPassword = findViewById(R.id.registerTvPassword);
         etConfirmPassword = findViewById(R.id.registerConfirmPassword);
+        etAddress = findViewById(R.id.registerTvAddress);
+        etPhone = findViewById(R.id.registerTvPhone);
+        etNif = findViewById(R.id.registerTvNif);
 
         loadEmail();
     }
@@ -48,18 +57,41 @@ public class RegisterActivity extends AppCompatActivity {
         return Objects.equals(password, secondPassword);
     }
 
+    private static boolean isNifValid(int nif){
+        if(nif < 999999999 && nif > 111111111){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     private void loadEmail() {
         email = getIntent().getStringExtra(EMAIL);
         etEmail.setText(email);
     }
 
     public void onClickRegister(View view) {
-        boolean isEmailValid, isPasswordValid, isConfirmPasswordEqual;
+        boolean isNifValid ,isEmailValid, isPasswordValid, isConfirmPasswordEqual ;
+
         isEmailValid = isEmailValid(etEmail.getText().toString());
         isPasswordValid = isPasswordValid(String.valueOf(etPassword.getText()));
         isConfirmPasswordEqual= isConfirmPasswordEqual(etPassword.getText().toString(),etConfirmPassword.getText().toString());
-        Intent intent = new Intent(this, LoginActivity.class);
-        if (isEmailValid && isPasswordValid && isConfirmPasswordEqual) {
+        isNifValid = isNifValid(Integer.parseInt(etNif.getText().toString()));
+
+        user = new User(
+                0,
+                etUsername.getText().toString(),
+                etEmail.getText().toString(),
+                etPassword.getText().toString(),
+                etAddress.getText().toString(),
+                Integer.parseInt(etPhone.getText().toString()),
+                Integer.parseInt(etNif.getText().toString()),
+                DEFAULT_IMG
+        );
+
+        if (isNifValid && isEmailValid && isPasswordValid && isConfirmPasswordEqual) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            SingletonManager.getInstance(getApplicationContext()).addUserApi(user, getApplicationContext());
             startActivity(intent);
         } else {
             Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show();

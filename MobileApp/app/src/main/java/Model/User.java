@@ -4,14 +4,17 @@ public class User {
     private int id, phone, nif;
     private String username, email, password, address, photo;
 
-    public User(int id, int phone, int nif, String username, String email, String password, String address, String photo) {
+    public static final String DEFAULT_IMG = "https://images.app.goo.gl/WRUpq3qmgD331B64A";
+
+
+    public User(int id, String username, String email, String password, String address, int phone, int nif, String photo) {
         this.id = id;
-        this.phone = phone;
-        this.nif = nif;
         this.username = username;
         this.email = email;
         this.password = password;
         this.address = address;
+        this.phone = phone;
+        this.nif = nif;
         this.photo = photo;
     }
 
