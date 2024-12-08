@@ -11,7 +11,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Activity', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 YiiAsset::register($this);
 
-$imgPath = Url::to('@web/img/activity/' . Yii::$app->user->id . '/');
+$imgPath = Url::to('@web/img/activity/' . $userId = Yii::$app->user->identity->userExtra->supplier . '/');
 
 $this->registerCssFile('@web/css/site.css', [
     'depends' => [\yii\web\YiiAsset::class],
@@ -34,10 +34,10 @@ $this->registerCssFile('@web/css/site.css', [
             echo '<p class="card-text">Date: ' . $calendar->date->date . ' Time: ' . $calendar->time->hour . '</p>';
         }
     }
-
-    echo '<a href="' . Url::to(['activity/update', 'id' => $model->id]) . '" class="btn btn-warning mr-3">Update</a>';
-    echo '<a href="' . Url::to(['activity/delete', 'id' => $model->id]) . '" class="btn btn-danger" data-method="post">Delete</a>';
-
+    if (Yii::$app->user->getRole() == "supplier") {
+        echo '<a href="' . Url::to(['activity/update', 'id' => $model->id]) . '" class="btn btn-warning mr-3">Update</a>';
+        echo '<a href="' . Url::to(['activity/delete', 'id' => $model->id]) . '" class="btn btn-danger" data-method="post">Delete</a>';
+    }
     echo '</div>';
     echo '</div>';
     ?>

@@ -118,15 +118,20 @@ class Sale extends \yii\db\ActiveRecord
         return $this->hasOne(User::class, ['id' => 'seller_id']);
     }
 
+    public function getSellerExtra()
+    {
+        return $this->hasOne(Userextra::class, ['user_id' => 'seller_id']);
+    }
+
     public static function createSale($cart)
     {
         $model = new Sale();
         $model->seller_id = 1;
+        $model->localsellpoint_id = 1;
         $model->activity_id = $cart->product_id;
         $model->buyer = $cart->user_id;
         $model->quantity = $cart->quantity;
         $model->total = $cart->activity->priceperpax * $cart->quantity;
-        $model->localsellpoint_id = 1;
         $model->purchase_date = new Expression('NOW()');
         if ($model->save()) {
             return $model->id;

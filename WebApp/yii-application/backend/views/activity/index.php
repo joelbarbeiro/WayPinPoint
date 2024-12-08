@@ -10,7 +10,7 @@ use yii\helpers\Url;
 $this->title = 'Activities';
 $this->params['breadcrumbs'][] = $this->title;
 
-$imgPath = Url::to('@web/img/activity/' . Yii::$app->user->id . '/');
+$imgPath = Url::to('@web/img/activity/' . Yii::$app->user->identity->userExtra->supplier . '/');
 
 $this->registerCssFile('@web/css/site.css', [
     'depends' => [\yii\web\YiiAsset::class],
@@ -45,7 +45,10 @@ $this->registerCssFile('@web/css/site.css', [
                     'prompt' => 'Select a date',
                 ]
             );
+        if (Yii::$app->user->identity->role == "supplier") {
+
             echo '<p class="card-text mt-3"><a href="' . Url::to(['activity/view', 'id' => $activity->id]) . '" class="btn btn-primary">View</a></p>';
+        }
             echo '<p class="card-text mt-3"><a href="' . Url::to(['sale/create', 'id' => $activity->id, 'calendar_id' => $calendar->id]) . '" class="btn btn-primary">Buy</a></p>';
             echo '</div>';
             echo '</div>';
