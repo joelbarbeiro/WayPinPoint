@@ -93,34 +93,33 @@ class Activity extends \yii\db\ActiveRecord
     {
         $uploadBackendPath = $this->checkBackendUploadFolder();
         $uploadFrontendPath = $this->checkFrontendUploadFolder();
-        $binaryFile = UploadedFile::getInstance($this, 'photoFile');
-        if (!$binaryFile) {
-            $binaryFile = UploadedFile::getInstanceByName('photoFile');
-        }
-
-        if ($binaryFile) {
-            $changeFileName = Yii::$app->security->generateRandomString(16) . '.' . $binaryFile->extension;
-            $fileBackendPath = $uploadBackendPath . $changeFileName;
-            $fileFrontendPath = $uploadFrontendPath . $changeFileName;
-
-            if ($binaryFile->saveAs($fileBackendPath)) {
-                // Copy the file to the frontend directory
-                if (!copy($fileBackendPath, $fileFrontendPath)) {
-                    Yii::error("Failed to copy file to frontend directory");
-                }
-
-                if ($this->photo != null) {
-                    //$this->deletePhoto($this->photo);
-                }
-
-                $this->photo = $changeFileName;
-                return true;
-            } else {
-                Yii::error("File save failed at: " . $fileBackendPath);
+            $binaryFile = UploadedFile::getInstance($this, 'photoFile');
+            if (!$binaryFile) {
+                $binaryFile = UploadedFile::getInstanceByName('photoFile');
             }
-        } else {
-            Yii::error("No file uploaded");
-        }
+            if ($binaryFile) {
+                $changeFileName = Yii::$app->security->generateRandomString(16) . '.' . $binaryFile->extension;
+                $fileBackendPath = $uploadBackendPath . $changeFileName;
+                $fileFrontendPath = $uploadFrontendPath . $changeFileName;
+
+                if ($binaryFile->saveAs($fileBackendPath)) {
+                    // Copy the file to the frontend directory
+                    if (!copy($fileBackendPath, $fileFrontendPath)) {
+                        Yii::error("Failed to copy file to frontend directory");
+                    }
+
+                    if ($this->photo != null) {
+                        //$this->deletePhoto($this->photo);
+                    }
+
+                    $this->photo = $changeFileName;
+                    return true;
+                } else {
+                    Yii::error("File save failed at: " . $fileBackendPath);
+                }
+            } else {
+                Yii::error("No file uploaded");
+            }
         return false;
     }
 

@@ -60,10 +60,11 @@ class ActivityController extends ActiveController
 
     public function actionUpdateactivity($id)
     {
-        if(Yii::$app->request->isPut) {
-            $activity = new Activity();
+        // Devido a limitações do Yii, por não suportar um multipart/form no metodo PUT
+        // o envio de dados para este metodo deve ser efetudado por POST
+        $activity = new Activity();
+        if(Yii::$app->request->post()) {
             $activity = $activity->getActivityView($id);
-            Yii::info(Yii::$app->request->bodyParams, 'request-data');
             $activity->load(Yii::$app->request->post(), '');
             if ($activity->updateActivity($activity)) {
                 return [
