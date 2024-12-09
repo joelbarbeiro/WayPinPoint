@@ -21,6 +21,7 @@ public class SingletonManager {
     private static SingletonManager instance = null;
     private static Route route = null;
     private UserDbHelper userDbHelper = null;
+    private String urlApiUser = "http://waypinpoint/backend/web/api/users/userextras";
 
     private static RequestQueue volleyQueue = null;
 
@@ -44,7 +45,7 @@ public class SingletonManager {
         if (!UserJsonParser.isConnectionInternet(context)) {
             Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
         } else {
-            StringRequest request = new StringRequest(Request.Method.POST, "http://waypinpoint/backend/web/api/users/userextras" , new Response.Listener<String>() {
+            StringRequest request = new StringRequest(Request.Method.POST, urlApiUser , new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
                     addUserDb(UserJsonParser.parserJsonUser(response));
@@ -54,6 +55,7 @@ public class SingletonManager {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
+                    System.out.println("---> " + error.getMessage());
                     Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }) {

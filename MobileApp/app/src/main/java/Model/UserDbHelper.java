@@ -51,6 +51,7 @@ public class UserDbHelper extends SQLiteOpenHelper {
 
     public void addUserDb(User user) {
         ContentValues values = new ContentValues();
+        values.put(ID, user.getId());
         values.put(USERNAME, user.getUsername());
         values.put(EMAIL, user.getEmail());
         values.put(PASSWORD, user.getPassword());
