@@ -13,18 +13,18 @@ class m241118_214239_seed_user_userextra_localsellpoint_table extends Migration
     public function safeUp()
     {
         // Step 1: Insert users
-        $this->batchInsert('user', ['username', 'email', 'password_hash', 'auth_key'], [
-            ['admin', 'admin@example.com', Yii::$app->security->generatePasswordHash('admin'), Yii::$app->security->generateRandomString()],
-            ['supplier1', 'supplier1@example.com', Yii::$app->security->generatePasswordHash('supplier1'),Yii::$app->security->generateRandomString()],
-            ['supplier2', 'supplier2@example.com', Yii::$app->security->generatePasswordHash('supplier2'),Yii::$app->security->generateRandomString()],
-            ['manager1', 'manager1@example.com', Yii::$app->security->generatePasswordHash('manager1'),Yii::$app->security->generateRandomString()],
-            ['manager2', 'manager2@example.com', Yii::$app->security->generatePasswordHash('manager2'),Yii::$app->security->generateRandomString()],
-            ['salesperson1', 'salesperson1@example.com', Yii::$app->security->generatePasswordHash('salesperson1'),Yii::$app->security->generateRandomString()],
-            ['salesperson2', 'salesperson2@example.com', Yii::$app->security->generatePasswordHash('salesperson2'),Yii::$app->security->generateRandomString()],
-            ['guide1', 'guide1@example.com', Yii::$app->security->generatePasswordHash('guide1'),Yii::$app->security->generateRandomString()],
-            ['guide2', 'guide2@example.com', Yii::$app->security->generatePasswordHash('guide2'),Yii::$app->security->generateRandomString()],
-            ['client1', 'client1@example.com', Yii::$app->security->generatePasswordHash('client1'),Yii::$app->security->generateRandomString()],
-            ['client2', 'client2@example.com', Yii::$app->security->generatePasswordHash('client2'),Yii::$app->security->generateRandomString()],
+        $this->batchInsert('user', ['username', 'email', 'password_hash', 'auth_key', 'created_at'], [
+            ['admin', 'admin@example.com', Yii::$app->security->generatePasswordHash('admin'), Yii::$app->security->generateRandomString(), 1],
+            ['supplier1', 'supplier1@example.com', Yii::$app->security->generatePasswordHash('supplier1'),Yii::$app->security->generateRandomString(), 1],
+            ['supplier2', 'supplier2@example.com', Yii::$app->security->generatePasswordHash('supplier2'),Yii::$app->security->generateRandomString(), 1],
+            ['manager1', 'manager1@example.com', Yii::$app->security->generatePasswordHash('manager1'),Yii::$app->security->generateRandomString(), 1],
+            ['manager2', 'manager2@example.com', Yii::$app->security->generatePasswordHash('manager2'),Yii::$app->security->generateRandomString(), 1],
+            ['salesperson1', 'salesperson1@example.com', Yii::$app->security->generatePasswordHash('salesperson1'),Yii::$app->security->generateRandomString(), 1],
+            ['salesperson2', 'salesperson2@example.com', Yii::$app->security->generatePasswordHash('salesperson2'),Yii::$app->security->generateRandomString(), 1],
+            ['guide1', 'guide1@example.com', Yii::$app->security->generatePasswordHash('guide1'),Yii::$app->security->generateRandomString(), 1],
+            ['guide2', 'guide2@example.com', Yii::$app->security->generatePasswordHash('guide2'),Yii::$app->security->generateRandomString(), 1],
+            ['client1', 'client1@example.com', Yii::$app->security->generatePasswordHash('client1'),Yii::$app->security->generateRandomString(), 1],
+            ['client2', 'client2@example.com', Yii::$app->security->generatePasswordHash('client2'),Yii::$app->security->generateRandomString(), 1],
         ]);
 
         // Step 2: Retrieve the user IDs (after insert)
