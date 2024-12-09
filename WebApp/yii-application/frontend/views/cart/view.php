@@ -13,7 +13,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="cart-view">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <h1><?= $model->activity->name ?></h1>
 
     <p>
         <?= Html::a('Update', ['update', 'user_id' => $model->user_id, 'product_id' => $model->product_id], ['class' => 'btn btn-primary']) ?>

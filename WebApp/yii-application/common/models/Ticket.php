@@ -2,8 +2,6 @@
 
 namespace common\models;
 
-use Yii;
-
 /**
  * This is the model class for table "tickets".
  *
@@ -69,15 +67,17 @@ class Ticket extends \yii\db\ActiveRecord
         return $this->hasOne(User::class, ['id' => 'participant']);
     }
 
-    public static function createTicket($activityId, $qrCode)
+    public static function createTicket($cart, $qrCode)
     {
         $model = new Ticket();
-        $userId = Yii::$app->user->id;
-        $model->activity_id = $activityId;
-        $model->participant = $userId;
+        $model->activity_id = $cart->product_id;
+        $model->participant = $cart->user_id;
         $model->qr = $qrCode->getText();
         $model->status = 0;
-        $model->save();
-        $cenas = 0;
+        if ($model->save()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

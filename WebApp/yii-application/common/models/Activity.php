@@ -1,7 +1,6 @@
 <?php
 
 namespace common\models;
-
 use backend\models\Sale;
 use backend\models\Ticket;
 use Yii;
@@ -93,33 +92,33 @@ class Activity extends \yii\db\ActiveRecord
     {
         $uploadBackendPath = $this->checkBackendUploadFolder();
         $uploadFrontendPath = $this->checkFrontendUploadFolder();
-            $binaryFile = UploadedFile::getInstance($this, 'photoFile');
-            if (!$binaryFile) {
-                $binaryFile = UploadedFile::getInstanceByName('photoFile');
-            }
-            if ($binaryFile) {
-                $changeFileName = Yii::$app->security->generateRandomString(16) . '.' . $binaryFile->extension;
-                $fileBackendPath = $uploadBackendPath . $changeFileName;
-                $fileFrontendPath = $uploadFrontendPath . $changeFileName;
+        $binaryFile = UploadedFile::getInstance($this, 'photoFile');
+        if (!$binaryFile) {
+            $binaryFile = UploadedFile::getInstanceByName('photoFile');
+        }
+        if ($binaryFile) {
+            $changeFileName = Yii::$app->security->generateRandomString(16) . '.' . $binaryFile->extension;
+            $fileBackendPath = $uploadBackendPath . $changeFileName;
+            $fileFrontendPath = $uploadFrontendPath . $changeFileName;
 
-                if ($binaryFile->saveAs($fileBackendPath)) {
-                    // Copy the file to the frontend directory
-                    if (!copy($fileBackendPath, $fileFrontendPath)) {
-                        Yii::error("Failed to copy file to frontend directory");
-                    }
-
-                    if ($this->photo != null) {
-                        //$this->deletePhoto($this->photo);
-                    }
-
-                    $this->photo = $changeFileName;
-                    return true;
-                } else {
-                    Yii::error("File save failed at: " . $fileBackendPath);
+            if ($binaryFile->saveAs($fileBackendPath)) {
+                // Copy the file to the frontend directory
+                if (!copy($fileBackendPath, $fileFrontendPath)) {
+                    Yii::error("Failed to copy file to frontend directory");
                 }
+
+                if ($this->photo != null) {
+                    //$this->deletePhoto($this->photo);
+                }
+
+                $this->photo = $changeFileName;
+                return true;
             } else {
-                Yii::error("No file uploaded");
+                Yii::error("File save failed at: " . $fileBackendPath);
             }
+        } else {
+            Yii::error("No file uploaded");
+        }
         return false;
     }
 
@@ -360,6 +359,19 @@ class Activity extends \yii\db\ActiveRecord
         return false;
     }
 
+    public static function getSupplierActivityNames($userId): array
+    {
+        $activities =
+            Activity::find()
+                ->joinWith('calendar')
+                ->where(['activity.user_id' => $userId])
+                ->andWhere(['activity.status' => '1'])
+                ->andWhere(['calendar.status' => '1'])
+                ->all();
+
+        return ArrayHelper::map($activities, 'id', 'name');
+    }
+
     public function getTimeList()
     {
         $hoursQuery = Time::find()->select(['id', 'hour'])->asArray()->all();
@@ -424,18 +436,5 @@ class Activity extends \yii\db\ActiveRecord
     public function getCalendars()
     {
         return $this->hasMany(Calendar::class, ['activity_id' => 'id']);
-    }
-
-    public static function getSupplierActivityNames($userId): array
-    {
-        $activities =
-            Activity::find()
-                ->joinWith('calendar')
-                ->where(['activity.user_id' => $userId])
-                ->andWhere(['activity.status' => '1'])
-                ->andWhere(['calendar.status' => '1'])
-                ->all();
-
-        return ArrayHelper::map($activities, 'id', 'name');
     }
 }

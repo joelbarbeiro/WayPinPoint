@@ -23,6 +23,7 @@ $this->registerCssFile('@web/css/site.css');
                 <tr>
                     <th>Activity</th>
                     <th>Client</th>
+                    <th>Sell point</th>
                     <th>Seller</th>
                     <th>Purchase Date</th>
                     <th>Quantity</th>
@@ -34,12 +35,25 @@ $this->registerCssFile('@web/css/site.css');
                     <tr>
                         <td><?= Html::encode($sale->activity->name) ?></td>
                         <td><?= Html::encode($sale->buyer0->username) ?></td>
+                        <?php
+                        if(Yii::$app->user->identity->getRole() == "supplier")
+                        {
+                            echo '<td>' . Html::encode($sale->sellerExtra->localsellpoint->name ?? "website") . '</td>';
+                        }
+                        if(Yii::$app->user->identity->getRole() == "manager")
+                        {
+dd($sale->localsellpoint_id);
+                            if(Yii::$app->user->identity->userExtra->localsellpoint_id == $sale->localsellpoint_id) {
+                                echo '<td>' . Html::encode($sale->sellerExtra->localsellpoint->name) . '</td>';
+                            }
+                        }
+                        ?>
                         <td><?= Html::encode($sale->seller->username) ?></td>
                         <td><?= Html::encode($sale->purchase_date) ?></td>
                         <td><?= Html::encode($sale->quantity) ?></td>
                         <td><?= Html::encode($sale->total) ?></td>
                     </tr>
-                <?php endforeach; ?>
+                <?php endforeach;?>
                 </tbody>
             </table>
         </div>

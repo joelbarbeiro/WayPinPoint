@@ -8,6 +8,8 @@ use common\models\Calendar;
 use common\models\Category;
 use common\models\Date;
 use common\models\Time;
+use common\models\User;
+use common\models\UserExtra;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
@@ -70,7 +72,9 @@ class ActivityController extends Controller
      */
     public function actionIndex()
     {
-        $userId = Yii::$app->user->id;
+
+        $userId = Yii::$app->user->identity->userExtra->supplier;
+
         $searchModel = new Activity();
         $dataProvider = $searchModel->getSupplierActivities($userId);
 
@@ -89,7 +93,7 @@ class ActivityController extends Controller
      */
     public function actionView($id)
     {
-        $userId = Yii::$app->user->id;
+        $userId = Yii::$app->user->identity->userExtra->supplier;
         $model = new Activity();
         $activity = $model->getActivity($id, $userId);
         if (!$activity) {

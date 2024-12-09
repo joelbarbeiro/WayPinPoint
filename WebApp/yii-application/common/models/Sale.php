@@ -118,24 +118,26 @@ class Sale extends \yii\db\ActiveRecord
         return $this->hasOne(User::class, ['id' => 'seller_id']);
     }
 
-    public static function createSale($activityId)
+    public function getSellerExtra()
     {
-        $activity = Activity::findOne($activityId);
-        $userId = Yii::$app->user->id;
-        $cart = Cart::find()
-            ->where(['user_id' => $userId, 'product_id' => $activityId])
-            ->one();
+        return $this->hasOne(Userextra::class, ['user_id' => 'seller_id']);
+    }
+
+    public static function createSale($cart)
+    {
         $model = new Sale();
         $model->seller_id = 1;
-        $model->activity_id = $activityId;
-        $model->buyer = $userId;
-        $model->quantity = $cart->quantity;
-        $model->total = $activity->priceperpax * $cart->quantity;
         $model->localsellpoint_id = 1;
+        $model->activity_id = $cart->product_id;
+        $model->buyer = $cart->user_id;
+        $model->quantity = $cart->quantity;
+        $model->total = $cart->activity->priceperpax * $cart->quantity;
         $model->purchase_date = new Expression('NOW()');
-        $model->save();
-        return $model;
-
+        if ($model->save()) {
+            return $model->id;
+        } else {
+            return false;
+        }
     }
 
     public static function createBooking($activity, $buyer, $calendar_id, $quantity)
