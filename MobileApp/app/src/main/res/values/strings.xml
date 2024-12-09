@@ -27,9 +27,24 @@
     <string name="ndOpen">Open</string>
     <string name="ndClose">Close</string>
 
-<!-- My Profile-->
+    <!-- My Profile-->
     <string name="my_profile_nif">NIF</string>
     <string name="my_profile_save_button">Save Changes</string>
     <string name="my_profile_delete_button">Delete Profile</string>
+
+    <!-- Dashboard -->
+    <string name="dashboard_name_label">Name: </string>
+    <string name="dashboard_description_label">Description: </string>
+    <string name="dashboard_category_label">Category: </string>
+    <string name="dashboard_price_label">Price per Ticket :</string>
+    <string name="dashboard_date_label">Dates: </string>
+
+
+
+    <!-- Errors-->
+    <string name="error_no_internet">No Internet Connection</string>
+    <string name="register_address_hint">Address</string>
+    <string name="register_phone_number_hint">Phone Number</string>
+    <string name="register_nif_hint">NIF</string>
 
 </resources>
