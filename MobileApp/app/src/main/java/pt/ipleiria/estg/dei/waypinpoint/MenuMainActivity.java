@@ -1,5 +1,6 @@
 package pt.ipleiria.estg.dei.waypinpoint;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -42,6 +43,16 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
 
     private void loadHeader() {
         email = getIntent().getStringExtra(EMAIL).toString();
+        SharedPreferences sharedPreferencesUser = getSharedPreferences("USER_DATA", MODE_PRIVATE);
+
+        if(email != null){
+            SharedPreferences.Editor editorUser = sharedPreferencesUser.edit();
+            editorUser.putString(EMAIL, email);
+            editorUser.apply();
+        } else {
+            email = sharedPreferencesUser.getString(EMAIL,"No Email Provided");
+        }
+
         View hView = navigationView.getHeaderView(0);
         TextView nav_tvEmail = hView.findViewById(R.id.headerMenuTextViewEmail);
         nav_tvEmail.setText(email);

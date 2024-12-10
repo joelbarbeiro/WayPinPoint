@@ -335,5 +335,4 @@ class Activity extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Calendar::class, ['activity_id' => 'id']);
     }
-
 }
