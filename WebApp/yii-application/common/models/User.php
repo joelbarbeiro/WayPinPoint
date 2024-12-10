@@ -347,6 +347,4 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return $this->hasMany(Userextra::class, ['user_id' => 'id']);
     }
-
-
 }

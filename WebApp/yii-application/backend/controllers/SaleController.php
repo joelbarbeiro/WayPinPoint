@@ -47,7 +47,7 @@ class SaleController extends Controller
         $searchModel = new SaleSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
-        $userId = Yii::$app->user->id;
+        $userId = Yii::$app->user->identity->userextra->supplier;
 
         $dataProvider = Sale::getSupplierSales($userId);
 

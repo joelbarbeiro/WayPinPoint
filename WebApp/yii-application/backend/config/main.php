@@ -102,6 +102,17 @@ return [
                         '{id}' => '<id:\\d+>',
                     ],
                 ],
+                [
+                    'class' => 'yii\rest\UrlRule',
+                    'controller' => 'api/activity',
+                    'extraPatterns' => [
+                        'GET' => 'activities',
+                        'GET {id}' => 'activityview',
+                        'POST' => 'createactivity',
+                        'PUT {id}' => 'updateactivity',
+                        'DELETE {id}' => 'deleteactivity',
+                    ],
+                ],
             ],
         ],
     ],

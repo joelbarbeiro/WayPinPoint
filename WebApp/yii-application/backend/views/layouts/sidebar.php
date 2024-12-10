@@ -47,33 +47,63 @@ $imgUserPath = Url::to('@web/img/user/' . Yii::$app->user->id . '/');
         <!-- Sidebar Menu -->
         <nav class="mt-2">
             <?php
-            echo \hail812\adminlte\widgets\Menu::widget([
-                'items' => [
-                    /*[
-                        'label' => 'Starter Pages',
-                        'icon' => 'tachometer-alt',
-                        'badge' => '<span class="right badge badge-info">2</span>',
-                        'items' => [
-                            ['label' => 'Active Page', 'url' => ['site/index'], 'iconStyle' => 'far'],
-                            ['label' => 'Inactive Page', 'iconStyle' => 'far'],
-                        ]
-                    ],*/
-                    ['label' => 'Employee Management', 'header' => true],
-                    ['label' => 'User', 'icon' => 'user', 'url' => Url::to(['role-register/index'])],
-                    ['label' => 'Activities', 'header' => true],
-                    //['label' => 'Bookings', 'url' => ['site/login'], 'icon' => 'sign-in-alt',
-                    // 'visible' => Yii::$app->user->isGuest],
-                    ['label' => 'Bookings', 'icon' => 'file-code', 'url' => ['booking/index']],
-                    ['label' => 'Manage Calendar', 'icon' => 'file-code', 'url' => ['calendar/index']],
-                    ['label' => 'Create activity', 'icon' => 'plus', 'url' => ['activity/create']],
-                    ['label' => 'Manage activity', 'icon' => 'map', 'url' => ['activity/index']],
-                    ['label' => 'Selling Points', 'header' => true],
-                    ['label' => 'My Local Shops', 'icon' => 'map', 'url' => ['localsellpoint/index']],
-                    ['label' => 'Add Local Shop', 'icon' => 'plus', 'url' => ['localsellpoint/create']],
-                    ['label' => 'Sales', 'header' => true],
-                    ['label' => 'Sales List', 'icon' => 'plus', 'url' => ['sale/index']],
-                ],
-            ]);
+            if ($user->getRole() == "supplier") {
+                echo \hail812\adminlte\widgets\Menu::widget([
+                    'items' => [
+                        /*[
+                            'label' => 'Starter Pages',
+                            'icon' => 'tachometer-alt',
+                            'badge' => '<span class="right badge badge-info">2</span>',
+                            'items' => [
+                                ['label' => 'Active Page', 'url' => ['site/index'], 'iconStyle' => 'far'],
+                                ['label' => 'Inactive Page', 'iconStyle' => 'far'],
+                            ]
+                        ],*/
+
+                        ['label' => 'Employee Management', 'header' => true],
+                        ['label' => 'User', 'icon' => 'user', 'url' => Url::to(['role-register/index'])],
+                        ['label' => 'Activities', 'header' => true],
+                        ['label' => 'Bookings', 'icon' => 'file-code', 'url' => ['booking/index']],
+                        ['label' => 'Manage Calendar', 'icon' => 'file-code', 'url' => ['calendar/index']],
+                        ['label' => 'Create activity', 'icon' => 'plus', 'url' => ['activity/create']],
+                        ['label' => 'Manage activity', 'icon' => 'map', 'url' => ['activity/index']],
+                        ['label' => 'Selling Points', 'header' => true],
+                        ['label' => 'My Local Shops', 'icon' => 'map', 'url' => ['localsellpoint/index']],
+                        ['label' => 'Add Local Shop', 'icon' => 'plus', 'url' => ['localsellpoint/create']],
+                        ['label' => 'Sales', 'header' => true],
+                        ['label' => 'Manage sales', 'icon' => 'plus', 'url' => ['sale/index']],
+                    ],
+                ]);
+            }
+            if ($user->getRole() == "manager") {
+                echo \hail812\adminlte\widgets\Menu::widget([
+                    'items' => [
+                        ['label' => 'Activities', 'header' => true],
+                        ['label' => 'Bookings', 'icon' => 'file-code', 'url' => ['booking/index']],
+                        ['label' => 'Manage Calendar', 'icon' => 'file-code', 'url' => ['calendar/index']],
+                        ['label' => 'Manage activity', 'icon' => 'map', 'url' => ['activity/index']],
+                        ['label' => 'Sales', 'header' => true],
+                        ['label' => 'Manage sales', 'icon' => 'plus', 'url' => ['sale/index']],
+                    ],
+                ]);
+            }
+            if ($user->getRole() == "salesperson") {
+                echo \hail812\adminlte\widgets\Menu::widget([
+                    'items' => [
+                        ['label' => 'Activities', 'header' => true],
+                        ['label' => 'Bookings', 'icon' => 'file-code', 'url' => ['booking/index']],
+                        ['label' => 'Manage activity', 'icon' => 'map', 'url' => ['activity/index']],
+                        ['label' => 'Sales', 'header' => true],
+                    ],
+                ]);
+            }
+            if ($user->getRole() == "guide") {
+                echo \hail812\adminlte\widgets\Menu::widget([
+                    'items' => [
+                        ['label' => 'Bookings', 'icon' => 'file-code', 'url' => ['booking/index']],
+                    ],
+                ]);
+            }
             ?>
         </nav>
         <!-- /.sidebar-menu -->
