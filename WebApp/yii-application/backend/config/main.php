@@ -90,15 +90,11 @@ return [
                     'class' => 'yii\rest\UrlRule',
                     'controller' => 'api/activity',
                     'extraPatterns' => [
-                        'GET count' => 'count',
-                        'GET activities' => 'activities',
-                        'GET activityview/{id}' => 'activityview',
-                        'POST createactivity' => 'createactivity',
+                        'GET' => 'activities',
+                        'GET {id}' => 'activityview',
+                        'POST' => 'createactivity',
                         'PUT {id}' => 'updateactivity',
                         'DELETE {id}' => 'deleteactivity',
-                    ],
-                    'tokens' => [
-                        '{id}' => '<id:\\d+>',
                     ],
                 ],
             ],

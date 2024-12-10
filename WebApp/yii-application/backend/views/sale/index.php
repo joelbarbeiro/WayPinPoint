@@ -31,28 +31,35 @@ $this->registerCssFile('@web/css/site.css');
                 </tr>
                 </thead>
                 <tbody>
-                <?php foreach ($dataProvider as $sale): ?>
+                <?php
+                foreach ($dataProvider as $sale):
+                    if(Yii::$app->user->identity->getRole() == "supplier")
+                        {
+                    ?>
+                <tr>
+                    <td><?= Html::encode($sale->activity->name) ?></td>
+                    <td><?= Html::encode($sale->buyer0->username) ?></td>
+                    <td><?= Html::encode($sale->sellerExtra->localsellpoint->name ?? "website") ?></td>
+                    <td><?= Html::encode($sale->seller->username) ?></td>
+                    <td><?= Html::encode($sale->purchase_date) ?></td>
+                    <td><?= Html::encode($sale->quantity) ?></td>
+                    <td><?= Html::encode($sale->total) ?></td>
+                </tr>
+                <?php }
+                if(Yii::$app->user->identity->getRole() == "manager")
+                {
+                    if (Yii::$app->user->identity->userExtra->localsellpoint_id == $sale->localsellpoint_id) { ?>
                     <tr>
                         <td><?= Html::encode($sale->activity->name) ?></td>
                         <td><?= Html::encode($sale->buyer0->username) ?></td>
-                        <?php
-                        if(Yii::$app->user->identity->getRole() == "supplier")
-                        {
-                            echo '<td>' . Html::encode($sale->sellerExtra->localsellpoint->name ?? "website") . '</td>';
-                        }
-                        if(Yii::$app->user->identity->getRole() == "manager")
-                        {
-dd($sale->localsellpoint_id);
-                            if(Yii::$app->user->identity->userExtra->localsellpoint_id == $sale->localsellpoint_id) {
-                                echo '<td>' . Html::encode($sale->sellerExtra->localsellpoint->name) . '</td>';
-                            }
-                        }
-                        ?>
+                        <td><?= Html::encode($sale->sellerExtra->localsellpoint->name) ?></td>
                         <td><?= Html::encode($sale->seller->username) ?></td>
                         <td><?= Html::encode($sale->purchase_date) ?></td>
                         <td><?= Html::encode($sale->quantity) ?></td>
                         <td><?= Html::encode($sale->total) ?></td>
                     </tr>
+                <?php }
+                } ?>
                 <?php endforeach;?>
                 </tbody>
             </table>

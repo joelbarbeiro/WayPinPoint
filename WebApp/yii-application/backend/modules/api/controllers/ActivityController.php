@@ -2,25 +2,38 @@
 
 namespace backend\modules\api\controllers;
 
-use common\models\Activity;
+use \common\models\Activity;
+use common\models\User;
 use Yii;
+use yii\filters\auth\HttpBasicAuth;
 use yii\rest\ActiveController;
 
 class ActivityController extends ActiveController
 {
-
-    public $modelClass = 'models\Activity';
+    public $modelClass = 'common\models\Activity';
     public $photoFile;
     public $hour = [];
     public $date = [];
 
-    public function actionCount()
+    public function behaviors()
     {
-        $activities = Activity::getActivities();
-        if ($activities) {
-            return ['count' => count($activities)];
+        $behaviors = parent::behaviors();
+        $behaviors['authenticator'] = [
+            'class' => HttpBasicAuth::className(),
+            'except' => ['index', 'view'],
+            'auth' => [$this, 'authintercept']
+        ];
+        return $behaviors;
+    }
+
+    public function authintercept($username, $password)
+    {
+        $user = User::findByUsername($username);
+        if ($user && $user->validatePassword($password)) {
+            $this->user = $user; //Guardar user autenticado         r
+            return $user;
         }
-        return ['error' => 'Activity not found'];
+        throw new \yii\web\ForbiddenHttpException('Error auth'); //403
     }
 
     public function actionActivities()
@@ -60,8 +73,6 @@ class ActivityController extends ActiveController
 
     public function actionUpdateactivity($id)
     {
-        // Devido a limitações do Yii, por não suportar um multipart/form no metodo PUT
-        // o envio de dados para este metodo deve ser efetudado por POST
         $activity = new Activity();
         if(Yii::$app->request->post()) {
             $activity = $activity->getActivityView($id);

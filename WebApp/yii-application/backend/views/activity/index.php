@@ -45,7 +45,8 @@ $this->registerCssFile('@web/css/site.css', [
                     'prompt' => 'Select a date',
                 ]
             );
-        if (Yii::$app->user->identity->role == "supplier") {
+
+        if (Yii::$app->user->identity->getRole() == "supplier") {
 
             echo '<p class="card-text mt-3"><a href="' . Url::to(['activity/view', 'id' => $activity->id]) . '" class="btn btn-primary">View</a></p>';
         }
