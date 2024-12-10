@@ -162,7 +162,7 @@ class CartController extends Controller
                 if (Invoice::createInvoice($cart, $saleId, $bookingId)) {
                     $qrCode = $this->generateQrCode($cart->user, $cart->activity);
                     Ticket::createTicket($cart, $qrCode);
-                    $cart->status = 0;
+                    $cart->status = 1;
                     if ($cart->save()) {
                         Yii::$app->session->setFlash('success', 'Checkout completed successfully.');
                     } else {
@@ -172,11 +172,9 @@ class CartController extends Controller
                         'cart' => $cart,
                     ]);
                     $this->generatePdf($content);
-
                 }
             }
         }
-        return $this->redirect(['index']); //FIX THIS
     }
 
     public static function generateQrCode($user, $activity)
@@ -193,9 +191,10 @@ class CartController extends Controller
     {
         $pdf = new Mpdf();
         $pdf->WriteHTML($content);
-        return Yii::$app->response->sendContentAsFile($pdf->Output('', 'S'), "receipt.pdf", [
+        Yii::$app->response->sendContentAsFile($pdf->Output('', 'S'), "receipt.pdf", [
             'mimeType' => 'application/pdf',
         ])->send();
+        return $this->redirect(['index']);
     }
 
 }

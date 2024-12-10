@@ -57,6 +57,21 @@ class m241027_181850_create_calendar_table extends Migration
             'id',
             'CASCADE'
         );
+        $this->createIndex(
+            '{{%idx-calendar-time_id}}',
+            '{{%calendar}}',
+            'time_id'
+        );
+
+        // add foreign key for table `{{%dates}}`
+        $this->addForeignKey(
+            '{{%fk-calendar-time_id}}',
+            '{{%calendar}}',
+            'time_id',
+            '{{%time}}',
+            'id',
+            'CASCADE'
+        );
     }
 
     /**
