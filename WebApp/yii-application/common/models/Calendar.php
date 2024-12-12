@@ -2,8 +2,6 @@
 
 namespace common\models;
 
-use common\models\Booking;
-
 /**
  * This is the model class for table "calendar".
  *
@@ -14,7 +12,8 @@ use common\models\Booking;
  * @property int $status
  *
  * @property Activity $activity
- * @property Booking[] $booking
+ * @property Booking[] $bookings
+ * @property Cart[] $carts
  * @property Date $date
  * @property Time $time
  *
@@ -68,6 +67,17 @@ class Calendar extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Activity::class, ['id' => 'activity_id']);
     }
+
+    /**
+     * Gets query for [[Carts]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCarts()
+    {
+        return $this->hasMany(Cart::class, ['calendar_id' => 'id']);
+    }
+
 
     /**
      * Gets query for [[Bookings]].

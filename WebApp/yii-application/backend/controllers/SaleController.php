@@ -75,7 +75,7 @@ class SaleController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
-    public function actionCreate($calendar_id)
+    public function actionCreate()
     {
         $model = new Sale();
         $userId = Yii::$app->user->id;
@@ -93,7 +93,7 @@ class SaleController extends Controller
             if ($model->buyer === null) {
                 throw new BadRequestHttpException('Buyer information is missing.');
             }
-            if ($calendar_id === null) {
+            if ($model->calendar_id === null) {
                 throw new BadRequestHttpException('Calendar ID is required.');
             }
             $activity = Activity::findOne($this->request->post('Sale')['activity_id']);
@@ -103,7 +103,7 @@ class SaleController extends Controller
             $model->purchase_date = new Expression('NOW()');
             $model->total = $activity->priceperpax * $model->quantity;
             if ($model->save()) {
-                Sale::createBooking($activity, $model->buyer, $calendar_id, $model->quantity);
+                Sale::createBooking($activity, $model->buyer, $model->calendar_id, $model->quantity);
                 return $this->redirect(['view', 'id' => $model->id]);
             } else {
                 var_dump($model->getErrors());

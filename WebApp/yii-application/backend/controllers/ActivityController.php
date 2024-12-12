@@ -7,6 +7,7 @@ use common\models\ActivitySearch;
 use common\models\Calendar;
 use common\models\Category;
 use common\models\Date;
+use common\models\Sale;
 use common\models\Time;
 use common\models\User;
 use common\models\UserExtra;
@@ -77,10 +78,18 @@ class ActivityController extends Controller
 
         $searchModel = new Activity();
         $dataProvider = $searchModel->getSupplierActivities($userId);
+        $sale = new Sale();
+        $seller = UserExtra::findOne(['user_id' => $userId]);
+        $activities = Activity::getSupplierActivityNames($seller->supplier);
+        $clients = Sale::getAllClients();
+        $clientsMap = ArrayHelper::map($clients, 'id', 'username');
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'clients' => $clientsMap,
+            'activities' => $activities,
+            'model' => $sale,
         ]);
 
     }

@@ -2,10 +2,13 @@
 
 use yii\helpers\Html;
 use yii\helpers\Url;
+use yii\widgets\ActiveForm;
 
 /** @var yii\web\View $this */
 /** @var common\models\ActivitySearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
+/** @var yii\widgets\ActiveForm $form */
+
 
 $this->title = 'Activities';
 $this->params['breadcrumbs'][] = $this->title;
@@ -42,15 +45,33 @@ $this->registerCssFile('@web/css/site.css', [
                 $dropdownOptions,
                 [
                     'class' => 'card-link',
-                    'prompt' => 'Select a date',
                 ]
             );
+            $form = ActiveForm::begin([
+                'action' => ['sale/create'], // Form submission URL
+                'method' => 'post',
+            ]);
 
-        if (Yii::$app->user->identity->getRole() == "supplier") {
+            echo Html::activeHiddenInput($model, 'activity_id', ['value' => $activity->id]); // Pass activity ID
+            echo Html::activeHiddenInput($model, 'calendar_id', ['value' => $calendar->id]);
+            echo $form->field($model, 'buyer')->dropDownList(
+                $clients,
+            );
+            echo $form->field($model, 'quantity')->textInput([
+                'type' => 'number',
+                'min' => 1,
+                'value' => 1,
+            ]);
 
-            echo '<p class="card-text mt-3"><a href="' . Url::to(['activity/view', 'id' => $activity->id]) . '" class="btn btn-primary">View</a></p>';
-        }
-            echo '<p class="card-text mt-3"><a href="' . Url::to(['sale/create', 'id' => $activity->id, 'calendar_id' => $calendar->id]) . '" class="btn btn-primary">Buy</a></p>';
+            echo Html::submitButton('Buy', ['class' => 'btn btn-primary']);
+
+            ActiveForm::end();
+
+
+            if (Yii::$app->user->identity->getRole() == "supplier") {
+
+                echo '<p class="card-text mt-3"><a href="' . Url::to(['activity/view', 'id' => $activity->id]) . '" class="btn btn-primary">View</a></p>';
+            }
             echo '</div>';
             echo '</div>';
             echo '</div>';

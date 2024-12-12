@@ -8,7 +8,7 @@ namespace common\models;
  * @property int $id
  * @property string $hour
  *
- * @property Calendar[] $calendar
+ * @property Calendar[] $calendars
  */
 class Time extends \yii\db\ActiveRecord
 {
