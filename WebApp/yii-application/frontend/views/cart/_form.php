@@ -10,8 +10,10 @@ use yii\widgets\ActiveForm;
 
 <div class="cart-form">
 
-    <?php $form = ActiveForm::begin(); ?>
+    <?= "<strong>Name of the activity:</strong> " . $activityName ?><br>
+    <?= "<strong>Date of the activity:</strong> " . $calendarDate . " " . $calendarHour ?><br>
 
+    <?php $form = ActiveForm::begin(); ?>
     <?= $form->field($model, 'quantity')->textInput() ?>
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>

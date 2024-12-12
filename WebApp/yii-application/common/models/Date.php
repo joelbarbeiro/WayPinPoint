@@ -8,7 +8,7 @@ namespace common\models;
  * @property int $id
  * @property string $date
  *
- * @property Calendar[] $calendar
+ * @property Calendar[] $calendars
  */
 class Date extends \yii\db\ActiveRecord
 {
@@ -47,7 +47,7 @@ class Date extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getCalendar()
+    public function getCalendars()
     {
         return $this->hasMany(Calendar::class, ['date_id' => 'id']);
     }
