@@ -9,7 +9,7 @@ import androidx.annotation.Nullable;
 
 public class UserDbHelper extends SQLiteOpenHelper {
 
-    private static final String DB_NAME = "waypinpointMobile";
+    private static final String DB_NAME = "waypinpointmobile";
     private static final int DB_VERSION = 1;
 
     private final SQLiteDatabase db;
@@ -32,8 +32,8 @@ public class UserDbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         String createBookTable = "CREATE TABLE " + TABLE_NAME +
                 "(" + ID + " INTEGER, " +
-                USERNAME + "TEXT NOT NULL, " +
-                EMAIL + "TEXT NOT NULL, " +
+                USERNAME + " TEXT NOT NULL, " +
+                EMAIL + " TEXT NOT NULL, " +
                 PASSWORD + " TEXT NOT NULL, " +
                 NIF + " INTEGER NOT NULL, " +
                 PHONE + " TEXT NOT NULL," +
@@ -50,6 +50,7 @@ public class UserDbHelper extends SQLiteOpenHelper {
     }
 
     public void addUserDb(User user) {
+        System.out.println("#AQUI DENTRO JA DO DB HELPER");
         ContentValues values = new ContentValues();
         values.put(ID, user.getId());
         values.put(USERNAME, user.getUsername());

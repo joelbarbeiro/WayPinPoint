@@ -13,7 +13,10 @@ import com.android.volley.toolbox.Volley;
 import java.util.HashMap;
 import java.util.Map;
 
+import Listeners.UserListener;
+import pt.ipleiria.estg.dei.waypinpoint.LoginActivity;
 import pt.ipleiria.estg.dei.waypinpoint.R;
+import pt.ipleiria.estg.dei.waypinpoint.utils.StatusJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.UserJsonParser;
 
 public class SingletonManager {
@@ -21,11 +24,14 @@ public class SingletonManager {
     private static SingletonManager instance = null;
     private static Route route = null;
     private UserDbHelper userDbHelper = null;
-    private String urlApiUser = "http://waypinpoint/backend/web/api/users/userextras";
+    private static final String urlApiUser = "http://waypinpoint/backend/web/api/users/userextras";
+
+    private UserListener userListener;
 
     private static RequestQueue volleyQueue = null;
 
     public SingletonManager(Context context) {
+
         userDbHelper = new UserDbHelper(context);
     }
 
@@ -37,20 +43,31 @@ public class SingletonManager {
         return instance;
     }
 
+    //REGISTER LISTENERS
+    public void setUserListener(UserListener userListener) {
+        this.userListener = userListener;
+    }
+
+    //region = API USER METHODS #
     public void addUserDb(User user) {
+        System.out.println("#AQUI DENTRO DO ADD USER");
         userDbHelper.addUserDb(user);
     }
 
     public void addUserApi(final User user, final Context context) {
-        if (!UserJsonParser.isConnectionInternet(context)) {
+        if (!StatusJsonParser.isConnectionInternet(context)) {
             Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
         } else {
-            StringRequest request = new StringRequest(Request.Method.POST, urlApiUser , new Response.Listener<String>() {
+            System.out.println("#AQUI DENTRO");
+            StringRequest request = new StringRequest(Request.Method.POST, urlApiUser, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
+                    System.out.println("---> ENTREI AQUI MEU ");
                     addUserDb(UserJsonParser.parserJsonUser(response));
 
-                    //TODO IMPLEMENT LISTENERS
+                    if (userListener != null) {
+                        userListener.onValidateRegister(LoginActivity.REGISTER);
+                    }
                 }
             }, new Response.ErrorListener() {
                 @Override
@@ -75,5 +92,6 @@ public class SingletonManager {
             volleyQueue.add(request);
         }
     }
+    //endregion
 
 }
