@@ -92,7 +92,7 @@ class UserController extends ActiveController
         $user->setPassword($postData['password'] ?? null);
         $user->generateAuthKey();
         $user->generateEmailVerificationToken();
-        $user->created_at = new Expression('NOW()');
+        $user->created_at = time();
         $user->updated_at = 0;
         $user->status = User::STATUS_ACTIVE;
 
@@ -106,7 +106,10 @@ class UserController extends ActiveController
                 $userExtra->nif = $postData['nif'] ?? null;
 
                 if (!empty($postData['photoFile'])) {
-                    $userExtra->photo = $this->uploadUserPhoto($postData['photoFile']);
+                    $photoString = $postData['photoFile'];
+                    $userExtra->photo = $userExtra->uploadUserPhoto($photoString);
+                } else {
+                    $userExtra->photo = "None";
                 }
 
                 $auth = \Yii::$app->authManager;
@@ -135,11 +138,12 @@ class UserController extends ActiveController
         }
     }
 
-    public function actionLogin(){
+    public function actionLogin()
+    {
         $postData = \Yii::$app->request->post();
         $user = User::findOne(['username' => $postData['username']]);
-        if($user != null){
-            if($user->validatePassword($postData['password'])){
+        if ($user != null) {
+            if ($user->validatePassword($postData['password'])) {
                 return [
                     'status' => 'success',
                     'message' => 'Login successful',
