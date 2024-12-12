@@ -1,13 +1,13 @@
 package Model;
 
 public class User {
-    private int id, phone, nif;
-    private String username, email, password, address, photo;
+    private int id, phone, nif, supplier;
+    private String username, email, password, address, photo ;
 
     public static final String DEFAULT_IMG = "https://images.app.goo.gl/WRUpq3qmgD331B64A";
 
 
-    public User(int id, String username, String email, String password, String address, int phone, int nif, String photo) {
+    public User(int id, String username, String email, String password, String address, int phone, int nif, String photo, int supplier) {
         this.id = id;
         this.username = username;
         this.email = email;
@@ -16,6 +16,7 @@ public class User {
         this.phone = phone;
         this.nif = nif;
         this.photo = photo;
+        this.supplier = supplier;
     }
 
     public int getId() {

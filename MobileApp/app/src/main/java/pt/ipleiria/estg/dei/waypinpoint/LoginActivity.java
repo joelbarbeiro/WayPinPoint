@@ -14,6 +14,10 @@ public class LoginActivity extends AppCompatActivity {
     private EditText etEmail;
     private EditText etPassword;
 
+    public static final int REGISTER = 100;
+    public static final String OP_CODE = "DETAIL_OPERATION";
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,7 +64,7 @@ public class LoginActivity extends AppCompatActivity {
 
         if (isEmailValid) {
             intent.putExtra(RegisterActivity.EMAIL, etEmail.getText().toString());
-            startActivity(intent);
+            startActivityForResult(intent, REGISTER);
         } else {
             startActivity(intent);
         }

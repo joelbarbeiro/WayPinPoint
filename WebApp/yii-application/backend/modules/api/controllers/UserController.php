@@ -5,6 +5,7 @@ namespace backend\modules\api\controllers;
 use common\models\User;
 use common\models\UserExtra;
 use Yii;
+use yii\db\Expression;
 use yii\db\Query;
 use yii\rest\ActiveController;
 
@@ -81,7 +82,7 @@ class UserController extends ActiveController
             ->all();
     }
 
-    public function actionUserextras()
+    public function actionRegister()
     {
         $postData = \Yii::$app->request->post();
 
@@ -90,8 +91,10 @@ class UserController extends ActiveController
         $user->email = $postData['email'] ?? null;
         $user->setPassword($postData['password'] ?? null);
         $user->generateAuthKey();
+        $user->generateEmailVerificationToken();
+        $user->created_at = new Expression('NOW()');
+        $user->updated_at = 0;
         $user->status = User::STATUS_ACTIVE;
-
 
         $transaction = Yii::$app->db->beginTransaction();
         try {
@@ -132,6 +135,22 @@ class UserController extends ActiveController
         }
     }
 
+    public function actionLogin(){
+        $postData = \Yii::$app->request->post();
+        $user = User::findOne(['username' => $postData['username']]);
+        if($user != null){
+            if($user->validatePassword($postData['password'])){
+                return [
+                    'status' => 'success',
+                    'message' => 'Login successful',
+                    'token' => $user->verification_token,
+                ];
+            }
+            return "User not validated";
+        }
+        return "User doesn't Exist";
+    }
+
     public function actionEdituserextras($id)
     {
         $postData = \Yii::$app->request->post();
@@ -155,11 +174,12 @@ class UserController extends ActiveController
             if (!$user) {
                 throw new \Exception("User not found");
             }
-            $user->username = $postData['username'] ?? null;
-            $user->email = $postData['email'] ?? null;
-            $userExtra->phone = $postData['phone'] ?? null;
-            $userExtra->address = $postData['address'] ?? null;
-            $userExtra->nif = $postData['nif'] ?? null;
+            $user->username = $postData['username'] ?? $user->username;
+            $user->email = $postData['email'] ?? $user->email;
+            $user->updated_at = new Expression('NOW()');
+            $userExtra->phone = $postData['phone'] ?? $userExtra->phone;
+            $userExtra->address = $postData['address'] ?? $userExtra->address;
+            $userExtra->nif = $postData['nif'] ?? $userExtra->nif;
 
             if (!empty($postData['photoFile'])) {
                 $userExtra->photo = $this->uploadUserPhoto($postData['photoFile']);

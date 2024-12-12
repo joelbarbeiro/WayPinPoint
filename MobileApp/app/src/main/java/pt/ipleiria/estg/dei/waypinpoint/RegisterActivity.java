@@ -13,10 +13,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.Objects;
 
+import Listeners.UserListener;
 import Model.SingletonManager;
 import Model.User;
 
-public class RegisterActivity extends AppCompatActivity {
+public class RegisterActivity extends AppCompatActivity implements UserListener {
 
     public static final String EMAIL = "EMAIL";
     private User user;
@@ -78,23 +79,33 @@ public class RegisterActivity extends AppCompatActivity {
         isConfirmPasswordEqual= isConfirmPasswordEqual(etPassword.getText().toString(),etConfirmPassword.getText().toString());
         isNifValid = isNifValid(Integer.parseInt(etNif.getText().toString()));
 
-        user = new User(
-                0,
-                etUsername.getText().toString(),
-                etEmail.getText().toString(),
-                etPassword.getText().toString(),
-                etAddress.getText().toString(),
-                Integer.parseInt(etPhone.getText().toString()),
-                Integer.parseInt(etNif.getText().toString()),
-                DEFAULT_IMG
-        );
+
 
         if (isNifValid && isEmailValid && isPasswordValid && isConfirmPasswordEqual) {
-            Intent intent = new Intent(this, LoginActivity.class);
+            System.out.println("#AQUI");
+            user = new User(
+                    0,
+                    etUsername.getText().toString(),
+                    etEmail.getText().toString(),
+                    etPassword.getText().toString(),
+                    etAddress.getText().toString(),
+                    Integer.parseInt(etPhone.getText().toString()),
+                    Integer.parseInt(etNif.getText().toString()),
+                    DEFAULT_IMG,
+                    0
+            );
             SingletonManager.getInstance(getApplicationContext()).addUserApi(user, getApplicationContext());
-            startActivity(intent);
         } else {
             Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show();
         }
+        SingletonManager.getInstance(getApplicationContext()).setUserListener(this);
+    }
+
+    @Override
+    public void onValidateRegister(int op) {
+        Intent intent = new Intent();
+        intent.putExtra(LoginActivity.OP_CODE, op);
+        setResult(RESULT_OK, intent);
+        finish();
     }
 }

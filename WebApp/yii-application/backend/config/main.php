@@ -65,7 +65,8 @@ return [
                         'GET extras' => 'extras',
                         'GET employees' => 'employees',
                         'DELETE {username}' => 'delbyusername',
-                        'POST userextras' => 'userextras',
+                        'POST register' => 'register',
+                        'POST login' => 'login',
                         'PUT {id}' => 'edituserextras',
                     ],
                     'tokens' => [
