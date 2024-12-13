@@ -120,8 +120,14 @@ class UserController extends ActiveController
                     $transaction->commit();
                     return [
                         'status' => 'success',
-                        'message' => 'User and UserExtra created successfully.',
-                        'user_id' => $user->id,
+                        'id' => $user->id,
+                        'username' => $user->username,
+                        'email' => $user->email,
+                        'password' => $user->password_hash,
+                        'phone' => $userExtra->phone,
+                        'address' => $userExtra->address,
+                        'nif' => $userExtra->nif,
+                        'photo' => $userExtra->photo
                     ];
                 } else {
                     throw new \Exception('Failed to save UserExtra: ' . json_encode($userExtra->getErrors()));
@@ -131,6 +137,7 @@ class UserController extends ActiveController
             }
         } catch (\Exception $e) {
             $transaction->rollBack();
+            \Yii::$app->response->statusCode = 400;
             return [
                 'status' => 'error',
                 'message' => $e->getMessage(),
@@ -141,7 +148,7 @@ class UserController extends ActiveController
     public function actionLogin()
     {
         $postData = \Yii::$app->request->post();
-        $user = User::findOne(['username' => $postData['username']]);
+        $user = User::findOne(['email' => $postData['email']]);
         if ($user != null) {
             if ($user->validatePassword($postData['password'])) {
                 return [
@@ -150,9 +157,17 @@ class UserController extends ActiveController
                     'token' => $user->verification_token,
                 ];
             }
-            return "User not validated";
+            \Yii::$app->response->statusCode = 400;
+            return [
+                'status' => 'error',
+                'message' => 'User not validated',
+            ];
         }
-        return "User doesn't Exist";
+        \Yii::$app->response->statusCode = 400;
+        return [
+            'status' => 'error',
+            'message' => 'User not validated',
+        ];
     }
 
     public function actionEdituserextras($id)

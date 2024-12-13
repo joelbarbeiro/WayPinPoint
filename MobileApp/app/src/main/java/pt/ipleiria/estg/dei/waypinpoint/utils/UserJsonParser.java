@@ -12,6 +12,7 @@ public class UserJsonParser {
 
         try {
             JSONObject User = new JSONObject(response);
+            int idUser = User.getInt("id");
             String usernameUser = User.getString("username");
             String emailUser = User.getString("email");
             String passwordUser = User.getString("password");
@@ -21,7 +22,7 @@ public class UserJsonParser {
             String photoUser = User.getString("photo");
 
             auxUser = new User(
-                    0,
+                    idUser,
                     usernameUser,
                     emailUser,
                     passwordUser,

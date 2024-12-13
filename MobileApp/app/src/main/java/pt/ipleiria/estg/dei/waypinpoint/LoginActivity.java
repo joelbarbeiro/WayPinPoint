@@ -1,5 +1,6 @@
 package pt.ipleiria.estg.dei.waypinpoint;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Patterns;
@@ -7,7 +8,10 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.material.snackbar.Snackbar;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -41,6 +45,17 @@ public class LoginActivity extends AppCompatActivity {
         return false;
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == REGISTER) {
+                View rootView = findViewById(R.id.loginView);
+                Snackbar.make(rootView, R.string.login_register_success_message, Snackbar.LENGTH_SHORT).show();
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
     public void onClickLogin(View view) {
         boolean isEmailValid, isPasswordValid;
         isEmailValid = isEmailValid(etEmail.getText().toString());
@@ -52,10 +67,9 @@ public class LoginActivity extends AppCompatActivity {
             intent.putExtra(MenuMainActivity.EMAIL, etEmail.getText().toString());
             startActivity(intent);
         } else {
-            Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.login_error_message, Toast.LENGTH_SHORT).show();
         }
     }
-
 
     public void onClickRegisterLabel(View view) {
         boolean isEmailValid;
@@ -66,7 +80,7 @@ public class LoginActivity extends AppCompatActivity {
             intent.putExtra(RegisterActivity.EMAIL, etEmail.getText().toString());
             startActivityForResult(intent, REGISTER);
         } else {
-            startActivity(intent);
+            startActivityForResult(intent, REGISTER);
         }
     }
 }

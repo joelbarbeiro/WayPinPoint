@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/loginView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_vertical"
@@ -14,6 +16,13 @@
         android:orientation="vertical"
         tools:ignore="UselessParent">
 
+
+        <ImageView
+            android:id="@+id/iv_logo"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:srcCompat="@drawable/waypinpointfront" />
+
         <TextView
             android:id="@+id/textView3"
             android:layout_width="match_parent"
@@ -25,7 +34,7 @@
 
         <EditText
             android:id="@+id/textviewUsername"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:autofillHints=""
@@ -37,7 +46,7 @@
 
         <EditText
             android:id="@+id/registerTvPassword"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:autofillHints=""
@@ -47,20 +56,28 @@
             android:minHeight="48dp"
             tools:ignore="LabelFor" />
 
-        <Button
-            android:id="@+id/button_login"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:onClick="onClickLogin"
-            android:text="@string/login_button" />
-
-        <TextView
-            android:id="@+id/textViewRegister"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="onClickRegisterLabel"
-            android:text="@string/login_register_label"
-            android:textAlignment="center" />
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/button_login"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="onClickLogin"
+                android:layout_marginEnd="10dp"
+                android:text="@string/login_button" />
+
+            <Button
+                android:id="@+id/button_register"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="onClickRegisterLabel"
+                android:layout_marginStart="10dp"
+                android:text="@string/login_sign_up" />
+        </LinearLayout>
+
     </LinearLayout>
 </LinearLayout>

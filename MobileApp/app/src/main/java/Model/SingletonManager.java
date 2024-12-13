@@ -24,15 +24,15 @@ public class SingletonManager {
     private static SingletonManager instance = null;
     private static Route route = null;
     private UserDbHelper userDbHelper = null;
-    private static final String urlApiUser = "http://waypinpoint/backend/web/api/users/userextras";
+    private static final String urlApiUser = "http://35.179.107.54:8080/api/";
 
     private UserListener userListener;
 
     private static RequestQueue volleyQueue = null;
 
     public SingletonManager(Context context) {
-
         userDbHelper = new UserDbHelper(context);
+
     }
 
     public static synchronized SingletonManager getInstance(Context context) {
@@ -50,7 +50,6 @@ public class SingletonManager {
 
     //region = API USER METHODS #
     public void addUserDb(User user) {
-        System.out.println("#AQUI DENTRO DO ADD USER");
         userDbHelper.addUserDb(user);
     }
 
@@ -58,13 +57,10 @@ public class SingletonManager {
         if (!StatusJsonParser.isConnectionInternet(context)) {
             Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
         } else {
-            System.out.println("#AQUI DENTRO");
-            StringRequest request = new StringRequest(Request.Method.POST, urlApiUser, new Response.Listener<String>() {
+            StringRequest request = new StringRequest(Request.Method.POST, urlApiUser + "user/register", new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
-                    System.out.println("---> ENTREI AQUI MEU ");
                     addUserDb(UserJsonParser.parserJsonUser(response));
-
                     if (userListener != null) {
                         userListener.onValidateRegister(LoginActivity.REGISTER);
                     }
@@ -79,11 +75,12 @@ public class SingletonManager {
                 @Override
                 protected Map<String, String> getParams() {
                     Map<String, String> params = new HashMap<String, String>();
+                    params.put("id", "" + user.getId());
                     params.put("username", user.getUsername());
                     params.put("email", user.getEmail());
                     params.put("password", user.getPassword());
                     params.put("address", user.getAddress());
-                    params.put("phone", "" + user.getNif());
+                    params.put("phone", "" + user.getPhone());
                     params.put("nif", "" + user.getNif());
                     params.put("photo", user.getPhoto() == null ? User.DEFAULT_IMG : user.getPhoto());
                     return params;

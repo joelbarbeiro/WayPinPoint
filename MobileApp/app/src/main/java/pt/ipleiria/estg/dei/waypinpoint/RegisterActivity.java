@@ -21,8 +21,8 @@ public class RegisterActivity extends AppCompatActivity implements UserListener 
 
     public static final String EMAIL = "EMAIL";
     private User user;
-    private String username,address,email,password,photo = "";
-    private int nif,phone;
+    private String username, address, email, password, photo = "";
+    private int nif, phone;
     private EditText etConfirmPassword, etPassword, etEmail, etUsername, etAddress, etNif, etPhone;
 
     @Override
@@ -54,12 +54,12 @@ public class RegisterActivity extends AppCompatActivity implements UserListener 
         return false;
     }
 
-    private static boolean isConfirmPasswordEqual(String password, String secondPassword){
+    private static boolean isConfirmPasswordEqual(String password, String secondPassword) {
         return Objects.equals(password, secondPassword);
     }
 
-    private static boolean isNifValid(int nif){
-        if(nif < 999999999 && nif > 111111111){
+    private static boolean isNifValid(int nif) {
+        if (nif < 999999999 && nif > 111111111) {
             return true;
         } else {
             return false;
@@ -72,17 +72,14 @@ public class RegisterActivity extends AppCompatActivity implements UserListener 
     }
 
     public void onClickRegister(View view) {
-        boolean isNifValid ,isEmailValid, isPasswordValid, isConfirmPasswordEqual ;
+        boolean isNifValid, isEmailValid, isPasswordValid, isConfirmPasswordEqual;
 
         isEmailValid = isEmailValid(etEmail.getText().toString());
         isPasswordValid = isPasswordValid(String.valueOf(etPassword.getText()));
-        isConfirmPasswordEqual= isConfirmPasswordEqual(etPassword.getText().toString(),etConfirmPassword.getText().toString());
+        isConfirmPasswordEqual = isConfirmPasswordEqual(etPassword.getText().toString(), etConfirmPassword.getText().toString());
         isNifValid = isNifValid(Integer.parseInt(etNif.getText().toString()));
 
-
-
         if (isNifValid && isEmailValid && isPasswordValid && isConfirmPasswordEqual) {
-            System.out.println("#AQUI");
             user = new User(
                     0,
                     etUsername.getText().toString(),
