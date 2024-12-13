@@ -46,5 +46,7 @@
     <string name="error_no_internet">No Internet Connection</string>
     <string name="login_error_message">Something went wrong</string>
     <string name="login_sign_up">Sign Up</string>
+    <string name="login_invalid_login">Invalid Login</string>
+    <string name="login_error_parse_response">Failed to parse response.</string>
 
 </resources>

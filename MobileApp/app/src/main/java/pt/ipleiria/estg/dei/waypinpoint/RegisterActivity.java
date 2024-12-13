@@ -89,7 +89,8 @@ public class RegisterActivity extends AppCompatActivity implements UserListener 
                     Integer.parseInt(etPhone.getText().toString()),
                     Integer.parseInt(etNif.getText().toString()),
                     DEFAULT_IMG,
-                    0
+                    0,
+                    ""
             );
             SingletonManager.getInstance(getApplicationContext()).addUserApi(user, getApplicationContext());
         } else {

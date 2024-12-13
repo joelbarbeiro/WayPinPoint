@@ -1,6 +1,7 @@
 package Model;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -10,9 +11,13 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.HashMap;
 import java.util.Map;
 
+import Listeners.LoginListener;
 import Listeners.UserListener;
 import pt.ipleiria.estg.dei.waypinpoint.LoginActivity;
 import pt.ipleiria.estg.dei.waypinpoint.R;
@@ -27,6 +32,8 @@ public class SingletonManager {
     private static final String urlApiUser = "http://35.179.107.54:8080/api/";
 
     private UserListener userListener;
+
+    private LoginListener loginListener;
 
     private static RequestQueue volleyQueue = null;
 
@@ -47,6 +54,11 @@ public class SingletonManager {
     public void setUserListener(UserListener userListener) {
         this.userListener = userListener;
     }
+
+    public void setLoginListener(LoginListener loginListener) {
+        this.loginListener = loginListener;
+    }
+
 
     //region = API USER METHODS #
     public void addUserDb(User user) {
@@ -84,6 +96,61 @@ public class SingletonManager {
                     params.put("nif", "" + user.getNif());
                     params.put("photo", user.getPhoto() == null ? User.DEFAULT_IMG : user.getPhoto());
                     return params;
+                }
+            };
+            volleyQueue.add(request);
+        }
+    }
+
+    //region # LOGIN API #
+    public void loginAPI(final String email, final String password, final Context context, final LoginListener listener)  {
+        if (!StatusJsonParser.isConnectionInternet(context)) {
+            Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
+            listener.onErrorLogin(context.getString(R.string.error_no_internet));
+        }else{
+            StringRequest request = new StringRequest(Request.Method.POST, urlApiUser +"users/login", new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    System.out.println("---> SUCCESS Login " + response);
+                    SharedPreferences sharedPreferences = context.getSharedPreferences("USER_DATA", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    try {
+                        JSONObject jsonObject = new JSONObject(response);
+                        String token = jsonObject.getString("token");
+                        editor.putString("TOKEN", token);
+                        editor.putString("EMAIL",email);
+                        editor.apply();
+                        listener.onValidateLogin(token);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        listener.onErrorLogin(context.getString(R.string.login_error_parse_response));
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    System.out.println("---> ERROR Login" + error.getMessage() + error);
+                    SharedPreferences sharedPreferences = context.getSharedPreferences("USER_DATA", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    if(error.networkResponse.statusCode == 401){
+                        Toast.makeText(context, R.string.login_invalid_login, Toast.LENGTH_SHORT).show();
+                        listener.onErrorLogin(error.getMessage());
+                    }else{
+                        Toast.makeText(context, R.string.login_error_message, Toast.LENGTH_SHORT).show();
+                        listener.onErrorLogin(error.getMessage());
+                    }
+                    editor.putString("TOKEN", "TOKEN");
+                    editor.apply();
+                    listener.onErrorLogin(error.getMessage());
+                }
+            }){
+                protected Map<String, String> getParams(){
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("email", email);
+                    params.put("password", password);
+
+                    return params;
+
                 }
             };
             volleyQueue.add(request);

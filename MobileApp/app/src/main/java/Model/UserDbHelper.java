@@ -18,7 +18,7 @@ public class UserDbHelper extends SQLiteOpenHelper {
     private static final String USERNAME = "username";
     private static final String EMAIL = "email";
     private static final String PASSWORD = "password";
-    private static final String ADDRESS = "password";
+    private static final String ADDRESS = "address";
     private static final String NIF = "nif";
     private static final String PHONE = "phone";
     private static final String PHOTO = "photo";
@@ -70,6 +70,7 @@ public class UserDbHelper extends SQLiteOpenHelper {
         values.put(USERNAME, user.getUsername());
         values.put(EMAIL, user.getEmail());
         values.put(PASSWORD, user.getPassword());
+        values.put(ADDRESS, user.getAddress());
         values.put(NIF, user.getNif());
         values.put(PHONE, user.getPhone());
         values.put(PHOTO, user.getPhoto());

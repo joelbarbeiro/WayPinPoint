@@ -16,9 +16,9 @@ public class UserJsonParser {
             String usernameUser = User.getString("username");
             String emailUser = User.getString("email");
             String passwordUser = User.getString("password");
-            int nifUser = User.getInt("nif");
-            int phoneUser = User.getInt("phone");
             String addressUser = User.getString("address");
+            int phoneUser = User.getInt("phone");
+            int nifUser = User.getInt("nif");
             String photoUser = User.getString("photo");
 
             auxUser = new User(
@@ -30,7 +30,8 @@ public class UserJsonParser {
                     phoneUser,
                     nifUser,
                     photoUser,
-                    0
+                    0,
+                    null
             );
 
         } catch (JSONException e) {
