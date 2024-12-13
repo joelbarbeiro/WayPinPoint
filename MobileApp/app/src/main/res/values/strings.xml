@@ -8,12 +8,15 @@
     <string name="login_textview_password">Password</string>
     <string name="login_button">Login</string>
     <string name="login_register_label">Not a member? Sign Up</string>
+    <string name="login_register_success_message">User Registered Successfully</string>
 
     <!-- Register -->
     <string name="register_title">Register</string>
     <string name="register_button">Register</string>
     <string name="register_confirm_password_label">Confirm Password</string>
-
+    <string name="register_address_hint">Address</string>
+    <string name="register_phone_number_hint">Phone Number</string>
+    <string name="register_nif_hint">NIF</string>
 
     <!-- Menu -->
     <string name="menu_my_profile_label">My Profile</string>
@@ -39,12 +42,11 @@
     <string name="dashboard_price_label">Price per Ticket :</string>
     <string name="dashboard_date_label">Dates: </string>
 
-
-
     <!-- Errors-->
     <string name="error_no_internet">No Internet Connection</string>
-    <string name="register_address_hint">Address</string>
-    <string name="register_phone_number_hint">Phone Number</string>
-    <string name="register_nif_hint">NIF</string>
+    <string name="login_error_message">Something went wrong</string>
+    <string name="login_sign_up">Sign Up</string>
+    <string name="login_invalid_login">Invalid Login</string>
+    <string name="login_error_parse_response">Failed to parse response.</string>
 
 </resources>

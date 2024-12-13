@@ -18,6 +18,7 @@ public class UserDbHelper extends SQLiteOpenHelper {
     private static final String USERNAME = "username";
     private static final String EMAIL = "email";
     private static final String PASSWORD = "password";
+    private static final String ADDRESS = "address";
     private static final String NIF = "nif";
     private static final String PHONE = "phone";
     private static final String PHOTO = "photo";
@@ -35,6 +36,7 @@ public class UserDbHelper extends SQLiteOpenHelper {
                 USERNAME + " TEXT NOT NULL, " +
                 EMAIL + " TEXT NOT NULL, " +
                 PASSWORD + " TEXT NOT NULL, " +
+                ADDRESS + " TEXT NOT NULL, " +
                 NIF + " INTEGER NOT NULL, " +
                 PHONE + " TEXT NOT NULL," +
                 PHOTO + " TEXT NOT NULL" +
@@ -50,12 +52,12 @@ public class UserDbHelper extends SQLiteOpenHelper {
     }
 
     public void addUserDb(User user) {
-        System.out.println("#AQUI DENTRO JA DO DB HELPER");
         ContentValues values = new ContentValues();
         values.put(ID, user.getId());
         values.put(USERNAME, user.getUsername());
         values.put(EMAIL, user.getEmail());
         values.put(PASSWORD, user.getPassword());
+        values.put(ADDRESS, user.getAddress());
         values.put(NIF, user.getNif());
         values.put(PHONE, user.getPhone());
         values.put(PHOTO, user.getPhoto());
@@ -68,6 +70,7 @@ public class UserDbHelper extends SQLiteOpenHelper {
         values.put(USERNAME, user.getUsername());
         values.put(EMAIL, user.getEmail());
         values.put(PASSWORD, user.getPassword());
+        values.put(ADDRESS, user.getAddress());
         values.put(NIF, user.getNif());
         values.put(PHONE, user.getPhone());
         values.put(PHOTO, user.getPhoto());

@@ -12,16 +12,17 @@ public class UserJsonParser {
 
         try {
             JSONObject User = new JSONObject(response);
+            int idUser = User.getInt("id");
             String usernameUser = User.getString("username");
             String emailUser = User.getString("email");
             String passwordUser = User.getString("password");
-            int nifUser = User.getInt("nif");
-            int phoneUser = User.getInt("phone");
             String addressUser = User.getString("address");
+            int phoneUser = User.getInt("phone");
+            int nifUser = User.getInt("nif");
             String photoUser = User.getString("photo");
 
             auxUser = new User(
-                    0,
+                    idUser,
                     usernameUser,
                     emailUser,
                     passwordUser,
@@ -29,7 +30,8 @@ public class UserJsonParser {
                     phoneUser,
                     nifUser,
                     photoUser,
-                    0
+                    0,
+                    null
             );
 
         } catch (JSONException e) {
