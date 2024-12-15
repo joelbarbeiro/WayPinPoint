@@ -10,16 +10,15 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
 import Listeners.LoginListener;
 import Listeners.UserListener;
 import pt.ipleiria.estg.dei.waypinpoint.LoginActivity;
+import pt.ipleiria.estg.dei.waypinpoint.MenuMainActivity;
 import pt.ipleiria.estg.dei.waypinpoint.R;
 import pt.ipleiria.estg.dei.waypinpoint.utils.StatusJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.UserJsonParser;
@@ -31,6 +30,8 @@ public class SingletonManager {
     private UserDbHelper userDbHelper = null;
     private static final String urlApiUser = "http://35.179.107.54:8080/api/";
 
+    private ArrayList<User> users;
+
     private UserListener userListener;
 
     private LoginListener loginListener;
@@ -38,8 +39,8 @@ public class SingletonManager {
     private static RequestQueue volleyQueue = null;
 
     public SingletonManager(Context context) {
+        users = new ArrayList<>();
         userDbHelper = new UserDbHelper(context);
-
     }
 
     public static synchronized SingletonManager getInstance(Context context) {
@@ -61,8 +62,42 @@ public class SingletonManager {
 
 
     //region = API USER METHODS #
+
+    public ArrayList<User> getUsersBD() {
+        users = userDbHelper.getAllUsersDb();
+        return new ArrayList<>(users);
+    }
+
+    public User getUser(int id) {
+        users = getUsersBD();
+        for (User user : users) {
+            if (user.getId() == id) {
+                return user;
+            }
+        }
+        return null;
+    }
+
     public void addUserDb(User user) {
         userDbHelper.addUserDb(user);
+    }
+
+    public void editUserDb(User user) {
+        userDbHelper.editUserDb(user);
+    }
+
+    public void removeUserDb(int userId) {
+        User b = getUser(userId);
+        if (b != null) {
+            userDbHelper.removeUserDb(b.getId());
+        }
+    }
+
+    public void addUsersDb(ArrayList<User> users) {
+        userDbHelper.removeAllUsersDb();
+        for (User b : users) {
+            addUserDb(b);
+        }
     }
 
     public void addUserApi(final User user, final Context context) {
@@ -76,6 +111,17 @@ public class SingletonManager {
                     if (userListener != null) {
                         userListener.onValidateRegister(LoginActivity.REGISTER);
                     }
+                    try {
+                        JSONObject jsonObject = new JSONObject(response);
+                        SharedPreferences sharedPreferences = context.getSharedPreferences("USER_DATA", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        int id = jsonObject.getInt("id");
+                        editor.putInt(MenuMainActivity.ID, id);
+                        editor.apply();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
                 }
             }, new Response.ErrorListener() {
                 @Override
@@ -103,12 +149,12 @@ public class SingletonManager {
     }
 
     //region # LOGIN API #
-    public void loginAPI(final String email, final String password, final Context context, final LoginListener listener)  {
+    public void loginAPI(final String email, final String password, final Context context, final LoginListener listener) {
         if (!StatusJsonParser.isConnectionInternet(context)) {
             Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
             listener.onErrorLogin(context.getString(R.string.error_no_internet));
-        }else{
-            StringRequest request = new StringRequest(Request.Method.POST, urlApiUser +"users/login", new Response.Listener<String>() {
+        } else {
+            StringRequest request = new StringRequest(Request.Method.POST, urlApiUser + "users/login", new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
                     System.out.println("---> SUCCESS Login " + response);
@@ -118,7 +164,7 @@ public class SingletonManager {
                         JSONObject jsonObject = new JSONObject(response);
                         String token = jsonObject.getString("token");
                         editor.putString("TOKEN", token);
-                        editor.putString("EMAIL",email);
+                        editor.putString("EMAIL", email);
                         editor.apply();
                         listener.onValidateLogin(token);
                     } catch (JSONException e) {
@@ -132,10 +178,10 @@ public class SingletonManager {
                     System.out.println("---> ERROR Login" + error.getMessage() + error);
                     SharedPreferences sharedPreferences = context.getSharedPreferences("USER_DATA", Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
-                    if(error.networkResponse.statusCode == 401){
+                    if (error.networkResponse.statusCode == 401) {
                         Toast.makeText(context, R.string.login_invalid_login, Toast.LENGTH_SHORT).show();
                         listener.onErrorLogin(error.getMessage());
-                    }else{
+                    } else {
                         Toast.makeText(context, R.string.login_error_message, Toast.LENGTH_SHORT).show();
                         listener.onErrorLogin(error.getMessage());
                     }
@@ -143,8 +189,8 @@ public class SingletonManager {
                     editor.apply();
                     listener.onErrorLogin(error.getMessage());
                 }
-            }){
-                protected Map<String, String> getParams(){
+            }) {
+                protected Map<String, String> getParams() {
                     Map<String, String> params = new HashMap<String, String>();
                     params.put("email", email);
                     params.put("password", password);

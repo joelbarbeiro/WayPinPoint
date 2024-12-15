@@ -8,11 +8,8 @@ import android.util.Patterns;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import java.util.Objects;
-
 import Listeners.UserListener;
 import Model.SingletonManager;
 import Model.User;
@@ -40,6 +37,13 @@ public class RegisterActivity extends AppCompatActivity implements UserListener 
         loadEmail();
     }
 
+    private static boolean isUsernameValid(String username) {
+        if (username != null) {
+            return username.length() >= 2;
+        }
+        return false;
+    }
+
     private static boolean isEmailValid(String email) {
         if (email != null) {
             return Patterns.EMAIL_ADDRESS.matcher(email).matches();
@@ -58,12 +62,12 @@ public class RegisterActivity extends AppCompatActivity implements UserListener 
         return Objects.equals(password, secondPassword);
     }
 
+    private static boolean isPhoneValid(int phone) {
+        return phone != 0;
+    }
+
     private static boolean isNifValid(int nif) {
-        if (nif < 999999999 && nif > 111111111) {
-            return true;
-        } else {
-            return false;
-        }
+        return nif <= 999999999 && nif >= 100000000;
     }
 
     private void loadEmail() {
@@ -71,27 +75,54 @@ public class RegisterActivity extends AppCompatActivity implements UserListener 
         etEmail.setText(email);
     }
 
+    private int safeParseInt(String value) {
+        if (value == null || value.trim().isEmpty()) {
+            return 0;
+        }
+        return Integer.parseInt(value);
+    }
+
     public void onClickRegister(View view) {
-        boolean isNifValid, isEmailValid, isPasswordValid, isConfirmPasswordEqual;
+        boolean isNifValid, isEmailValid, isPasswordValid, isConfirmPasswordEqual, isUsernameValid, isPhoneValid;
 
-        isEmailValid = isEmailValid(etEmail.getText().toString());
-        isPasswordValid = isPasswordValid(String.valueOf(etPassword.getText()));
-        isConfirmPasswordEqual = isConfirmPasswordEqual(etPassword.getText().toString(), etConfirmPassword.getText().toString());
-        isNifValid = isNifValid(Integer.parseInt(etNif.getText().toString()));
+        username = etUsername.getText().toString();
+        email = etEmail.getText().toString();
+        password = etPassword.getText().toString();
+        address = etAddress.getText().toString();
+        phone = safeParseInt(etPhone.getText().toString());
+        nif = safeParseInt(etNif.getText().toString());
 
-        if (isNifValid && isEmailValid && isPasswordValid && isConfirmPasswordEqual) {
+        isEmailValid = isEmailValid(email);
+        isPasswordValid = isPasswordValid(password);
+        isConfirmPasswordEqual = isConfirmPasswordEqual(password, etConfirmPassword.getText().toString());
+        isNifValid = isNifValid(nif);
+        isUsernameValid = isUsernameValid(username);
+        isPhoneValid = isPhoneValid(phone);
+
+        if (username.isEmpty() || email.isEmpty() || password.isEmpty() || address.isEmpty()) {
+            Toast.makeText(this, "You have to fill all the fields", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (!isPhoneValid && !isNifValid) {
+            Toast.makeText(this, "Nif/Phone has to be valid", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (isNifValid && isEmailValid && isPasswordValid && isConfirmPasswordEqual && isUsernameValid && isPhoneValid) {
             user = new User(
                     0,
-                    etUsername.getText().toString(),
-                    etEmail.getText().toString(),
-                    etPassword.getText().toString(),
-                    etAddress.getText().toString(),
-                    Integer.parseInt(etPhone.getText().toString()),
-                    Integer.parseInt(etNif.getText().toString()),
+                    username,
+                    email,
+                    password,
+                    address,
+                    phone,
+                    nif,
                     DEFAULT_IMG,
                     0,
                     ""
             );
+
             SingletonManager.getInstance(getApplicationContext()).addUserApi(user, getApplicationContext());
         } else {
             Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show();

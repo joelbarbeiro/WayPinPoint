@@ -16,7 +16,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.snackbar.Snackbar;
 
 import Listeners.LoginListener;
-import Listeners.UserListener;
 import Model.SingletonManager;
 
 public class LoginActivity extends AppCompatActivity implements LoginListener {
@@ -26,7 +25,7 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
 
     public static final int REGISTER = 100;
     public static final String OP_CODE = "DETAIL_OPERATION";
-    private String email ;
+    private String email, password;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,11 +34,9 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
         etEmail = findViewById(R.id.textviewUsername);
         etPassword = findViewById(R.id.registerTvPassword);
 
-        if(isTokenValid()){
-
+        if (isTokenValid()) {
             SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("USER_DATA", Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
-
             editor.apply();
 
             Intent intent = new Intent(getApplicationContext(), MenuMainActivity.class);
@@ -47,7 +44,6 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
             startActivity(intent);
             finish();
         }
-
     }
 
     private static boolean isEmailValid(String email) {
@@ -77,14 +73,14 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
 
     public void onClickLogin(View view) {
         boolean isEmailValid, isPasswordValid;
-        String email, password;
+
         email = etEmail.getText().toString();
         password = String.valueOf(etPassword.getText());
         isEmailValid = isEmailValid(email);
         isPasswordValid = isPasswordValid(password);
 
         if (isEmailValid && isPasswordValid) {
-            SingletonManager.getInstance(getApplicationContext()).loginAPI(email,password,getApplicationContext(),this);
+            SingletonManager.getInstance(getApplicationContext()).loginAPI(email, password, getApplicationContext(), this);
         } else {
             Toast.makeText(this, R.string.login_error_message, Toast.LENGTH_SHORT).show();
         }
@@ -104,13 +100,13 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
         }
     }
 
-    public boolean isTokenValid(){
+    public boolean isTokenValid() {
         SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("USER_DATA", Context.MODE_PRIVATE);
-        System.out.println("TOKEN: --->" + sharedPreferences.getString("TOKEN","TOKEN"));
-        if(sharedPreferences.getString("TOKEN","TOKEN").matches("TOKEN")){
+        System.out.println("TOKEN: --->" + sharedPreferences.getString("TOKEN", "TOKEN"));
+        if (sharedPreferences.getString("TOKEN", "TOKEN").matches("TOKEN")) {
             System.out.println("--->token invalido, não faz login automatico");
             return false;
-        }else{
+        } else {
             return true;
         }
     }

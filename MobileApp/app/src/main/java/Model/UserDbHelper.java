@@ -2,10 +2,13 @@ package Model;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.Nullable;
+
+import java.util.ArrayList;
 
 public class UserDbHelper extends SQLiteOpenHelper {
 
@@ -31,7 +34,7 @@ public class UserDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String createBookTable = "CREATE TABLE " + TABLE_NAME +
+        String createUserTable = "CREATE TABLE " + TABLE_NAME +
                 "(" + ID + " INTEGER, " +
                 USERNAME + " TEXT NOT NULL, " +
                 EMAIL + " TEXT NOT NULL, " +
@@ -42,7 +45,7 @@ public class UserDbHelper extends SQLiteOpenHelper {
                 PHOTO + " TEXT NOT NULL" +
                 ");";
 
-        db.execSQL(createBookTable);
+        db.execSQL(createUserTable);
     }
 
     @Override
@@ -82,4 +85,32 @@ public class UserDbHelper extends SQLiteOpenHelper {
         return this.db.delete(TABLE_NAME, ID + "= ?", new String[]{"" + id}) == 1;
     }
 
+    public ArrayList<User> getAllUsersDb() {
+        ArrayList<User> users = new ArrayList<>();
+
+        Cursor cursor = this.db.query(TABLE_NAME, new String[]{ID, USERNAME, EMAIL, PASSWORD, ADDRESS, PHONE, NIF, PHOTO},
+                null, null, null, null, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                User auxUser = new User(cursor.getInt(0),
+                        cursor.getString(1),
+                        cursor.getString(2),
+                        cursor.getString(3),
+                        cursor.getString(4),
+                        cursor.getInt(5),
+                        cursor.getInt(6),
+                        cursor.getString(7),
+                        0,
+                        ""
+                );
+                users.add(auxUser);
+            } while (cursor.moveToNext());
+        }
+        return users;
+    }
+
+    public void removeAllUsersDb() {
+        this.db.delete(TABLE_NAME, null, null);
+    }
 }

@@ -9,6 +9,7 @@
     <string name="login_button">Login</string>
     <string name="login_register_label">Not a member? Sign Up</string>
     <string name="login_register_success_message">User Registered Successfully</string>
+    <string name="login_sign_up">Sign Up</string>
 
     <!-- Register -->
     <string name="register_title">Register</string>
@@ -32,6 +33,8 @@
 
     <!-- My Profile-->
     <string name="my_profile_nif">NIF</string>
+    <string name="my_profile_address">Address</string>
+    <string name="my_profile_phone">Phone</string>
     <string name="my_profile_save_button">Save Changes</string>
     <string name="my_profile_delete_button">Delete Profile</string>
 
@@ -45,7 +48,6 @@
     <!-- Errors-->
     <string name="error_no_internet">No Internet Connection</string>
     <string name="login_error_message">Something went wrong</string>
-    <string name="login_sign_up">Sign Up</string>
     <string name="login_invalid_login">Invalid Login</string>
     <string name="login_error_parse_response">Failed to parse response.</string>
 
