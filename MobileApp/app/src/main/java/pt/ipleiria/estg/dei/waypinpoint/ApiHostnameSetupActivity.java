@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 public class ApiHostnameSetupActivity extends AppCompatActivity {
 
     private EditText etHostname;
+    private String hostname;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,12 +24,13 @@ public class ApiHostnameSetupActivity extends AppCompatActivity {
 
         if(sharedPreferences.contains("API_HOSTNAME")) {
             etHostname.setText(sharedPreferences.getString("API_HOSTNAME", "35.179.107.54"));
+            hostname = "http://" + etHostname + ":8080/api";
         }
 
     }
     public void onClickSaveHostname(View view){
-        String hostname;
-        hostname = etHostname.getText().toString();
+
+        hostname = "http://" + etHostname.getText().toString() + ":8080/api";
 
         SharedPreferences sharedPreferences = getSharedPreferences("API_HOSTNAME", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();

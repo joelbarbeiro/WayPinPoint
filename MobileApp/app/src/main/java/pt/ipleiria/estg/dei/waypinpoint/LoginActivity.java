@@ -26,14 +26,24 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
 
     public static final int REGISTER = 100;
     public static final String OP_CODE = "DETAIL_OPERATION";
+    private String apiHost = null;
     private String email ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_login);
         etEmail = findViewById(R.id.textviewUsername);
         etPassword = findViewById(R.id.registerTvPassword);
+
+        if(getApiHost() != null){
+            apiHost = getApiHost();
+        } else {
+            // Set the api Hostname for tests speed up
+            setApiHost();
+            apiHost = getApiHost();
+        }
 
         if(isTokenValid()){
 
@@ -84,7 +94,7 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
         isPasswordValid = isPasswordValid(password);
 
         if (isEmailValid && isPasswordValid) {
-            SingletonManager.getInstance(getApplicationContext()).loginAPI(email,password,getApplicationContext(),this);
+            SingletonManager.getInstance(getApplicationContext()).loginAPI(apiHost,email,password,getApplicationContext(),this);
         } else {
             Toast.makeText(this, R.string.login_error_message, Toast.LENGTH_SHORT).show();
         }
@@ -96,6 +106,7 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
         isEmailValid = isEmailValid(etEmail.getText().toString());
         Intent intent = new Intent(this, RegisterActivity.class);
 
+        intent.putExtra(RegisterActivity.APIHOST, apiHost);
         if (isEmailValid) {
             intent.putExtra(RegisterActivity.EMAIL, etEmail.getText().toString());
             startActivityForResult(intent, REGISTER);
@@ -125,5 +136,15 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
     @Override
     public void onErrorLogin(String errorMessage) {
         Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
+    }
+    public String getApiHost(){
+        SharedPreferences sharedPreferences = getSharedPreferences("API_HOSTNAME", Context.MODE_PRIVATE);
+        return sharedPreferences.toString();
+    }
+    public void setApiHost(){
+        SharedPreferences sharedPreferences = getSharedPreferences("API_HOSTNAME", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("API_HOSTNAME", "35.179.107.54");
+        editor.apply();
     }
 }
