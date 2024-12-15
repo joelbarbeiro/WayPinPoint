@@ -86,4 +86,16 @@
         </LinearLayout>
 
     </LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabApiHostnameConfig"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:clickable="true"
+        android:contentDescription="@string/apihostnameconfig"
+        android:backgroundTint="@color/blue_500"
+        android:src="@drawable/ic_change_hosts_menu"
+        app:tint="@android:color/white" />
 </LinearLayout>
