@@ -206,10 +206,21 @@ class UserController extends ActiveController
 
             if ($user->save(false) && $userExtra->save(false)) {
                 $transaction->commit();
-                return true;
+                return [
+                    'status' => 'success',
+                    'id' => $user->id,
+                    'username' => $user->username,
+                    'email' => $user->email,
+                    'password' => $user->password_hash,
+                    'phone' => $userExtra->phone,
+                    'address' => $userExtra->address,
+                    'nif' => $userExtra->nif,
+                    'photo' => $userExtra->photo
+                ];
             } else {
                 $transaction->rollBack();
-                return false;
+                \Yii::$app->response->statusCode = 400;
+                throw new \Exception('Failed to save User: ' . json_encode($user->getErrors()));
             }
         } catch (\Exception $e) {
             $transaction->rollBack();
