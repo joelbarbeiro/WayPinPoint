@@ -48,5 +48,9 @@
     <string name="login_sign_up">Sign Up</string>
     <string name="login_invalid_login">Invalid Login</string>
     <string name="login_error_parse_response">Failed to parse response.</string>
+    <string name="apihostnameconfig">ApiHostnameConfig</string>
+    <string name="bt_hostname_save">Save</string>
+    <string name="config_api_hostname_title">Config Api Hostname</string>
+    <string name="api_hostaname_back_login">Back</string>
 
 </resources>

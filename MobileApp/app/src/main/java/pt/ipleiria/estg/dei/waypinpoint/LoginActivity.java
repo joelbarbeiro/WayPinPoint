@@ -13,30 +13,51 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+
+import java.io.Console;
 
 import Listeners.LoginListener;
 import Listeners.UserListener;
 import Model.SingletonManager;
 
 public class LoginActivity extends AppCompatActivity implements LoginListener {
-
     private EditText etEmail;
     private EditText etPassword;
-
     public static final int REGISTER = 100;
     public static final String OP_CODE = "DETAIL_OPERATION";
-    private String email ;
+    private String apiHost = null;
+    private String email;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_login);
         etEmail = findViewById(R.id.textviewUsername);
         etPassword = findViewById(R.id.registerTvPassword);
+        FloatingActionButton fabApiHost;
 
-        if(isTokenValid()){
+        fabApiHost = findViewById(R.id.fabApiHostnameConfig);
+        fabApiHost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), ApiHostnameSetupActivity.class);
+                startActivity(intent);
+            }
+        });
 
+        if (getApiHost() == null) {
+            View rootView = findViewById(R.id.loginView);
+            Snackbar.make(rootView, "Please config api hostname before login or register", Snackbar.LENGTH_SHORT).show();
+        } else {
+            apiHost = getApiHost();
+            View rootView = findViewById(R.id.loginView);
+            Snackbar.make(rootView, "Hostnme configed: " + apiHost, Snackbar.LENGTH_SHORT).show();
+        }
+
+        if (isTokenValid()) {
             SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("USER_DATA", Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
 
@@ -47,7 +68,6 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
             startActivity(intent);
             finish();
         }
-
     }
 
     private static boolean isEmailValid(String email) {
@@ -84,7 +104,7 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
         isPasswordValid = isPasswordValid(password);
 
         if (isEmailValid && isPasswordValid) {
-            SingletonManager.getInstance(getApplicationContext()).loginAPI(email,password,getApplicationContext(),this);
+            SingletonManager.getInstance(getApplicationContext()).loginAPI(apiHost, email, password, getApplicationContext(), this);
         } else {
             Toast.makeText(this, R.string.login_error_message, Toast.LENGTH_SHORT).show();
         }
@@ -95,6 +115,7 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
         boolean isEmailValid;
         isEmailValid = isEmailValid(etEmail.getText().toString());
         Intent intent = new Intent(this, RegisterActivity.class);
+        intent.putExtra(RegisterActivity.APIHOST, apiHost);
 
         if (isEmailValid) {
             intent.putExtra(RegisterActivity.EMAIL, etEmail.getText().toString());
@@ -104,13 +125,13 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
         }
     }
 
-    public boolean isTokenValid(){
+    public boolean isTokenValid() {
         SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("USER_DATA", Context.MODE_PRIVATE);
-        System.out.println("TOKEN: --->" + sharedPreferences.getString("TOKEN","TOKEN"));
-        if(sharedPreferences.getString("TOKEN","TOKEN").matches("TOKEN")){
+        System.out.println("TOKEN: --->" + sharedPreferences.getString("TOKEN", "TOKEN"));
+        if (sharedPreferences.getString("TOKEN", "TOKEN").matches("TOKEN")) {
             System.out.println("--->token invalido, não faz login automatico");
             return false;
-        }else{
+        } else {
             return true;
         }
     }
@@ -125,5 +146,11 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
     @Override
     public void onErrorLogin(String errorMessage) {
         Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
+    }
+
+    public String getApiHost() {
+        SharedPreferences sharedPreferences = getSharedPreferences("API_HOSTNAME", Context.MODE_PRIVATE);
+        System.out.println("--> Setted Host " + sharedPreferences.getString("API_HOSTNAME", null));
+        return sharedPreferences.getString("API_HOSTNAME", null);
     }
 }

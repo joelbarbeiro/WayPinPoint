@@ -29,7 +29,7 @@ public class SingletonManager {
     private static SingletonManager instance = null;
     private static Route route = null;
     private UserDbHelper userDbHelper = null;
-    private static final String urlApiUser = "http://35.179.107.54:8080/api/";
+    //private static final String urlApiUser = "http://35.179.107.54:8080/api/";
 
     private UserListener userListener;
 
@@ -65,11 +65,11 @@ public class SingletonManager {
         userDbHelper.addUserDb(user);
     }
 
-    public void addUserApi(final User user, final Context context) {
+    public void addUserApi(String apiHost, final User user, final Context context) {
         if (!StatusJsonParser.isConnectionInternet(context)) {
             Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
         } else {
-            StringRequest request = new StringRequest(Request.Method.POST, urlApiUser + "user/register", new Response.Listener<String>() {
+            StringRequest request = new StringRequest(Request.Method.POST, apiHost + "user/register", new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
                     addUserDb(UserJsonParser.parserJsonUser(response));
@@ -103,12 +103,12 @@ public class SingletonManager {
     }
 
     //region # LOGIN API #
-    public void loginAPI(final String email, final String password, final Context context, final LoginListener listener)  {
+    public void loginAPI(String apiHost, final String email, final String password, final Context context, final LoginListener listener)  {
         if (!StatusJsonParser.isConnectionInternet(context)) {
             Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
             listener.onErrorLogin(context.getString(R.string.error_no_internet));
         }else{
-            StringRequest request = new StringRequest(Request.Method.POST, urlApiUser +"users/login", new Response.Listener<String>() {
+            StringRequest request = new StringRequest(Request.Method.POST, apiHost +"users/login", new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
                     System.out.println("---> SUCCESS Login " + response);
