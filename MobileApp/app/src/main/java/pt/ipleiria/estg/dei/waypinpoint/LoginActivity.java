@@ -10,14 +10,14 @@ import android.util.Patterns;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
-import java.util.ArrayList;
 
-import java.io.Console;
+import java.util.ArrayList;
 
 import Listeners.LoginListener;
 import Listeners.UsersListener;
@@ -70,9 +70,6 @@ public class LoginActivity extends AppCompatActivity implements LoginListener, U
             Snackbar.make(rootView, "Hostname: " + apiHost, Snackbar.LENGTH_SHORT).show();
         }
 
-
-
-        SingletonManager.getInstance(getApplicationContext()).getAllUsersApi(getApplicationContext());
         if (isTokenValid()) {
             SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("USER_DATA", Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();

@@ -53,7 +53,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:onClick="onClickHostnameBack"
-            android:text="@string/api_hostaname_back_login" />
+            android:text="@string/api_hostname_back_login" />
     </LinearLayout>
 
 </LinearLayout>

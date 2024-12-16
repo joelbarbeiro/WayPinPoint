@@ -8,11 +8,9 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -110,35 +108,6 @@ public class SingletonManager {
         }
     }
 
-    public void getAllUsersApi(final Context context) {
-        if (!StatusJsonParser.isConnectionInternet(context)) {
-            Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
-
-            if (usersListener != null) {
-                usersListener.onRefreshUserList(userDbHelper.getAllUsersDb());
-            }
-        } else {
-            JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, urlApi + "users/extras", null, new Response.Listener<JSONArray>() {
-                @Override
-                public void onResponse(JSONArray response) {
-                    System.out.println("---> USERS FROM API: " + response);
-                    users = UserJsonParser.parserJsonUsers(response);
-                    addUsersDb(users);
-
-                    if (usersListener != null) {
-                        usersListener.onRefreshUserList(users);
-                    }
-                }
-            },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    });
-            volleyQueue.add(request);
-        }
-    }
 
     public void addUserApi(String apiHost, final User user, final Context context) {
         if (!StatusJsonParser.isConnectionInternet(context)) {
@@ -214,15 +183,16 @@ public class SingletonManager {
     }
 
     //region # LOGIN API #
-    public void loginAPI(String apiHost, final String email, final String password, final Context context, final LoginListener listener)  {
+    public void loginAPI(String apiHost, final String email, final String password, final Context context, final LoginListener listener) {
         if (!StatusJsonParser.isConnectionInternet(context)) {
             Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
             listener.onErrorLogin(context.getString(R.string.error_no_internet));
-        }else{
-            StringRequest request = new StringRequest(Request.Method.POST, apiHost +"users/login", new Response.Listener<String>() {
+        } else {
+            StringRequest request = new StringRequest(Request.Method.POST, apiHost + "users/login", new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
                     System.out.println("---> SUCCESS Login " + response);
+                    addUserDb(UserJsonParser.parserJsonUser(response));
                     SharedPreferences sharedPreferences = context.getSharedPreferences("USER_DATA", Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     try {
