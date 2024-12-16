@@ -6,14 +6,13 @@ use yii\widgets\DetailView;
 /** @var yii\web\View $this */
 /** @var common\models\Sale $model */
 
-$this->title = $model->id;
+$this->title = $model->activity->name;
 $this->params['breadcrumbs'][] = ['label' => 'Sales', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
 <div class="sale-view">
 
-    <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
         <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
@@ -29,12 +28,23 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
-            'id',
-            'activity_id',
-            'buyer',
-            'total',
+            [
+                'attribute' => 'activity_id',
+                'value' => $model->activity ? $model->activity->name : 'N/A', // Assuming `name` is the field in `Activity`
+            ],
+            [
+                'attribute' => 'buyer',
+                'value' => $model->buyer0 ? $model->buyer0->username : 'N/A', // Assuming `username` is the field in `User`
+            ],
+            [
+                'attribute' => 'total',
+                'format' => ['currency', 'EUR']
+            ],
             'purchase_date',
-            'seller_id',
+            [
+                'attribute' => 'seller_id',
+                'value' => $model->seller ? $model->seller->username : 'N/A', // Assuming `username` is the field in `User`
+            ],
         ],
     ]) ?>
 

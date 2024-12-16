@@ -26,6 +26,8 @@ use yii\web\ServerErrorHttpException;
  */
 class Sale extends \yii\db\ActiveRecord
 {
+    public $calendar_id;
+
     /**
      * {@inheritdoc}
      */
@@ -41,13 +43,14 @@ class Sale extends \yii\db\ActiveRecord
     {
         return [
             [['activity_id', 'buyer', 'purchase_date', 'seller_id', 'localsellpoint_id', 'quantity'], 'required'],
-            [['activity_id', 'buyer', 'seller_id', 'localsellpoint_id', 'quantity'], 'integer'],
+            [['activity_id', 'buyer', 'seller_id', 'localsellpoint_id', 'quantity', 'calendar_id'], 'integer'],
             [['total'], 'number'],
             [['purchase_date'], 'safe'],
             [['activity_id'], 'exist', 'skipOnError' => true, 'targetClass' => Activity::class, 'targetAttribute' => ['activity_id' => 'id']],
             [['buyer'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['buyer' => 'id']],
             [['localsellpoint_id'], 'exist', 'skipOnError' => true, 'targetClass' => Userextra::class, 'targetAttribute' => ['localsellpoint_id' => 'localsellpoint_id']],
             [['seller_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['seller_id' => 'id']],
+            [['calendar_id'], 'safe'],
         ];
     }
 
@@ -62,9 +65,10 @@ class Sale extends \yii\db\ActiveRecord
             'buyer' => 'Buyer',
             'total' => 'Total',
             'purchase_date' => 'Purchase Date',
-            'seller_id' => 'Seller ID',
-            'localsellpoint_id' => 'Localsellpoint ID',
+            'seller_id' => 'Seller',
+            'localsellpoint_id' => 'Localsellpoint',
             'quantity' => 'Quantity',
+            'calendar_id' => 'Calendar',
         ];
     }
 
@@ -118,15 +122,20 @@ class Sale extends \yii\db\ActiveRecord
         return $this->hasOne(User::class, ['id' => 'seller_id']);
     }
 
+    public function getSellerExtra()
+    {
+        return $this->hasOne(Userextra::class, ['user_id' => 'seller_id']);
+    }
+
     public static function createSale($cart)
     {
         $model = new Sale();
         $model->seller_id = 1;
+        $model->localsellpoint_id = 1;
         $model->activity_id = $cart->product_id;
         $model->buyer = $cart->user_id;
         $model->quantity = $cart->quantity;
         $model->total = $cart->activity->priceperpax * $cart->quantity;
-        $model->localsellpoint_id = 1;
         $model->purchase_date = new Expression('NOW()');
         if ($model->save()) {
             return $model->id;

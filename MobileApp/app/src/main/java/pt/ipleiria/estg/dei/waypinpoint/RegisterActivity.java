@@ -20,8 +20,9 @@ import Model.User;
 public class RegisterActivity extends AppCompatActivity implements UserListener {
 
     public static final String EMAIL = "EMAIL";
+    public static final String APIHOST = "APIHOST";
     private User user;
-    private String username, address, email, password, photo = "";
+    private String apiHost, username, address, email, password, photo = "";
     private int nif, phone;
     private EditText etConfirmPassword, etPassword, etEmail, etUsername, etAddress, etNif, etPhone;
 
@@ -38,6 +39,7 @@ public class RegisterActivity extends AppCompatActivity implements UserListener 
         etNif = findViewById(R.id.registerTvNif);
 
         loadEmail();
+        loadApiHost();
     }
 
     private static boolean isUsernameValid(String username) {
@@ -85,6 +87,10 @@ public class RegisterActivity extends AppCompatActivity implements UserListener 
         return Integer.parseInt(value);
     }
 
+    private void loadApiHost() {
+        apiHost = getIntent().getStringExtra(APIHOST);
+    }
+
     public void onClickRegister(View view) {
         boolean isNifValid, isEmailValid, isPasswordValid, isConfirmPasswordEqual, isUsernameValid, isPhoneValid;
 
@@ -125,8 +131,7 @@ public class RegisterActivity extends AppCompatActivity implements UserListener 
                     0,
                     ""
             );
-
-            SingletonManager.getInstance(getApplicationContext()).addUserApi(user, getApplicationContext());
+            SingletonManager.getInstance(getApplicationContext()).addUserApi(apiHost, user, getApplicationContext());
         } else {
             Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show();
         }

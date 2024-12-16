@@ -140,11 +140,11 @@ public class SingletonManager {
         }
     }
 
-    public void addUserApi(final User user, final Context context) {
+    public void addUserApi(String apiHost, final User user, final Context context) {
         if (!StatusJsonParser.isConnectionInternet(context)) {
             Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
         } else {
-            StringRequest request = new StringRequest(Request.Method.POST, urlApi + "user/register", new Response.Listener<String>() {
+            StringRequest request = new StringRequest(Request.Method.POST, apiHost + "user/register", new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
                     addUserDb(UserJsonParser.parserJsonUser(response));
@@ -214,12 +214,12 @@ public class SingletonManager {
     }
 
     //region # LOGIN API #
-    public void loginAPI(final String email, final String password, final Context context, final LoginListener listener) {
+    public void loginAPI(String apiHost, final String email, final String password, final Context context, final LoginListener listener)  {
         if (!StatusJsonParser.isConnectionInternet(context)) {
             Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
             listener.onErrorLogin(context.getString(R.string.error_no_internet));
-        } else {
-            StringRequest request = new StringRequest(Request.Method.POST, urlApi + "users/login", new Response.Listener<String>() {
+        }else{
+            StringRequest request = new StringRequest(Request.Method.POST, apiHost +"users/login", new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
                     System.out.println("---> SUCCESS Login " + response);

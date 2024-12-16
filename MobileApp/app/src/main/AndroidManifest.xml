@@ -20,6 +20,9 @@
             android:name=".MyProfileActivity"
             android:exported="false" />
         <activity
+            android:name=".ApiHostnameSetupActivity"
+            android:exported="false" />
+        <activity
             android:name=".MenuMainActivity"
             android:exported="false"
             android:theme="@style/Theme.WayPinPoint.NoActionBar" />

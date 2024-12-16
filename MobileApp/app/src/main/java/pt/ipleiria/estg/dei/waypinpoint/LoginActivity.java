@@ -5,14 +5,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import java.util.ArrayList;
+
+import java.io.Console;
+
 import Listeners.LoginListener;
 import Listeners.UsersListener;
 import Model.SingletonManager;
@@ -26,13 +32,46 @@ public class LoginActivity extends AppCompatActivity implements LoginListener, U
     public static final int REGISTER = 100;
     public static final String OP_CODE = "DETAIL_OPERATION";
     private String email, password;
+    private String apiHost = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_login);
         etEmail = findViewById(R.id.textviewUsername);
         etPassword = findViewById(R.id.registerTvPassword);
+
+        FloatingActionButton fabApiHost;
+
+        fabApiHost = findViewById(R.id.fabApiHostnameConfig);
+        fabApiHost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), ApiHostnameSetupActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        if (getApiHost() == null) {
+            View rootView = findViewById(R.id.loginView);
+            Snackbar.make(rootView, "Please config api hostname before login or register", Snackbar.LENGTH_SHORT).show();
+
+            int toastDuration = 1000;
+            new Handler(getMainLooper()).postDelayed(() -> {
+                Intent intent = new Intent(getApplicationContext(), ApiHostnameSetupActivity.class);
+                startActivity(intent);
+                finish();
+            }, toastDuration);
+
+        } else {
+            apiHost = getApiHost();
+            View rootView = findViewById(R.id.loginView);
+            Snackbar.make(rootView, "Hostname: " + apiHost, Snackbar.LENGTH_SHORT).show();
+        }
+
+
+
         SingletonManager.getInstance(getApplicationContext()).getAllUsersApi(getApplicationContext());
         if (isTokenValid()) {
             SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("USER_DATA", Context.MODE_PRIVATE);
@@ -80,7 +119,7 @@ public class LoginActivity extends AppCompatActivity implements LoginListener, U
         isPasswordValid = isPasswordValid(password);
 
         if (isEmailValid && isPasswordValid) {
-            SingletonManager.getInstance(getApplicationContext()).loginAPI(email, password, getApplicationContext(), this);
+            SingletonManager.getInstance(getApplicationContext()).loginAPI(apiHost, email, password, getApplicationContext(), this);
         } else {
             Toast.makeText(this, R.string.login_error_message, Toast.LENGTH_SHORT).show();
         }
@@ -91,6 +130,7 @@ public class LoginActivity extends AppCompatActivity implements LoginListener, U
         boolean isEmailValid;
         isEmailValid = isEmailValid(etEmail.getText().toString());
         Intent intent = new Intent(this, RegisterActivity.class);
+        intent.putExtra(RegisterActivity.APIHOST, apiHost);
 
         if (isEmailValid) {
             intent.putExtra(RegisterActivity.EMAIL, etEmail.getText().toString());
@@ -130,5 +170,11 @@ public class LoginActivity extends AppCompatActivity implements LoginListener, U
         } else {
             Toast.makeText(this, "No users available", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public String getApiHost() {
+        SharedPreferences sharedPreferences = getSharedPreferences("API_HOSTNAME", Context.MODE_PRIVATE);
+        System.out.println("--> Setted Host " + sharedPreferences.getString("API_HOSTNAME", null));
+        return sharedPreferences.getString("API_HOSTNAME", null);
     }
 }

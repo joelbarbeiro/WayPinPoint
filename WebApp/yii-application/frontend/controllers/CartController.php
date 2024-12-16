@@ -4,6 +4,7 @@ namespace frontend\controllers;
 
 use common\models\Activity;
 use common\models\Booking;
+use common\models\Calendar;
 use common\models\Cart;
 use common\models\Invoice;
 use common\models\Sale;
@@ -82,6 +83,8 @@ class CartController extends Controller
         $activity = Activity::findOne($activityId);
         $userId = Yii::$app->user->id;
         $model->calendar_id = $calendarId;
+        $calendar = Calendar::findOne($calendarId);
+
         $model->user_id = $userId;
         $model->product_id = $activityId;
         if ($model->load($this->request->post())) {
@@ -98,6 +101,9 @@ class CartController extends Controller
         return $this->render('create', [
             'model' => $model,
             'calendarId' => $calendarId,
+            'activityName' => $activity->name,
+            'calendarDate' => $calendar->date->date,
+            'calendarHour' => $calendar->time->hour,
 
         ]);
     }
@@ -162,7 +168,7 @@ class CartController extends Controller
                 if (Invoice::createInvoice($cart, $saleId, $bookingId)) {
                     $qrCode = $this->generateQrCode($cart->user, $cart->activity);
                     Ticket::createTicket($cart, $qrCode);
-                    $cart->status = 0;
+                    $cart->status = 1;
                     if ($cart->save()) {
                         Yii::$app->session->setFlash('success', 'Checkout completed successfully.');
                     } else {
@@ -172,11 +178,10 @@ class CartController extends Controller
                         'cart' => $cart,
                     ]);
                     $this->generatePdf($content);
-
+                    return $this->redirect(['activity/index']);
                 }
             }
         }
-        return $this->redirect(['index']); //FIX THIS
     }
 
     public static function generateQrCode($user, $activity)
@@ -193,9 +198,6 @@ class CartController extends Controller
     {
         $pdf = new Mpdf();
         $pdf->WriteHTML($content);
-        return Yii::$app->response->sendContentAsFile($pdf->Output('', 'S'), "receipt.pdf", [
-            'mimeType' => 'application/pdf',
-        ])->send();
+        $pdf->Output('receipt.pdf','D');
     }
-
 }

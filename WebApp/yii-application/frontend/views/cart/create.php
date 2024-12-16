@@ -8,10 +8,12 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="cart-create">
 
-
     <?= $this->render('_form', [
         'model' => $model,
         'calendarId' => $calendarId,
+        'activityName' => $activityName,
+        'calendarDate' => $calendarDate,
+        'calendarHour' => $calendarHour,
     ]) ?>
 
 </div>

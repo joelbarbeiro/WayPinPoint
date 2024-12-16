@@ -58,7 +58,6 @@ $this->registerCssFile('@web/css/site.css');
                     echo '<a href="' . Url::to(['review/index', 'id' => $activity->id]) . '" class="btn btn-outline-warning">Review</a>';
                     echo '<a href="' . Url::to(['cart/create', 'activityId' => $activity->id, 'calendarId' => $calendar->id]) . '" class="btn btn-outline-success">Buy</a>';
                     echo '</div>';
-
                     echo '</div>';
                     echo '</div>';
                     echo '</div>';

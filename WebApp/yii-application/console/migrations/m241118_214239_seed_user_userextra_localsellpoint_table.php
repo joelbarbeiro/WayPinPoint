@@ -28,22 +28,24 @@ class m241118_214239_seed_user_userextra_localsellpoint_table extends Migration
         ]);
 
         // Step 2: Retrieve the user IDs (after insert)
+        $adminIdSupplier = (new \yii\db\Query())->select('id')->from('user')->where(['username' => 'admin'])->scalar();
         $userIdSupplier1 = (new \yii\db\Query())->select('id')->from('user')->where(['username' => 'supplier1'])->scalar();
         $userIdSupplier2 = (new \yii\db\Query())->select('id')->from('user')->where(['username' => 'supplier2'])->scalar();
 
         // Step 3: Insert localsellpoint records with the correct user_id
         $this->batchInsert('localsellpoint', ['user_id', 'address', 'name'], [
+            [$adminIdSupplier, 'website', 'Website'],
             [$userIdSupplier1, 'Supplier1 Address', 'Supplier1 Sellpoint'],
             [$userIdSupplier2, 'Supplier2 Address', 'Supplier2 Sellpoint'],
         ]);
-
+        $adminSellPoint = (new \yii\db\Query())->select('id')->from('localsellpoint')->where(['user_id' => $adminIdSupplier])->scalar();
         $localsellpointId1 = (new \yii\db\Query())->select('id')->from('localsellpoint')->where(['user_id' => $userIdSupplier1])->scalar();
         $localsellpointId2 = (new \yii\db\Query())->select('id')->from('localsellpoint')->where(['user_id' => $userIdSupplier2])->scalar();
 
 
         // Step 4: Insert userextra records
         $usersData = [
-            'admin' => ['nif' => 987654222, 'address' => 'Admin Address', 'phone' => '0987654321','photo'=> 'E35moiq2WSjIUs6T.jpeg', 'supplier' => null, 'localsellpoint_id' => null],
+            'admin' => ['nif' => 987654222, 'address' => 'Admin Address', 'phone' => '0987654321','photo'=> 'E35moiq2WSjIUs6T.jpeg', 'supplier' => $adminIdSupplier, 'localsellpoint_id' => $adminSellPoint],
             'supplier1' => ['nif' => 987654321, 'address' => 'Supplier1 Address', 'phone' => '0987654321','photo'=> 'P8Sx4JRg_2S5_zni.jpeg', 'supplier' => $userIdSupplier1, 'localsellpoint_id' => $localsellpointId1],
             'supplier2' => ['nif' => 567890123, 'address' => 'Supplier2 Address', 'phone' => '5678901234', 'photo'=> 'kXVn4GehTmqUMez3.jpg','supplier' => $userIdSupplier2, 'localsellpoint_id' => $localsellpointId2],
             'manager1' => ['nif' => 345678901, 'address' => 'Manager1 Address', 'phone' => '3456789012','photo'=> 'rLB2CUDgIzhuja5t.jpg', 'supplier' => $userIdSupplier1, 'localsellpoint_id' => $localsellpointId1],

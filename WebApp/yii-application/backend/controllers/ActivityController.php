@@ -7,7 +7,10 @@ use common\models\ActivitySearch;
 use common\models\Calendar;
 use common\models\Category;
 use common\models\Date;
+use common\models\Sale;
 use common\models\Time;
+use common\models\User;
+use common\models\UserExtra;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
@@ -70,15 +73,23 @@ class ActivityController extends Controller
      */
     public function actionIndex()
     {
-        $userId = Yii::$app->user->id;
+
+        $userId = Yii::$app->user->identity->userExtra->supplier;
 
         $searchModel = new Activity();
         $dataProvider = $searchModel->getSupplierActivities($userId);
-
+        $sale = new Sale();
+        $seller = UserExtra::findOne(['user_id' => $userId]);
+        $activities = Activity::getSupplierActivityNames($seller->supplier);
+        $clients = Sale::getAllClients();
+        $clientsMap = ArrayHelper::map($clients, 'id', 'username');
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'clients' => $clientsMap,
+            'activities' => $activities,
+            'model' => $sale,
         ]);
 
     }
@@ -91,11 +102,9 @@ class ActivityController extends Controller
      */
     public function actionView($id)
     {
-        $userId = Yii::$app->user->id;
-
+        $userId = Yii::$app->user->identity->userExtra->supplier;
         $model = new Activity();
         $activity = $model->getActivity($id, $userId);
-
         if (!$activity) {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
@@ -113,30 +122,10 @@ class ActivityController extends Controller
     public function actionCreate()
     {
         $model = new Activity();
-
         $hoursList = $model->getTimeList();
-
         $categories = $model->getCatories();
 
-        if ($model->load($this->request->post())) {
-            $getDateTimes = $model->getCalendarArray();
-            $model->uploadPhoto();
-            $model->user_id = Yii::$app->user->id;
-
-            if ($model->validate() && $model->save()) {
-                foreach ($getDateTimes as $dateVal => $timeId) {
-                    $date = new Date();
-                    $date->date = $dateVal;
-                    $date->save();
-                    foreach ($timeId as $time) {
-                        $calendarModel = new Calendar();
-                        $calendarModel->activity_id = $model->id;
-                        $calendarModel->date_id = $date->id;
-                        $calendarModel->time_id = $time;
-                        $calendarModel->save();
-                    }
-                }
-            }
+        if ($model->load($this->request->post()) && Activity::createActivity($model)) {
             return $this->redirect(['index']);
         }
 
@@ -158,34 +147,14 @@ class ActivityController extends Controller
     {
         $model = new Activity();
         $userId = Yii::$app->user->id;
-
         $model = $model->getActivity($id, $userId);
         $hoursList = $model->getTimeList();
-
         $categories = $model->getCatories();
 
-        if ($model->load($this->request->post())) {
-            $getDateTimeUpdate = $model->setCalendar($model->id, $model->date, $model->hour);
-            $model->uploadPhoto();
-            if ($model->validate() && $model->save()) {
-                foreach ($getDateTimeUpdate as $dateVal => $timeId) {
-                    $date = $model->getDateIfExists($dateVal);
-                    if($date == null){
-                        $date = new Date();
-                        $date->date = $dateVal;
-                        $date->save();
-                    }
-                    foreach ($timeId as $time) {
-                        $calendarModel = new Calendar();
-                        $calendarModel->activity_id = $model->id;
-                        $calendarModel->date_id = $date->id;
-                        $calendarModel->time_id = $time;
-                        $calendarModel->save();
-                    }
-                }
-            }
+        if ($model->load($this->request->post()) && Activity::updateActivity($model)) {
             return $this->redirect(['index']);
         }
+
         return $this->render('update', [
             'model' => $model,
             'categories' => $categories,

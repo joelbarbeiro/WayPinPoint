@@ -87,6 +87,33 @@ return [
                         '{id}' => '<id:\\d+>',
                     ],
                 ],
+                [
+                    'class' => 'yii\rest\UrlRule',
+                    'controller' => 'api/cart',
+                    'extraPatterns' => [
+                        'GET count' => 'count',
+                        'GET {id}' => 'products',
+                        'GET status' => 'status',
+                        'GET buyers/{id}' => 'buyer',
+                        'DELETE delete/{id}' => 'delete',
+                        'POST addtocart/{id}' => 'addtocart',
+                        'PUT updatecart/{id}' => 'updatecart',
+                    ],
+                    'tokens' => [
+                        '{id}' => '<id:\\d+>',
+                    ],
+                ],
+                [
+                    'class' => 'yii\rest\UrlRule',
+                    'controller' => 'api/activity',
+                    'extraPatterns' => [
+                        'GET' => 'activities',
+                        'GET {id}' => 'activityview',
+                        'POST' => 'createactivity',
+                        'PUT {id}' => 'updateactivity',
+                        'DELETE {id}' => 'deleteactivity',
+                    ],
+                ],
             ],
         ],
     ],
