@@ -10,26 +10,29 @@ import android.util.Patterns;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+import java.util.ArrayList;
 
 import java.io.Console;
 
 import Listeners.LoginListener;
-import Listeners.UserListener;
+import Listeners.UsersListener;
 import Model.SingletonManager;
+import Model.User;
 
-public class LoginActivity extends AppCompatActivity implements LoginListener {
+public class LoginActivity extends AppCompatActivity implements LoginListener, UsersListener {
+
     private EditText etEmail;
     private EditText etPassword;
+
     public static final int REGISTER = 100;
     public static final String OP_CODE = "DETAIL_OPERATION";
+    private String email, password;
     private String apiHost = null;
-    private String email;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +41,7 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
         setContentView(R.layout.activity_login);
         etEmail = findViewById(R.id.textviewUsername);
         etPassword = findViewById(R.id.registerTvPassword);
+
         FloatingActionButton fabApiHost;
 
         fabApiHost = findViewById(R.id.fabApiHostnameConfig);
@@ -66,10 +70,12 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
             Snackbar.make(rootView, "Hostname: " + apiHost, Snackbar.LENGTH_SHORT).show();
         }
 
+
+
+        SingletonManager.getInstance(getApplicationContext()).getAllUsersApi(getApplicationContext());
         if (isTokenValid()) {
             SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("USER_DATA", Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
-
             editor.apply();
 
             Intent intent = new Intent(getApplicationContext(), MenuMainActivity.class);
@@ -106,7 +112,7 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
 
     public void onClickLogin(View view) {
         boolean isEmailValid, isPasswordValid;
-        String email, password;
+
         email = etEmail.getText().toString();
         password = String.valueOf(etPassword.getText());
         isEmailValid = isEmailValid(email);
@@ -136,9 +142,9 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
 
     public boolean isTokenValid() {
         SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("USER_DATA", Context.MODE_PRIVATE);
-        System.out.println("TOKEN: --->" + sharedPreferences.getString("TOKEN", "TOKEN"));
-        if (sharedPreferences.getString("TOKEN", "TOKEN").matches("TOKEN")) {
-            System.out.println("--->token invalido, não faz login automatico");
+        System.out.println("TOKEN: --->" + sharedPreferences.getString("TOKEN", "NO TOKEN"));
+        if (sharedPreferences.getString("TOKEN", "NO TOKEN").matches("NO TOKEN")) {
+            System.out.println(getString(R.string.error_invalid_token));
             return false;
         } else {
             return true;
@@ -155,6 +161,15 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
     @Override
     public void onErrorLogin(String errorMessage) {
         Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onRefreshUserList(ArrayList<User> usersList) {
+        if (usersList != null) {
+            Toast.makeText(this, "Users available", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "No users available", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public String getApiHost() {

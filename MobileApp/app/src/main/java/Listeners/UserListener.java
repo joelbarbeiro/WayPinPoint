@@ -1,7 +1,5 @@
 package Listeners;
 
-import Model.User;
-
 public interface UserListener {
-    void onValidateRegister(int op);
+    void onValidateOperation(int op);
 }
