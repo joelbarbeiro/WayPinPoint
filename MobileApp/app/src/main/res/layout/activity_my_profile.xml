@@ -43,22 +43,6 @@
             android:minHeight="48dp" />
 
         <TextView
-            android:id="@+id/textView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/login_textview_password"
-            android:textAlignment="center"
-            android:textSize="24sp" />
-
-        <EditText
-            android:id="@+id/etProfilePassword"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/login_textview_password"
-            android:inputType="textPassword"
-            android:minHeight="48dp" />
-
-        <TextView
             android:id="@+id/textViewAddress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -117,6 +101,7 @@
             android:id="@+id/buttonSave"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:onClick="onClickSave"
             android:text="@string/my_profile_save_button" />
 
         <Button

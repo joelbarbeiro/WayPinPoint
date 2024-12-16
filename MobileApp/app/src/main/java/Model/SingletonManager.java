@@ -11,12 +11,15 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
 import Listeners.LoginListener;
 import Listeners.UserListener;
 import Listeners.UsersListener;
@@ -111,22 +114,22 @@ public class SingletonManager {
         if (!StatusJsonParser.isConnectionInternet(context)) {
             Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
 
-            if(usersListener != null){
+            if (usersListener != null) {
                 usersListener.onRefreshUserList(userDbHelper.getAllUsersDb());
             }
         } else {
             JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, urlApi + "users/extras", null, new Response.Listener<JSONArray>() {
-                        @Override
-                        public void onResponse(JSONArray response) {
-                            System.out.println("---> USERS FROM API: " + response);
-                            users = UserJsonParser.parserJsonUsers(response);
-                            addUsersDb(users);
+                @Override
+                public void onResponse(JSONArray response) {
+                    System.out.println("---> USERS FROM API: " + response);
+                    users = UserJsonParser.parserJsonUsers(response);
+                    addUsersDb(users);
 
-                            if(usersListener != null){
-                                usersListener.onRefreshUserList(users);
-                            }
-                        }
-                    },
+                    if (usersListener != null) {
+                        usersListener.onRefreshUserList(users);
+                    }
+                }
+            },
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
@@ -146,7 +149,7 @@ public class SingletonManager {
                 public void onResponse(String response) {
                     addUserDb(UserJsonParser.parserJsonUser(response));
                     if (userListener != null) {
-                        userListener.onValidateRegister(LoginActivity.REGISTER);
+                        userListener.onValidateOperation(LoginActivity.REGISTER);
                     }
                 }
             }, new Response.ErrorListener() {
@@ -160,6 +163,42 @@ public class SingletonManager {
                 protected Map<String, String> getParams() {
                     Map<String, String> params = new HashMap<String, String>();
                     params.put("id", "" + user.getId());
+                    params.put("username", user.getUsername());
+                    params.put("email", user.getEmail());
+                    params.put("password", user.getPassword());
+                    params.put("address", user.getAddress());
+                    params.put("phone", "" + user.getPhone());
+                    params.put("nif", "" + user.getNif());
+                    params.put("photo", user.getPhoto() == null ? User.DEFAULT_IMG : user.getPhoto());
+                    return params;
+                }
+            };
+            volleyQueue.add(request);
+        }
+    }
+
+    public void editUserApi(final User user, final Context context) {
+        if (!StatusJsonParser.isConnectionInternet(context)) {
+            Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
+        } else {
+            StringRequest request = new StringRequest(Request.Method.PUT, urlApi + "users/" + user.getId(), new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    editUserDb(UserJsonParser.parserJsonUser(response));
+                    if (userListener != null) {
+                        userListener.onValidateOperation(MenuMainActivity.EDIT);
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    System.out.println("---> " + error.getMessage());
+                    Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }) {
+                @Override
+                protected Map<String, String> getParams() {
+                    Map<String, String> params = new HashMap<String, String>();
                     params.put("username", user.getUsername());
                     params.put("email", user.getEmail());
                     params.put("password", user.getPassword());

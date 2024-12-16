@@ -8,8 +8,11 @@ import android.util.Patterns;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import java.util.Objects;
+
 import Listeners.UserListener;
 import Model.SingletonManager;
 import Model.User;
@@ -131,7 +134,7 @@ public class RegisterActivity extends AppCompatActivity implements UserListener 
     }
 
     @Override
-    public void onValidateRegister(int op) {
+    public void onValidateOperation(int op) {
         Intent intent = new Intent();
         intent.putExtra(LoginActivity.OP_CODE, op);
         setResult(RESULT_OK, intent);
