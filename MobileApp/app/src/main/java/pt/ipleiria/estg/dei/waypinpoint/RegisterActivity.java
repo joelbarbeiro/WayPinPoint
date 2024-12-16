@@ -39,6 +39,7 @@ public class RegisterActivity extends AppCompatActivity implements UserListener 
         etNif = findViewById(R.id.registerTvNif);
 
         loadEmail();
+        loadApiHost();
     }
 
     private static boolean isEmailValid(String email) {
@@ -72,7 +73,7 @@ public class RegisterActivity extends AppCompatActivity implements UserListener 
         etEmail.setText(email);
     }
 
-    private void loagApiHost() {
+    private void loadApiHost() {
         apiHost = getIntent().getStringExtra(APIHOST);
     }
 
