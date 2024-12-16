@@ -54,8 +54,8 @@ class m241118_214239_seed_user_userextra_localsellpoint_table extends Migration
             'salesperson2' => ['nif' => 765432109, 'address' => 'Salesperson2 Address', 'phone' => '7654321098', 'photo'=> 'zJ4MUbJrB9KfwYN7.jpeg','supplier' => $userIdSupplier2, 'localsellpoint_id' => $localsellpointId2],
             'guide1' => ['nif' => 654321098, 'address' => 'Guide1 Address', 'phone' => '6543210987','photo'=> 'dNB5yZv8IgGoVm4D.jpg', 'supplier' => $userIdSupplier1, 'localsellpoint_id' => $localsellpointId1],
             'guide2' => ['nif' => 543210987, 'address' => 'Guide2 Address', 'phone' => '5432109876','photo'=> 'sOaAX7bSet74Myea.jpg', 'supplier' => $userIdSupplier2, 'localsellpoint_id' => $localsellpointId2],
-            'client1' => ['nif' => 432109876, 'address' => 'Client1 Address', 'phone' => '4321098765','photo'=> 'OyvGbaj69i9ZjLAk.jpeg', 'supplier' => null, 'localsellpoint_id' => null],
-            'client2' => ['nif' => 321098765, 'address' => 'Client2 Address', 'phone' => '3210987654','photo'=> 'elQNDZvUmyavSxMS.jpg', 'supplier' => null, 'localsellpoint_id' => null],
+            'client1' => ['nif' => 432109876, 'address' => 'Client1 Address', 'phone' => '4321098765','photo'=> 'OyvGbaj69i9ZjLAk.jpeg', 'supplier' => 0, 'localsellpoint_id' => null],
+            'client2' => ['nif' => 321098765, 'address' => 'Client2 Address', 'phone' => '3210987654','photo'=> 'elQNDZvUmyavSxMS.jpg', 'supplier' => 0, 'localsellpoint_id' => null],
         ];
 
         foreach ($usersData as $username => $data) {
