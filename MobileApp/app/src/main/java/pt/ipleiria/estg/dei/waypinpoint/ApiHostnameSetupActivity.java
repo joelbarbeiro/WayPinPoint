@@ -18,6 +18,7 @@ public class ApiHostnameSetupActivity extends AppCompatActivity {
 
     private EditText etHostname;
     private String hostname;
+    private String url = "35.179.107.54";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,9 +29,9 @@ public class ApiHostnameSetupActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences("API_HOSTNAME", Context.MODE_PRIVATE);
 
         if(sharedPreferences.getString("API_HOSTNAME", null) != null) {
-            etHostname.setText(extractDns(sharedPreferences.getString("API_HOSTNAME", "35.179.107.54")));
+            etHostname.setText(extractDns(sharedPreferences.getString("API_HOSTNAME", url)));
         } else {
-            etHostname.setText("35.179.107.54");
+            etHostname.setText(url);
         }
 
     }
