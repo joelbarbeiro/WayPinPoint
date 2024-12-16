@@ -42,21 +42,20 @@ class UserController extends ActiveController
 
     public function actionExtras()
     {
-        $id = \Yii::$app->user->id;
         return User::find()
             ->select([
                 'user.id',
                 'user.username',
                 'user.email',
+                'user.password_hash',
                 'userextra.phone',
                 'userextra.nif',
                 'userextra.address',
                 'userextra.photo',
                 'userextra.supplier',
-                'userextra.localsellpoint_id'
+                'user.verification_token'
             ])
             ->leftJoin('userextra', 'user.id = userextra.user_id') // Join on the user ID
-            ->where(['user.id' => $id])
             ->asArray()
             ->all();
     }
@@ -155,6 +154,7 @@ class UserController extends ActiveController
                     'status' => 'success',
                     'message' => 'Login successful',
                     'token' => $user->verification_token,
+                    'id' => $user->id
                 ];
             }
             \Yii::$app->response->statusCode = 400;

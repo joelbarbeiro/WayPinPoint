@@ -9,16 +9,16 @@ import android.util.Patterns;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.android.material.snackbar.Snackbar;
-
+import java.util.ArrayList;
 import Listeners.LoginListener;
+import Listeners.UsersListener;
 import Model.SingletonManager;
+import Model.User;
 
-public class LoginActivity extends AppCompatActivity implements LoginListener {
+public class LoginActivity extends AppCompatActivity implements LoginListener, UsersListener {
 
     private EditText etEmail;
     private EditText etPassword;
@@ -33,7 +33,7 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
         setContentView(R.layout.activity_login);
         etEmail = findViewById(R.id.textviewUsername);
         etPassword = findViewById(R.id.registerTvPassword);
-
+        SingletonManager.getInstance(getApplicationContext()).getAllUsersApi(getApplicationContext());
         if (isTokenValid()) {
             SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("USER_DATA", Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -102,9 +102,9 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
 
     public boolean isTokenValid() {
         SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("USER_DATA", Context.MODE_PRIVATE);
-        System.out.println("TOKEN: --->" + sharedPreferences.getString("TOKEN", "TOKEN"));
-        if (sharedPreferences.getString("TOKEN", "TOKEN").matches("TOKEN")) {
-            System.out.println("--->token invalido, não faz login automatico");
+        System.out.println("TOKEN: --->" + sharedPreferences.getString("TOKEN", "NO TOKEN"));
+        if (sharedPreferences.getString("TOKEN", "NO TOKEN").matches("NO TOKEN")) {
+            System.out.println(getString(R.string.error_invalid_token));
             return false;
         } else {
             return true;
@@ -121,5 +121,14 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
     @Override
     public void onErrorLogin(String errorMessage) {
         Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onRefreshUserList(ArrayList<User> usersList) {
+        if (usersList != null) {
+            Toast.makeText(this, "Users available", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "No users available", Toast.LENGTH_SHORT).show();
+        }
     }
 }

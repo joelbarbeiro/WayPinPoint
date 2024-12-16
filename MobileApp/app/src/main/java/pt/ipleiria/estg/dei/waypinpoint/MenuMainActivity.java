@@ -15,6 +15,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import com.google.android.material.navigation.NavigationView;
+import Model.UserDbHelper;
 
 public class MenuMainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -29,6 +30,7 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu_main);
+        SharedPreferences sharedPreferencesUser = getSharedPreferences("USER_DATA", MODE_PRIVATE);
         fragmentManager = getSupportFragmentManager();
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -40,13 +42,12 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.ndOpen, R.string.ndClose);
         toggle.syncState();
         drawer.addDrawerListener(toggle);
-        loadHeader();
+        loadHeader( sharedPreferencesUser);
         navigationView.setNavigationItemSelectedListener(this);
     }
 
-    private void loadHeader() {
+    private void loadHeader(SharedPreferences sharedPreferencesUser) {
         email = getIntent().getStringExtra(EMAIL).toString();
-        SharedPreferences sharedPreferencesUser = getSharedPreferences("USER_DATA", MODE_PRIVATE);
 
         if (email != null) {
             SharedPreferences.Editor editorUser = sharedPreferencesUser.edit();
@@ -64,6 +65,7 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         Fragment fragment = null;
+        SharedPreferences sharedPreferencesUser = getSharedPreferences("USER_DATA", MODE_PRIVATE);
         if (item.getItemId() == R.id.navMyProfile) {
             Intent intent = new Intent(this, MyProfileActivity.class);
             startActivity(intent);
@@ -71,7 +73,16 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
         if (item.getItemId() == R.id.navMyActivities) System.out.println("--> My Activities");
         if (item.getItemId() == R.id.navMyReceipts) System.out.println("--> My Receipts");
         if (item.getItemId() == R.id.navChangeHost) System.out.println("--> Change Host");
-        if (item.getItemId() == R.id.navLogout) System.out.println("--> Logout");
+        if (item.getItemId() == R.id.navLogout) {
+            UserDbHelper userDbHelper = new UserDbHelper(getApplicationContext());
+            userDbHelper.removeAllUsersDb();
+            SharedPreferences.Editor editorUser = sharedPreferencesUser.edit();
+            editorUser.putString("TOKEN", "NO TOKEN");
+            editorUser.apply();
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            System.out.println("--> Logout");
+        }
         if (item.getItemId() == R.id.navQrCode) System.out.println("--> Validate QR-Code");
         drawer.closeDrawer(GravityCompat.START);
         if (fragment != null)

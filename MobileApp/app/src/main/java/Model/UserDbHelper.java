@@ -23,6 +23,8 @@ public class UserDbHelper extends SQLiteOpenHelper {
     private static final String PASSWORD = "password";
     private static final String ADDRESS = "address";
     private static final String NIF = "nif";
+    private static final String SUPPLIER = "supplier";
+    private static final String TOKEN = "token";
     private static final String PHONE = "phone";
     private static final String PHOTO = "photo";
     private static final String ID = "id";
@@ -42,7 +44,9 @@ public class UserDbHelper extends SQLiteOpenHelper {
                 ADDRESS + " TEXT NOT NULL, " +
                 NIF + " INTEGER NOT NULL, " +
                 PHONE + " TEXT NOT NULL," +
-                PHOTO + " TEXT NOT NULL" +
+                PHOTO + " TEXT NOT NULL," +
+                SUPPLIER + " INTEGER," +
+                TOKEN + " TEXT" +
                 ");";
 
         db.execSQL(createUserTable);

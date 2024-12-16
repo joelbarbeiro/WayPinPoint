@@ -8,8 +8,10 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
@@ -17,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 import Listeners.LoginListener;
 import Listeners.UserListener;
+import Listeners.UsersListener;
 import pt.ipleiria.estg.dei.waypinpoint.LoginActivity;
 import pt.ipleiria.estg.dei.waypinpoint.MenuMainActivity;
 import pt.ipleiria.estg.dei.waypinpoint.R;
@@ -28,12 +31,12 @@ public class SingletonManager {
     private static SingletonManager instance = null;
     private static Route route = null;
     private UserDbHelper userDbHelper = null;
-    private static final String urlApiUser = "http://35.179.107.54:8080/api/";
+    private static final String urlApi = "http://35.179.107.54:8080/api/";
 
     private ArrayList<User> users;
 
     private UserListener userListener;
-
+    private UsersListener usersListener;
     private LoginListener loginListener;
 
     private static RequestQueue volleyQueue = null;
@@ -54,6 +57,10 @@ public class SingletonManager {
     //REGISTER LISTENERS
     public void setUserListener(UserListener userListener) {
         this.userListener = userListener;
+    }
+
+    public void setUsersListener(UsersListener usersListener) {
+        this.usersListener = usersListener;
     }
 
     public void setLoginListener(LoginListener loginListener) {
@@ -100,28 +107,47 @@ public class SingletonManager {
         }
     }
 
+    public void getAllUsersApi(final Context context) {
+        if (!StatusJsonParser.isConnectionInternet(context)) {
+            Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
+
+            if(usersListener != null){
+                usersListener.onRefreshUserList(userDbHelper.getAllUsersDb());
+            }
+        } else {
+            JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, urlApi + "users/extras", null, new Response.Listener<JSONArray>() {
+                        @Override
+                        public void onResponse(JSONArray response) {
+                            System.out.println("---> USERS FROM API: " + response);
+                            users = UserJsonParser.parserJsonUsers(response);
+                            addUsersDb(users);
+
+                            if(usersListener != null){
+                                usersListener.onRefreshUserList(users);
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+            volleyQueue.add(request);
+        }
+    }
+
     public void addUserApi(final User user, final Context context) {
         if (!StatusJsonParser.isConnectionInternet(context)) {
             Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
         } else {
-            StringRequest request = new StringRequest(Request.Method.POST, urlApiUser + "user/register", new Response.Listener<String>() {
+            StringRequest request = new StringRequest(Request.Method.POST, urlApi + "user/register", new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
                     addUserDb(UserJsonParser.parserJsonUser(response));
                     if (userListener != null) {
                         userListener.onValidateRegister(LoginActivity.REGISTER);
                     }
-                    try {
-                        JSONObject jsonObject = new JSONObject(response);
-                        SharedPreferences sharedPreferences = context.getSharedPreferences("USER_DATA", Context.MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        int id = jsonObject.getInt("id");
-                        editor.putInt(MenuMainActivity.ID, id);
-                        editor.apply();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
                 }
             }, new Response.ErrorListener() {
                 @Override
@@ -154,7 +180,7 @@ public class SingletonManager {
             Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
             listener.onErrorLogin(context.getString(R.string.error_no_internet));
         } else {
-            StringRequest request = new StringRequest(Request.Method.POST, urlApiUser + "users/login", new Response.Listener<String>() {
+            StringRequest request = new StringRequest(Request.Method.POST, urlApi + "users/login", new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
                     System.out.println("---> SUCCESS Login " + response);
@@ -163,8 +189,10 @@ public class SingletonManager {
                     try {
                         JSONObject jsonObject = new JSONObject(response);
                         String token = jsonObject.getString("token");
+                        int id = jsonObject.getInt("id");
                         editor.putString("TOKEN", token);
                         editor.putString("EMAIL", email);
+                        editor.putInt(MenuMainActivity.ID, id);
                         editor.apply();
                         listener.onValidateLogin(token);
                     } catch (JSONException e) {
@@ -185,7 +213,7 @@ public class SingletonManager {
                         Toast.makeText(context, R.string.login_error_message, Toast.LENGTH_SHORT).show();
                         listener.onErrorLogin(error.getMessage());
                     }
-                    editor.putString("TOKEN", "TOKEN");
+                    editor.putString("TOKEN", "NO TOKEN");
                     editor.apply();
                     listener.onErrorLogin(error.getMessage());
                 }

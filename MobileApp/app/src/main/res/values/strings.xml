@@ -50,5 +50,6 @@
     <string name="login_error_message">Something went wrong</string>
     <string name="login_invalid_login">Invalid Login</string>
     <string name="login_error_parse_response">Failed to parse response.</string>
+    <string name="error_invalid_token"><![CDATA[--->Invalid token]]></string>
 
 </resources>
