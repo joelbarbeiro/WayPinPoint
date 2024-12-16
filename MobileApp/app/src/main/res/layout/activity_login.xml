@@ -94,7 +94,7 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
         android:clickable="true"
-        android:contentDescription="@string/apihostnameconfig"
+        android:contentDescription="@string/api_hostname_config"
         android:backgroundTint="@color/blue_500"
         android:src="@drawable/ic_change_hosts_menu"
         app:tint="@android:color/white" />

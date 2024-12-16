@@ -148,13 +148,22 @@ class UserController extends ActiveController
     {
         $postData = \Yii::$app->request->post();
         $user = User::findOne(['email' => $postData['email']]);
+        $userExtra = UserExtra::findOne(['user_id' => $user->id]);
+
         if ($user != null) {
             if ($user->validatePassword($postData['password'])) {
                 return [
                     'status' => 'success',
                     'message' => 'Login successful',
                     'token' => $user->verification_token,
-                    'id' => $user->id
+                    'id' => $user->id,
+                    'username' => $user->username,
+                    'email' => $user->email,
+                    'password' => $user->password_hash,
+                    'phone' => $userExtra->phone,
+                    'address' => $userExtra->address,
+                    'nif' => $userExtra->nif,
+                    'photo' => $userExtra->photo
                 ];
             }
             \Yii::$app->response->statusCode = 400;

@@ -50,10 +50,10 @@
     <string name="login_error_message">Something went wrong</string>
     <string name="login_invalid_login">Invalid Login</string>
     <string name="login_error_parse_response">Failed to parse response.</string>
-    <string name="apihostnameconfig">ApiHostnameConfig</string>
+    <string name="api_hostname_config">ApiHostnameConfig</string>
     <string name="bt_hostname_save">Save</string>
     <string name="config_api_hostname_title">Config Api Hostname</string>
-    <string name="api_hostaname_back_login">Back</string>
+    <string name="api_hostname_back_login">Back</string>
     <string name="error_invalid_token"><![CDATA[--->Invalid token]]></string>
 
 </resources>
