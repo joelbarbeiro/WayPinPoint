@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.EditText;
@@ -51,10 +52,18 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
         if (getApiHost() == null) {
             View rootView = findViewById(R.id.loginView);
             Snackbar.make(rootView, "Please config api hostname before login or register", Snackbar.LENGTH_SHORT).show();
+
+            int toastDuration = 1000;
+            new Handler(getMainLooper()).postDelayed(() -> {
+                Intent intent = new Intent(getApplicationContext(), ApiHostnameSetupActivity.class);
+                startActivity(intent);
+                finish();
+            }, toastDuration);
+
         } else {
             apiHost = getApiHost();
             View rootView = findViewById(R.id.loginView);
-            Snackbar.make(rootView, "Hostnme configed: " + apiHost, Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(rootView, "Hostname: " + apiHost, Snackbar.LENGTH_SHORT).show();
         }
 
         if (isTokenValid()) {
