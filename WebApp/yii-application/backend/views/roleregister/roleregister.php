@@ -16,10 +16,17 @@ use yii\bootstrap5\Html;
 
     <?php $form = ActiveForm::begin(['id' => 'form-signup']); ?>
 
+    <?= $form->field($model, 'photoFile')->fileInput(['multiple' => false, 'accept' => 'image/*']) ?>
     <?= $form->field($model, 'username')->textInput(['autofocus' => true]) ?>
     <?= $form->field($model, 'email')->input('email') ?>
     <?= $form->field($model, 'password')->passwordInput() ?>
     <?= $form->field($model, 'phone')->textInput() ?>
+    <?= $form->field($model, 'address')->textInput() ?>
+    <?= $form->field($model, 'nif')->input('number') ?>
+    <?= $form->field($model, 'localsellpoint')->dropDownList(
+        $localsellpoints,
+        ['prompt' => 'Select a Local Shop for employee to be assigned']
+    ); ?>
     <?= $form->field($model, 'role')->dropDownList([
         'manager' => 'manager',
         'salesperson' => 'salesperson',

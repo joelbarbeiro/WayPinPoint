@@ -1,14 +1,30 @@
 <?php
 
 namespace backend\controllers;
+use common\models\User;
 
 use backend\models\RegisterForm;
 use Yii;
+use yii\filters\VerbFilter;
 use yii\widgets\ActiveForm;
 
 
 class RegisterController extends \yii\web\Controller
 {
+    public function behaviors()
+    {
+        return array_merge(
+            parent::behaviors(),
+            [
+                'verbs' => [
+                    'class' => VerbFilter::className(),
+                    'actions' => [
+                        'delete' => ['POST'],
+                    ],
+                ],
+            ]
+        );
+    }
     public function actionIndex()
     {
         $model = new RegisterForm();

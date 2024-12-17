@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
-/** @var backend\models\Calendar $model */
+/** @var \common\models\Calendar $model */
 
 $this->title = 'Update Calendar: ' . $model->id;
 $this->params['breadcrumbs'][] = ['label' => 'Calendars', 'url' => ['index']];

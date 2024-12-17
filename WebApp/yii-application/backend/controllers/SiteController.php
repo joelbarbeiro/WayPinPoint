@@ -2,14 +2,15 @@
 
 namespace backend\controllers;
 
-use common\models\LoginForm;
-use common\models\User;
-use Yii;
-use yii\filters\VerbFilter;
-use yii\filters\AccessControl;
-use yii\web\Controller;
-use yii\web\Response;
 use backend\models\RegisterForm;
+use common\models\LoginForm;
+use Yii;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
+use yii\web\Controller;
+use yii\web\ForbiddenHttpException;
+use yii\web\Response;
+
 /**
  * Site controller
  */
@@ -29,10 +30,26 @@ class SiteController extends Controller
                         'allow' => true,
                     ],
                     [
+                        'actions' => ['index', 'create', 'update', 'delete', 'view'], // Backoffice actions
+                        'allow' => false,
+                        'roles' => ['client'], // Explicitly deny client access to backoffice
+                    ],
+                    [
+                        'actions' => ['index', 'create', 'update', 'delete'],
+                        'allow' => true,
+                        'roles' => ['admin', 'supplier', 'manager', 'salesperson', 'guide'],
+                    ],
+                    [
+                        'actions' => ['index', 'create', 'update', 'delete', 'view', 'update-status'],
+                        'allow' => true,
+                        'roles' => ['admin', 'supplier', 'manager', 'salesperson', 'guide'],
+                    ],
+                    [
                         'actions' => ['logout', 'index'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
+
                 ],
             ],
             'verbs' => [
@@ -52,7 +69,10 @@ class SiteController extends Controller
         return [
             'error' => [
                 'class' => \yii\web\ErrorAction::class,
+                'layout' => 'blank'
             ],
+
+
         ];
     }
 
@@ -77,10 +97,13 @@ class SiteController extends Controller
             return $this->redirect(['site/login']);
         }
 
+        $this->layout = 'blank';
+
         return $this->render('register', [
             'model' => $model,
-           ]);
+        ]);
     }
+
     /**
      * Login action.
      *
@@ -104,6 +127,19 @@ class SiteController extends Controller
         return $this->render('login', [
             'model' => $model,
         ]);
+    }
+
+    public function actionError()
+    {
+        $exception = Yii::$app->errorHandler->exception;
+
+        if ($exception !== null) {
+            if ($exception instanceof ForbiddenHttpException) {
+                // Render a custom 403 view
+                return $this->render('@backend/views/error');
+            }
+        }
+        return $this->render('error', ['exception' => $exception]);
     }
 
     /**

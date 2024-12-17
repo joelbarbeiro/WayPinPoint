@@ -2,6 +2,8 @@
 
 namespace common\models;
 
+use backend\models\Localsellpoint;
+use frontend\models\Review;
 use Yii;
 use yii\base\NotSupportedException;
 use yii\db\ActiveRecord;
@@ -236,4 +238,113 @@ class User extends ActiveRecord implements IdentityInterface
         $this->password_reset_token = null;
     }
 
+    public function getUserExtra()
+    {
+        return UserExtra::findOne(['user_id' => Yii::$app->user->id]);
+    }
+
+
+    /**
+     * Gets query for [[Activities]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getActivities()
+    {
+        return $this->hasMany(Activity::class, ['user_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[Bookings]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getBookings()
+    {
+        return $this->hasMany(Booking::class, ['user_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[Carts]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCarts()
+    {
+        return $this->hasMany(Cart::class, ['user_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[Invoices]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getInvoices()
+    {
+        return $this->hasMany(Invoice::class, ['user' => 'id']);
+    }
+
+    /**
+     * Gets query for [[Localsellpoints]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getLocalsellpoints()
+    {
+        return $this->hasMany(Localsellpoint::class, ['user_id' => 'id']);
+    }
+
+    public function getReviews()
+    {
+        return $this->hasMany(Review::class, ['user_id' => 'id']);
+    }
+    /**
+     * Gets query for [[Pictures]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPictures()
+    {
+        return $this->hasMany(Picture::class, ['user_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[Sales]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getSales()
+    {
+        return $this->hasMany(Sale::class, ['buyer' => 'id']);
+    }
+
+    /**
+     * Gets query for [[Sales0]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getSales0()
+    {
+        return $this->hasMany(Sale::class, ['seller_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[Tickets]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getTickets()
+    {
+        return $this->hasMany(Ticket::class, ['participant' => 'id']);
+    }
+
+    /**
+     * Gets query for [[Userextras]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUserextras()
+    {
+        return $this->hasMany(Userextra::class, ['user_id' => 'id']);
+    }
 }

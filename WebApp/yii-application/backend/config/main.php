@@ -11,10 +11,17 @@ return [
     'basePath' => dirname(__DIR__),
     'controllerNamespace' => 'backend\controllers',
     'bootstrap' => ['log'],
-    'modules' => [],
+    'modules' => [
+        'api' => [
+            'class' => 'backend\modules\api\ModuleAPI',
+        ],
+    ],
     'components' => [
         'request' => [
             'csrfParam' => '_csrf-backend',
+            'parsers' => [
+                'application/json' => 'yii\web\JsonParser',
+            ]
         ],
         'user' => [
             'identityClass' => 'common\models\User',
@@ -49,8 +56,66 @@ return [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                [
+                    'class' => 'yii\rest\UrlRule',
+                    'controller' => 'api/user',
+                    'extraPatterns' => [
+                        'GET count' => 'count',
+                        'GET usernames' => 'usernames',
+                        'GET extras' => 'extras',
+                        'GET employees' => 'employees',
+                        'DELETE {username}' => 'delbyusername',
+                        'POST register' => 'register',
+                        'POST login' => 'login',
+                        'PUT {id}' => 'edituserextras',
+                    ],
+                    'tokens' => [
+                        '{id}' => '<id:\\d+>',
+                        '{username}' => '<username:\\w+>', //[a-zA-Z0-9_] 1 ou + vezes (char)
+                    ],
+                ],
+                [
+                    'class' => 'yii\rest\UrlRule',
+                    'controller' => 'api/review',
+                    'extraPatterns' => [
+                        'GET count' => 'count',
+                        'GET activity/{id}' => 'activity',
+                        'GET users/{id}' => 'user',
+                        'POST {id}' => 'new'
+                    ],
+                    'tokens' => [
+                        '{id}' => '<id:\\d+>',
+                    ],
+                ],
+                [
+                    'class' => 'yii\rest\UrlRule',
+                    'controller' => 'api/cart',
+                    'extraPatterns' => [
+                        'GET count' => 'count',
+                        'GET {id}' => 'products',
+                        'GET status' => 'status',
+                        'GET buyers/{id}' => 'buyer',
+                        'DELETE delete/{id}' => 'delete',
+                        'POST addtocart/{id}' => 'addtocart',
+                        'PUT updatecart/{id}' => 'updatecart',
+                    ],
+                    'tokens' => [
+                        '{id}' => '<id:\\d+>',
+                    ],
+                ],
+                [
+                    'class' => 'yii\rest\UrlRule',
+                    'controller' => 'api/activity',
+                    'extraPatterns' => [
+                        'GET' => 'activities',
+                        'GET {id}' => 'activityview',
+                        'POST' => 'createactivity',
+                        'PUT {id}' => 'updateactivity',
+                        'DELETE {id}' => 'deleteactivity',
+                    ],
+                ],
             ],
         ],
     ],
     'params' => $params,
-]; 
+];

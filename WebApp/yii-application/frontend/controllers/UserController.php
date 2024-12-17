@@ -3,7 +3,9 @@
 namespace frontend\controllers;
 
 use common\models\User;
+use common\models\UserExtra;
 use common\models\UserSearch;
+use frontend\models\SignupForm;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
@@ -58,8 +60,11 @@ class UserController extends Controller
     public function actionView()
     {
         $id = Yii::$app->user->id;
+        $userExtra = UserExtra::findOne(['user_id' => $id]);
+
         return $this->render('view', [
             'model' => $this->findModel($id),
+            'userExtra' => $userExtra
         ]);
     }
 
@@ -97,14 +102,28 @@ class UserController extends Controller
     {
         $currentUserId = Yii::$app->user->id;
 
+        $model = new SignupForm();
+        $userExtra = UserExtra::findOne(['user_id' => $id]);
+        $user = $userExtra->user;
+
+        $model->username = $user->username;
+        $model->photo = $userExtra->photo;
+        $model->email = $user->email;
+        $model->phone = $userExtra->phone;
+        $model->address = $userExtra->address;
+        $model->nif = $userExtra->nif;
+
         // Prevent users from updating other users' profiles
         if ($id != $currentUserId) {
             throw new ForbiddenHttpException('You are not allowed to access this page.');
         }
 
-        $model = $this->findModel($id);
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            if ($model->updateUser($id)) {
+                return $this->redirect(['view', 'id' => $id]);
+            } else {
+                \Yii::$app->session->setFlash('error', 'Failed to update user');
+            }
         }
 
         return $this->render('update', [
@@ -122,9 +141,10 @@ class UserController extends Controller
 
     public function actionDelete($id)
     {
+        $userExtra = UserExtra::findOne(['user_id' => $id]);
+        $userExtra->delete();
         $this->findModel($id)->delete();
-
-        return $this->redirect(['site/index']);
+        return $this->redirect(['activity/index']);
     }
 
     /**
