@@ -241,4 +241,9 @@ public class SingletonManager {
     }
     //endregion
 
+    //region # Activity API #
+
+
+    //endregion
+
 }
