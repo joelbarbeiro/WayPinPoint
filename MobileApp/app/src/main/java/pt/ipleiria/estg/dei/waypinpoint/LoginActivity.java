@@ -82,6 +82,24 @@ public class LoginActivity extends AppCompatActivity implements LoginListener, U
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // Check if an extra message is passed to show Snackbar
+        Intent intent = getIntent();
+        if (intent != null && intent.hasExtra("SNACKBAR_MESSAGE")) {
+            String message = intent.getStringExtra("SNACKBAR_MESSAGE");
+            if (message != null) {
+                View rootView = findViewById(android.R.id.content); // Root view of the activity
+                Snackbar.make(rootView, message, Snackbar.LENGTH_SHORT).show();
+
+                // Clear the intent to avoid showing the Snackbar again
+                intent.removeExtra("SNACKBAR_MESSAGE");
+            }
+        }
+    }
+
     private static boolean isEmailValid(String email) {
         if (email != null) {
             return Patterns.EMAIL_ADDRESS.matcher(email).matches();

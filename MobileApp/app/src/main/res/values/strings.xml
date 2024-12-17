@@ -56,4 +56,13 @@
     <string name="api_hostname_back_login">Back</string>
     <string name="error_invalid_token"><![CDATA[--->Invalid token]]></string>
 
+    <!-- Dialogs-->
+    <string name="dialog_logout_message">Do you really want to logout ?</string>
+    <string name="dialog_delete_title">Delete Profile</string>
+    <string name="dialog_delete_message">Are you sure you want to delete your profile?\n Such an action cannot be reversed</string>
+    <string name="yes_string">Yes</string>
+    <string name="no_string">No</string>
+    <string name="menu_main_user_edited">User Edited With Success</string>
+    <string name="my_profile_deleted">Profile Deleted With Success</string>
+
 </resources>

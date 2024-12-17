@@ -1,5 +1,7 @@
 package pt.ipleiria.estg.dei.waypinpoint;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -9,20 +11,23 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import Listeners.UserListener;
 import Model.SingletonManager;
 import Model.User;
+import Model.UserDbHelper;
 
 public class MyProfileActivity extends AppCompatActivity implements UserListener {
 
-    private Button saveButton;
+    private Button saveButton, deleteButton;
 
     private User user;
 
     private String username, address, email, password, photo;
     private int nif, phone;
+    private String apiHost = null;
 
     private EditText etEmail, etUsername, etAddress, etNif, etPhone;
 
@@ -32,10 +37,12 @@ public class MyProfileActivity extends AppCompatActivity implements UserListener
         setContentView(R.layout.activity_my_profile);
         SharedPreferences sharedPreferencesUser = getSharedPreferences("USER_DATA", MODE_PRIVATE);
         int id = sharedPreferencesUser.getInt(MenuMainActivity.ID, 0);
-        System.out.println("---> ID: " + id);
+        System.out.println("--->USER ID: " + id);
         saveButton = findViewById(R.id.buttonSave);
+        deleteButton = findViewById(R.id.buttonDelete);
         user = SingletonManager.getInstance(getApplicationContext()).getUser(id);
 
+        apiHost = getApiHost();
         etUsername = findViewById(R.id.etProfileUsername);
         etEmail = findViewById(R.id.etProfileEmail);
         etAddress = findViewById(R.id.etProfileAddress);
@@ -111,10 +118,41 @@ public class MyProfileActivity extends AppCompatActivity implements UserListener
             user.setAddress(address);
             user.setNif(nif);
             user.setPhone(phone);
-            SingletonManager.getInstance(getApplicationContext()).editUserApi(user, getApplicationContext());
+            SingletonManager.getInstance(getApplicationContext()).editUserApi(apiHost, user, getApplicationContext());
         }
         SingletonManager.getInstance(getApplicationContext()).setUserListener(this);
 
+    }
+
+    public String getApiHost() {
+        SharedPreferences sharedPreferences = getSharedPreferences("API_HOSTNAME", Context.MODE_PRIVATE);
+        System.out.println("--> Setted Host " + sharedPreferences.getString("API_HOSTNAME", null));
+        return sharedPreferences.getString("API_HOSTNAME", null);
+    }
+
+    public void onClickDelete(View view) {
+        dialogRemoveUser();
+    }
+
+    private void dialogRemoveUser() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.dialog_delete_title);
+        builder.setMessage(R.string.dialog_delete_message);
+        builder.setPositiveButton(R.string.yes_string, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        SingletonManager.getInstance(getApplicationContext()).removeUserApi(apiHost,user,getApplicationContext());
+                        SingletonManager.getInstance(getApplicationContext()).setUserListener(MyProfileActivity.this);
+                    }
+                })
+                .setNegativeButton(R.string.no_string, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                })
+                .setIcon(R.drawable.ic_delete)
+                .show();
     }
 
     @Override

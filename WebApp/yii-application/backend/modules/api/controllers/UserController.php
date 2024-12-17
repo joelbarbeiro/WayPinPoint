@@ -204,7 +204,7 @@ class UserController extends ActiveController
             }
             $user->username = $postData['username'] ?? $user->username;
             $user->email = $postData['email'] ?? $user->email;
-            $user->updated_at = new Expression('NOW()');
+            $user->updated_at = time();
             $userExtra->phone = $postData['phone'] ?? $userExtra->phone;
             $userExtra->address = $postData['address'] ?? $userExtra->address;
             $userExtra->nif = $postData['nif'] ?? $userExtra->nif;

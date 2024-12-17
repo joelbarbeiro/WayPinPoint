@@ -69,7 +69,7 @@ public class SingletonManager {
     }
 
 
-    //region = API USER METHODS #
+
 
     public ArrayList<User> getUsersBD() {
         users = userDbHelper.getAllUsersDb();
@@ -108,6 +108,7 @@ public class SingletonManager {
         }
     }
 
+    //region = API USER METHODS #
 
     public void addUserApi(String apiHost, final User user, final Context context) {
         if (!StatusJsonParser.isConnectionInternet(context)) {
@@ -146,11 +147,11 @@ public class SingletonManager {
         }
     }
 
-    public void editUserApi(final User user, final Context context) {
+    public void editUserApi(String apiHost, final User user, final Context context) {
         if (!StatusJsonParser.isConnectionInternet(context)) {
             Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
         } else {
-            StringRequest request = new StringRequest(Request.Method.PUT, urlApi + "users/" + user.getId(), new Response.Listener<String>() {
+            StringRequest request = new StringRequest(Request.Method.PUT, apiHost + "users/" + user.getId(), new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
                     editUserDb(UserJsonParser.parserJsonUser(response));
@@ -178,6 +179,29 @@ public class SingletonManager {
                     return params;
                 }
             };
+            volleyQueue.add(request);
+        }
+    }
+
+    public void removeUserApi(String apiHost, final User user, final Context context) {
+        if (!StatusJsonParser.isConnectionInternet(context)) {
+            Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
+        } else {
+            StringRequest request = new StringRequest(Request.Method.DELETE, apiHost + "users/" + user.getUsername(), new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    removeUserDb(user.getId());
+
+                    if(userListener != null){
+                        userListener.onValidateOperation(MenuMainActivity.DELETE);
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
             volleyQueue.add(request);
         }
     }
