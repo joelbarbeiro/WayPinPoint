@@ -30,6 +30,8 @@
     <string name="menu_header_image_description">Menu header Image</string>
     <string name="ndOpen">Open</string>
     <string name="ndClose">Close</string>
+    <string name="menu_cart">Cart</string>
+
 
     <!-- My Profile-->
     <string name="my_profile_nif">NIF</string>
