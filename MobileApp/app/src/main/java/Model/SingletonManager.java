@@ -8,9 +8,11 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -18,12 +20,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import Listeners.CartListener;
 import Listeners.LoginListener;
 import Listeners.UserListener;
 import Listeners.UsersListener;
 import pt.ipleiria.estg.dei.waypinpoint.LoginActivity;
 import pt.ipleiria.estg.dei.waypinpoint.MenuMainActivity;
 import pt.ipleiria.estg.dei.waypinpoint.R;
+import pt.ipleiria.estg.dei.waypinpoint.utils.CartJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.StatusJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.UserJsonParser;
 
@@ -33,8 +37,9 @@ public class SingletonManager {
     private static Route route = null;
     private UserDbHelper userDbHelper = null;
     private static final String urlApi = "http://35.179.107.54:8080/api/";
-
+    private CartDbHelper cartDbHelper = null;
     private ArrayList<User> users;
+    private ArrayList<Cart> carts;
 
     private UserListener userListener;
     private UsersListener usersListener;
@@ -240,5 +245,65 @@ public class SingletonManager {
         }
     }
     //endregion
+    //REGION # MÉTODOS CART - API #
+
+    public ArrayList<Cart> getCartsDB() {
+        carts = cartDbHelper.getAllCartDb();
+        return new ArrayList<>(carts);
+    }
+    public Cart getCart(int id) {
+        carts = getCartsDB();
+        for (Cart cart : carts) {
+            if (cart.getId() == id) {
+                return cart;
+            }
+        }
+        return null;
+    }
+    public void getCartAPI(final Context context, final CartListener listener, final Cart cart){
+        if(!StatusJsonParser.isConnectionInternet(context)){
+            Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
+            listener.onErrorAdd(context.getString(R.string.error_no_internet));
+
+        } else {
+            JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, urlApi + "carts/" + cart.getId(), null, new Response.Listener<JSONArray>() {
+                @Override
+                public void onResponse(JSONArray response) {
+                    System.out.println("------> Cart Data: " + response);
+                    Cart cart = CartJsonParser.parsonJsonCart(response.toString());
+                    cartDbHelper.addCartDb(cart);
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    System.out.println("Error fetching cart");
+                    Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            volleyQueue.add(request);
+        }
+    }
+    public void getCartByUserId(final Context context, int userId, final CartListener listener)
+    {
+        if(!StatusJsonParser.isConnectionInternet(context)){
+            Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
+            listener.onErrorAdd(context.getString(R.string.error_no_internet));
+        } else {
+            JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, urlApi + "carts/buyers/" + userId, null, new Response.Listener<JSONArray>() {
+            @Override
+                public void onResponse(JSONArray response) {
+                    System.out.println("------> Cart Data: " + response);
+                    ArrayList<Cart> cart = CartJsonParser.parserJsonCarts(response);
+                    cartDbHelper.addCartDb(cart);
+                }
+            }
+        }
+    }
+
+
+
+
+
 
 }

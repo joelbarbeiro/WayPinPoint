@@ -58,4 +58,11 @@
     <string name="api_hostname_back_login">Back</string>
     <string name="error_invalid_token"><![CDATA[--->Invalid token]]></string>
 
+    <!-- Cart -->
+    <string name="number_of_tickets">Number of Tickets:</string>
+    <string name="cart">Cart</string>
+    <string name="save">Add to Cart</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>
