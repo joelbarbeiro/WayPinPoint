@@ -2,10 +2,10 @@ package Model;
 
 public class Activity {
     private int id, maxpax, supplier, status;
-    private float priceperpax;
+    private double priceperpax;
     private String name, description, photo, address, catgory;
 
-    public Activity(int id, String name, String description, String photo, int maxpax, float priceperpax, String address, int supplier, int status, String catgory) {
+    public Activity(int id, String name, String description, String photo, int maxpax, double priceperpax, String address, int supplier, int status, String catgory) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -17,7 +17,12 @@ public class Activity {
         this.status = status;
         this.catgory = catgory;
     }
-
+    public int getId(){
+        return id;
+    }
+    public void setId(int id){
+        this.id = id;
+    }
     public int getMaxpax() {
         return maxpax;
     }
@@ -42,11 +47,11 @@ public class Activity {
         this.status = status;
     }
 
-    public float getPriceperpax() {
+    public double getPriceperpax() {
         return priceperpax;
     }
 
-    public void setPriceperpax(float priceperpax) {
+    public void setPriceperpax(double priceperpax) {
         this.priceperpax = priceperpax;
     }
 

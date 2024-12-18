@@ -2,15 +2,18 @@ package Model;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.http.UrlRequest;
 import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -18,12 +21,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import Listeners.ActivitiesListener;
 import Listeners.LoginListener;
 import Listeners.UserListener;
 import Listeners.UsersListener;
 import pt.ipleiria.estg.dei.waypinpoint.LoginActivity;
 import pt.ipleiria.estg.dei.waypinpoint.MenuMainActivity;
 import pt.ipleiria.estg.dei.waypinpoint.R;
+import pt.ipleiria.estg.dei.waypinpoint.utils.ActivityJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.StatusJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.UserJsonParser;
 
@@ -39,6 +44,15 @@ public class SingletonManager {
     private UserListener userListener;
     private UsersListener usersListener;
     private LoginListener loginListener;
+
+    //region # Activities instances #
+
+    private ActivitiesListener activitiesListener;
+    private ActivityDbHelper activityDbHelper = null;
+
+    private ArrayList<Activity> activities;
+
+    //endregion
 
     private static RequestQueue volleyQueue = null;
 
@@ -243,6 +257,40 @@ public class SingletonManager {
 
     //region # Activity API #
 
+    public void addActivitiesDB(ArrayList<Activity> activities){
+        activityDbHelper.delAllActivitiesDB();
+        for(Activity a: activities){
+            addActivityDB(a);
+        }
+    }
+    public void getActivities(final Context context){
+        if(!StatusJsonParser.isConnectionInternet(context)){
+            Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
+
+            if(activitiesListener != null){
+                activitiesListener.onRefreshActivitiesList(activityDbHelper.getActivitiesDB());
+            }
+        } else {
+            JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, urlApi + "activities", null, new Response.Listener<JSONArray>() {
+                @Override
+                public void onResponse(JSONArray response) {
+                    System.out.println("------> GETAPI: " + response);
+                    activities = ActivityJsonParser.parserJsonActivity(response);
+                    activityDbHelper.getActivitiesDB(activities);
+
+                    if(activitiesListener != null){
+                        activitiesListener.onRefreshActivitiesList(activities);
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        volleyQueue.add(request);
+        }
+    }
 
     //endregion
 
