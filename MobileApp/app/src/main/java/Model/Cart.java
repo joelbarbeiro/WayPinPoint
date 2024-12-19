@@ -2,10 +2,11 @@ package Model;
 
 public class Cart {
     private int id, user_id, product_id, quantity, status, calendar_id;
-    private String time, date;
+    private String time, date, activityImg;
     private double price;
 
-    public Cart(int id, int user_id, int product_id, int quantity, int status, int calendar_id, String date, String time, double price) {
+
+    public Cart(int id, int user_id, int product_id, int quantity, int status, int calendar_id, String date, String time, double price, String activityImg) {
         this.id = id;
         this.user_id = user_id;
         this.product_id = product_id;
@@ -15,10 +16,19 @@ public class Cart {
         this.time = time;
         this.date = date;
         this.price = price;
+        this.activityImg = activityImg;
     }
 
     public int getId() {
         return id;
+    }
+
+    public String getActivityImg() {
+        return activityImg;
+    }
+
+    public void setActivityImg(String activityImg) {
+        this.activityImg = activityImg;
     }
 
     public void setId(int id) {

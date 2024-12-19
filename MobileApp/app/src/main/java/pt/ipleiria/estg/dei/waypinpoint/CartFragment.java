@@ -1,64 +1,102 @@
 package pt.ipleiria.estg.dei.waypinpoint;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ListView;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link CartFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class CartFragment extends Fragment {
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+import java.util.ArrayList;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
+import Listeners.CartListener;
+import Model.Cart;
+import Model.SingletonManager;
+import pt.ipleiria.estg.dei.waypinpoint.Adapters.CartAdapter;
+
+public class CartFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, CartListener {
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private int userId;
+    private CartListener cartListener;
+    private ListView lvCart;
     private String mParam2;
+    private FloatingActionButton fabCheckout;
 
     public CartFragment() {
         // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment CartFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static CartFragment newInstance(String param1, String param2) {
-        CartFragment fragment = new CartFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_cart, container, false);
+        setHasOptionsMenu(true);
+        View view =  inflater.inflate(R.layout.fragment_cart, container, false);
+        lvCart = view.findViewById(R.id.lvCart);
+        SingletonManager.getInstance(getContext()).setCartsListener(this);
+        SingletonManager.getInstance(getContext()).getCartByUserId(getContext(),userId, cartListener);
+        lvCart.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                Toast.makeText(getContext(), bookList.get(position).getTitle() , Toast.LENGTH_SHORT).show();
+                //Fazer code para ir para os details do livro
+                Intent intent = new Intent(getContext(), CartDetailsActivity.class);
+                intent.putExtra(CartDetailsActivity.ID_CART, (int) id);
+                startActivityForResult(intent, MenuMainActivity.EDIT);
+            }
+        });
+
+        fabCheckout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), CartDetailsActivity.class);
+                startActivityForResult(intent, MenuMainActivity.CREATE);
+            }
+        });
+
+        swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout);
+        swipeRefreshLayout.setOnRefreshListener(this);
+
+        return view;
+    }
+
+    @Override
+    public void onValidateOperation(int op) {
+
+    }
+
+    @Override
+    public void onErrorAdd(String errorMessage) {
+
+    }
+
+    @Override
+    public void onSuccess() {
+
+    }
+
+    @Override
+    public void validateOperation(String s) {
+
+    }
+
+    @Override
+    public void onRefresh() {
+        SingletonManager.getInstance(getContext()).getCartByUserId(getContext(), userId, cartListener);
+        swipeRefreshLayout.setRefreshing(false);
+    }
+
+    public void onRefreshBookList(ArrayList<Cart> cartArrayList) {
+        if(cartArrayList != null)
+        {
+            lvCart.setAdapter(new CartAdapter(getContext(), cartArrayList));
+        }
     }
 }

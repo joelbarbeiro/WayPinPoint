@@ -66,7 +66,17 @@ public class CartDbHelper extends SQLiteOpenHelper {
         this.db.insert(TABLE_NAME, null, values);
     }
 
-    public boolean removeCartDb(int id) {
+    public boolean editCartDb(Cart cart) {
+        ContentValues values = new ContentValues();
+        values.put(QUANTITY, cart.getQuantity());
+        values.put(CALENDAR_ID, cart.getCalendar_id());
+        values.put(TIME, cart.getTime());
+        values.put(DATE, cart.getDate());
+
+        return this.db.update(TABLE_NAME, values, ID + "= ?", new String[]{"" + cart.getId()}) > 0;
+    }
+
+    public boolean removeCartDb(Cart id) {
         return this.db.delete(TABLE_NAME, ID + "= ?", new String[]{"" + id}) == 1;
     }
 
@@ -85,7 +95,8 @@ public class CartDbHelper extends SQLiteOpenHelper {
                         cursor.getInt(5),
                         cursor.getString(6),
                         cursor.getString(7),
-                        cursor.getFloat(8)
+                        cursor.getFloat(8),
+                        cursor.getString(9)
                 );
                 carts.add(auxCart);
             } while (cursor.moveToNext());
@@ -114,7 +125,8 @@ public class CartDbHelper extends SQLiteOpenHelper {
                         cursor.getInt(5),
                         cursor.getString(6),
                         cursor.getString(7),
-                        cursor.getFloat(8)
+                        cursor.getFloat(8),
+                        cursor.getString(9)
                 );
                 carts.add(auxCart);
             } while (cursor.moveToNext());

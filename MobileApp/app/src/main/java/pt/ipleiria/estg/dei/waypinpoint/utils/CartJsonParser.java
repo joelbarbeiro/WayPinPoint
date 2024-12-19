@@ -1,5 +1,9 @@
 package pt.ipleiria.estg.dei.waypinpoint.utils;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,6 +28,7 @@ public class CartJsonParser {
                 String date = cart.getString("date");
                 String time = cart.getString("time");
                 double price = cart.getDouble("price");
+                String activityImg = cart.getString("activityImg");
 
                 Cart auxCart = new Cart(
                         idCart,
@@ -34,7 +39,8 @@ public class CartJsonParser {
                         calendar_id,
                         date,
                         time,
-                        price
+                        price,
+                        activityImg
                         );
                 carts.add(auxCart);
             }
@@ -58,6 +64,7 @@ public class CartJsonParser {
             String date = Cart.getString("date");
             String time = Cart.getString("time");
             double price = Cart.getDouble("price");
+            String activityImg = Cart.getString("activityImg");
 
             auxCart = new Cart(
                     idCart,
@@ -68,12 +75,21 @@ public class CartJsonParser {
                     calendar_id,
                     date,
                     time,
-                    price
+                    price,
+                    activityImg
             );
         } catch (JSONException e) {
             e.printStackTrace();
         }
         return auxCart;
+    }
+
+    public static boolean isConnectionInternet(Context context){
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo networkInfo = cm.getActiveNetworkInfo();
+
+        return networkInfo != null && networkInfo.isConnected();
     }
 
 }
