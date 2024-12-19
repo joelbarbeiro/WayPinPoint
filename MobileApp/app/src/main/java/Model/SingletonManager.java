@@ -1,5 +1,13 @@
 package Model;
 
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.DELETE;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EDIT;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EMAIL;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ID;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.REGISTER;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.TOKEN;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.USER_DATA;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.widget.Toast;
@@ -14,30 +22,26 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import Listeners.LoginListener;
 import Listeners.UserListener;
-import Listeners.UsersListener;
-import pt.ipleiria.estg.dei.waypinpoint.LoginActivity;
-import pt.ipleiria.estg.dei.waypinpoint.MenuMainActivity;
 import pt.ipleiria.estg.dei.waypinpoint.R;
+import pt.ipleiria.estg.dei.waypinpoint.utils.MultipartRequest;
 import pt.ipleiria.estg.dei.waypinpoint.utils.StatusJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.UserJsonParser;
 
 public class SingletonManager {
 
     private static SingletonManager instance = null;
-    private static Route route = null;
     private UserDbHelper userDbHelper = null;
-    private static final String urlApi = "http://35.179.107.54:8080/api/";
 
     private ArrayList<User> users;
 
     private UserListener userListener;
-    private UsersListener usersListener;
     private LoginListener loginListener;
 
     private static RequestQueue volleyQueue = null;
@@ -60,16 +64,9 @@ public class SingletonManager {
         this.userListener = userListener;
     }
 
-    public void setUsersListener(UsersListener usersListener) {
-        this.usersListener = usersListener;
-    }
-
     public void setLoginListener(LoginListener loginListener) {
         this.loginListener = loginListener;
     }
-
-
-    //region = API USER METHODS #
 
     public ArrayList<User> getUsersBD() {
         users = userDbHelper.getAllUsersDb();
@@ -84,6 +81,10 @@ public class SingletonManager {
             }
         }
         return null;
+    }
+
+    public void editPhotoDb(String photo, int id) {
+        userDbHelper.editPhotoDb(photo, id);
     }
 
     public void addUserDb(User user) {
@@ -101,13 +102,7 @@ public class SingletonManager {
         }
     }
 
-    public void addUsersDb(ArrayList<User> users) {
-        userDbHelper.removeAllUsersDb();
-        for (User b : users) {
-            addUserDb(b);
-        }
-    }
-
+    //region = API USER METHODS #
 
     public void addUserApi(String apiHost, final User user, final Context context) {
         if (!StatusJsonParser.isConnectionInternet(context)) {
@@ -118,7 +113,7 @@ public class SingletonManager {
                 public void onResponse(String response) {
                     addUserDb(UserJsonParser.parserJsonUser(response));
                     if (userListener != null) {
-                        userListener.onValidateOperation(LoginActivity.REGISTER);
+                        userListener.onValidateOperation(REGISTER);
                     }
                 }
             }, new Response.ErrorListener() {
@@ -146,16 +141,16 @@ public class SingletonManager {
         }
     }
 
-    public void editUserApi(final User user, final Context context) {
+    public void editUserApi(String apiHost, final User user, final Context context) {
         if (!StatusJsonParser.isConnectionInternet(context)) {
             Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
         } else {
-            StringRequest request = new StringRequest(Request.Method.PUT, urlApi + "users/" + user.getId(), new Response.Listener<String>() {
+            StringRequest request = new StringRequest(Request.Method.PUT, apiHost + "users/update/" + user.getId(), new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
                     editUserDb(UserJsonParser.parserJsonUser(response));
                     if (userListener != null) {
-                        userListener.onValidateOperation(MenuMainActivity.EDIT);
+                        userListener.onValidateOperation(EDIT);
                     }
                 }
             }, new Response.ErrorListener() {
@@ -170,7 +165,6 @@ public class SingletonManager {
                     Map<String, String> params = new HashMap<String, String>();
                     params.put("username", user.getUsername());
                     params.put("email", user.getEmail());
-                    params.put("password", user.getPassword());
                     params.put("address", user.getAddress());
                     params.put("phone", "" + user.getPhone());
                     params.put("nif", "" + user.getNif());
@@ -178,9 +172,68 @@ public class SingletonManager {
                     return params;
                 }
             };
+            System.out.println("---> REQUEST  USER" + request);
+
             volleyQueue.add(request);
         }
     }
+
+    public void removeUserApi(String apiHost, final User user, final Context context) {
+        if (!StatusJsonParser.isConnectionInternet(context)) {
+            Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
+        } else {
+            StringRequest request = new StringRequest(Request.Method.DELETE, apiHost + "users/" + user.getUsername(), new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    removeUserDb(user.getId());
+
+                    if (userListener != null) {
+                        userListener.onValidateOperation(DELETE);
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+            volleyQueue.add(request);
+        }
+    }
+
+    public void addPhotoApi(String apiHost, final int id, final String photoProfile, final Context context) {
+        if (!StatusJsonParser.isConnectionInternet(context)) {
+            Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
+        } else {
+            StringRequest request = new StringRequest(Request.Method.PUT, apiHost + "user/photo", new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    System.out.println("---> SUCCESS NO RESPONSE " + response);
+                    editPhotoDb(UserJsonParser.parserJsonPhoto(response), id);
+                    Toast.makeText(context, "Photo Uploaded Successfully", Toast.LENGTH_SHORT).show();
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    System.out.println("---> ERRO NO RESPONSE " + error.getMessage());
+                    Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }) {
+
+                @Override
+                public Map<String, String> getParams() {
+                    Map<String, String> params = new HashMap<>();
+                    params.put("id", "" + id);
+                    params.put("photoFile", photoProfile);
+                    return params;
+                }
+            };
+            System.out.println("---> REQUEST  " + request);
+            volleyQueue.add(request);
+        }
+    }
+
+    //endregion
 
     //region # LOGIN API #
     public void loginAPI(String apiHost, final String email, final String password, final Context context, final LoginListener listener) {
@@ -193,15 +246,15 @@ public class SingletonManager {
                 public void onResponse(String response) {
                     System.out.println("---> SUCCESS Login " + response);
                     addUserDb(UserJsonParser.parserJsonUser(response));
-                    SharedPreferences sharedPreferences = context.getSharedPreferences("USER_DATA", Context.MODE_PRIVATE);
+                    SharedPreferences sharedPreferences = context.getSharedPreferences(USER_DATA, Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     try {
                         JSONObject jsonObject = new JSONObject(response);
                         String token = jsonObject.getString("token");
                         int id = jsonObject.getInt("id");
-                        editor.putString("TOKEN", token);
-                        editor.putString("EMAIL", email);
-                        editor.putInt(MenuMainActivity.ID, id);
+                        editor.putString(TOKEN, token);
+                        editor.putString(EMAIL, email);
+                        editor.putInt(ID, id);
                         editor.apply();
                         listener.onValidateLogin(token);
                     } catch (JSONException e) {
@@ -213,7 +266,7 @@ public class SingletonManager {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     System.out.println("---> ERROR Login" + error.getMessage() + error);
-                    SharedPreferences sharedPreferences = context.getSharedPreferences("USER_DATA", Context.MODE_PRIVATE);
+                    SharedPreferences sharedPreferences = context.getSharedPreferences(USER_DATA, Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     if (error.networkResponse.statusCode == 401) {
                         Toast.makeText(context, R.string.login_invalid_login, Toast.LENGTH_SHORT).show();
@@ -222,7 +275,7 @@ public class SingletonManager {
                         Toast.makeText(context, R.string.login_error_message, Toast.LENGTH_SHORT).show();
                         listener.onErrorLogin(error.getMessage());
                     }
-                    editor.putString("TOKEN", "NO TOKEN");
+                    editor.putString(TOKEN, "NO TOKEN");
                     editor.apply();
                     listener.onErrorLogin(error.getMessage());
                 }

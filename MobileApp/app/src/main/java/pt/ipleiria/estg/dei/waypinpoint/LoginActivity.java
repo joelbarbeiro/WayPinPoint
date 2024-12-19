@@ -1,5 +1,13 @@
 package pt.ipleiria.estg.dei.waypinpoint;
 
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.APIHOST;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EMAIL;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.REGISTER;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.SNACKBAR_MESSAGE;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.TOKEN;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.USER_DATA;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getApiHost;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -17,20 +25,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
-import java.util.ArrayList;
-
 import Listeners.LoginListener;
-import Listeners.UsersListener;
 import Model.SingletonManager;
-import Model.User;
 
-public class LoginActivity extends AppCompatActivity implements LoginListener, UsersListener {
+public class LoginActivity extends AppCompatActivity implements LoginListener {
 
     private EditText etEmail;
     private EditText etPassword;
 
-    public static final int REGISTER = 100;
-    public static final String OP_CODE = "DETAIL_OPERATION";
     private String email, password;
     private String apiHost = null;
 
@@ -53,7 +55,7 @@ public class LoginActivity extends AppCompatActivity implements LoginListener, U
             }
         });
 
-        if (getApiHost() == null) {
+        if (getApiHost(getApplicationContext()) == null) {
             View rootView = findViewById(R.id.loginView);
             Snackbar.make(rootView, "Please config api hostname before login or register", Snackbar.LENGTH_SHORT).show();
 
@@ -65,20 +67,35 @@ public class LoginActivity extends AppCompatActivity implements LoginListener, U
             }, toastDuration);
 
         } else {
-            apiHost = getApiHost();
+            apiHost = getApiHost(getApplicationContext());
             View rootView = findViewById(R.id.loginView);
             Snackbar.make(rootView, "Hostname: " + apiHost, Snackbar.LENGTH_SHORT).show();
         }
 
         if (isTokenValid()) {
-            SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("USER_DATA", Context.MODE_PRIVATE);
+            SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences(USER_DATA, Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.apply();
 
             Intent intent = new Intent(getApplicationContext(), MenuMainActivity.class);
-            intent.putExtra(MenuMainActivity.EMAIL, sharedPreferences.getString("EMAIL", "No Email Provided"));
+            intent.putExtra(EMAIL, sharedPreferences.getString(EMAIL, "No Email Provided"));
             startActivity(intent);
             finish();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Intent intent = getIntent();
+        if (intent != null && intent.hasExtra(SNACKBAR_MESSAGE)) {
+            String message = intent.getStringExtra(SNACKBAR_MESSAGE);
+            if (message != null) {
+                View rootView = findViewById(android.R.id.content);
+                Snackbar.make(rootView, message, Snackbar.LENGTH_SHORT).show();
+                //REMOVER DO INTENT PARA NAO MOSTRAR OUTRA VEZ
+                intent.removeExtra(SNACKBAR_MESSAGE);
+            }
         }
     }
 
@@ -127,10 +144,10 @@ public class LoginActivity extends AppCompatActivity implements LoginListener, U
         boolean isEmailValid;
         isEmailValid = isEmailValid(etEmail.getText().toString());
         Intent intent = new Intent(this, RegisterActivity.class);
-        intent.putExtra(RegisterActivity.APIHOST, apiHost);
+        intent.putExtra(APIHOST, apiHost);
 
         if (isEmailValid) {
-            intent.putExtra(RegisterActivity.EMAIL, etEmail.getText().toString());
+            intent.putExtra(EMAIL, etEmail.getText().toString());
             startActivityForResult(intent, REGISTER);
         } else {
             startActivityForResult(intent, REGISTER);
@@ -138,9 +155,9 @@ public class LoginActivity extends AppCompatActivity implements LoginListener, U
     }
 
     public boolean isTokenValid() {
-        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("USER_DATA", Context.MODE_PRIVATE);
-        System.out.println("TOKEN: --->" + sharedPreferences.getString("TOKEN", "NO TOKEN"));
-        if (sharedPreferences.getString("TOKEN", "NO TOKEN").matches("NO TOKEN")) {
+        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences(USER_DATA, Context.MODE_PRIVATE);
+        System.out.println("TOKEN: --->" + sharedPreferences.getString(TOKEN, "NO TOKEN"));
+        if (sharedPreferences.getString(TOKEN, "NO TOKEN").matches("NO TOKEN")) {
             System.out.println(getString(R.string.error_invalid_token));
             return false;
         } else {
@@ -151,7 +168,7 @@ public class LoginActivity extends AppCompatActivity implements LoginListener, U
     @Override
     public void onValidateLogin(String token) {
         Intent intent = new Intent(this, MenuMainActivity.class);
-        intent.putExtra(MenuMainActivity.EMAIL, etEmail.getText().toString());
+        intent.putExtra(EMAIL, etEmail.getText().toString());
         startActivity(intent);
     }
 
@@ -160,18 +177,4 @@ public class LoginActivity extends AppCompatActivity implements LoginListener, U
         Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
     }
 
-    @Override
-    public void onRefreshUserList(ArrayList<User> usersList) {
-        if (usersList != null) {
-            Toast.makeText(this, "Users available", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this, "No users available", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    public String getApiHost() {
-        SharedPreferences sharedPreferences = getSharedPreferences("API_HOSTNAME", Context.MODE_PRIVATE);
-        System.out.println("--> Setted Host " + sharedPreferences.getString("API_HOSTNAME", null));
-        return sharedPreferences.getString("API_HOSTNAME", null);
-    }
 }

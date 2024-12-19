@@ -68,6 +68,7 @@ return [
                         'POST register' => 'register',
                         'POST login' => 'login',
                         'PUT {id}' => 'edituserextras',
+                        'PUT photo' => 'photo',
                     ],
                     'tokens' => [
                         '{id}' => '<id:\\d+>',

@@ -5,9 +5,9 @@ namespace backend\modules\api\controllers;
 use common\models\User;
 use common\models\UserExtra;
 use Yii;
-use yii\db\Expression;
 use yii\db\Query;
 use yii\rest\ActiveController;
+use yii\web\UploadedFile;
 
 /**
  * Default controller for the `api` module
@@ -205,16 +205,17 @@ class UserController extends ActiveController
             }
             $user->username = $postData['username'] ?? $user->username;
             $user->email = $postData['email'] ?? $user->email;
-            $user->updated_at = new Expression('NOW()');
+            $user->updated_at = time();
             $userExtra->phone = $postData['phone'] ?? $userExtra->phone;
             $userExtra->address = $postData['address'] ?? $userExtra->address;
             $userExtra->nif = $postData['nif'] ?? $userExtra->nif;
 
             if (!empty($postData['photoFile'])) {
-                $userExtra->photo = $this->uploadUserPhoto($postData['photoFile']);
+                $userExtra->photo = $userExtra->uploadUserPhoto($postData['photoFile']);
             }
 
             if ($user->save(false) && $userExtra->save(false)) {
+                echo "NAO PASSEI";
                 $transaction->commit();
                 return [
                     'status' => 'success',
@@ -244,4 +245,36 @@ class UserController extends ActiveController
         $userModel::deleteAll(['username' => $username]);
     }
 
+    public function actionPhoto()
+    {
+        $photoFile = UploadedFile::getInstanceByName('photoFile');
+        $postData = \Yii::$app->request->post();
+        $user = User::findOne($postData['id']);
+        $userExtra = UserExtra::findOne(['user_id' => $user->id]);
+
+        $transaction = Yii::$app->db->beginTransaction();
+        try {
+            if (!$user) {
+                throw new \Exception("User not found");
+            }
+            if ($photoFile) {
+                $photoPath = $userExtra->uploadUserPhoto($photoFile);
+                $userExtra->photo = $photoPath;
+            }
+            if ($user->save(false) && $userExtra->save(false)) {
+                $transaction->commit();
+                return [
+                    'status' => 'success',
+                    'photo' => $userExtra->photo
+                ];
+            } else {
+                $transaction->rollBack();
+                \Yii::$app->response->statusCode = 400;
+                throw new \Exception('Failed to save Photo: ' . json_encode($user->getErrors()));
+            }
+        } catch (\Exception $e) {
+            $transaction->rollBack();
+            throw $e;
+        }
+    }
 }

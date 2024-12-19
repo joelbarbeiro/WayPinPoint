@@ -85,6 +85,12 @@ public class UserDbHelper extends SQLiteOpenHelper {
         return this.db.update(TABLE_NAME, values, ID + "= ?", new String[]{"" + user.getId()}) > 0;
     }
 
+    public boolean editPhotoDb(String photo, int id) {
+        ContentValues values = new ContentValues();
+        values.put(PHOTO, photo);
+        return this.db.update(TABLE_NAME, values, ID + "= ?", new String[]{"" + id}) > 0;
+    }
+
     public boolean removeUserDb(int id) {
         return this.db.delete(TABLE_NAME, ID + "= ?", new String[]{"" + id}) == 1;
     }

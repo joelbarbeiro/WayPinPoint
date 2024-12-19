@@ -108,6 +108,7 @@
             android:id="@+id/buttonDelete"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:onClick="onClickDelete"
             android:text="@string/my_profile_delete_button" />
     </LinearLayout>
 </LinearLayout>
