@@ -68,6 +68,7 @@ return [
                         'POST register' => 'register',
                         'POST login' => 'login',
                         'PUT {id}' => 'edituserextras',
+                        'PUT photo' => 'photo',
                     ],
                     'tokens' => [
                         '{id}' => '<id:\\d+>',
@@ -92,7 +93,7 @@ return [
                     'controller' => 'api/cart',
                     'extraPatterns' => [
                         'GET count' => 'count',
-                        'GET {id}' => 'products',
+                        'GET {id}' => 'cart',
                         'GET status' => 'status',
                         'GET buyers/{id}' => 'buyer',
                         'DELETE delete/{id}' => 'delete',

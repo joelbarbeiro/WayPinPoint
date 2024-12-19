@@ -45,7 +45,7 @@ class CartController extends ActiveController
         return ['count' => count($recs)];
     }
 
-    public function actionProducts($id)
+    public function actionCart($id)
     {
         $cartModel = new $this->modelClass;
         $recs = $cartModel::findOne(['id' => $id]);
@@ -69,6 +69,7 @@ class CartController extends ActiveController
                 'status' => $cart['status'],
                 'date' => $cart['calendar']['date']['date'] ?? 'Unknown Date',
                 'time' => $cart['calendar']['time']['hour'] ?? 'Unknown Time',
+                'price' => $cart['activity']['priceperpax'],
             ];
         }, $cartItems);
         return $data;
