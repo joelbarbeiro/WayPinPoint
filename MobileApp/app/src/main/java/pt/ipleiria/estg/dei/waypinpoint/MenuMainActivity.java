@@ -97,6 +97,9 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
             fragmentManager.beginTransaction().replace(R.id.contentFragment, fragment).commit();
         return true;
     }
+    private void loadActivitiesFragment(){
+
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

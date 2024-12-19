@@ -26,9 +26,9 @@ public class ActivityDbHelper extends SQLiteOpenHelper {
     private static final String CATGORY = "catgory";
     private final SQLiteDatabase db;
 
-    public ActivityDbHelper(@Nullable Context context, @Nullable String name, @Nullable SQLiteDatabase.CursorFactory factory, int version, SQLiteDatabase db) {
-        super(context, name, factory, version);
-        this.db = db;
+    public ActivityDbHelper(@Nullable Context context) {
+        super(context, DB_NAME, null, DB_VERSION);
+        this.db = getWritableDatabase();
     }
 
     @Override

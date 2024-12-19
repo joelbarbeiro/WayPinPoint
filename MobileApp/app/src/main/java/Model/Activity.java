@@ -17,12 +17,15 @@ public class Activity {
         this.status = status;
         this.catgory = catgory;
     }
+
     public int getId(){
         return id;
     }
+
     public void setId(int id){
         this.id = id;
     }
+
     public int getMaxpax() {
         return maxpax;
     }

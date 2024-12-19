@@ -260,10 +260,10 @@ public class SingletonManager {
     public void addActivitiesDB(ArrayList<Activity> activities){
         activityDbHelper.delAllActivitiesDB();
         for(Activity a: activities){
-            addActivityDB(a);
+            activityDbHelper.addActivityDB(a);
         }
     }
-    public void getActivities(final Context context){
+    public void getActivities(String apiHost, final Context context){
         if(!StatusJsonParser.isConnectionInternet(context)){
             Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
 
@@ -271,12 +271,12 @@ public class SingletonManager {
                 activitiesListener.onRefreshActivitiesList(activityDbHelper.getActivitiesDB());
             }
         } else {
-            JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, urlApi + "activities", null, new Response.Listener<JSONArray>() {
+            JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, apiHost + "activities", null, new Response.Listener<JSONArray>() {
                 @Override
                 public void onResponse(JSONArray response) {
                     System.out.println("------> GETAPI: " + response);
                     activities = ActivityJsonParser.parserJsonActivity(response);
-                    activityDbHelper.getActivitiesDB(activities);
+                    addActivitiesDB(activities);
 
                     if(activitiesListener != null){
                         activitiesListener.onRefreshActivitiesList(activities);
