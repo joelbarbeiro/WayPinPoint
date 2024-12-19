@@ -37,6 +37,10 @@
     <string name="my_profile_phone">Phone</string>
     <string name="my_profile_save_button">Save Changes</string>
     <string name="my_profile_delete_button">Delete Profile</string>
+    <string name="my_profile_deleted">Profile Deleted With Success</string>
+    <string name="my_profile_fields_warning">You have to fill all the fields</string>
+    <string name="my_profile_nif_phone_warning">Nif/Phone has to be valid</string>
+    <string name="menu_main_user_edited">User Edited With Success</string>
 
     <!-- Dashboard -->
     <string name="dashboard_name_label">Name: </string>
@@ -54,7 +58,9 @@
     <string name="bt_hostname_save">Save</string>
     <string name="config_api_hostname_title">Config Api Hostname</string>
     <string name="api_hostname_back_login">Back</string>
-    <string name="error_invalid_token"><![CDATA[--->Invalid token]]></string>
+    <string name="error_invalid_token">Invalid token</string>
+    <string name="error_default">Something went wrong</string>
+
 
     <!-- Dialogs-->
     <string name="dialog_logout_message">Do you really want to logout ?</string>
@@ -62,7 +68,6 @@
     <string name="dialog_delete_message">Are you sure you want to delete your profile?\n Such an action cannot be reversed</string>
     <string name="yes_string">Yes</string>
     <string name="no_string">No</string>
-    <string name="menu_main_user_edited">User Edited With Success</string>
-    <string name="my_profile_deleted">Profile Deleted With Success</string>
+
 
 </resources>

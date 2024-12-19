@@ -1,13 +1,28 @@
 package pt.ipleiria.estg.dei.waypinpoint;
 
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.DELETE;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EDIT;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EMAIL;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.OP_CODE;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.PICK_IMAGE;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.SNACKBAR_MESSAGE;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.TOKEN;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.USER_DATA;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getUserId;
+
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,15 +38,13 @@ import androidx.fragment.app.FragmentManager;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 
+import Model.SingletonManager;
 import Model.UserDbHelper;
+import pt.ipleiria.estg.dei.waypinpoint.utils.Utilities;
 
 public class MenuMainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    public static final String EMAIL = "EMAIL";
-    public static final String ID = "ID";
-    public static final int EDIT = 200;
-    public static final int DELETE = 300;
-
+    private ImageView photoProfile;
     private DrawerLayout drawer;
     private NavigationView navigationView;
     private String email;
@@ -41,9 +54,10 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu_main);
-        SharedPreferences sharedPreferencesUser = getSharedPreferences("USER_DATA", MODE_PRIVATE);
+        SharedPreferences sharedPreferencesUser = getSharedPreferences(USER_DATA, MODE_PRIVATE);
         fragmentManager = getSupportFragmentManager();
         Toolbar toolbar = findViewById(R.id.toolbar);
+        photoProfile = findViewById(R.id.profilePhoto);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -71,7 +85,14 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
         View hView = navigationView.getHeaderView(0);
         TextView nav_tvEmail = hView.findViewById(R.id.headerMenuTextViewEmail);
         nav_tvEmail.setText(email);
+
+        ImageView profileImageView = hView.findViewById(R.id.profilePhoto);
+        profileImageView.setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            startActivityForResult(intent, PICK_IMAGE);
+        });
     }
+
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -104,7 +125,7 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
                         UserDbHelper userDbHelper = new UserDbHelper(getApplicationContext());
                         userDbHelper.removeAllUsersDb();
                         SharedPreferences.Editor editorUser = sharedPreferencesUser.edit();
-                        editorUser.putString("TOKEN", "NO TOKEN");
+                        editorUser.putString(TOKEN, "NO TOKEN");
                         editorUser.apply();
                         Intent intent = new Intent(MenuMainActivity.this, LoginActivity.class);
                         startActivity(intent);
@@ -125,15 +146,15 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == EDIT) {
-                if (data.getIntExtra(LoginActivity.OP_CODE, 0) == MenuMainActivity.DELETE) {
-                    SharedPreferences sharedPreferencesUser = getSharedPreferences("USER_DATA", MODE_PRIVATE);
+                if (data.getIntExtra(OP_CODE, 0) == DELETE) {
+                    SharedPreferences sharedPreferencesUser = getSharedPreferences(USER_DATA, MODE_PRIVATE);
                     UserDbHelper userDbHelper = new UserDbHelper(getApplicationContext());
                     userDbHelper.removeAllUsersDb();
                     SharedPreferences.Editor editorUser = sharedPreferencesUser.edit();
-                    editorUser.putString("TOKEN", "NO TOKEN");
+                    editorUser.putString(TOKEN, "NO TOKEN");
                     editorUser.apply();
                     Intent intent = new Intent(MenuMainActivity.this, LoginActivity.class);
-                    intent.putExtra("SNACKBAR_MESSAGE", R.string.my_profile_deleted);
+                    intent.putExtra(SNACKBAR_MESSAGE, R.string.my_profile_deleted);
                     startActivity(intent);
                     finish();
                 } else {
@@ -141,7 +162,36 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
                     Snackbar.make(rootview, R.string.menu_main_user_edited, Snackbar.LENGTH_SHORT).show();
                 }
             }
+            if (requestCode == PICK_IMAGE && data != null) {
+                int id = getUserId(getApplicationContext());
+                Uri imageUri = data.getData();
+
+                // Get the file path from the Uri
+                String filePath = getPathFromUri(imageUri);
+
+                if (filePath != null) {
+                    String apiHost = Utilities.getApiHost(getApplicationContext());
+                    SingletonManager.getInstance(getApplicationContext()).addPhotoApi(apiHost, id, filePath, getApplicationContext());
+                } else {
+                    Toast.makeText(getApplicationContext(), "Unable to get the file path", Toast.LENGTH_SHORT).show();
+                }
+            }
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private String getPathFromUri(Uri uri) {
+        String[] projection = {MediaStore.Images.Media.DATA};
+        Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
+
+        if (cursor != null) {
+            int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            String filePath = cursor.getString(columnIndex);
+            cursor.close();
+            return filePath;
+        }
+
+        return null;
     }
 }

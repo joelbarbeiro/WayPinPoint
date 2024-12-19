@@ -1,6 +1,9 @@
 package pt.ipleiria.estg.dei.waypinpoint;
 
 import static Model.User.DEFAULT_IMG;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.APIHOST;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EMAIL;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.OP_CODE;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,8 +22,7 @@ import Model.User;
 
 public class RegisterActivity extends AppCompatActivity implements UserListener {
 
-    public static final String EMAIL = "EMAIL";
-    public static final String APIHOST = "APIHOST";
+
     private User user;
     private String apiHost, username, address, email, password, photo = "";
     private int nif, phone;
@@ -30,6 +32,7 @@ public class RegisterActivity extends AppCompatActivity implements UserListener 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+
         etUsername = findViewById(R.id.registerTvUsername);
         etEmail = findViewById(R.id.registerTvEmail);
         etPassword = findViewById(R.id.registerTvPassword);
@@ -109,12 +112,12 @@ public class RegisterActivity extends AppCompatActivity implements UserListener 
         isPhoneValid = isPhoneValid(phone);
 
         if (username.isEmpty() || email.isEmpty() || password.isEmpty() || address.isEmpty()) {
-            Toast.makeText(this, "You have to fill all the fields", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.my_profile_fields_warning, Toast.LENGTH_SHORT).show();
             return;
         }
 
         if (!isPhoneValid && !isNifValid) {
-            Toast.makeText(this, "Nif/Phone has to be valid", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.my_profile_nif_phone_warning, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -133,7 +136,7 @@ public class RegisterActivity extends AppCompatActivity implements UserListener 
             );
             SingletonManager.getInstance(getApplicationContext()).addUserApi(apiHost, user, getApplicationContext());
         } else {
-            Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.error_default, Toast.LENGTH_SHORT).show();
         }
         SingletonManager.getInstance(getApplicationContext()).setUserListener(this);
     }
@@ -141,7 +144,7 @@ public class RegisterActivity extends AppCompatActivity implements UserListener 
     @Override
     public void onValidateOperation(int op) {
         Intent intent = new Intent();
-        intent.putExtra(LoginActivity.OP_CODE, op);
+        intent.putExtra(OP_CODE, op);
         setResult(RESULT_OK, intent);
         finish();
     }
