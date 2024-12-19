@@ -34,6 +34,7 @@ public class ApiHostnameSetupActivity extends AppCompatActivity {
         }
 
     }
+
     public void onClickSaveHostname(View view){
 
         hostname = "http://" + etHostname.getText().toString() + ":8080/api/";
@@ -56,12 +57,6 @@ public class ApiHostnameSetupActivity extends AppCompatActivity {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public void onClickHostnameBack(View view) {
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent);
-        finish();
     }
 
     public String extractDns(String hostname) {
