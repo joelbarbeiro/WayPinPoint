@@ -5,7 +5,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.jar.JarException;
 
 import Model.Cart;
 
@@ -45,7 +44,7 @@ public class CartJsonParser {
         return carts;
     }
 
-    public static Cart parsonJsonCart(String response) {
+    public static Cart parserJsonCart(String response) {
         Cart auxCart = null;
 
         try {
