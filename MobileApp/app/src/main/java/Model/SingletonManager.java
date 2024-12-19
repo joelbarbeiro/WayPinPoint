@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import Listeners.ActivitiesListener;
+import Listeners.ActivityListener;
 import Listeners.LoginListener;
 import Listeners.UserListener;
 import Listeners.UsersListener;
@@ -48,6 +49,7 @@ public class SingletonManager {
     //region # Activities instances #
 
     private ActivitiesListener activitiesListener;
+    private ActivityListener activityListener;
     private ActivityDbHelper activityDbHelper = null;
 
     private ArrayList<Activity> activities;
@@ -256,14 +258,28 @@ public class SingletonManager {
     //endregion
 
     //region # Activity API #
+    public void setActivitiesListener(ActivitiesListener activitiesListener) {
+        this.activitiesListener = activitiesListener;
+    }
 
+    public void setActivityListener(ActivityListener activityListener) {
+        this.activityListener = activityListener;
+    }
+    public Activity getActivity(int id){
+        for(Activity a: activities){
+            if(a.getId() == id){
+                return a;
+            }
+        }
+        return null;
+    }
     public void addActivitiesDB(ArrayList<Activity> activities){
         activityDbHelper.delAllActivitiesDB();
         for(Activity a: activities){
             activityDbHelper.addActivityDB(a);
         }
     }
-    public void getActivities(String apiHost, final Context context){
+    public void getActivities( final Context context){
         if(!StatusJsonParser.isConnectionInternet(context)){
             Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
 

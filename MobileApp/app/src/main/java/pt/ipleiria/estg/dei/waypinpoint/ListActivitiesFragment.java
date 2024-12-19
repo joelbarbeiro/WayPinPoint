@@ -1,5 +1,6 @@
 package pt.ipleiria.estg.dei.waypinpoint;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -11,21 +12,21 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.ArrayList;
 
 import Listeners.ActivitiesListener;
 import Model.Activity;
+import Model.SingletonManager;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ListActivitiesFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class ListActivitiesFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, ActivitiesListener {
 
     private ListView lvActivities;
     private ArrayList<Activity> activities;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private FloatingActionButton fabCrudActivity;
 
     public ListActivitiesFragment() {
         // Required empty public constructor
@@ -41,11 +42,28 @@ public class ListActivitiesFragment extends Fragment implements SwipeRefreshLayo
         lvActivities.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent = new Intent(getContext(), )
-                        //TODO: ActivityDetails <----- !!!
+                Intent intent = new Intent(getContext(), ActivityDetailsActivity.class);
+                intent.putExtra(ActivityDetailsActivity.ID_ACTIVITY, (int) l );
+                //startActivity(intent);
+                startActivityForResult(intent, MenuMainActivity.EDIT);
             }
         });
-        return inflater.inflate(R.layout.fragment_list_activities, container, false);
+
+        fabCrudActivity = view.findViewById(R.id.fabCrudActivity);
+        fabCrudActivity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), ActivityDetailsActivity.class);
+                startActivityForResult(intent, MenuMainActivity.ADD);
+            }
+        });
+        swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout);
+        swipeRefreshLayout.setOnRefreshListener(this);
+
+        SingletonManager.getInstance(getContext()).setActivitiesListener(this);
+        SingletonManager.getInstance(getContext()).getActivities(getContext());
+
+        return view;
     }
 
     @Override

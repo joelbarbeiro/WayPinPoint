@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -27,7 +28,7 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
 
     public static final String EMAIL = "EMAIL";
     public static final String ID = "ID";
-    public static final int EDIT = 100;
+    public static final int ADD = 100, EDIT = 200, DELETE = 300;
 
     private DrawerLayout drawer;
     private NavigationView navigationView;
@@ -52,6 +53,11 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
         drawer.addDrawerListener(toggle);
         loadHeader(sharedPreferencesUser);
         navigationView.setNavigationItemSelectedListener(this);
+        loadDefaultFragment();
+    }
+    private void loadDefaultFragment(){
+        Fragment fragment = new ListActivitiesFragment();
+        fragmentManager.beginTransaction().replace(R.id.contentFragment, fragment).commit();
     }
 
     private void loadHeader(SharedPreferences sharedPreferencesUser) {

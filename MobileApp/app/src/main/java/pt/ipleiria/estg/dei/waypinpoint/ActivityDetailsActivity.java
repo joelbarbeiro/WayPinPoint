@@ -5,24 +5,23 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import Model.Activity;
 import Model.SingletonManager;
 
 public class ActivityDetailsActivity extends AppCompatActivity {
 
+    public static final String ID_ACTIVITY = "ID_ACTIVITY";
     private Activity activity;
     private EditText etName;
     private EditText etDescription;
     private EditText etMaxPax;
     private EditText etPricePerPax;
-    private Spinner spinnerDate;
-    private Spinner spinnerHour;
+    private Spinner spinnerDateTime;
     private ImageView imageActivity;
 
     @Override
@@ -30,17 +29,31 @@ public class ActivityDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
 
-        activity = SingletonManager.getInstance(getApplicationContext().getActivity(id));
+        int id =getIntent().getIntExtra(ID_ACTIVITY, 0);
+
+        activity = SingletonManager.getInstance(getApplicationContext()).getActivity(id);
 
         etName = findViewById(R.id.etActivityName);
         etDescription = findViewById(R.id.etActivityDescription);
         etMaxPax = findViewById(R.id.etActivityMaxPax);
         etPricePerPax = findViewById(R.id.etActivityPricePerPax);
-        spinnerDate = findViewById(R.id.spinnerActivityDate);
-        spinnerHour = findViewById(R.id.spinnerActivityHour);
+        spinnerDateTime = findViewById(R.id.spinnerActivityDateTime);
 
         if(activity != null){
 
         }
+    }
+    private void deployActivity(){
+        setTitle("Detalhes: " + activity.getName());
+
+        etName.setText(activity.getName());
+        etDescription.setText(activity.getDescription());
+        etMaxPax.setText("" + activity.getMaxpax());
+        etPricePerPax.setText("" + activity.getPriceperpax());
+        Glide.with(getApplicationContext())
+                .load(activity.getPhoto())
+                .placeholder(R.drawable.img_default_activity)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(imageActivity);
     }
 }
