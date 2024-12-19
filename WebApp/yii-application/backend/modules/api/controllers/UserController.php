@@ -138,6 +138,7 @@ class UserController extends ActiveController
 
         $user = User::findOne($id);
         $userExtra = UserExtra::findOne(['user_id' => $user->id]);
+        
 
 
         $nifExists = (new Query())
