@@ -18,6 +18,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -69,6 +70,11 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
         drawer.addDrawerListener(toggle);
         loadHeader(sharedPreferencesUser);
         navigationView.setNavigationItemSelectedListener(this);
+        loadDefaultFragment();
+    }
+    private void loadDefaultFragment(){
+        Fragment fragment = new ListActivitiesFragment();
+        fragmentManager.beginTransaction().replace(R.id.contentFragment, fragment).commit();
     }
 
     private void loadHeader(SharedPreferences sharedPreferencesUser) {

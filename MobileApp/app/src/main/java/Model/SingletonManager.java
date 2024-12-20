@@ -10,15 +10,18 @@ import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.USER_DATA;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.http.UrlRequest;
 import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -27,12 +30,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import Listeners.ActivitiesListener;
+import Listeners.ActivityListener;
 import Listeners.LoginListener;
 import Listeners.UserListener;
 import pt.ipleiria.estg.dei.waypinpoint.R;
-import pt.ipleiria.estg.dei.waypinpoint.utils.MultipartRequest;
+import pt.ipleiria.estg.dei.waypinpoint.utils.ActivityJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.StatusJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.UserJsonParser;
+import pt.ipleiria.estg.dei.waypinpoint.utils.Utilities;
 
 public class SingletonManager {
 
@@ -44,11 +50,26 @@ public class SingletonManager {
     private UserListener userListener;
     private LoginListener loginListener;
 
+    //region # Activities instances #
+    private ActivityDbHelper activityDbHelper = null;
+
+    private ActivitiesListener activitiesListener;
+    private ArrayList<Activity> activities;
+
+    private ActivityListener activityListener;
+
+
+    //endregion
+
     private static RequestQueue volleyQueue = null;
+
 
     public SingletonManager(Context context) {
         users = new ArrayList<>();
         userDbHelper = new UserDbHelper(context);
+
+        activities = new ArrayList<>();
+        activityDbHelper = new ActivityDbHelper(context);
     }
 
     public static synchronized SingletonManager getInstance(Context context) {
@@ -292,6 +313,68 @@ public class SingletonManager {
             volleyQueue.add(request);
         }
     }
+    //endregion
+
+    //region # Activity API #
+    public void setActivitiesListener(ActivitiesListener activitiesListener) {
+        this.activitiesListener = activitiesListener;
+    }
+
+    public void setActivityListener(ActivityListener activityListener) {
+        this.activityListener = activityListener;
+    }
+
+    public ArrayList<Activity> getActivities(){
+        activities = activityDbHelper.getActivitiesDB();
+        return new ArrayList<>(activities);
+    }
+
+    public Activity getActivity(int id){
+        for(Activity a: activities){
+            if(a.getId() == id){
+                return a;
+            }
+        }
+        return null;
+    }
+    public void addActivitiesDB(ArrayList<Activity> activities){
+        //activityDbHelper.delAllActivitiesDB();
+        for(Activity a: activities){
+            System.out.println("DB Add --> " + a);
+            activityDbHelper.addActivityDB(a);
+        }
+    }
+    public void getActivities( final Context context){
+        String apiHost = Utilities.getApiHost(context);
+        if(!StatusJsonParser.isConnectionInternet(context)){
+            Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
+
+            if(activitiesListener != null){
+                activitiesListener.onRefreshActivitiesList(activityDbHelper.getActivitiesDB());
+            }
+        } else {
+            JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, apiHost + "activities", null, new Response.Listener<JSONArray>() {
+                @Override
+                public void onResponse(JSONArray response) {
+                    System.out.println("--> GETAPI: " + response);
+                    activities = ActivityJsonParser.parserJsonActivity(response);
+                    addActivitiesDB(activities);
+
+                    if(activitiesListener != null){
+                        activitiesListener.onRefreshActivitiesList(activities);
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    System.out.println("--> GET --> " + error);
+
+                }
+            });
+        volleyQueue.add(request);
+        }
+    }
+
     //endregion
 
 }

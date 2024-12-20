@@ -7,6 +7,7 @@ import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.SNACKBAR_MESSAGE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.TOKEN;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.USER_DATA;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getApiHost;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getImgUri;
 
 import android.app.Activity;
 import android.content.Context;
@@ -70,6 +71,7 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
             apiHost = getApiHost(getApplicationContext());
             View rootView = findViewById(R.id.loginView);
             Snackbar.make(rootView, "Hostname: " + apiHost, Snackbar.LENGTH_SHORT).show();
+            System.out.println("--> img path " + getImgUri(getApplicationContext()));
         }
 
         if (isTokenValid()) {
