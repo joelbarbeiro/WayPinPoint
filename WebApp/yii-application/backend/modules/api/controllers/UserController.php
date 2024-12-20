@@ -7,7 +7,6 @@ use common\models\UserExtra;
 use Yii;
 use yii\db\Query;
 use yii\rest\ActiveController;
-use yii\web\UploadedFile;
 
 /**
  * Default controller for the `api` module
@@ -185,7 +184,6 @@ class UserController extends ActiveController
 
         $user = User::findOne($id);
         $userExtra = UserExtra::findOne(['user_id' => $user->id]);
-        
 
 
         $nifExists = (new Query())
@@ -203,6 +201,7 @@ class UserController extends ActiveController
             if (!$user) {
                 throw new \Exception("User not found");
             }
+
             $user->username = $postData['username'] ?? $user->username;
             $user->email = $postData['email'] ?? $user->email;
             $user->updated_at = time();
@@ -211,11 +210,10 @@ class UserController extends ActiveController
             $userExtra->nif = $postData['nif'] ?? $userExtra->nif;
 
             if (!empty($postData['photoFile'])) {
-                $userExtra->photo = $userExtra->uploadUserPhoto($postData['photoFile']);
+                $userExtra->photo = $postData['photoFile'];
             }
 
             if ($user->save(false) && $userExtra->save(false)) {
-                echo "NAO PASSEI";
                 $transaction->commit();
                 return [
                     'status' => 'success',
@@ -247,20 +245,35 @@ class UserController extends ActiveController
 
     public function actionPhoto()
     {
-        $photoFile = UploadedFile::getInstanceByName('photoFile');
         $postData = \Yii::$app->request->post();
-        $user = User::findOne($postData['id']);
+        $id = $postData['id'];
+
+        $photoFile = \yii\web\UploadedFile::getInstanceByName('photoFile');
+
+        if (!$photoFile) {
+            \Yii::$app->response->statusCode = 400;
+            return ['status' => 'error', 'message' => 'No file uploaded'];
+        }
+
+        $user = User::findOne($id);
+        if (!$user) {
+            \Yii::$app->response->statusCode = 400;
+            return ['status' => 'error', 'message' => 'User not found'];
+        }
+
         $userExtra = UserExtra::findOne(['user_id' => $user->id]);
 
         $transaction = Yii::$app->db->beginTransaction();
         try {
-            if (!$user) {
-                throw new \Exception("User not found");
-            }
             if ($photoFile) {
-                $photoPath = $userExtra->uploadUserPhoto($photoFile);
+                $photoPath = Yii::getAlias('@backend/web/img/user/' . $id . '/' . uniqid() . '.' . $photoFile->extension);
+                if (!$photoFile->saveAs($photoPath)) {
+                    throw new \Exception("Failed to save uploaded photo.");
+                }
+
                 $userExtra->photo = $photoPath;
             }
+
             if ($user->save(false) && $userExtra->save(false)) {
                 $transaction->commit();
                 return [
@@ -270,11 +283,12 @@ class UserController extends ActiveController
             } else {
                 $transaction->rollBack();
                 \Yii::$app->response->statusCode = 400;
-                throw new \Exception('Failed to save Photo: ' . json_encode($user->getErrors()));
+                throw new \Exception('Failed to save user or user extra data');
             }
         } catch (\Exception $e) {
             $transaction->rollBack();
-            throw $e;
+            \Yii::$app->response->statusCode = 500;
+            return ['status' => 'error', 'message' => $e->getMessage()];
         }
     }
 }

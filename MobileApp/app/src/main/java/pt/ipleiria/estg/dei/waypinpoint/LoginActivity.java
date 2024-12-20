@@ -6,6 +6,7 @@ import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.REGISTER;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.SNACKBAR_MESSAGE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.TOKEN;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.USER_DATA;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.checkAndRequestPermissions;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getApiHost;
 
 import android.app.Activity;
@@ -45,6 +46,7 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
         etPassword = findViewById(R.id.registerTvPassword);
 
         FloatingActionButton fabApiHost;
+        checkAndRequestPermissions(getApplicationContext(), LoginActivity.this);
 
         fabApiHost = findViewById(R.id.fabApiHostnameConfig);
         fabApiHost.setOnClickListener(new View.OnClickListener() {

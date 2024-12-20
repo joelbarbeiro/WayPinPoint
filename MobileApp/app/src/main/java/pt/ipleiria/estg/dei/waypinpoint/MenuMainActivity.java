@@ -5,16 +5,17 @@ import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EDIT;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EMAIL;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.OP_CODE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.PICK_IMAGE;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.PROFILE_PIC;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.SNACKBAR_MESSAGE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.TOKEN;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.USER_DATA;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getApiHost;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getUserId;
 
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -22,7 +23,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -35,12 +35,14 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 
 import Model.SingletonManager;
+import Model.User;
 import Model.UserDbHelper;
-import pt.ipleiria.estg.dei.waypinpoint.utils.Utilities;
+import pt.ipleiria.estg.dei.waypinpoint.utils.ImageSender;
 
 public class MenuMainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -49,11 +51,18 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
     private NavigationView navigationView;
     private String email;
     private FragmentManager fragmentManager;
+    private int id;
+    private User user;
+    private String apiHost;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu_main);
+
+        id = getUserId(getApplicationContext());
+        user = SingletonManager.getInstance(getApplicationContext()).getUser(id);
+
         SharedPreferences sharedPreferencesUser = getSharedPreferences(USER_DATA, MODE_PRIVATE);
         fragmentManager = getSupportFragmentManager();
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -67,11 +76,11 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.ndOpen, R.string.ndClose);
         toggle.syncState();
         drawer.addDrawerListener(toggle);
-        loadHeader(sharedPreferencesUser);
+        loadHeader(sharedPreferencesUser, user);
         navigationView.setNavigationItemSelectedListener(this);
     }
 
-    private void loadHeader(SharedPreferences sharedPreferencesUser) {
+    private void loadHeader(SharedPreferences sharedPreferencesUser, User user) {
         email = getIntent().getStringExtra(EMAIL).toString();
 
         if (email != null) {
@@ -87,6 +96,21 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
         nav_tvEmail.setText(email);
 
         ImageView profileImageView = hView.findViewById(R.id.profilePhoto);
+
+        String profilePic = user.getPhoto() != null ? user.getPhoto() : sharedPreferencesUser.getString(PROFILE_PIC, null);
+        if (profilePic == null) {
+            Glide.with(this)
+                    .load(R.drawable.ic_default_profile)
+                    .placeholder(R.drawable.ic_default_profile)
+                    .error(R.drawable.ic_default_profile)
+                    .into(profileImageView);
+        } else {
+            Glide.with(this)
+                    .load(profilePic)
+                    .override(600, 600)
+                    .circleCrop()
+                    .into(profileImageView);
+        }
         profileImageView.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             startActivityForResult(intent, PICK_IMAGE);
@@ -97,7 +121,7 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         Fragment fragment = null;
-        SharedPreferences sharedPreferencesUser = getSharedPreferences("USER_DATA", MODE_PRIVATE);
+        SharedPreferences sharedPreferencesUser = getSharedPreferences(USER_DATA, MODE_PRIVATE);
         if (item.getItemId() == R.id.navMyProfile) {
             Intent intent = new Intent(this, MyProfileActivity.class);
             startActivityForResult(intent, EDIT);
@@ -113,6 +137,54 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
         if (fragment != null)
             fragmentManager.beginTransaction().replace(R.id.contentFragment, fragment).commit();
         return true;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == EDIT) {
+                if (data.getIntExtra(OP_CODE, 0) == DELETE) {
+                    SharedPreferences sharedPreferencesUser = getSharedPreferences(USER_DATA, MODE_PRIVATE);
+                    UserDbHelper userDbHelper = new UserDbHelper(getApplicationContext());
+                    userDbHelper.removeAllUsersDb();
+                    SharedPreferences.Editor editorUser = sharedPreferencesUser.edit();
+                    editorUser.putString(TOKEN, "NO TOKEN");
+                    editorUser.apply();
+                    Intent intent = new Intent(MenuMainActivity.this, LoginActivity.class);
+                    intent.putExtra(SNACKBAR_MESSAGE, R.string.my_profile_deleted);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    View rootview = findViewById(R.id.drawerLayout);
+                    Snackbar.make(rootview, R.string.menu_main_user_edited, Snackbar.LENGTH_SHORT).show();
+                }
+            }
+            if (requestCode == PICK_IMAGE && data != null) {
+                Uri imageUri = data.getData();
+                id = getUserId(getApplicationContext());
+                apiHost = getApiHost(getApplicationContext());
+
+                ImageSender imageSender = new ImageSender(getApplicationContext());
+                imageSender.sendImageToServer(apiHost, id, imageUri, 600);
+                // Save the selected image URI for future use
+                SharedPreferences sharedPreferences = getSharedPreferences(USER_DATA, MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString(PROFILE_PIC, imageUri.toString());
+                editor.apply();
+                View hView = navigationView.getHeaderView(0);
+                ImageView photoProfile = hView.findViewById(R.id.profilePhoto);
+
+                Glide.with(this)
+                        .load(imageUri)
+                        .placeholder(R.drawable.ic_default_profile)
+                        .error(R.drawable.ic_default_profile)
+                        .into(photoProfile);
+                user = SingletonManager.getInstance(getApplicationContext()).getUser(id);
+                user.setPhoto(String.valueOf(imageUri));
+//                SingletonManager.getInstance(getApplicationContext()).editUserApi(apiHost,user,getApplicationContext());
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     private void dialogLogout(SharedPreferences sharedPreferencesUser) {
@@ -140,58 +212,5 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
                 })
                 .setIcon(R.drawable.ic_logout_menu)
                 .show();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == EDIT) {
-                if (data.getIntExtra(OP_CODE, 0) == DELETE) {
-                    SharedPreferences sharedPreferencesUser = getSharedPreferences(USER_DATA, MODE_PRIVATE);
-                    UserDbHelper userDbHelper = new UserDbHelper(getApplicationContext());
-                    userDbHelper.removeAllUsersDb();
-                    SharedPreferences.Editor editorUser = sharedPreferencesUser.edit();
-                    editorUser.putString(TOKEN, "NO TOKEN");
-                    editorUser.apply();
-                    Intent intent = new Intent(MenuMainActivity.this, LoginActivity.class);
-                    intent.putExtra(SNACKBAR_MESSAGE, R.string.my_profile_deleted);
-                    startActivity(intent);
-                    finish();
-                } else {
-                    View rootview = findViewById(R.id.drawerLayout);
-                    Snackbar.make(rootview, R.string.menu_main_user_edited, Snackbar.LENGTH_SHORT).show();
-                }
-            }
-            if (requestCode == PICK_IMAGE && data != null) {
-                int id = getUserId(getApplicationContext());
-                Uri imageUri = data.getData();
-
-                // Get the file path from the Uri
-                String filePath = getPathFromUri(imageUri);
-
-                if (filePath != null) {
-                    String apiHost = Utilities.getApiHost(getApplicationContext());
-                    SingletonManager.getInstance(getApplicationContext()).addPhotoApi(apiHost, id, filePath, getApplicationContext());
-                } else {
-                    Toast.makeText(getApplicationContext(), "Unable to get the file path", Toast.LENGTH_SHORT).show();
-                }
-            }
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    private String getPathFromUri(Uri uri) {
-        String[] projection = {MediaStore.Images.Media.DATA};
-        Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
-
-        if (cursor != null) {
-            int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-            cursor.moveToFirst();
-            String filePath = cursor.getString(columnIndex);
-            cursor.close();
-            return filePath;
-        }
-
-        return null;
     }
 }

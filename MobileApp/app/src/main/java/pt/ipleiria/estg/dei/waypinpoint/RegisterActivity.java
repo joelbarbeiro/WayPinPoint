@@ -1,7 +1,7 @@
 package pt.ipleiria.estg.dei.waypinpoint;
 
-import static Model.User.DEFAULT_IMG;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.APIHOST;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.DEFAULT_IMG;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EMAIL;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.OP_CODE;
 
