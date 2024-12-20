@@ -8,7 +8,6 @@ import android.content.SharedPreferences;
 import pt.ipleiria.estg.dei.waypinpoint.MenuMainActivity;
 
 public class Utilities {
-
     public static final int REGISTER = 100;
     public static final int EDIT = 200;
     public static final int DELETE = 300;

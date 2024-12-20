@@ -108,7 +108,7 @@ return [
                     'class' => 'yii\rest\UrlRule',
                     'controller' => 'api/activity',
                     'extraPatterns' => [
-                        'GET' => 'activities',
+                        'GET all' => 'activities',
                         'GET {id}' => 'activityview',
                         'POST' => 'createactivity',
                         'PUT {id}' => 'updateactivity',

@@ -38,6 +38,7 @@ import pt.ipleiria.estg.dei.waypinpoint.R;
 import pt.ipleiria.estg.dei.waypinpoint.utils.ActivityJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.StatusJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.UserJsonParser;
+import pt.ipleiria.estg.dei.waypinpoint.utils.Utilities;
 
 public class SingletonManager {
 
@@ -332,6 +333,7 @@ public class SingletonManager {
         }
     }
     public void getActivities( final Context context){
+        String apiHost = Utilities.getApiHost(context);
         if(!StatusJsonParser.isConnectionInternet(context)){
             Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
 
@@ -342,7 +344,7 @@ public class SingletonManager {
             JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, apiHost + "activities", null, new Response.Listener<JSONArray>() {
                 @Override
                 public void onResponse(JSONArray response) {
-                    System.out.println("------> GETAPI: " + response);
+                    System.out.println("--> GETAPI: " + response);
                     activities = ActivityJsonParser.parserJsonActivity(response);
                     addActivitiesDB(activities);
 
@@ -353,7 +355,8 @@ public class SingletonManager {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
+                    System.out.println("--> GET --> " + error);
+
                 }
             });
         volleyQueue.add(request);

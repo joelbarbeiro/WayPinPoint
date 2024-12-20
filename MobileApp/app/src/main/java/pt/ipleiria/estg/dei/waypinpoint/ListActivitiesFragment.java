@@ -1,5 +1,9 @@
 package pt.ipleiria.estg.dei.waypinpoint;
 
+import static android.graphics.PorterDuff.Mode.ADD;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EDIT;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.REGISTER;
+
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -19,6 +23,7 @@ import java.util.ArrayList;
 import Listeners.ActivitiesListener;
 import Model.Activity;
 import Model.SingletonManager;
+import adaptors.ActivitiesListAdaptor;
 
 
 public class ListActivitiesFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, ActivitiesListener {
@@ -45,7 +50,7 @@ public class ListActivitiesFragment extends Fragment implements SwipeRefreshLayo
                 Intent intent = new Intent(getContext(), ActivityDetailsActivity.class);
                 intent.putExtra(ActivityDetailsActivity.ID_ACTIVITY, (int) l );
                 //startActivity(intent);
-                startActivityForResult(intent, MenuMainActivity.EDIT);
+                startActivityForResult(intent, EDIT);
             }
         });
 
@@ -54,7 +59,7 @@ public class ListActivitiesFragment extends Fragment implements SwipeRefreshLayo
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getContext(), ActivityDetailsActivity.class);
-                startActivityForResult(intent, MenuMainActivity.ADD);
+                startActivityForResult(intent, REGISTER);
             }
         });
         swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout);
@@ -68,11 +73,14 @@ public class ListActivitiesFragment extends Fragment implements SwipeRefreshLayo
 
     @Override
     public void onRefresh() {
-
+        SingletonManager.getInstance(getContext()).getActivities(getContext());
+        swipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
     public void onRefreshActivitiesList(ArrayList<Activity> listActivities) {
-
+        if(listActivities != null){
+            lvActivities.setAdapter(new ActivitiesListAdaptor(getContext(), listActivities));
+        }
     }
 }
