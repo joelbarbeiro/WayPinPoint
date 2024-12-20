@@ -1,5 +1,7 @@
 package pt.ipleiria.estg.dei.waypinpoint;
 
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.setImgUri;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -37,8 +39,8 @@ public class ApiHostnameSetupActivity extends AppCompatActivity {
     }
 
     public void onClickSaveHostname(View view){
-
         hostname = "http://" + etHostname.getText().toString() + ":8080/api/";
+        setImgUri(etHostname.getText().toString(), getApplicationContext());
         try {
             SharedPreferences sharedPreferences = getSharedPreferences("API_HOSTNAME", Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();

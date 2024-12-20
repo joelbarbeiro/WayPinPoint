@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import Model.Activity;
 import Model.SingletonManager;
@@ -23,13 +24,14 @@ public class ActivityDetailsActivity extends AppCompatActivity {
     private EditText etPricePerPax;
     private Spinner spinnerDateTime;
     private ImageView imageActivity;
+    private FloatingActionButton fabCrudActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
 
-        int id =getIntent().getIntExtra(ID_ACTIVITY, 0);
+        int id = getIntent().getIntExtra(ID_ACTIVITY, 2);
 
         activity = SingletonManager.getInstance(getApplicationContext()).getActivity(id);
 
@@ -43,7 +45,7 @@ public class ActivityDetailsActivity extends AppCompatActivity {
 
         }
     }
-    private void deployActivity(){
+    private void loadActivity(){
         setTitle("Detalhes: " + activity.getName());
 
         etName.setText(activity.getName());

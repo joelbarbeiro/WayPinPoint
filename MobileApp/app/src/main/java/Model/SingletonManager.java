@@ -51,20 +51,25 @@ public class SingletonManager {
     private LoginListener loginListener;
 
     //region # Activities instances #
-
-    private ActivitiesListener activitiesListener;
-    private ActivityListener activityListener;
     private ActivityDbHelper activityDbHelper = null;
 
+    private ActivitiesListener activitiesListener;
     private ArrayList<Activity> activities;
+
+    private ActivityListener activityListener;
+
 
     //endregion
 
     private static RequestQueue volleyQueue = null;
 
+
     public SingletonManager(Context context) {
         users = new ArrayList<>();
         userDbHelper = new UserDbHelper(context);
+
+        activities = new ArrayList<>();
+        activityDbHelper = new ActivityDbHelper(context);
     }
 
     public static synchronized SingletonManager getInstance(Context context) {
@@ -318,6 +323,12 @@ public class SingletonManager {
     public void setActivityListener(ActivityListener activityListener) {
         this.activityListener = activityListener;
     }
+
+    public ArrayList<Activity> getActivities(){
+        activities = activityDbHelper.getActivitiesDB();
+        return new ArrayList<>(activities);
+    }
+
     public Activity getActivity(int id){
         for(Activity a: activities){
             if(a.getId() == id){
@@ -327,8 +338,9 @@ public class SingletonManager {
         return null;
     }
     public void addActivitiesDB(ArrayList<Activity> activities){
-        activityDbHelper.delAllActivitiesDB();
+        //activityDbHelper.delAllActivitiesDB();
         for(Activity a: activities){
+            System.out.println("DB Add --> " + a);
             activityDbHelper.addActivityDB(a);
         }
     }

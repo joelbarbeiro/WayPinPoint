@@ -12,7 +12,8 @@ import java.util.ArrayList;
 
 public class ActivityDbHelper extends SQLiteOpenHelper {
     private static final String DB_NAME = "waypinpointmobile";
-    private static final int DB_VERSION = 1;
+    private static final int DB_VERSION = 2;
+
     private static final String TABLE_NAME = "activities";
     private static final String ID = "id";
     private static final String NAME = "name";
@@ -23,7 +24,8 @@ public class ActivityDbHelper extends SQLiteOpenHelper {
     private static final String ADDRESS = "address";
     private static final String SUPPLIER = "supplier";
     private static final String STATUS = "status";
-    private static final String CATGORY = "catgory";
+    private static final String CATEGORY_ID = "category_id";
+
     private final SQLiteDatabase db;
 
     public ActivityDbHelper(@Nullable Context context) {
@@ -44,7 +46,7 @@ public class ActivityDbHelper extends SQLiteOpenHelper {
                 ADDRESS + " TEXT NOT NULL, " +
                 SUPPLIER + " INTEGER NOT NULL, " +
                 STATUS + " INTEGER NOT NULL, " +
-                CATGORY + " TEXT NOT NULL" +
+                CATEGORY_ID + " TEXT NOT NULL" +
                 ")";
         db.execSQL(createActivitiesTable);
     }
@@ -54,6 +56,7 @@ public class ActivityDbHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
         this.onCreate(db);
     }
+
     public void addActivityDB(Activity a){
         ContentValues val = new ContentValues();
         val.put(ID, a.getId());
@@ -65,7 +68,7 @@ public class ActivityDbHelper extends SQLiteOpenHelper {
         val.put(ADDRESS, a.getAddress());
         val.put(SUPPLIER, a.getSupplier());
         val.put(STATUS, a.getStatus());
-        val.put(CATGORY, a.getCatgory());
+        val.put(CATEGORY_ID, a.getCategory());
 
         this.db.insert(TABLE_NAME, null, val);
     }
@@ -81,7 +84,7 @@ public class ActivityDbHelper extends SQLiteOpenHelper {
         val.put(ADDRESS, a.getAddress());
         val.put(SUPPLIER, a.getSupplier());
         val.put(STATUS, a.getStatus());
-        val.put(CATGORY, a.getCatgory());
+        val.put(CATEGORY_ID, a.getCategory());
 
         return this.db.update(TABLE_NAME, val, ID + "= ?", new String[]{""+a.getId()}) > 0;
     }
@@ -92,7 +95,7 @@ public class ActivityDbHelper extends SQLiteOpenHelper {
 
     public ArrayList<Activity> getActivitiesDB(){
         ArrayList<Activity> activities = new ArrayList<>();
-        Cursor cursor = this.db.query(TABLE_NAME, new String[]{ID, NAME, DESCRIPTION, PHOTO, MAXPAX, PRICEPERPAX, ADDRESS, SUPPLIER, STATUS, CATGORY},
+        Cursor cursor = this.db.query(TABLE_NAME, new String[]{ID, NAME, DESCRIPTION, PHOTO, MAXPAX, PRICEPERPAX, ADDRESS, SUPPLIER, STATUS, CATEGORY_ID},
             null, null, null, null, null);
         if (cursor.moveToFirst()){
             do {
@@ -104,6 +107,7 @@ public class ActivityDbHelper extends SQLiteOpenHelper {
         }
         return activities;
     }
+
     public void delAllActivitiesDB(){
         this.db.delete(TABLE_NAME, null, null);
     }

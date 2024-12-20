@@ -12,7 +12,7 @@ public class ActivityJsonParser {
     public static ArrayList<Activity> parserJsonActivity(JSONArray response) {
         ArrayList<Activity> activities = new ArrayList<>();
         try {
-            for (int c = 0; c <= response.length(); c++) {
+            for (int c = 0; c < response.length(); c++) {
                 JSONObject activity = (JSONObject) response.get(c);
                 int id = activity.getInt("id");
                 String name = activity.getString("name");
@@ -23,9 +23,9 @@ public class ActivityJsonParser {
                 String address = activity.getString("address");
                 int supplier = activity.getInt("user_id");
                 int status = activity.getInt("status");
-                String catgory = activity.getString("catgory");
+                String category = activity.getString("category_id");
 
-                Activity auxActivity = new Activity(id, name,description, photo, maxpax, priceperpax, address, supplier, status, catgory);
+                Activity auxActivity = new Activity(id, name,description, photo, maxpax, priceperpax, address, supplier, status, category);
                 activities.add(auxActivity);
             }
         } catch (JSONException e) {

@@ -1,11 +1,13 @@
 package Model;
 
+import pt.ipleiria.estg.dei.waypinpoint.utils.Utilities;
+
 public class Activity {
     private int id, maxpax, supplier, status;
     private double priceperpax;
-    private String name, description, photo, address, catgory;
+    private String name, description, photo, address, category;
 
-    public Activity(int id, String name, String description, String photo, int maxpax, double priceperpax, String address, int supplier, int status, String catgory) {
+    public Activity(int id, String name, String description, String photo, int maxpax, double priceperpax, String address, int supplier, int status, String category) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -15,7 +17,7 @@ public class Activity {
         this.address = address;
         this.supplier = supplier;
         this.status = status;
-        this.catgory = catgory;
+        this.category = category;
     }
 
     public int getId(){
@@ -74,9 +76,7 @@ public class Activity {
         this.description = description;
     }
 
-    public String getPhoto() {
-        return photo;
-    }
+    public String getPhoto() { return photo; }
 
     public void setPhoto(String photo) {
         this.photo = photo;
@@ -90,11 +90,11 @@ public class Activity {
         this.address = address;
     }
 
-    public String getCatgory() {
-        return catgory;
+    public String getCategory() {
+        return category;
     }
 
-    public void setCatgory(String catgory) {
-        this.catgory = catgory;
+    public void setCategory(String category) {
+        this.category = category;
     }
 }

@@ -1,7 +1,6 @@
 package adaptors;
 
 import android.content.Context;
-import android.icu.util.ULocale;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +15,7 @@ import java.util.ArrayList;
 
 import Model.Activity;
 import pt.ipleiria.estg.dei.waypinpoint.R;
+import pt.ipleiria.estg.dei.waypinpoint.utils.Utilities;
 
 public class ActivitiesListAdaptor extends BaseAdapter {
 
@@ -53,7 +53,13 @@ public class ActivitiesListAdaptor extends BaseAdapter {
             view = inflater.inflate(R.layout.item_list_activity, null);
         }
 
-        // TODO: call view holder
+        ViewHolderActivity viewHolderActivity = (ViewHolderActivity) view.getTag();
+        if(viewHolderActivity == null){
+            viewHolderActivity = new ViewHolderActivity(view);
+            view.setTag(viewHolderActivity);
+        }
+        viewHolderActivity.update(activities.get(i));
+
         return view;
     }
 
@@ -65,17 +71,18 @@ public class ActivitiesListAdaptor extends BaseAdapter {
             tvName = view.findViewById(R.id.tvNameContent);
             tvCatgory = view.findViewById(R.id.tvCategoryContent);
             tvPrice = view.findViewById(R.id.tvPriceContent);
-            tvAddress = view.findViewById(R.id.tvPriceContent);
+            tvAddress = view.findViewById(R.id.tvAddressContent);
             activityImg = view.findViewById(R.id.imageViewCover);
         }
 
         public void update(Activity activity){
             tvName.setText(activity.getName());
-            tvCatgory.setText(activity.getCatgory());
+            tvCatgory.setText(activity.getCategory());
             tvPrice.setText(""+activity.getPriceperpax());
             tvAddress.setText(activity.getAddress());
+            String imgPath = Utilities.getImgUri(context) + activity.getSupplier() + "/" + activity.getPhoto();
             Glide.with(context)
-                    .load(activity.getPhoto())
+                    .load(imgPath)
                     .placeholder(R.drawable.img_default_activity)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(activityImg);
