@@ -22,7 +22,6 @@ import pt.ipleiria.estg.dei.waypinpoint.LoginActivity;
 import pt.ipleiria.estg.dei.waypinpoint.MenuMainActivity;
 
 public class Utilities {
-
     public static final int REGISTER = 100;
     public static final int EDIT = 200;
     public static final int DELETE = 300;
@@ -39,10 +38,12 @@ public class Utilities {
     public static final String DEFAULT_IMG = "https://images.app.goo.gl/WRUpq3qmgD331B64A";
     public static final String PROFILE_PIC = "PROFILE_PIC";
 
+    public static final String DB_VERSION = "DB_VERSION";
+    public static final String IMG_URI = "IMG_URI";
 
     public static String getApiHost(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(API_HOSTNAME, MODE_PRIVATE);
-        System.out.println("--> Set Host " + sharedPreferences.getString(API_HOSTNAME, null));
+        System.out.println("--> Get Host " + sharedPreferences.getString(API_HOSTNAME, null));
         return sharedPreferences.getString(API_HOSTNAME, null);
     }
 
@@ -92,4 +93,18 @@ public class Utilities {
         }
     }
 
+
+    public static String getImgUri(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(IMG_URI, MODE_PRIVATE);
+        System.out.println("--> Get IMG URI " + sharedPreferences.getString(IMG_URI, null));
+        return sharedPreferences.getString(IMG_URI, null);
+    }
+
+    public static void setImgUri(String uri, Context context){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(IMG_URI, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        String imgPath = "http://" + uri + "/img/activity/";
+        editor.putString(IMG_URI, imgPath);
+        editor.apply();
+    }
 }
