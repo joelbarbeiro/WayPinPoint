@@ -10,6 +10,7 @@ import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.SNACKBAR_MESSAGE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.TOKEN;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.USER_DATA;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getApiHost;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getImgUriUser;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getUserId;
 
 import android.app.Activity;
@@ -43,6 +44,7 @@ import Model.SingletonManager;
 import Model.User;
 import Model.UserDbHelper;
 import pt.ipleiria.estg.dei.waypinpoint.utils.ImageSender;
+import pt.ipleiria.estg.dei.waypinpoint.utils.Utilities;
 
 public class MenuMainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -62,6 +64,7 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
 
         id = getUserId(getApplicationContext());
         user = SingletonManager.getInstance(getApplicationContext()).getUser(id);
+        String profilePic = getImgUriUser(getApplicationContext()) + user.getId() + "/" + user.getPhoto();
 
         SharedPreferences sharedPreferencesUser = getSharedPreferences(USER_DATA, MODE_PRIVATE);
         fragmentManager = getSupportFragmentManager();
@@ -76,11 +79,17 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.ndOpen, R.string.ndClose);
         toggle.syncState();
         drawer.addDrawerListener(toggle);
-        loadHeader(sharedPreferencesUser, user);
+        loadHeader(sharedPreferencesUser, profilePic);
         navigationView.setNavigationItemSelectedListener(this);
+        loadDefaultFragment();
     }
 
-    private void loadHeader(SharedPreferences sharedPreferencesUser, User user) {
+    private void loadDefaultFragment() {
+        Fragment fragment = new ListActivitiesFragment();
+        fragmentManager.beginTransaction().replace(R.id.contentFragment, fragment).commit();
+    }
+
+    private void loadHeader(SharedPreferences sharedPreferencesUser, String profilePic) {
         email = getIntent().getStringExtra(EMAIL).toString();
 
         if (email != null) {
@@ -97,7 +106,6 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
 
         ImageView profileImageView = hView.findViewById(R.id.profilePhoto);
 
-        String profilePic = user.getPhoto() != null ? user.getPhoto() : sharedPreferencesUser.getString(PROFILE_PIC, null);
         if (profilePic == null) {
             Glide.with(this)
                     .load(R.drawable.ic_default_profile)

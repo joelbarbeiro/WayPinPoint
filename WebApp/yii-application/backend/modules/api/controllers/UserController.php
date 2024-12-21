@@ -266,12 +266,30 @@ class UserController extends ActiveController
         $transaction = Yii::$app->db->beginTransaction();
         try {
             if ($photoFile) {
-                $photoPath = Yii::getAlias('@backend/web/img/user/' . $id . '/' . uniqid() . '.' . $photoFile->extension);
-                if (!$photoFile->saveAs($photoPath)) {
-                    throw new \Exception("Failed to save uploaded photo.");
+                $photoDirBackend = Yii::getAlias('@backend/web/img/user/' . $id . '/');
+                $photoDirFrontend = Yii::getAlias('@frontend/web/img/user/' . $id . '/');
+
+                if (!is_dir($photoDirBackend)) {
+                    mkdir($photoDirBackend, 0755, true);
+                }
+                if (!is_dir($photoDirFrontend)) {
+                    mkdir($photoDirFrontend, 0755, true);
                 }
 
-                $userExtra->photo = $photoPath;
+                $uniqueFilename = uniqid() . '.' . $photoFile->extension;
+
+                $photoPathBackend = $photoDirBackend . $uniqueFilename;
+                $photoPathFrontend = $photoDirFrontend . $uniqueFilename;
+
+                if (!$photoFile->saveAs($photoPathBackend)) {
+                    throw new \Exception("Failed to save uploaded photo to backend.");
+                }
+
+                if (!copy($photoPathBackend, $photoPathFrontend)) {
+                    throw new \Exception("Failed to copy uploaded photo to frontend.");
+                }
+
+                $userExtra->photo = $uniqueFilename;
             }
 
             if ($user->save(false) && $userExtra->save(false)) {

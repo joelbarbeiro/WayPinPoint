@@ -46,8 +46,8 @@
     <string name="dashboard_name_label">Name: </string>
     <string name="dashboard_description_label">Description: </string>
     <string name="dashboard_category_label">Category: </string>
-    <string name="dashboard_price_label">Price per Ticket :</string>
-    <string name="dashboard_date_label">Dates: </string>
+    <string name="dashboard_price_label">Price: </string>
+    <string name="dashboard_address_label">Address: </string>
 
     <!-- Errors-->
     <string name="error_no_internet">No Internet Connection</string>
@@ -69,5 +69,15 @@
     <string name="yes_string">Yes</string>
     <string name="no_string">No</string>
 
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="priceperpax">PricePerPax</string>
+    <string name="maxpax">MaxPax</string>
+    <string name="description">Description</string>
+    <string name="name">Name</string>
+    <string name="add_to_cart">Add to cart</string>
+    <string name="fab_add_activity">Add Activity</string>
+    <string name="menu_search_title_search">Search</string>
+    <string name="menu_delete">delete</string>
 
 </resources>

@@ -37,9 +37,11 @@ public class Utilities {
     public static final String SNACKBAR_MESSAGE = "SNACKBAR_MESSAGE";
     public static final String DEFAULT_IMG = "https://images.app.goo.gl/WRUpq3qmgD331B64A";
     public static final String PROFILE_PIC = "PROFILE_PIC";
+    public static final String BACKEND_PORT = ":8080";
 
     public static final String DB_VERSION = "DB_VERSION";
     public static final String IMG_URI = "IMG_URI";
+    public static final String IMG_URI_USER = "IMG_URI_USER";
 
     public static String getApiHost(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(API_HOSTNAME, MODE_PRIVATE);
@@ -93,11 +95,16 @@ public class Utilities {
         }
     }
 
-
     public static String getImgUri(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(IMG_URI, MODE_PRIVATE);
         System.out.println("--> Get IMG URI " + sharedPreferences.getString(IMG_URI, null));
         return sharedPreferences.getString(IMG_URI, null);
+    }
+
+    public static String getImgUriUser(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(IMG_URI_USER, MODE_PRIVATE);
+        System.out.println("--> Get IMG URI FOR USER " + sharedPreferences.getString(IMG_URI_USER, null));
+        return sharedPreferences.getString(IMG_URI_USER, null);
     }
 
     public static void setImgUri(String uri, Context context){
@@ -107,4 +114,13 @@ public class Utilities {
         editor.putString(IMG_URI, imgPath);
         editor.apply();
     }
+
+    public static void setImgUriUser(String uri, Context context){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(IMG_URI_USER, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        String imgUserPath = "http://" + uri + "/img/user/";
+        editor.putString(IMG_URI_USER, imgUserPath);
+        editor.apply();
+    }
+
 }

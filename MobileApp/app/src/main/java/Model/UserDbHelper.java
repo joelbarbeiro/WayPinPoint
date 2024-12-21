@@ -13,7 +13,7 @@ import java.util.ArrayList;
 public class UserDbHelper extends SQLiteOpenHelper {
 
     private static final String DB_NAME = "waypinpointmobile";
-    private static final int DB_VERSION = 1;
+    private static final int DB_VERSION = 2;
 
     private final SQLiteDatabase db;
 
