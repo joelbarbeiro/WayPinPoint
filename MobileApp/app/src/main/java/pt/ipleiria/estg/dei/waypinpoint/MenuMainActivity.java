@@ -5,9 +5,12 @@ import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EDIT;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EMAIL;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.OP_CODE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.PICK_IMAGE;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.PROFILE_PIC;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.SNACKBAR_MESSAGE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.TOKEN;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.USER_DATA;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getApiHost;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getImgUriUser;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getUserId;
 
 import android.app.Activity;
@@ -36,11 +39,14 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 
 import Model.SingletonManager;
+import Model.User;
 import Model.UserDbHelper;
+import pt.ipleiria.estg.dei.waypinpoint.utils.ImageSender;
 import pt.ipleiria.estg.dei.waypinpoint.utils.Utilities;
 
 public class MenuMainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -50,11 +56,19 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
     private NavigationView navigationView;
     private String email;
     private FragmentManager fragmentManager;
+    private int id;
+    private User user;
+    private String apiHost;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu_main);
+
+        id = getUserId(getApplicationContext());
+        user = SingletonManager.getInstance(getApplicationContext()).getUser(id);
+        String profilePic = getImgUriUser(getApplicationContext()) + user.getId() + "/" + user.getPhoto();
+
         SharedPreferences sharedPreferencesUser = getSharedPreferences(USER_DATA, MODE_PRIVATE);
         fragmentManager = getSupportFragmentManager();
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -68,11 +82,17 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.ndOpen, R.string.ndClose);
         toggle.syncState();
         drawer.addDrawerListener(toggle);
-        loadHeader(sharedPreferencesUser);
+        loadHeader(sharedPreferencesUser, profilePic);
         navigationView.setNavigationItemSelectedListener(this);
+        loadDefaultFragment();
     }
 
-    private void loadHeader(SharedPreferences sharedPreferencesUser) {
+    private void loadDefaultFragment() {
+        Fragment fragment = new ListActivitiesFragment();
+        fragmentManager.beginTransaction().replace(R.id.contentFragment, fragment).commit();
+    }
+
+    private void loadHeader(SharedPreferences sharedPreferencesUser, String profilePic) {
         email = getIntent().getStringExtra(EMAIL).toString();
 
         if (email != null) {
@@ -88,6 +108,20 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
         nav_tvEmail.setText(email);
 
         ImageView profileImageView = hView.findViewById(R.id.profilePhoto);
+
+        if (profilePic == null) {
+            Glide.with(this)
+                    .load(R.drawable.ic_default_profile)
+                    .placeholder(R.drawable.ic_default_profile)
+                    .error(R.drawable.ic_default_profile)
+                    .into(profileImageView);
+        } else {
+            Glide.with(this)
+                    .load(profilePic)
+                    .override(600, 600)
+                    .circleCrop()
+                    .into(profileImageView);
+        }
         profileImageView.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             startActivityForResult(intent, PICK_IMAGE);
@@ -98,7 +132,7 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         Fragment fragment = null;
-        SharedPreferences sharedPreferencesUser = getSharedPreferences("USER_DATA", MODE_PRIVATE);
+        SharedPreferences sharedPreferencesUser = getSharedPreferences(USER_DATA, MODE_PRIVATE);
         if (item.getItemId() == R.id.navMyProfile) {
             Intent intent = new Intent(this, MyProfileActivity.class);
             startActivityForResult(intent, EDIT);
@@ -114,49 +148,6 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
         if (fragment != null)
             fragmentManager.beginTransaction().replace(R.id.contentFragment, fragment).commit();
         return true;
-    }
-
-    private void dialogLogout(SharedPreferences sharedPreferencesUser) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.menu_logout_label);
-        builder.setMessage(R.string.dialog_logout_message);
-        builder.setPositiveButton(R.string.dialog_yes, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        UserDbHelper userDbHelper = new UserDbHelper(getApplicationContext());
-                        userDbHelper.removeAllUsersDb();
-                        SharedPreferences.Editor editorUser = sharedPreferencesUser.edit();
-                        editorUser.putString(TOKEN, "NO TOKEN");
-                        editorUser.apply();
-                        Intent intent = new Intent(MenuMainActivity.this, LoginActivity.class);
-                        startActivity(intent);
-                        System.out.println("--> Logout");
-                    }
-                })
-                .setNegativeButton(R.string.no_string, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                })
-                .setIcon(R.drawable.ic_logout_menu)
-                .show();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_cart, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.navCart) {
-            Intent intent = new Intent(this, CartActivity.class);
-            startActivity(intent);
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -180,35 +171,57 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
                 }
             }
             if (requestCode == PICK_IMAGE && data != null) {
-                int id = getUserId(getApplicationContext());
                 Uri imageUri = data.getData();
+                id = getUserId(getApplicationContext());
+                apiHost = getApiHost(getApplicationContext());
 
-                // Get the file path from the Uri
-                String filePath = getPathFromUri(imageUri);
+                ImageSender imageSender = new ImageSender(getApplicationContext());
+                imageSender.sendImageToServer(apiHost, id, imageUri, 600);
+                // Save the selected image URI for future use
+                SharedPreferences sharedPreferences = getSharedPreferences(USER_DATA, MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString(PROFILE_PIC, imageUri.toString());
+                editor.apply();
+                View hView = navigationView.getHeaderView(0);
+                ImageView photoProfile = hView.findViewById(R.id.profilePhoto);
 
-                if (filePath != null) {
-                    String apiHost = Utilities.getApiHost(getApplicationContext());
-                    SingletonManager.getInstance(getApplicationContext()).addPhotoApi(apiHost, id, filePath, getApplicationContext());
-                } else {
-                    Toast.makeText(getApplicationContext(), "Unable to get the file path", Toast.LENGTH_SHORT).show();
-                }
+                Glide.with(this)
+                        .load(imageUri)
+                        .placeholder(R.drawable.ic_default_profile)
+                        .error(R.drawable.ic_default_profile)
+                        .into(photoProfile);
+                user = SingletonManager.getInstance(getApplicationContext()).getUser(id);
+                user.setPhoto(String.valueOf(imageUri));
+//                SingletonManager.getInstance(getApplicationContext()).editUserApi(apiHost,user,getApplicationContext());
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private String getPathFromUri(Uri uri) {
-        String[] projection = {MediaStore.Images.Media.DATA};
-        Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
-
-        if (cursor != null) {
-            int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-            cursor.moveToFirst();
-            String filePath = cursor.getString(columnIndex);
-            cursor.close();
-            return filePath;
-        }
-
-        return null;
+    private void dialogLogout(SharedPreferences sharedPreferencesUser) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.menu_logout_label);
+        builder.setMessage(R.string.dialog_logout_message);
+        builder.setPositiveButton(R.string.yes_string, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        UserDbHelper userDbHelper = new UserDbHelper(getApplicationContext());
+                        userDbHelper.removeAllUsersDb();
+                        SharedPreferences.Editor editorUser = sharedPreferencesUser.edit();
+                        editorUser.putString(TOKEN, "NO TOKEN");
+                        editorUser.apply();
+                        Intent intent = new Intent(MenuMainActivity.this, LoginActivity.class);
+                        startActivity(intent);
+                        System.out.println("--> Logout");
+                    }
+                })
+                .setNegativeButton(R.string.no_string, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                })
+                .setIcon(R.drawable.ic_logout_menu)
+                .show();
     }
 }

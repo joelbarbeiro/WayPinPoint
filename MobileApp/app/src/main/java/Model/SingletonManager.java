@@ -1,5 +1,6 @@
 package Model;
 
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.DEFAULT_IMG;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.DELETE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EDIT;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EMAIL;
@@ -11,6 +12,7 @@ import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getApiHost;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.http.UrlRequest;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -30,13 +32,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import Listeners.ActivitiesListener;
+import Listeners.ActivityListener;
 import Listeners.CartListener;
 import Listeners.LoginListener;
 import Listeners.UserListener;
 import pt.ipleiria.estg.dei.waypinpoint.R;
 import pt.ipleiria.estg.dei.waypinpoint.utils.CartJsonParser;
+import pt.ipleiria.estg.dei.waypinpoint.utils.ActivityJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.StatusJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.UserJsonParser;
+import pt.ipleiria.estg.dei.waypinpoint.utils.Utilities;
 
 public class SingletonManager {
 
@@ -54,14 +60,27 @@ public class SingletonManager {
     private ArrayList<Cart> carts;
     private Cart cart;
 
-    private static RequestQueue volleyQueue = null;
+    //region # Activities instances #
+    private ActivityDbHelper activityDbHelper = null;
 
+    private ActivitiesListener activitiesListener;
+    private ArrayList<Activity> activities;
+
+    private ActivityListener activityListener;
+
+
+    //endregion
+
+    private static RequestQueue volleyQueue = null;
 
     public SingletonManager(Context context) {
         users = new ArrayList<>();
         userDbHelper = new UserDbHelper(context);
         cartDbHelper = new CartDbHelper(context);
 
+
+        activities = new ArrayList<>();
+        activityDbHelper = new ActivityDbHelper(context);
     }
 
     public static synchronized SingletonManager getInstance(Context context) {
@@ -146,7 +165,7 @@ public class SingletonManager {
                     params.put("address", user.getAddress());
                     params.put("phone", "" + user.getPhone());
                     params.put("nif", "" + user.getNif());
-                    params.put("photo", user.getPhoto() == null ? User.DEFAULT_IMG : user.getPhoto());
+                    params.put("photo", user.getPhoto() == null ? DEFAULT_IMG : user.getPhoto());
                     return params;
                 }
             };
@@ -165,6 +184,7 @@ public class SingletonManager {
                     if (userListener != null) {
                         userListener.onValidateOperation(EDIT);
                     }
+                    System.out.println("---> EDIT USER RESPONSE: " + response);
                 }
             }, new Response.ErrorListener() {
                 @Override
@@ -181,7 +201,7 @@ public class SingletonManager {
                     params.put("address", user.getAddress());
                     params.put("phone", "" + user.getPhone());
                     params.put("nif", "" + user.getNif());
-                    params.put("photo", user.getPhoto() == null ? User.DEFAULT_IMG : user.getPhoto());
+                    params.put("photoFile", user.getPhoto() == null ? String.valueOf(R.drawable.ic_default_profile) : user.getPhoto());
                     return params;
                 }
             };
@@ -461,12 +481,75 @@ public class SingletonManager {
     public void setCartsListener(CartListener cartsListener) {
         this.cartListener = cartsListener;
     }
-
     public void setCartListener(CartListener cartListener) {
         this.cartListener = cartListener;
     }
 
     //ENDREGION
+
+    //region # Activity API #
+    public void setActivitiesListener(ActivitiesListener activitiesListener) {
+        this.activitiesListener = activitiesListener;
+    }
+
+    public void setActivityListener(ActivityListener activityListener) {
+        this.activityListener = activityListener;
+    }
+
+    public ArrayList<Activity> getActivities(){
+        activities = activityDbHelper.getActivitiesDB();
+        return new ArrayList<>(activities);
+    }
+
+    public Activity getActivity(int id){
+        for(Activity a: activities){
+            if(a.getId() == id){
+                return a;
+            }
+        }
+        return null;
+    }
+    public void addActivitiesDB(ArrayList<Activity> activities){
+        //activityDbHelper.delAllActivitiesDB();
+        for(Activity a: activities){
+            System.out.println("DB Add --> " + a);
+            activityDbHelper.addActivityDB(a);
+        }
+    }
+    public void getActivities( final Context context){
+        String apiHost = Utilities.getApiHost(context);
+        if(!StatusJsonParser.isConnectionInternet(context)){
+            Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
+
+            if(activitiesListener != null){
+                activitiesListener.onRefreshActivitiesList(activityDbHelper.getActivitiesDB());
+            }
+        } else {
+            JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, apiHost + "activities", null, new Response.Listener<JSONArray>() {
+                @Override
+                public void onResponse(JSONArray response) {
+                    System.out.println("--> GETAPI: " + response);
+                    activities = ActivityJsonParser.parserJsonActivity(response);
+                    addActivitiesDB(activities);
+
+                    if(activitiesListener != null){
+                        activitiesListener.onRefreshActivitiesList(activities);
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    System.out.println("--> GET --> " + error);
+
+                }
+            });
+        volleyQueue.add(request);
+        }
+    }
+
+    //endregion
+
+
 
 
 }
