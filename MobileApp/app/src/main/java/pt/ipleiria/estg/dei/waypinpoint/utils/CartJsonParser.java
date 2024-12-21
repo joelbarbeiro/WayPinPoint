@@ -39,8 +39,7 @@ public class CartJsonParser {
                         calendar_id,
                         date,
                         time,
-                        price,
-                        activityImg
+                        price
                         );
                 carts.add(auxCart);
             }
@@ -75,8 +74,7 @@ public class CartJsonParser {
                     calendar_id,
                     date,
                     time,
-                    price,
-                    activityImg
+                    price
             );
         } catch (JSONException e) {
             e.printStackTrace();

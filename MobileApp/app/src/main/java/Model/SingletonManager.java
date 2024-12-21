@@ -7,9 +7,11 @@ import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ID;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.REGISTER;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.TOKEN;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.USER_DATA;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getApiHost;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -24,7 +26,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -48,15 +49,19 @@ public class SingletonManager {
     private LoginListener loginListener;
     //Region Cart Instances
     private CartListener cartListener;
-    private CartDbHelper cartDbHelper = null;
+    private static CartDbHelper cartDbHelper = null;
+
     private ArrayList<Cart> carts;
     private Cart cart;
 
     private static RequestQueue volleyQueue = null;
 
+
     public SingletonManager(Context context) {
         users = new ArrayList<>();
         userDbHelper = new UserDbHelper(context);
+        cartDbHelper = new CartDbHelper(context);
+
     }
 
     public static synchronized SingletonManager getInstance(Context context) {
@@ -304,7 +309,7 @@ public class SingletonManager {
     //REGION # MÉTODOS CART - API #
 
     public ArrayList<Cart> getCartsDB() {
-        carts = cartDbHelper.getAllCartDb();
+        carts = cartDbHelper.getAllCartsDb();
         return new ArrayList<>(carts);
     }
 
@@ -319,6 +324,7 @@ public class SingletonManager {
     }
 
     public void getCartAPI(final Context context, final CartListener listener, final Cart cart) {
+        String apiHost = getApiHost(context);
         if (!StatusJsonParser.isConnectionInternet(context)) {
             Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
             listener.onErrorAdd(context.getString(R.string.error_no_internet));
@@ -344,132 +350,112 @@ public class SingletonManager {
     }
 
     public void getCartByUserId(final Context context, int userId, final CartListener listener) {
-        if (!StatusJsonParser.isConnectionInternet(context)) {
-            Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
-            listener.onErrorAdd(context.getString(R.string.error_no_internet));
-        } else {
-            JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, urlApi + "carts/buyers/" + userId, null, new Response.Listener<JSONArray>() {
-                @Override
-                public void onResponse(JSONArray response) {
-                    System.out.println("------> Cart Data: " + response);
-                    ArrayList<Cart> carts = CartJsonParser.parserJsonCarts(response);
-                    for (Cart cart : carts) {
-                        cartDbHelper.addCartDb(cart);
+        String apiHost = getApiHost(context);
+        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, apiHost + "carts/buyers/" + userId,
+                null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                ArrayList<Cart> carts = CartJsonParser.parserJsonCarts(response);
+                listener.onSuccess(carts);
+            }
+        },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        listener.onError("Error fetching carts: " + error.getMessage());
                     }
-                }
-            },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            System.out.println("Error fetching cart user ID");
-                            Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    });
-            volleyQueue.add(request);
-        }
+                });
+        System.out.println("------> Cart Data: " + request.toString());
+        volleyQueue.add(request);
     }
 
-    public void addCartApi(String apiHost, final Cart cart, final Context context, final CartListener CartListener) {
-        if (!StatusJsonParser.isConnectionInternet(context)) {
-            Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
-        } else {
-            StringRequest request = new StringRequest(Request.Method.POST, apiHost + "cart/add",
-                    new Response.Listener<String>() {
-                        @Override
-                        public void onResponse(String response) {
-                            Cart newCart = CartJsonParser.parserJsonCart(response);
-                            cartDbHelper.addCartDb(newCart);
-                            if (CartListener != null) {
-                                CartListener.validateOperation("Cart added successfully!");
-                            }
-                        }
-                    },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            System.out.println("---> " + error.getMessage());
-                            Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    }) {
-                @Override
-                protected Map<String, String> getParams() {
-                    Map<String, String> params = new HashMap<>();
-                    params.put("id", String.valueOf(cart.getId()));
-                    params.put("user_id", String.valueOf(cart.getUser_id()));
-                    params.put("product_id", String.valueOf(cart.getProduct_id()));
-                    params.put("quantity", String.valueOf(cart.getQuantity()));
-                    params.put("status", String.valueOf(cart.getStatus()));
-                    params.put("calendar_id", String.valueOf(cart.getCalendar_id()));
-                    params.put("time", cart.getTime());
-                    params.put("date", cart.getDate());
-                    params.put("price", String.valueOf(cart.getPrice()));
-                    return params;
+    public void addCartApi(final Cart cart, final Context context) {
+        String apiHost = getApiHost(context);
+        StringRequest request = new StringRequest(Request.Method.POST, apiHost + "carts/addtocart/" + cart.getProduct_id(), new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    cartDbHelper.addCartDb(CartJsonParser.parserJsonCart(response));
+                    JSONObject jsonResponse = new JSONObject(response);
+                    if (jsonResponse.getBoolean("success")) {
+                        Toast.makeText(context, "Cart added successfully", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(context, "Error: " + jsonResponse.getString("errors"), Toast.LENGTH_SHORT).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-            };
-            volleyQueue.add(request);
-        }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                if (error.networkResponse != null) {
+                    int statusCode = error.networkResponse.statusCode;
+                    String responseBody = new String(error.networkResponse.data);
+                    Toast.makeText(context, "Server Error: " + statusCode + "\n" + responseBody, Toast.LENGTH_LONG).show();
+                    Log.e("ServerError", "Code: " + statusCode + " Response: " + responseBody);
+                } else {
+                    Toast.makeText(context, "No response from server.", Toast.LENGTH_SHORT).show();
+                    Log.e("ServerError", "No response from server.");
+                }
+                Toast.makeText(context, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("quantity", String.valueOf(cart.getQuantity()));
+                params.put("calendar_id", String.valueOf(cart.getCalendar_id()));
+                return params;
+            }
+        };
+        volleyQueue.add(request);
     }
 
     public void editCart(final Cart cart, final Context context) {
-        if (!StatusJsonParser.isConnectionInternet(context)) {
-            Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
-        } else {
-            StringRequest request = new StringRequest(Request.Method.PUT, urlApi + "users/" + cart.getId(), new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                    cartDbHelper.editCartDb(cart);
-                    Toast.makeText(context, R.string.cart_edited, Toast.LENGTH_SHORT).show();
-                    if (cartListener != null) {
-                        cartListener.onValidateOperation(MenuMainActivity.EDIT);
+        String apiHost = getApiHost(context);
+        StringRequest request = new StringRequest(Request.Method.PUT, apiHost + "carts/updatecart/" + cart.getId(),
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Toast.makeText(context, "Cart updated successfully", Toast.LENGTH_SHORT).show();
                     }
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    System.out.println("---> " + error.getMessage());
-                    Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            }) {
-                @Override
-                protected Map<String, String> getParams() {
-                    Map<String, String> params = new HashMap<>();
-                    params.put("quantity", String.valueOf(cart.getQuantity()));
-                    if (cart.getCalendar_id() != 0) {
-                        params.put("calendar_id", String.valueOf(cart.getCalendar_id()));
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(context, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
                     }
-                    return params;
+                }) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("quantity", String.valueOf(cart.getQuantity()));
+                if (cart.getCalendar_id() != 0) {
+                    params.put("calendar_id", String.valueOf(cart.getCalendar_id()));
                 }
-            };
-            volleyQueue.add(request);
-        }
+                return params;
+            }
+        };
+        volleyQueue.add(request);
     }
 
     public void removeCartAPI(final Context context, final Cart cart) {
-        if (!StatusJsonParser.isConnectionInternet(context)) {
-            Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
-        } else {
-            StringRequest request = new StringRequest(Request.Method.DELETE, urlApi + "carts/" + cart.getId(), new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                    Toast.makeText(context, R.string.cart_deleted, Toast.LENGTH_SHORT).show();
-                    cartDbHelper.removeCartDb(CartJsonParser.parserJsonCart(response));
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    System.out.println("---> " + error.getMessage());
-                    Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            }) {
-                @Override
-                protected Map<String, String> getParams() {
-                    Map<String, String> params = new HashMap<>();
-                    params.put("status", "1");
-                    return params;
-                }
-            };
-            volleyQueue.add(request);
-        }
+        String apiHost = getApiHost(context);
+        StringRequest request = new StringRequest(Request.Method.DELETE, apiHost + "delete/" + cart.getId(),
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Toast.makeText(context, "Cart item deleted", Toast.LENGTH_SHORT).show();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(context, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+        volleyQueue.add(request);
     }
 
     public void setCartsListener(CartListener cartsListener) {

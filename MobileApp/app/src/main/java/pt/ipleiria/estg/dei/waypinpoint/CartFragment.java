@@ -1,5 +1,10 @@
 package pt.ipleiria.estg.dei.waypinpoint;
 
+import static android.os.FileObserver.CREATE;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EDIT;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ID_CART;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getUserId;
+
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -23,7 +28,7 @@ import pt.ipleiria.estg.dei.waypinpoint.Adapters.CartAdapter;
 
 public class CartFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, CartListener {
     private SwipeRefreshLayout swipeRefreshLayout;
-    private int userId;
+
     private CartListener cartListener;
     private ListView lvCart;
     private String mParam2;
@@ -38,18 +43,21 @@ public class CartFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         setHasOptionsMenu(true);
-        View view =  inflater.inflate(R.layout.fragment_cart, container, false);
+        View view = inflater.inflate(R.layout.fragment_cart, container, false);
         lvCart = view.findViewById(R.id.lvCart);
+
         SingletonManager.getInstance(getContext()).setCartsListener(this);
-        SingletonManager.getInstance(getContext()).getCartByUserId(getContext(),userId, cartListener);
+        SingletonManager.getInstance(getContext()).getCartByUserId(getContext(), getUserId(getContext()), cartListener);
+        System.out.println("--->>>> " + getUserId(getContext()));
         lvCart.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 //                Toast.makeText(getContext(), bookList.get(position).getTitle() , Toast.LENGTH_SHORT).show();
                 //Fazer code para ir para os details do livro
                 Intent intent = new Intent(getContext(), CartDetailsActivity.class);
-                intent.putExtra(CartDetailsActivity.ID_CART, (int) id);
-                startActivityForResult(intent, MenuMainActivity.EDIT);
+                intent.putExtra(ID_CART, (int) id);
+                startActivityForResult(intent, EDIT);
+
             }
         });
 
@@ -57,7 +65,7 @@ public class CartFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getContext(), CartDetailsActivity.class);
-                startActivityForResult(intent, MenuMainActivity.CREATE);
+                startActivityForResult(intent, CREATE);
             }
         });
 
@@ -78,7 +86,7 @@ public class CartFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     }
 
     @Override
-    public void onSuccess() {
+    public void onSuccess(ArrayList<Cart> carts) {
 
     }
 
@@ -88,14 +96,18 @@ public class CartFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     }
 
     @Override
+    public void onError(String s) {
+
+    }
+
+    @Override
     public void onRefresh() {
-        SingletonManager.getInstance(getContext()).getCartByUserId(getContext(), userId, cartListener);
+        SingletonManager.getInstance(getContext()).getCartByUserId(getContext(), getUserId(getContext()), cartListener);
         swipeRefreshLayout.setRefreshing(false);
     }
 
-    public void onRefreshBookList(ArrayList<Cart> cartArrayList) {
-        if(cartArrayList != null)
-        {
+    public void onRefreshCartList(ArrayList<Cart> cartArrayList) {
+        if (cartArrayList != null) {
             lvCart.setAdapter(new CartAdapter(getContext(), cartArrayList));
         }
     }

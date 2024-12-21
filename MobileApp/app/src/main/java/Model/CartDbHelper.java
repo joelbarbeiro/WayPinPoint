@@ -6,13 +6,12 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class CartDbHelper extends SQLiteOpenHelper {
 
     private static final String DB_NAME = "waypinpointmobile";
-    private static final int DB_VERSION = 1;
+    private static final int DB_VERSION = 3;
 
     private final SQLiteDatabase db;
 
@@ -33,8 +32,8 @@ public class CartDbHelper extends SQLiteOpenHelper {
     }
 
     public void onCreate(SQLiteDatabase db) {
-        String createCartTable = "CREATE TABLE " + TABLE_NAME +
-                "(" + ID + " INTEGER, " +
+            String createCartTable = "CREATE TABLE " + TABLE_NAME +
+                "(" + ID + " INTEGER PRIMARY KEY, " +
                 USER_ID + " INTEGER NOT NULL, " +
                 PRODUCT_ID + " INTEGER NOT NULL, " +
                 QUANTITY + " INTEGER NOT NULL, " +
@@ -80,7 +79,7 @@ public class CartDbHelper extends SQLiteOpenHelper {
         return this.db.delete(TABLE_NAME, ID + "= ?", new String[]{"" + id}) == 1;
     }
 
-    public ArrayList<Cart> getAllCartDb() {
+    public ArrayList<Cart> getAllCartsDb() {
         ArrayList<Cart> carts = new ArrayList<>();
         Cursor cursor = this.db.query(TABLE_NAME, new String[]{ID, USER_ID, PRODUCT_ID, QUANTITY, STATUS, CALENDAR_ID, TIME, DATE, PRICE},
                 null, null, null, null, null);
@@ -91,16 +90,16 @@ public class CartDbHelper extends SQLiteOpenHelper {
                         cursor.getInt(1),
                         cursor.getInt(2),
                         cursor.getInt(3),
-                        cursor.getInt(4),
+                        0,
                         cursor.getInt(5),
                         cursor.getString(6),
                         cursor.getString(7),
-                        cursor.getFloat(8),
-                        cursor.getString(9)
+                        cursor.getFloat(8)
                 );
                 carts.add(auxCart);
             } while (cursor.moveToNext());
         }
+        cursor.close();
         return carts;
     }
 
@@ -125,8 +124,7 @@ public class CartDbHelper extends SQLiteOpenHelper {
                         cursor.getInt(5),
                         cursor.getString(6),
                         cursor.getString(7),
-                        cursor.getFloat(8),
-                        cursor.getString(9)
+                        cursor.getFloat(8)
                 );
                 carts.add(auxCart);
             } while (cursor.moveToNext());

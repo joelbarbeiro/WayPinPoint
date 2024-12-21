@@ -78,10 +78,6 @@
     <string name="save">Add to Cart</string>
     <string name="delete_cart_item">Do you really want to delete this cart item?</string>
     <string name="remove_cart_item">Remove cart item</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="img_default">img_default</string>
-    <string name="quantity">Quantity</string>
     <string name="price">Price</string>
     <string name="date">Date</string>
     <string name="activity_name_label">Activity Name Label</string>
@@ -93,6 +89,12 @@
     <string name="cart_edited">Cart Edited!</string>
     <string name="cart_deleted">Cart Deleted!</string>
     <string name="no_string">no string</string>
+    <string name="cart_added_successfully">Cart added successfully!</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="img_default">img_default</string>
+    <string name="quantity">Quantity</string>
+
 
 
 </resources>

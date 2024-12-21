@@ -57,11 +57,11 @@
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/button_login"
+                    android:id="@+id/buttonAddCart"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="10dp"
-                    android:onClick="onClickCartSave"
+                    android:onClick="onClickCartCheckout"
                     android:text="@string/save" />
 
             </LinearLayout>

@@ -1,7 +1,11 @@
 package pt.ipleiria.estg.dei.waypinpoint;
 
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.OP_CODE;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getApiHost;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getUserId;
+
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.view.View;
@@ -9,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import Listeners.UserListener;
@@ -17,12 +22,13 @@ import Model.User;
 
 public class MyProfileActivity extends AppCompatActivity implements UserListener {
 
-    private Button saveButton;
+    private Button saveButton, deleteButton;
 
     private User user;
 
     private String username, address, email, password, photo;
     private int nif, phone;
+    private String apiHost = null;
 
     private EditText etEmail, etUsername, etAddress, etNif, etPhone;
 
@@ -30,17 +36,21 @@ public class MyProfileActivity extends AppCompatActivity implements UserListener
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_profile);
-        SharedPreferences sharedPreferencesUser = getSharedPreferences("USER_DATA", MODE_PRIVATE);
-        int id = sharedPreferencesUser.getInt(MenuMainActivity.ID, 0);
-        System.out.println("---> ID: " + id);
-        saveButton = findViewById(R.id.buttonSave);
-        user = SingletonManager.getInstance(getApplicationContext()).getUser(id);
+
+        int id = getUserId(getApplicationContext());
+        System.out.println("--->USER ID: " + id);
 
         etUsername = findViewById(R.id.etProfileUsername);
         etEmail = findViewById(R.id.etProfileEmail);
         etAddress = findViewById(R.id.etProfileAddress);
         etNif = findViewById(R.id.etProfileNif);
         etPhone = findViewById(R.id.etProfilePhone);
+        saveButton = findViewById(R.id.buttonSave);
+        deleteButton = findViewById(R.id.buttonDelete);
+
+        user = SingletonManager.getInstance(getApplicationContext()).getUser(id);
+        apiHost = getApiHost(getApplicationContext());
+
         loadProfile();
     }
 
@@ -96,12 +106,12 @@ public class MyProfileActivity extends AppCompatActivity implements UserListener
         isPhoneValid = isPhoneValid(phone);
 
         if (username.isEmpty() || email.isEmpty() || address.isEmpty()) {
-            Toast.makeText(this, "You have to fill all the fields", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.my_profile_fields_warning, Toast.LENGTH_SHORT).show();
             return;
         }
 
         if (!isPhoneValid && !isNifValid) {
-            Toast.makeText(this, "Nif/Phone has to be valid", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.my_profile_nif_phone_warning, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -111,16 +121,41 @@ public class MyProfileActivity extends AppCompatActivity implements UserListener
             user.setAddress(address);
             user.setNif(nif);
             user.setPhone(phone);
-            SingletonManager.getInstance(getApplicationContext()).editUserApi(user, getApplicationContext());
+            SingletonManager.getInstance(getApplicationContext()).editUserApi(apiHost, user, getApplicationContext());
         }
         SingletonManager.getInstance(getApplicationContext()).setUserListener(this);
 
     }
 
+    public void onClickDelete(View view) {
+        dialogRemoveUser();
+    }
+
+    private void dialogRemoveUser() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.dialog_delete_title);
+        builder.setMessage(R.string.dialog_delete_message);
+        builder.setPositiveButton(R.string.dialog_yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //SingletonManager.getInstance(getApplicationContext()).removeUserApi(apiHost, user, getApplicationContext());
+                        SingletonManager.getInstance(getApplicationContext()).setUserListener(MyProfileActivity.this);
+                    }
+                })
+                .setNegativeButton(R.string.no_string, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                })
+                .setIcon(R.drawable.ic_delete)
+                .show();
+    }
+
     @Override
     public void onValidateOperation(int op) {
         Intent intent = new Intent();
-        intent.putExtra(LoginActivity.OP_CODE, op);
+        intent.putExtra(OP_CODE, op);
         setResult(RESULT_OK, intent);
         finish();
     }

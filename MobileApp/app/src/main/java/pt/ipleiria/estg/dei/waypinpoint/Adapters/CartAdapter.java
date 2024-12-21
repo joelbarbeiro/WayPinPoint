@@ -53,7 +53,7 @@ public class CartAdapter extends BaseAdapter {
         }
 
         ViewHolderList viewHolderList = (ViewHolderList) convertView.getTag();
-        if(viewHolderList == null){
+        if (viewHolderList == null) {
             viewHolderList = new ViewHolderList(convertView);
             convertView.setTag(viewHolderList);
         }
@@ -81,11 +81,11 @@ public class CartAdapter extends BaseAdapter {
             tvPrice.setText(String.format("$%.2f", cart.getPrice()));
             tvDate.setText(cart.getDate());
 
-            Glide.with(context)
-                    .load(cart.getActivityImg())
-                    .placeholder(R.drawable.img_default_activity)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .into(imageViewCartItem);
+//            Glide.with(context)
+//                    //.load(cart.getActivityImg())
+//                    .placeholder(R.drawable.img_default_activity)
+//                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+//                    .into(imageViewCartItem);
         }
     }
 }

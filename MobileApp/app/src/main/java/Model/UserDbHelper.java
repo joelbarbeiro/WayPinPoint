@@ -13,7 +13,7 @@ import java.util.ArrayList;
 public class UserDbHelper extends SQLiteOpenHelper {
 
     private static final String DB_NAME = "waypinpointmobile";
-    private static final int DB_VERSION = 1;
+    private static final int DB_VERSION = 3;
 
     private final SQLiteDatabase db;
 
@@ -83,6 +83,12 @@ public class UserDbHelper extends SQLiteOpenHelper {
         values.put(PHOTO, user.getPhoto());
 
         return this.db.update(TABLE_NAME, values, ID + "= ?", new String[]{"" + user.getId()}) > 0;
+    }
+
+    public boolean editPhotoDb(String photo, int id) {
+        ContentValues values = new ContentValues();
+        values.put(PHOTO, photo);
+        return this.db.update(TABLE_NAME, values, ID + "= ?", new String[]{"" + id}) > 0;
     }
 
     public boolean removeUserDb(int id) {

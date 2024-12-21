@@ -1,6 +1,7 @@
 package pt.ipleiria.estg.dei.waypinpoint;
 
 import static Model.User.DEFAULT_IMG;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.OP_CODE;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -141,7 +142,7 @@ public class RegisterActivity extends AppCompatActivity implements UserListener 
     @Override
     public void onValidateOperation(int op) {
         Intent intent = new Intent();
-        intent.putExtra(LoginActivity.OP_CODE, op);
+        intent.putExtra(OP_CODE, op);
         setResult(RESULT_OK, intent);
         finish();
     }
