@@ -57,7 +57,7 @@ public class ActivityDbHelper extends SQLiteOpenHelper {
         this.onCreate(db);
     }
 
-    public void addActivityDB(Activity a){
+    public void addActivityDB(Activity a) {
         ContentValues val = new ContentValues();
         val.put(ID, a.getId());
         val.put(NAME, a.getName());
@@ -73,7 +73,7 @@ public class ActivityDbHelper extends SQLiteOpenHelper {
         this.db.insert(TABLE_NAME, null, val);
     }
 
-    public boolean editActivityDB(Activity a){
+    public boolean editActivityDB(Activity a) {
         ContentValues val = new ContentValues();
         val.put(ID, a.getId());
         val.put(NAME, a.getName());
@@ -86,29 +86,29 @@ public class ActivityDbHelper extends SQLiteOpenHelper {
         val.put(STATUS, a.getStatus());
         val.put(CATEGORY_ID, a.getCategory());
 
-        return this.db.update(TABLE_NAME, val, ID + "= ?", new String[]{""+a.getId()}) > 0;
+        return this.db.update(TABLE_NAME, val, ID + "= ?", new String[]{"" + a.getId()}) > 0;
     }
 
-    public boolean delActivityDB(int id){
+    public boolean delActivityDB(int id) {
         return (this.db.delete(TABLE_NAME, ID + " = ?", new String[]{"" + id}) == 1);
     }
 
-    public ArrayList<Activity> getActivitiesDB(){
+    public ArrayList<Activity> getActivitiesDB() {
         ArrayList<Activity> activities = new ArrayList<>();
         Cursor cursor = this.db.query(TABLE_NAME, new String[]{ID, NAME, DESCRIPTION, PHOTO, MAXPAX, PRICEPERPAX, ADDRESS, SUPPLIER, STATUS, CATEGORY_ID},
-            null, null, null, null, null);
-        if (cursor.moveToFirst()){
+                null, null, null, null, null);
+        if (cursor.moveToFirst()) {
             do {
                 Activity auxActivity = new Activity(cursor.getInt(0), cursor.getString(1), cursor.getString(2),
                         cursor.getString(3), cursor.getInt(4), cursor.getFloat(5), cursor.getString(6),
                         cursor.getInt(7), cursor.getInt(8), cursor.getString(9));
                 activities.add(auxActivity);
-            }while(cursor.moveToNext());
+            } while (cursor.moveToNext());
         }
         return activities;
     }
 
-    public void delAllActivitiesDB(){
+    public void delAllActivitiesDB() {
         this.db.delete(TABLE_NAME, null, null);
     }
 }

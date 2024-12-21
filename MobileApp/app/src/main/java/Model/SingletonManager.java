@@ -1,5 +1,6 @@
 package Model;
 
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.DEFAULT_IMG;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.DELETE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EDIT;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EMAIL;
@@ -7,6 +8,7 @@ import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ID;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.REGISTER;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.TOKEN;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.USER_DATA;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getApiHost;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -25,7 +27,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -62,7 +63,6 @@ public class SingletonManager {
     //endregion
 
     private static RequestQueue volleyQueue = null;
-
 
     public SingletonManager(Context context) {
         users = new ArrayList<>();
@@ -154,7 +154,7 @@ public class SingletonManager {
                     params.put("address", user.getAddress());
                     params.put("phone", "" + user.getPhone());
                     params.put("nif", "" + user.getNif());
-                    params.put("photo", user.getPhoto() == null ? User.DEFAULT_IMG : user.getPhoto());
+                    params.put("photo", user.getPhoto() == null ? DEFAULT_IMG : user.getPhoto());
                     return params;
                 }
             };
@@ -173,6 +173,7 @@ public class SingletonManager {
                     if (userListener != null) {
                         userListener.onValidateOperation(EDIT);
                     }
+                    System.out.println("---> EDIT USER RESPONSE: " + response);
                 }
             }, new Response.ErrorListener() {
                 @Override
@@ -189,7 +190,7 @@ public class SingletonManager {
                     params.put("address", user.getAddress());
                     params.put("phone", "" + user.getPhone());
                     params.put("nif", "" + user.getNif());
-                    params.put("photo", user.getPhoto() == null ? User.DEFAULT_IMG : user.getPhoto());
+                    params.put("photoFile", user.getPhoto() == null ? String.valueOf(R.drawable.ic_default_profile) : user.getPhoto());
                     return params;
                 }
             };

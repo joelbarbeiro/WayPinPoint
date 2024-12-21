@@ -7,12 +7,6 @@ import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.REGISTER;
 
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,6 +16,11 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -53,11 +52,11 @@ public class ListActivitiesFragment extends Fragment implements SwipeRefreshLayo
         View view = inflater.inflate(R.layout.fragment_list_activities, container, false);
         lvActivities = view.findViewById(R.id.lvActivities);
 
-        lvActivities.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+        lvActivities.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent = new Intent(getContext(), ActivityDetailsActivity.class);
-                intent.putExtra(ActivityDetailsActivity.ID_ACTIVITY, (int) l );
+                intent.putExtra(ActivityDetailsActivity.ID_ACTIVITY, (int) l);
                 startActivityForResult(intent, EDIT);
             }
         });
@@ -97,9 +96,8 @@ public class ListActivitiesFragment extends Fragment implements SwipeRefreshLayo
             public boolean onQueryTextChange(String s) {
                 ArrayList<Activity> tempLivros = new ArrayList<>();
 
-                for(Activity a : SingletonManager.getInstance(getContext()).getActivities())
-                {
-                    if(a.getName().toLowerCase().contains(s.toLowerCase())){
+                for (Activity a : SingletonManager.getInstance(getContext()).getActivities()) {
+                    if (a.getName().toLowerCase().contains(s.toLowerCase())) {
                         tempLivros.add(a);
                     }
                 }
@@ -115,18 +113,18 @@ public class ListActivitiesFragment extends Fragment implements SwipeRefreshLayo
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if(resultCode == LoginActivity.RESULT_OK){
-            if(requestCode == REGISTER || requestCode == EDIT){
+        if (resultCode == LoginActivity.RESULT_OK) {
+            if (requestCode == REGISTER || requestCode == EDIT) {
                 SingletonManager.getInstance(getContext()).getActivities(getContext());
 
-                switch (requestCode){
+                switch (requestCode) {
                     case REGISTER:
                         Snackbar.make(getView(), "Activity successfully created!", Snackbar.LENGTH_SHORT).show();
                         break;
                     case EDIT:
-                        if(data.getIntExtra(OP_CODE, 0) == DELETE){
+                        if (data.getIntExtra(OP_CODE, 0) == DELETE) {
                             Snackbar.make(getView(), "Activity removed!", Snackbar.LENGTH_SHORT).show();
-                        }else{
+                        } else {
                             Snackbar.make(getView(), "Activity edit successful!", Snackbar.LENGTH_SHORT).show();
                         }
                         break;
@@ -137,6 +135,7 @@ public class ListActivitiesFragment extends Fragment implements SwipeRefreshLayo
 
         super.onActivityResult(requestCode, resultCode, data);
     }
+
     @Override
     public void onRefresh() {
         SingletonManager.getInstance(getContext()).getActivities(getContext());
@@ -145,7 +144,7 @@ public class ListActivitiesFragment extends Fragment implements SwipeRefreshLayo
 
     @Override
     public void onRefreshActivitiesList(ArrayList<Activity> listActivities) {
-        if(listActivities != null){
+        if (listActivities != null) {
             lvActivities.setAdapter(new ActivitiesListAdaptor(getContext(), listActivities));
         }
     }

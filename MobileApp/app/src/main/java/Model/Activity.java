@@ -1,7 +1,5 @@
 package Model;
 
-import pt.ipleiria.estg.dei.waypinpoint.utils.Utilities;
-
 public class Activity {
     private int id, maxpax, supplier, status;
     private double priceperpax;
@@ -20,11 +18,11 @@ public class Activity {
         this.category = category;
     }
 
-    public int getId(){
+    public int getId() {
         return id;
     }
 
-    public void setId(int id){
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -76,7 +74,9 @@ public class Activity {
         this.description = description;
     }
 
-    public String getPhoto() { return photo; }
+    public String getPhoto() {
+        return photo;
+    }
 
     public void setPhoto(String photo) {
         this.photo = photo;

@@ -23,7 +23,7 @@ public class ActivitiesListAdaptor extends BaseAdapter {
     private LayoutInflater inflater;
     private ArrayList<Activity> activities;
 
-    public ActivitiesListAdaptor(Context context, ArrayList<Activity> activities){
+    public ActivitiesListAdaptor(Context context, ArrayList<Activity> activities) {
         this.context = context;
         this.activities = activities;
     }
@@ -45,7 +45,7 @@ public class ActivitiesListAdaptor extends BaseAdapter {
 
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
-        if(inflater == null){
+        if (inflater == null) {
             inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
 
@@ -54,7 +54,7 @@ public class ActivitiesListAdaptor extends BaseAdapter {
         }
 
         ViewHolderActivity viewHolderActivity = (ViewHolderActivity) view.getTag();
-        if(viewHolderActivity == null){
+        if (viewHolderActivity == null) {
             viewHolderActivity = new ViewHolderActivity(view);
             view.setTag(viewHolderActivity);
         }
@@ -63,11 +63,11 @@ public class ActivitiesListAdaptor extends BaseAdapter {
         return view;
     }
 
-    private class ViewHolderActivity{
+    private class ViewHolderActivity {
         private TextView tvName, tvCatgory, tvPrice, tvAddress;
         private ImageView activityImg;
 
-        public ViewHolderActivity(View view){
+        public ViewHolderActivity(View view) {
             tvName = view.findViewById(R.id.tvNameContent);
             tvCatgory = view.findViewById(R.id.tvCategoryContent);
             tvPrice = view.findViewById(R.id.tvPriceContent);
@@ -75,10 +75,10 @@ public class ActivitiesListAdaptor extends BaseAdapter {
             activityImg = view.findViewById(R.id.imageViewCover);
         }
 
-        public void update(Activity activity){
+        public void update(Activity activity) {
             tvName.setText(activity.getName());
             tvCatgory.setText(activity.getCategory());
-            tvPrice.setText(""+activity.getPriceperpax());
+            tvPrice.setText("" + activity.getPriceperpax());
             tvAddress.setText(activity.getAddress());
             String imgPath = Utilities.getImgUri(context) + activity.getSupplier() + "/" + activity.getPhoto();
             Glide.with(context)

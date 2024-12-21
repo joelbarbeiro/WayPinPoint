@@ -4,7 +4,6 @@ public class User {
     private int id, phone, nif, supplier;
     private String username, email, password, address, photo, token;
 
-    public static final String DEFAULT_IMG = "https://images.app.goo.gl/WRUpq3qmgD331B64A";
 
 
     public User(int id, String username, String email, String password, String address, int phone, int nif, String photo, int supplier, String token) {

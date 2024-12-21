@@ -6,8 +6,10 @@ import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.REGISTER;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.SNACKBAR_MESSAGE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.TOKEN;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.USER_DATA;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.checkAndRequestPermissions;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getApiHost;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getImgUri;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getImgUriUser;
 
 import android.app.Activity;
 import android.content.Context;
@@ -46,6 +48,7 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
         etPassword = findViewById(R.id.registerTvPassword);
 
         FloatingActionButton fabApiHost;
+        checkAndRequestPermissions(getApplicationContext(), LoginActivity.this);
 
         fabApiHost = findViewById(R.id.fabApiHostnameConfig);
         fabApiHost.setOnClickListener(new View.OnClickListener() {
@@ -72,6 +75,8 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
             View rootView = findViewById(R.id.loginView);
             Snackbar.make(rootView, "Hostname: " + apiHost, Snackbar.LENGTH_SHORT).show();
             System.out.println("--> img path " + getImgUri(getApplicationContext()));
+            System.out.println("--> img USER path " + getImgUriUser(getApplicationContext()));
+
         }
 
         if (isTokenValid()) {
