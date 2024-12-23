@@ -45,9 +45,8 @@ import com.google.android.material.snackbar.Snackbar;
 
 import Model.SingletonManager;
 import Model.User;
-import Model.UserDbHelper;
+import Model.WaypinpointDbHelper;
 import pt.ipleiria.estg.dei.waypinpoint.utils.ImageSender;
-import pt.ipleiria.estg.dei.waypinpoint.utils.Utilities;
 
 public class MenuMainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -156,8 +155,8 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
             if (requestCode == EDIT) {
                 if (data.getIntExtra(OP_CODE, 0) == DELETE) {
                     SharedPreferences sharedPreferencesUser = getSharedPreferences(USER_DATA, MODE_PRIVATE);
-                    UserDbHelper userDbHelper = new UserDbHelper(getApplicationContext());
-                    userDbHelper.removeAllUsersDb();
+                    WaypinpointDbHelper waypinpointDbHelper = new WaypinpointDbHelper(getApplicationContext());
+                    waypinpointDbHelper.removeAllUsersDb();
                     SharedPreferences.Editor editorUser = sharedPreferencesUser.edit();
                     editorUser.putString(TOKEN, "NO TOKEN");
                     editorUser.apply();
@@ -205,8 +204,8 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
         builder.setPositiveButton(R.string.yes_string, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        UserDbHelper userDbHelper = new UserDbHelper(getApplicationContext());
-                        userDbHelper.removeAllUsersDb();
+                        WaypinpointDbHelper waypinpointDbHelper = new WaypinpointDbHelper(getApplicationContext());
+                        waypinpointDbHelper.removeAllUsersDb();
                         SharedPreferences.Editor editorUser = sharedPreferencesUser.edit();
                         editorUser.putString(TOKEN, "NO TOKEN");
                         editorUser.apply();

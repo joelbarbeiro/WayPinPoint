@@ -41,6 +41,8 @@ public class Utilities {
     public static final String DEFAULT_IMG = "https://images.app.goo.gl/WRUpq3qmgD331B64A";
     public static final String PROFILE_PIC = "PROFILE_PIC";
     public static final String BACKEND_PORT = ":8080";
+    public static final String ID_REVIEW = "ID_REVIEW";
+
 
     public static final String DB_VERSION = "DB_VERSION";
     public static final String IMG_URI = "IMG_URI";
@@ -125,5 +127,7 @@ public class Utilities {
         editor.putString(IMG_URI_USER, imgUserPath);
         editor.apply();
     }
+
+
 
 }

@@ -104,7 +104,10 @@
     <string name="name">Name</string>
     <string name="add_to_cart">Add to cart</string>
     <string name="fab_add_activity">Add Activity</string>
+    <string name="fab_add_Review">Add Review</string>
     <string name="menu_search_title_search">Search</string>
     <string name="menu_delete">delete</string>
+    <string name="activity_review_label">Review</string>
+    <string name="activity_pictures_description">Activity Pictures</string>
 
 </resources>

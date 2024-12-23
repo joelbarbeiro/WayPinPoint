@@ -29,7 +29,7 @@ class ReviewController extends ActiveController
     {
         $user = User::findByUsername($username);
         if ($user && $user->validatePassword($password)) {
-            $this->user = $user; //Guardar user autenticado         r
+            $this->user = $user; //Guardar user autenticado
             return $user;
         }
         throw new \yii\web\ForbiddenHttpException('Error auth'); //403
@@ -61,10 +61,11 @@ class ReviewController extends ActiveController
         $postData = \Yii::$app->request->post();
         $reviewModel = new $this->modelClass;
 
-        $reviewModel->user_id = \Yii::$app->user->id;
+        $reviewModel->user_id = $postData['user_id'];
         $reviewModel->activity_id = $id;
         $reviewModel->score = $postData['score'];
         $reviewModel->message = $postData['message'];
+        $reviewModel->created_at = time();
         $reviewModel->save();
         return $reviewModel;
     }
