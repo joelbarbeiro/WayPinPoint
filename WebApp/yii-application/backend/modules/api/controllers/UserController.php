@@ -154,7 +154,7 @@ class UserController extends ActiveController
                 return [
                     'status' => 'success',
                     'message' => 'Login successful',
-                    'token' => $user->verification_token,
+                    'token' => $user->auth_key,
                     'id' => $user->id,
                     'username' => $user->username,
                     'email' => $user->email,

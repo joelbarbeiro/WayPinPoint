@@ -8,13 +8,14 @@ import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ID;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.REGISTER;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.TOKEN;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.USER_DATA;
-import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getApiHost;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getUserId;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.net.http.UrlRequest;
+import android.util.Base64;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -34,9 +35,12 @@ import java.util.Map;
 import Listeners.ActivitiesListener;
 import Listeners.ActivityListener;
 import Listeners.LoginListener;
+import Listeners.ReviewListener;
+import Listeners.ReviewsListener;
 import Listeners.UserListener;
 import pt.ipleiria.estg.dei.waypinpoint.R;
 import pt.ipleiria.estg.dei.waypinpoint.utils.ActivityJsonParser;
+import pt.ipleiria.estg.dei.waypinpoint.utils.ReviewJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.StatusJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.UserJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.Utilities;
@@ -44,32 +48,36 @@ import pt.ipleiria.estg.dei.waypinpoint.utils.Utilities;
 public class SingletonManager {
 
     private static SingletonManager instance = null;
-    private UserDbHelper userDbHelper = null;
+    private WaypinpointDbHelper waypinpointDbHelper = null;
 
+    //region # Users instances #
     private ArrayList<User> users;
-
     private UserListener userListener;
     private LoginListener loginListener;
+    //endregion
+
+    //region # Reviews instances #
+    private ReviewsListener reviewsListener;
+    private ReviewListener reviewListener;
+    private ArrayList<Review> reviews;
+    //endregion
 
     //region # Activities instances #
-    private ActivityDbHelper activityDbHelper = null;
 
     private ActivitiesListener activitiesListener;
     private ArrayList<Activity> activities;
-
     private ActivityListener activityListener;
-
 
     //endregion
 
     private static RequestQueue volleyQueue = null;
 
     public SingletonManager(Context context) {
-        users = new ArrayList<>();
-        userDbHelper = new UserDbHelper(context);
+        waypinpointDbHelper = new WaypinpointDbHelper(context);
 
+        users = new ArrayList<>();
         activities = new ArrayList<>();
-        activityDbHelper = new ActivityDbHelper(context);
+        reviews = new ArrayList<>();
     }
 
     public static synchronized SingletonManager getInstance(Context context) {
@@ -90,7 +98,7 @@ public class SingletonManager {
     }
 
     public ArrayList<User> getUsersBD() {
-        users = userDbHelper.getAllUsersDb();
+        users = waypinpointDbHelper.getAllUsersDb();
         return new ArrayList<>(users);
     }
 
@@ -105,21 +113,21 @@ public class SingletonManager {
     }
 
     public void editPhotoDb(String photo, int id) {
-        userDbHelper.editPhotoDb(photo, id);
+        waypinpointDbHelper.editPhotoDb(photo, id);
     }
 
     public void addUserDb(User user) {
-        userDbHelper.addUserDb(user);
+        waypinpointDbHelper.addUserDb(user);
     }
 
     public void editUserDb(User user) {
-        userDbHelper.editUserDb(user);
+        waypinpointDbHelper.editUserDb(user);
     }
 
     public void removeUserDb(int userId) {
         User b = getUser(userId);
         if (b != null) {
-            userDbHelper.removeUserDb(b.getId());
+            waypinpointDbHelper.removeUserDb(b.getId());
         }
     }
 
@@ -254,7 +262,6 @@ public class SingletonManager {
             volleyQueue.add(request);
         }
     }
-
     //endregion
 
     //region # LOGIN API #
@@ -325,33 +332,35 @@ public class SingletonManager {
         this.activityListener = activityListener;
     }
 
-    public ArrayList<Activity> getActivities(){
-        activities = activityDbHelper.getActivitiesDB();
+    public ArrayList<Activity> getActivities() {
+        activities = waypinpointDbHelper.getActivitiesDB();
         return new ArrayList<>(activities);
     }
 
-    public Activity getActivity(int id){
-        for(Activity a: activities){
-            if(a.getId() == id){
+    public Activity getActivity(int id) {
+        for (Activity a : activities) {
+            if (a.getId() == id) {
                 return a;
             }
         }
         return null;
     }
-    public void addActivitiesDB(ArrayList<Activity> activities){
+
+    public void addActivitiesDB(ArrayList<Activity> activities) {
         //activityDbHelper.delAllActivitiesDB();
-        for(Activity a: activities){
+        for (Activity a : activities) {
             System.out.println("DB Add --> " + a);
-            activityDbHelper.addActivityDB(a);
+            waypinpointDbHelper.addActivityDB(a);
         }
     }
-    public void getActivities( final Context context){
+
+    public void getActivities(final Context context) {
         String apiHost = Utilities.getApiHost(context);
-        if(!StatusJsonParser.isConnectionInternet(context)){
+        if (!StatusJsonParser.isConnectionInternet(context)) {
             Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
 
-            if(activitiesListener != null){
-                activitiesListener.onRefreshActivitiesList(activityDbHelper.getActivitiesDB());
+            if (activitiesListener != null) {
+                activitiesListener.onRefreshActivitiesList(waypinpointDbHelper.getActivitiesDB());
             }
         } else {
             JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, apiHost + "activities", null, new Response.Listener<JSONArray>() {
@@ -361,7 +370,7 @@ public class SingletonManager {
                     activities = ActivityJsonParser.parserJsonActivity(response);
                     addActivitiesDB(activities);
 
-                    if(activitiesListener != null){
+                    if (activitiesListener != null) {
                         activitiesListener.onRefreshActivitiesList(activities);
                     }
                 }
@@ -372,10 +381,73 @@ public class SingletonManager {
 
                 }
             });
-        volleyQueue.add(request);
+            volleyQueue.add(request);
+        }
+    }
+    //endregion
+
+    //region # Review API #
+    public void setReviewsListener(ReviewsListener reviewsListener) {
+        this.reviewsListener = reviewsListener;
+    }
+
+    public void setReviewListener(ReviewListener reviewListener) {
+        this.reviewListener = reviewListener;
+    }
+
+    public void addReviewsDb(ArrayList<Review> reviews) {
+        //activityDbHelper.delAllActivitiesDB();
+        for (Review r : reviews) {
+            System.out.println("DB Add review--> " + r);
+            waypinpointDbHelper.addReviewDB(r);
         }
     }
 
-    //endregion
 
-}
+    public void getReviewsApi(final Context context, int id) {
+        String apiHost = Utilities.getApiHost(context);
+        User user = getUser(getUserId(context));
+        if (!StatusJsonParser.isConnectionInternet(context)) {
+            Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
+
+            if (reviewsListener != null) {
+                reviewsListener.onRefreshReviewsList(waypinpointDbHelper.getReviewsDb());
+            }
+        } else {
+            JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, apiHost + "reviews/activity/" + id, null, new Response.Listener<JSONArray>() {
+                @Override
+                public void onResponse(JSONArray response) {
+                    System.out.println("--> GETAPI: " + response);
+                    reviews = ReviewJsonParser.parserJsonReview(response);
+                    addReviewsDb(reviews);
+
+                    if (reviewsListener != null) {
+                        reviewsListener.onRefreshReviewsList(reviews);
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    System.out.println("--> GET --> " + error);
+
+                }
+            }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> headers = new HashMap<>();
+                    // Add Basic Authentication Header
+                    String username = user.getUsername(); // Replace with your username
+                    String password = user.getPassword(); // Replace with your password
+                    String credentials = username + ":" + password;
+                    String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+                    headers.put("Authorization", auth);
+                    return headers;
+                }
+            };
+
+            volleyQueue.add(request);
+            }
+        }
+        //endregion
+
+    }
