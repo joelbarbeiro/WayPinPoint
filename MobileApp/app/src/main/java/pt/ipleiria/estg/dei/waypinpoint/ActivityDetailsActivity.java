@@ -42,8 +42,13 @@ public class ActivityDetailsActivity extends AppCompatActivity {
         spinnerDateTime = findViewById(R.id.spinnerActivityDateTime);
 
         if(activity != null){
-
+            loadActivity();
+            // TODO: fabGuardar.setImageResource(R.drawable.ic_action_guardar);
+        }  else {
+            //setTitle(getString(R.string.txt_adicionar_livro));
+            //fabGuardar.setImageResource(R.drawable.ic_action_adicionar);
         }
+
     }
     private void loadActivity(){
         setTitle("Detalhes: " + activity.getName());

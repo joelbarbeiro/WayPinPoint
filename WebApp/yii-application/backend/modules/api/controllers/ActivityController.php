@@ -15,7 +15,7 @@ class ActivityController extends ActiveController
     public $hour = [];
     public $date = [];
 
-    public function behaviors()
+    /*public function behaviors()
     {
         $behaviors = parent::behaviors();
         $behaviors['authenticator'] = [
@@ -34,7 +34,7 @@ class ActivityController extends ActiveController
             return $user;
         }
         throw new \yii\web\ForbiddenHttpException('Error auth'); //403
-    }
+    }*/
 
     public function actionActivities()
     {
