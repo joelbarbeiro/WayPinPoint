@@ -58,7 +58,10 @@ class Calendar extends \yii\db\ActiveRecord
     }
 
     public static function getCalendar(){
-        return Calendar::find()->where(['status' => 1])->all();
+        return Calendar::find()
+            ->where(['calendar.status' => 1])
+            ->joinWith('date')
+            ->all();
     }
 
     /**
@@ -110,5 +113,15 @@ class Calendar extends \yii\db\ActiveRecord
     public function getTime()
     {
         return $this->hasOne(Time::class, ['id' => 'time_id']);
+    }
+    public function fields()
+    {
+        $fields = parent::fields();
+
+        $fields['date'] = function () {
+            return $this->date ? $this->date->date : null;
+        };
+
+        return $fields;
     }
 }
