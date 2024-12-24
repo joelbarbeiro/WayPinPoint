@@ -347,7 +347,7 @@ public class SingletonManager {
     }
 
     public void addActivitiesDB(ArrayList<Activity> activities) {
-        //activityDbHelper.delAllActivitiesDB();
+        waypinpointDbHelper.delAllActivitiesDB();
         for (Activity a : activities) {
             System.out.println("DB Add --> " + a);
             waypinpointDbHelper.addActivityDB(a);
@@ -385,6 +385,9 @@ public class SingletonManager {
         }
     }
     //endregion
+
+    //TODO: CALENDAR ENDPOINT
+    //TODO: TIME ENDPOINT
 
     //region # Review API #
     public void setReviewsListener(ReviewsListener reviewsListener) {

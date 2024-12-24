@@ -17,6 +17,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import Model.Activity;
 import Model.SingletonManager;
+import pt.ipleiria.estg.dei.waypinpoint.utils.Utilities;
 
 public class ActivityDetailsActivity extends AppCompatActivity {
 
@@ -37,16 +38,16 @@ public class ActivityDetailsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
-        int id = getIntent().getIntExtra(ID_ACTIVITY, 2);
-        fragmentManager = getSupportFragmentManager();
+        int id = getIntent().getIntExtra(ID_ACTIVITY, 0);
 
         activity = SingletonManager.getInstance(getApplicationContext()).getActivity(id);
 
+        imageActivity = findViewById(R.id.imgActiviy);
         etName = findViewById(R.id.etActivityName);
         etDescription = findViewById(R.id.etActivityDescription);
         etMaxPax = findViewById(R.id.etActivityMaxPax);
         etPricePerPax = findViewById(R.id.etActivityPricePerPax);
-        spinnerDateTime = findViewById(R.id.spinnerActivityDateTime);
+        //spinnerDateTime = findViewById(R.id.spinnerActivityDateTime);
 
         btnReviews = findViewById(R.id.btnReview);
 
@@ -67,8 +68,9 @@ public class ActivityDetailsActivity extends AppCompatActivity {
         etDescription.setText(activity.getDescription());
         etMaxPax.setText("" + activity.getMaxpax());
         etPricePerPax.setText("" + activity.getPriceperpax());
-        Glide.with(getApplicationContext())
-                .load(activity.getPhoto())
+        String imgPath = Utilities.getImgUri(getApplicationContext()) + activity.getSupplier() + "/" + activity.getPhoto();
+                Glide.with(getApplicationContext())
+                .load(imgPath)
                 .placeholder(R.drawable.img_default_activity)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(imageActivity);

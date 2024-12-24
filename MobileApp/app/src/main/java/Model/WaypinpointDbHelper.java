@@ -41,6 +41,24 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
     private static final String CATEGORY_ID = "category_id";
     //endregion
 
+    //region = CATEGORY DECLARATIONS #
+    private static String TABLE_NAME_CATEGORY = "categories";
+    //endregion
+
+    //region = CALENDAR #
+    private static final String TABLE_NAME_CALENDAR = "calendars";
+    private static final String ID_CALENDAR = "id";
+    private static  final String ID_ACTIVITY = "id_activity";
+    private static final String ID_DATE = "id_date";
+    private static final String DATE = "date";
+    private static final String ID_TIME = "id_time";
+    private static final String HOUR = "hour";
+    //endregion
+
+    //region = CALENDAR TIME DECLARATIONS #
+    private static final String TABLE_NAME_TIME = "calendartimes";
+    //endregion
+
     //region = REVIEW DECLARATIONS #
     private static final String TABLE_NAME_REVIEWS = "reviews";
     private static final String USER_ID = "user_id";
@@ -86,6 +104,30 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
                 CATEGORY_ID + " TEXT NOT NULL" +
                 ")";
         db.execSQL(createActivitiesTable);
+
+        String createCategoryTable = "CREATE TABLE " + TABLE_NAME_CATEGORY +
+                "(" +
+                ID + "INTEGER, " +
+                DESCRIPTION + " TEXT NOT NULL" +
+                ")";
+        db.execSQL(createCategoryTable);
+
+        String createCalendarTable = "CREATE TABLE " + TABLE_NAME_CALENDAR +
+                "(" +
+                ID + "INTEGER, " +
+                ID_ACTIVITY + "INTEGER, " +
+                ID_DATE + "INTEGER, " +
+                DATE + "TEXT NOT NULL, " +
+                ID_TIME + "INTEGER" +
+                ")";
+        db.execSQL(createCalendarTable);
+
+        String createTimeTable = "CREATE TABLE " + TABLE_NAME_TIME +
+                "(" +
+                ID + "INTEGER, " +
+                HOUR + " TEXT NOT NULL" +
+                ")";
+        db.execSQL(createCategoryTable);
 
         String createReviewsTable = "CREATE TABLE " + TABLE_NAME_REVIEWS +
                 "(" +
@@ -230,6 +272,121 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
 
     public void delAllActivitiesDB() {
         this.db.delete(TABLE_NAME_ACTIVITIES, null, null);
+    }
+
+    //endregion
+
+    //region CALENDAR DB METHODS#
+    public void addCalendarDB(Calendar c) {
+        ContentValues val = new ContentValues();
+        val.put(ID, c.getId());
+        val.put(ID_CALENDAR, c.getActivity_id());
+        val.put(ID_DATE, c.getDate_id());
+        val.put(DATE, c.getDate());
+        val.put(ID_TIME, c.getTime_id());
+
+        this.db.insert(TABLE_NAME_CALENDAR, null, val);
+    }
+
+    public boolean editCalendarDB(Calendar c) {
+        ContentValues val = new ContentValues();
+        val.put(ID, c.getId());
+        val.put(ID_CALENDAR, c.getActivity_id());
+        val.put(ID_DATE, c.getDate_id());
+        val.put(DATE, c.getDate());
+        val.put(ID_TIME, c.getTime_id());
+
+        return this.db.update(TABLE_NAME_CALENDAR, val, ID + "= ?", new String[]{"" + c.getId()}) > 0;
+    }
+
+    public boolean delCalendarDB(int id) {
+        return (this.db.delete(TABLE_NAME_CALENDAR, ID + " = ?", new String[]{"" + id}) == 1);
+    }
+
+    public ArrayList<Calendar> getCalendarDB() {
+        ArrayList<Calendar> calendars = new ArrayList<>();
+        Cursor cursor = this.db.query(TABLE_NAME_CALENDAR, new String[]{ID, ID_ACTIVITY, ID_DATE, DATE, ID_TIME},
+                null, null, null, null, null);
+        if (cursor.moveToFirst()) {
+            do {
+                Calendar auxCalendar = new Calendar(cursor.getInt(0), cursor.getInt(1), cursor.getInt(2),
+                        cursor.getString(3), cursor.getInt(4));
+                calendars.add(auxCalendar);
+            } while (cursor.moveToNext());
+        }
+        return calendars;
+    }
+
+    public void delAllCalendarDB() {
+        this.db.delete(TABLE_NAME_CALENDAR, null, null);
+    }
+
+    //endregion
+
+    //region CALENDAR TIME DB METHODS#
+    public void addCalendarTimeDB(CalendarTime c) {
+        ContentValues val = new ContentValues();
+        val.put(ID, c.getId());
+        val.put(HOUR, c.getHour());
+
+        this.db.insert(TABLE_NAME_TIME, null, val);
+    }
+
+    public ArrayList<CalendarTime> getCalendarTimeDB() {
+        ArrayList<CalendarTime> time = new ArrayList<>();
+        Cursor cursor = this.db.query(TABLE_NAME_TIME, new String[]{ID, HOUR},
+                null, null, null, null, null);
+        if (cursor.moveToFirst()) {
+            do {
+                CalendarTime auxTime = new CalendarTime(cursor.getInt(0), cursor.getString(1));
+                time.add(auxTime);
+            } while (cursor.moveToNext());
+        }
+        return time;
+    }
+
+    public void delAllCalendarTimeDB() {
+        this.db.delete(TABLE_NAME_TIME, null, null);
+    }
+
+    //endregion
+
+    //region CATEGORY DB METHODS#
+    public void addCategoryDB(Category c) {
+        ContentValues val = new ContentValues();
+        val.put(ID, c.getId());
+        val.put(DESCRIPTION, c.getDescription());
+
+        this.db.insert(TABLE_NAME_CATEGORY, null, val);
+    }
+
+    public boolean editCategoryDB(Category c) {
+        ContentValues val = new ContentValues();
+        val.put(ID, c.getId());
+        val.put(DESCRIPTION, c.getDescription());
+
+        return this.db.update(TABLE_NAME_CATEGORY, val, ID + "= ?", new String[]{"" + c.getId()}) > 0;
+    }
+
+    public boolean delCategoryDB(int id) {
+        return (this.db.delete(TABLE_NAME_CATEGORY, ID + " = ?", new String[]{"" + id}) == 1);
+    }
+
+    public ArrayList<Category> getCategoryDB() {
+        ArrayList<Category> category = new ArrayList<>();
+        Cursor cursor = this.db.query(TABLE_NAME_CATEGORY, new String[]{ID, DESCRIPTION},
+                null, null, null, null, null);
+        if (cursor.moveToFirst()) {
+            do {
+                Category auxCategory = new Category(cursor.getInt(0), cursor.getString(1));
+                category.add(auxCategory);
+            } while (cursor.moveToNext());
+        }
+        return category;
+    }
+
+    public void delAllCategoriesDB() {
+        this.db.delete(TABLE_NAME_CATEGORY, null, null);
     }
 
     //endregion

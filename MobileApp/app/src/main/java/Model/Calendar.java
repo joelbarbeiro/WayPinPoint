@@ -1,14 +1,15 @@
 package Model;
 
 public class Calendar {
-    private int id, activity_id;
-    private String date, time;
+    private int id, activity_id, time_id, date_id;
+    private String date;
 
-    public Calendar(int id, int activity_id, String date, String time) {
+    public Calendar(int id, int activity_id, int date_id, String date, int time_id) {
         this.id = id;
         this.activity_id = activity_id;
+        this.date_id = date_id;
         this.date = date;
-        this.time = time;
+        this.time_id = time_id;
     }
 
     public int getId() {
@@ -35,11 +36,19 @@ public class Calendar {
         this.date = date;
     }
 
-    public String getTime() {
-        return time;
+    public int getTime_id() {
+        return time_id;
     }
 
-    public void setTime(String time) {
-        this.time = time;
+    public void setTime_id(int time_id) {
+        this.time_id = time_id;
+    }
+
+    public int getDate_id() {
+        return date_id;
+    }
+
+    public void setDate_id(int date_id) {
+        this.date_id = date_id;
     }
 }
