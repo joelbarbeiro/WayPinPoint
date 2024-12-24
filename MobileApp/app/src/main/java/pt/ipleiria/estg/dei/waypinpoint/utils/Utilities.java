@@ -39,6 +39,8 @@ public class Utilities {
     public static final String PROFILE_PIC = "PROFILE_PIC";
     public static final String BACKEND_PORT = ":8080";
     public static final String ID_REVIEW = "ID_REVIEW";
+    public static final String USER_ID = "USER_ID";
+    public static final String ACTIVITY_ID = "ACTIVITY_ID";
 
 
     public static final String DB_VERSION = "DB_VERSION";

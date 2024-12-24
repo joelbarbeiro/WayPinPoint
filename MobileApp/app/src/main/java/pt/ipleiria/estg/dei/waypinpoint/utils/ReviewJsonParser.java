@@ -6,11 +6,12 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import Model.Activity;
 import Model.Review;
+import Model.User;
 
 public class ReviewJsonParser {
-    public static ArrayList<Review> parserJsonReview(JSONArray response) {
+
+    public static ArrayList<Review> parserJsonReviews(JSONArray response) {
         ArrayList<Review> reviews = new ArrayList<>();
         try {
             for (int c = 0; c < response.length(); c++) {
@@ -28,5 +29,31 @@ public class ReviewJsonParser {
             e.printStackTrace();
         }
         return reviews;
+    }
+
+    public static Review parserJsonReview (String response){
+        Review auxReview = null;
+
+        try{
+            JSONObject Review = new JSONObject(response);
+            int reviewId = Review.getInt("id");
+            int userId = Review.getInt("user_id");
+            int activityId = Review.getInt("activity_id");
+            int score = Review.getInt("score");
+            String message = Review.getString("message");
+            int createAt = Review.getInt("created_at");
+
+            auxReview = new Review(
+                    reviewId,
+                    userId,
+                    activityId,
+                    score,
+                    message,
+                    createAt
+            );
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return auxReview;
     }
 }
