@@ -68,6 +68,7 @@ public class ReviewListAdapter extends BaseAdapter {
         private TextView tvMessage, tvDate;
         private RatingBar ratingBar;
 
+
         public ViewHolderReview(View view) {
             ratingBar = view.findViewById(R.id.ratingBarScore);
             tvMessage = view.findViewById(R.id.tvMessageContent);
@@ -75,9 +76,12 @@ public class ReviewListAdapter extends BaseAdapter {
         }
 
         public void update(Review review) {
+            int date = review.getCreatedAt();
+            String dateToinsert;
             ratingBar.setRating(Float.parseFloat("" + review.getScore()));
             tvMessage.setText(review.getMessage());
-            tvDate.setText("" + review.getCreatedAt());
+            dateToinsert = Utilities.setDateFromTimestamp(date);
+            tvDate.setText(dateToinsert);
         }
     }
 }

@@ -13,6 +13,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.provider.MediaStore;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -121,6 +123,20 @@ public class Utilities {
         String imgUserPath = "http://" + uri + "/img/user/";
         editor.putString(IMG_URI_USER, imgUserPath);
         editor.apply();
+    }
+
+
+    public static String setDateFromTimestamp(int timestamp) {
+        // Convert the timestamp (seconds since Unix Epoch) into a Date object
+        Date date = new Date((long) timestamp * 1000); // Multiply by 1000 to convert to milliseconds
+
+        // Create a SimpleDateFormat to format the date
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); // You can change the format as needed
+
+        // Format the date
+        String formattedDate = dateFormat.format(date);
+
+        return formattedDate;
     }
 
 
