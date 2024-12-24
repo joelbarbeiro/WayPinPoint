@@ -110,8 +110,10 @@ return [
                     'extraPatterns' => [
                         'GET all' => 'activities',
                         'GET {id}' => 'activityview',
-                        'POST' => 'createactivity',
-                        'PUT {id}' => 'updateactivity',
+                        'GET calendar' => 'calendar',
+                        'GET time' => 'time',
+                        'POST createactivity' => 'createactivity',
+                        'PUT updateactivity/{id}' => 'updateactivity',
                         'DELETE {id}' => 'deleteactivity',
                     ],
                 ],

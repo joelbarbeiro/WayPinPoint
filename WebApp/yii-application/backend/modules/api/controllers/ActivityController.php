@@ -3,6 +3,8 @@
 namespace backend\modules\api\controllers;
 
 use \common\models\Activity;
+use common\models\Calendar;
+use common\models\Time;
 use common\models\User;
 use Yii;
 use yii\filters\auth\HttpBasicAuth;
@@ -104,5 +106,22 @@ class ActivityController extends ActiveController
             'status' => 'error',
             'message' => json_encode($activity->errors),
         ];
+    }
+    public function actionCalendar()
+    {
+        $calendar = Calendar::getCalendar();
+        if ($calendar) {
+            return ['calendar' => $calendar];
+        }
+        return ['error' => 'Calendar not found'];
+    }
+
+    public function actionTime()
+    {
+        $time = Time::getTimes();
+        if ($time) {
+            return ['time' => $time];
+        }
+        return ['error' => 'Calendar not found'];
     }
 }

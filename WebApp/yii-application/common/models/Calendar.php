@@ -57,6 +57,9 @@ class Calendar extends \yii\db\ActiveRecord
         ];
     }
 
+    public static function getCalendar(){
+        return Calendar::find()->where(['status' => 1])->all();
+    }
 
     /**
      * Gets query for [[activity]].
