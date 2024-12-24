@@ -30,7 +30,7 @@
             android:ems="10"
             android:inputType="textLongMessage"
             android:minHeight="48dp"
-            android:text="@string/review_details_message_hint" />
+            android:hint="@string/review_details_message_hint" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fabSave"

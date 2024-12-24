@@ -2,13 +2,10 @@ package pt.ipleiria.estg.dei.waypinpoint;
 
 import static pt.ipleiria.estg.dei.waypinpoint.utils.StatusJsonParser.isConnectionInternet;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ACTIVITY_ID;
-import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EDIT;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ID_REVIEW;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.OP_CODE;
-import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.REGISTER;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.USER_ID;
 
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -20,12 +17,10 @@ import android.widget.RatingBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
 import Listeners.ReviewListener;
 import Model.Review;
@@ -78,12 +73,11 @@ public class ReviewDetailsActivity extends AppCompatActivity implements ReviewLi
                     return;
                 }
 
-
                 if (review != null) {
-                    if(userId == review.getUserId()){
+                    if (userId == review.getUserId()) {
                         review.setScore(rbScore.getNumStars());
                         review.setMessage(etMessage.getText().toString());
-//                    SingletonManager.getInstance(getApplicationContext()).editReviewApi(review, getApplicationContext());
+                        SingletonManager.getInstance(getApplicationContext()).editReviewApi(review, getApplicationContext());
                     } else {
                         Toast.makeText(ReviewDetailsActivity.this, R.string.review_user_mismatch, Toast.LENGTH_SHORT).show();
                     }
@@ -103,7 +97,7 @@ public class ReviewDetailsActivity extends AppCompatActivity implements ReviewLi
         SingletonManager.getInstance(getApplicationContext()).setReviewListener(this);
     }
 
-    private void loadReview(){
+    private void loadReview() {
         setTitle(getString(R.string.review_details_title));
         rbScore.setRating(review.getScore());
         etMessage.setText(review.getMessage());
@@ -125,7 +119,7 @@ public class ReviewDetailsActivity extends AppCompatActivity implements ReviewLi
             if (!isConnectionInternet(getApplicationContext())) {
                 Toast.makeText(this, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
             } else {
-                if(userId == review.getUserId()){
+                if (userId == review.getUserId()) {
                     dialogRemove();
                 } else {
                     Toast.makeText(this, R.string.review_user_mismatch, Toast.LENGTH_SHORT).show();
@@ -143,7 +137,7 @@ public class ReviewDetailsActivity extends AppCompatActivity implements ReviewLi
         builder.setPositiveButton(R.string.yes_string, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-//                        SingletonManager.getInstance(getApplicationContext()).removeReviewApi(review, getApplicationContext());
+                        SingletonManager.getInstance(getApplicationContext()).removeReviewApi(review, getApplicationContext());
                     }
                 })
                 .setNegativeButton(R.string.no_string, new DialogInterface.OnClickListener() {

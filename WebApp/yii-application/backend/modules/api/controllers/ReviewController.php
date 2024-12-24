@@ -65,7 +65,7 @@ class ReviewController extends ActiveController
         $reviewModel->activity_id = $postData['activity_id'];
         $reviewModel->score = $postData['score'];
         $reviewModel->message = $postData['message'];
-        $reviewModel->created_at = ;
+        $reviewModel->created_at = time();
         $reviewModel->save();
         return $reviewModel;
     }

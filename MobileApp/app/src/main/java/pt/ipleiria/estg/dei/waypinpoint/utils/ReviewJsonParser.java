@@ -7,7 +7,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import Model.Review;
-import Model.User;
 
 public class ReviewJsonParser {
 
@@ -22,7 +21,7 @@ public class ReviewJsonParser {
                 int score = review.getInt("score");
                 String message = review.getString("message");
 
-                Review auxReview = new Review(id, userId,activityId, score, message, 0);
+                Review auxReview = new Review(id, userId, activityId, score, message, 0);
                 reviews.add(auxReview);
             }
         } catch (JSONException e) {
@@ -31,10 +30,10 @@ public class ReviewJsonParser {
         return reviews;
     }
 
-    public static Review parserJsonReview (String response){
+    public static Review parserJsonReview(String response) {
         Review auxReview = null;
 
-        try{
+        try {
             JSONObject Review = new JSONObject(response);
             int reviewId = Review.getInt("id");
             int userId = Review.getInt("user_id");
