@@ -61,13 +61,23 @@
     <string name="error_invalid_token">Invalid token</string>
     <string name="error_default">Something went wrong</string>
 
+    <!-- General Messages -->
+    <string name="message_save_changes">Save changes</string>
 
     <!-- Dialogs-->
     <string name="dialog_logout_message">Do you really want to logout ?</string>
     <string name="dialog_delete_title">Delete Profile</string>
     <string name="dialog_delete_message">Are you sure you want to delete your profile?\n Such an action cannot be reversed</string>
+    <string name="dialog_review_remove">Remove Review</string>
+    <string name="dialog_review_message">Do you really wish to delete this review?</string>
     <string name="yes_string">Yes</string>
     <string name="no_string">No</string>
+
+    <!-- Review -->
+    <string name="review_details_message_hint">Message</string>
+    <string name="review_add_message">Add Review</string>
+    <string name="review_details_title">Review Details</string>
+    <string name="review_user_mismatch">You are not the author of this review</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -82,5 +92,8 @@
     <string name="menu_delete">delete</string>
     <string name="activity_review_label">Review</string>
     <string name="activity_pictures_description">Activity Pictures</string>
+    <string name="error_rating_required">Rating required to send a review</string>
+    <string name="error_message_empty">Please enter a message on the review</string>
+
 
 </resources>

@@ -56,13 +56,13 @@ class ReviewController extends ActiveController
         return $recs;
     }
 
-    public function actionNew($id)
+    public function actionNew()
     {
         $postData = \Yii::$app->request->post();
         $reviewModel = new $this->modelClass;
 
         $reviewModel->user_id = $postData['user_id'];
-        $reviewModel->activity_id = $id;
+        $reviewModel->activity_id = $postData['activity_id'];
         $reviewModel->score = $postData['score'];
         $reviewModel->message = $postData['message'];
         $reviewModel->created_at = time();
