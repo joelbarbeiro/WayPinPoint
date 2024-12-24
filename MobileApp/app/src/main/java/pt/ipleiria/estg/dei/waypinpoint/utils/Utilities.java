@@ -6,7 +6,6 @@ import static android.os.Looper.getMainLooper;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -17,9 +16,6 @@ import android.provider.MediaStore;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-
-import pt.ipleiria.estg.dei.waypinpoint.LoginActivity;
-import pt.ipleiria.estg.dei.waypinpoint.MenuMainActivity;
 
 public class Utilities {
     public static final int REGISTER = 100;
@@ -58,7 +54,7 @@ public class Utilities {
         return sharedPreferences.getInt(ID, 0);
     }
 
-    public static void toastDuration(int duration){
+    public static void toastDuration(int duration) {
         new Handler(getMainLooper()).postDelayed(() -> {
         }, duration);
     }
@@ -111,7 +107,7 @@ public class Utilities {
         return sharedPreferences.getString(IMG_URI_USER, null);
     }
 
-    public static void setImgUri(String uri, Context context){
+    public static void setImgUri(String uri, Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(IMG_URI, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         String imgPath = "http://" + uri + "/img/activity/";
@@ -119,14 +115,13 @@ public class Utilities {
         editor.apply();
     }
 
-    public static void setImgUriUser(String uri, Context context){
+    public static void setImgUriUser(String uri, Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(IMG_URI_USER, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         String imgUserPath = "http://" + uri + "/img/user/";
         editor.putString(IMG_URI_USER, imgUserPath);
         editor.apply();
     }
-
 
 
 }
