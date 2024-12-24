@@ -31,8 +31,6 @@ public class ReviewDetailsActivity extends AppCompatActivity implements ReviewLi
     private Review review;
     private EditText etMessage;
     private RatingBar rbScore;
-    private int score;
-    private String message;
     private FloatingActionButton fabSave;
 
     @Override
@@ -75,7 +73,7 @@ public class ReviewDetailsActivity extends AppCompatActivity implements ReviewLi
 
                 if (review != null) {
                     if (userId == review.getUserId()) {
-                        review.setScore(rbScore.getNumStars());
+                        review.setScore((int) rbScore.getRating());
                         review.setMessage(etMessage.getText().toString());
                         SingletonManager.getInstance(getApplicationContext()).editReviewApi(review, getApplicationContext());
                     } else {
@@ -88,7 +86,7 @@ public class ReviewDetailsActivity extends AppCompatActivity implements ReviewLi
                             activityId,
                             (int) rating,
                             message,
-                            0
+                            null
                     );
                     SingletonManager.getInstance(getApplicationContext()).addReviewApi(review, getApplicationContext());
                 }

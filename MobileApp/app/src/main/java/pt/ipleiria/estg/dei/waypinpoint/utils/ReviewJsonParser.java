@@ -20,8 +20,9 @@ public class ReviewJsonParser {
                 int activityId = review.getInt("activity_id");
                 int score = review.getInt("score");
                 String message = review.getString("message");
+                int createdAt = review.getInt("created_at");
 
-                Review auxReview = new Review(id, userId, activityId, score, message, 0);
+                Review auxReview = new Review(id, userId, activityId, score, message, createdAt);
                 reviews.add(auxReview);
             }
         } catch (JSONException e) {
