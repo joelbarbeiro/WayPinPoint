@@ -34,14 +34,18 @@ import java.util.Map;
 
 import Listeners.ActivitiesListener;
 import Listeners.ActivityListener;
+import Listeners.CalendarListener;
 import Listeners.LoginListener;
 import Listeners.ReviewListener;
 import Listeners.ReviewsListener;
+import Listeners.TimeListener;
 import Listeners.UserListener;
 import pt.ipleiria.estg.dei.waypinpoint.R;
 import pt.ipleiria.estg.dei.waypinpoint.utils.ActivityJsonParser;
+import pt.ipleiria.estg.dei.waypinpoint.utils.CalendarJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.ReviewJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.StatusJsonParser;
+import pt.ipleiria.estg.dei.waypinpoint.utils.TimeJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.UserJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.Utilities;
 
@@ -65,7 +69,11 @@ public class SingletonManager {
     //region # Activities instances #
 
     private ActivitiesListener activitiesListener;
+    private CalendarListener calendarListener;
+    private TimeListener timeListener;
     private ArrayList<Activity> activities;
+    private ArrayList<Calendar> calendars;
+    private ArrayList<CalendarTime> calendarTimes;
     private ActivityListener activityListener;
 
     //endregion
@@ -363,10 +371,10 @@ public class SingletonManager {
                 activitiesListener.onRefreshActivitiesList(waypinpointDbHelper.getActivitiesDB());
             }
         } else {
-            JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, apiHost + "activities", null, new Response.Listener<JSONArray>() {
+
+            JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, apiHost + "activities/all", null, new Response.Listener<JSONArray>() {
                 @Override
                 public void onResponse(JSONArray response) {
-                    System.out.println("--> GETAPI: " + response);
                     activities = ActivityJsonParser.parserJsonActivity(response);
                     addActivitiesDB(activities);
 
@@ -374,6 +382,7 @@ public class SingletonManager {
                         activitiesListener.onRefreshActivitiesList(activities);
                     }
                 }
+
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
@@ -384,10 +393,75 @@ public class SingletonManager {
             volleyQueue.add(request);
         }
     }
-    //endregion
+    public void addCalendarsDB(ArrayList<Calendar> calendar) {
+        waypinpointDbHelper.delAllCalendarDB();
+        for (Calendar c : calendar) {
+            System.out.println("DB Add --> " + c);
+            waypinpointDbHelper.addCalendarDB(c);
+        }
+    }
+    public void getCalendar(final Context context) {
+        String apiHost = Utilities.getApiHost(context);
+        if (!StatusJsonParser.isConnectionInternet(context)) {
+            Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
 
-    //TODO: CALENDAR ENDPOINT
-    //TODO: TIME ENDPOINT
+            if (calendarListener != null) {
+                calendarListener.onRefreshCalendarsList(waypinpointDbHelper.getCalendarDB());
+            }
+        } else {
+
+            JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, apiHost + "activities/calendar", null, new Response.Listener<JSONArray>() {
+                @Override
+                public void onResponse(JSONArray response) {
+                    calendars = CalendarJsonParser.parserJsonCalendar(response);
+                    addCalendarsDB(calendars);
+
+                    if (calendarListener != null) {
+                        calendarListener.onRefreshCalendarsList(calendars);
+                    }
+                }
+
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    System.out.println("--> Calendar GET --> " + error);
+
+                }
+            });
+            volleyQueue.add(request);
+        }
+    }
+
+    public void addTimesDB(ArrayList<CalendarTime> calendarTime) {
+        waypinpointDbHelper.delAllCalendarTimeDB();
+        for (CalendarTime c : calendarTime) {
+            System.out.println("DB Add time --> " + c);
+            waypinpointDbHelper.addCalendarTimeDB(c);
+        }
+    }
+    private void fetchCalendarTimes(final Context context) {
+        String apiHost = Utilities.getApiHost(context);
+
+        JsonArrayRequest timesRequest = new JsonArrayRequest(Request.Method.GET, apiHost + "activities/time", null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray timesResponse) {
+                calendarTimes = TimeJsonParser.parserJsonTime(timesResponse);
+                addTimesDB(calendarTimes); // Update the database with fetched times
+
+                if (activitiesListener != null) {
+                    activitiesListener.onRefreshTimeList(calendarTimes); // Notify through the existing listener
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println("--> Time GET --> " + error);
+            }
+        });
+
+        volleyQueue.add(timesRequest);
+    }
+    //endregion
 
     //region # Review API #
     public void setReviewsListener(ReviewsListener reviewsListener) {

@@ -14,6 +14,8 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import java.util.ArrayList;
 
 import Model.Activity;
+import Model.Calendar;
+import Model.CalendarTime;
 import pt.ipleiria.estg.dei.waypinpoint.R;
 import pt.ipleiria.estg.dei.waypinpoint.utils.Utilities;
 
@@ -23,7 +25,7 @@ public class ActivitiesListAdaptor extends BaseAdapter {
     private LayoutInflater inflater;
     private ArrayList<Activity> activities;
 
-    public ActivitiesListAdaptor(Context context, ArrayList<Activity> activities) {
+    public ActivitiesListAdaptor(Context context, ArrayList<Activity> activities, ArrayList<Calendar> calendars, ArrayList<CalendarTime> times) {
         this.context = context;
         this.activities = activities;
     }
