@@ -293,6 +293,21 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
         }
         return reviews;
     }
+
+    public boolean editReviewDb(Review review) {
+        ContentValues values = new ContentValues();
+        values.put(USER_ID, review.getUserId());
+        values.put(ACTIVITY_ID, review.getActivityId());
+        values.put(SCORE, review.getScore());
+        values.put(MESSAGE, review.getMessage());
+        values.put(CREATED_AT, review.getCreatedAt());
+
+        return this.db.update(TABLE_NAME_REVIEWS, values, ID + "= ?", new String[]{"" + review.getId()}) > 0;
+    }
+
+    public boolean removeReviewDb(int id) {
+        return this.db.delete(TABLE_NAME_REVIEWS, ID + "= ?", new String[]{"" + id}) == 1;
+    }
     //endregion
     //REGION CART DB METHODS #
     public void addCartDb(Cart cart) {

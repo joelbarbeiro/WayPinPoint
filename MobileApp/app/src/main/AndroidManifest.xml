@@ -25,6 +25,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".ReviewDetailsActivity"
+            android:exported="false" />
+        <activity
             android:name=".ActivityDetailsActivity"
             android:exported="false" />
         <activity
@@ -63,4 +66,5 @@
                 android:resource="@xml/file_paths" />
         </provider>
     </application>
+
 </manifest>
