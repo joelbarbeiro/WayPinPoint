@@ -37,6 +37,8 @@ public class Utilities {
     public static final String TOKEN = "TOKEN";
     public static final String SNACKBAR_MESSAGE = "SNACKBAR_MESSAGE";
     public static final String ID_CART = "ID_CART";
+    public static final int DB_VERSION = 3;
+
 
     public static final String DEFAULT_IMG = "https://images.app.goo.gl/WRUpq3qmgD331B64A";
     public static final String PROFILE_PIC = "PROFILE_PIC";
@@ -44,7 +46,6 @@ public class Utilities {
     public static final String ID_REVIEW = "ID_REVIEW";
 
 
-    public static final String DB_VERSION = "DB_VERSION";
     public static final String IMG_URI = "IMG_URI";
     public static final String IMG_URI_USER = "IMG_URI_USER";
 
@@ -127,7 +128,10 @@ public class Utilities {
         editor.putString(IMG_URI_USER, imgUserPath);
         editor.apply();
     }
-
+    public static String getCredentials(Context context){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(USER_DATA, Context.MODE_PRIVATE);
+        return sharedPreferences.getString(USER_DATA, null);
+    }
 
 
 }

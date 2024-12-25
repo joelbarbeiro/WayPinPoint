@@ -15,7 +15,6 @@ import Model.Cart;
 public class CartJsonParser {
     public static ArrayList<Cart> parserJsonCarts(JSONArray response) {
         ArrayList<Cart> carts = new ArrayList<>();
-
         try {
             for (int i = 0; i < response.length(); i++) {
                 JSONObject cart = (JSONObject) response.get(i);
@@ -25,21 +24,13 @@ public class CartJsonParser {
                 int quantity = cart.getInt("quantity");
                 int status = cart.getInt("status");
                 int calendar_id = cart.getInt("calendar_id");
-                String date = cart.getString("date");
-                String time = cart.getString("time");
-                double price = cart.getDouble("price");
-                String activityImg = cart.getString("activityImg");
-
                 Cart auxCart = new Cart(
                         idCart,
                         user_id,
                         product_id,
                         quantity,
                         status,
-                        calendar_id,
-                        date,
-                        time,
-                        price
+                        calendar_id
                         );
                 carts.add(auxCart);
             }
@@ -55,15 +46,17 @@ public class CartJsonParser {
         try {
             JSONObject Cart = new JSONObject(response);
             int idCart = Cart.getInt("id");
+            System.out.println("PARSERERROR ID CART: " + idCart);
             int user_id = Cart.getInt("user_id");
+            System.out.println("PARSERERROR USER ID: " + user_id);
             int product_id = Cart.getInt("product_id");
+            System.out.println("PARSERERROR PRODUCT ID: " + product_id);
             int quantity = Cart.getInt("quantity");
+            System.out.println("PARSERERROR QUANTITY: " + quantity);
             int status = Cart.getInt("status");
+            System.out.println("PARSERERROR STATUS: " + status);
             int calendar_id = Cart.getInt("calendar_id");
-            String date = Cart.getString("date");
-            String time = Cart.getString("time");
-            double price = Cart.getDouble("price");
-            String activityImg = Cart.getString("activityImg");
+            System.out.println("PARSERERROR CALENDAR ID: " + calendar_id);
 
             auxCart = new Cart(
                     idCart,
@@ -71,10 +64,7 @@ public class CartJsonParser {
                     product_id,
                     quantity,
                     status,
-                    calendar_id,
-                    date,
-                    time,
-                    price
+                    calendar_id
             );
         } catch (JSONException e) {
             e.printStackTrace();

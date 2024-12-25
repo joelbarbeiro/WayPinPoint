@@ -88,10 +88,10 @@
     <string name="remove">Remove</string>
     <string name="cart_edited">Cart Edited!</string>
     <string name="cart_deleted">Cart Deleted!</string>
+    <string name="yes_string">yes string</string>
     <string name="no_string">no string</string>
     <string name="cart_added_successfully">Cart added successfully!</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="img_default">img_default</string>
     <string name="quantity">Quantity</string>
 

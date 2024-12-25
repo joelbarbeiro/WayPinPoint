@@ -53,11 +53,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".MainActivity"
-            android:exported="false"
-            android:launchMode="singleTop" />
-
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="your.package.name.fileprovider"

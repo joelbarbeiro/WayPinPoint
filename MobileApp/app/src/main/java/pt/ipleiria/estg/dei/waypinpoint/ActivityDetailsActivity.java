@@ -1,5 +1,6 @@
 package pt.ipleiria.estg.dei.waypinpoint;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -16,6 +17,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import Model.Activity;
+import Model.Cart;
 import Model.SingletonManager;
 
 public class ActivityDetailsActivity extends AppCompatActivity {
@@ -30,6 +32,8 @@ public class ActivityDetailsActivity extends AppCompatActivity {
     private Spinner spinnerDateTime;
     private ImageView imageActivity;
     private FloatingActionButton fabCrudActivity;
+    private Button btBuyActivity;
+    private Cart cart;
     private FragmentManager fragmentManager;
 
 
@@ -51,11 +55,21 @@ public class ActivityDetailsActivity extends AppCompatActivity {
         btnReviews = findViewById(R.id.btnReview);
 
 
-        if(activity != null){
+        btBuyActivity = findViewById(R.id.btBuyActivity);
+        btBuyActivity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
-        }
+                Intent intent = new Intent(ActivityDetailsActivity.this, CartActivity.class);
+                intent.putExtra("activity_id", activity.getId());
+                intent.putExtra("activity_name", activity.getName());
+                intent.putExtra("activity_price", activity.getPriceperpax());
+                startActivity(intent);
+            }
+        });
     }
-    private void loadActivity(){
+
+    private void loadActivity() {
         setTitle("Detalhes: " + activity.getName());
 
         etName.setText(activity.getName());
@@ -89,3 +103,4 @@ public class ActivityDetailsActivity extends AppCompatActivity {
                 .commit();
     }
 }
+

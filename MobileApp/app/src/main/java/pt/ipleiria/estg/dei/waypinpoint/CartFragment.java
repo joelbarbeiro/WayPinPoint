@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -28,11 +29,12 @@ import pt.ipleiria.estg.dei.waypinpoint.Adapters.CartAdapter;
 
 public class CartFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, CartListener {
     private SwipeRefreshLayout swipeRefreshLayout;
-
+    private ArrayList<Cart> cartList;
     private CartListener cartListener;
     private ListView lvCart;
     private String mParam2;
-    private FloatingActionButton fabCheckout;
+    private CartAdapter CartAdapter;
+    //private FloatingActionButton fabCheckout;
 
     public CartFragment() {
         // Required empty public constructor
@@ -45,29 +47,45 @@ public class CartFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         setHasOptionsMenu(true);
         View view = inflater.inflate(R.layout.fragment_cart, container, false);
         lvCart = view.findViewById(R.id.lvCart);
+        cartList = new ArrayList<>();
+        CartAdapter = new CartAdapter(getContext(), cartList);
+        lvCart.setAdapter(CartAdapter);
+        SingletonManager.getInstance(getContext()).getCartByUserId(getContext(), new CartListener() {
+            @Override
+            public void onSuccess(ArrayList<Cart> carts) {
+                cartList.clear();
+                cartList.addAll(carts);
+                CartAdapter.notifyDataSetChanged();
+            }
 
-        SingletonManager.getInstance(getContext()).setCartsListener(this);
-        SingletonManager.getInstance(getContext()).getCartByUserId(getContext(), getUserId(getContext()), cartListener);
-        System.out.println("--->>>> " + getUserId(getContext()));
+            @Override
+            public void onError(String errorMessage) {
+                Toast.makeText(getContext(), "Error fetching carts: " + errorMessage, Toast.LENGTH_SHORT).show();
+            }
+        });
+
         lvCart.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                Toast.makeText(getContext(), bookList.get(position).getTitle() , Toast.LENGTH_SHORT).show();
-                //Fazer code para ir para os details do livro
+                if (cartList == null || cartList.isEmpty()) {
+                    Toast.makeText(getContext(), "Cart list is empty or null!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 Intent intent = new Intent(getContext(), CartDetailsActivity.class);
-                intent.putExtra(ID_CART, (int) id);
-                startActivityForResult(intent, EDIT);
-
+                System.out.println("---> ID CART: " + cartList.get(position).getId());
+                intent.putExtra(ID_CART, cartList.get(position).getId());
+                startActivity(intent);
             }
         });
 
-        fabCheckout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getContext(), CartDetailsActivity.class);
-                startActivityForResult(intent, CREATE);
-            }
-        });
+
+//        fabCheckout.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(getContext(), CartDetailsActivity.class);
+//                startActivityForResult(intent, CREATE);
+//            }
+//        });
 
         swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout);
         swipeRefreshLayout.setOnRefreshListener(this);
@@ -75,23 +93,10 @@ public class CartFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         return view;
     }
 
-    @Override
-    public void onValidateOperation(int op) {
 
-    }
-
-    @Override
-    public void onErrorAdd(String errorMessage) {
-
-    }
 
     @Override
     public void onSuccess(ArrayList<Cart> carts) {
-
-    }
-
-    @Override
-    public void validateOperation(String s) {
 
     }
 
@@ -102,7 +107,7 @@ public class CartFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     @Override
     public void onRefresh() {
-        SingletonManager.getInstance(getContext()).getCartByUserId(getContext(), getUserId(getContext()), cartListener);
+        SingletonManager.getInstance(getContext()).getCartByUserId(getContext(), cartListener);
         swipeRefreshLayout.setRefreshing(false);
     }
 

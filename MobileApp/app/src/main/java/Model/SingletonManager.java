@@ -8,6 +8,8 @@ import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ID;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.REGISTER;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.TOKEN;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.USER_DATA;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getApiHost;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getCredentials;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getUserId;
 
 import android.content.Context;
@@ -67,7 +69,6 @@ public class SingletonManager {
     //endregion
     //Region Cart Instances
     private CartListener cartListener;
-    private static CartDbHelper cartDbHelper = null;
 
     private ArrayList<Cart> carts;
     private Cart cart;
@@ -86,9 +87,7 @@ public class SingletonManager {
         waypinpointDbHelper = new WaypinpointDbHelper(context);
 
         users = new ArrayList<>();
-        userDbHelper = new UserDbHelper(context);
-        cartDbHelper = new CartDbHelper(context);
-
+        carts = new ArrayList<>();
 
         activities = new ArrayList<>();
         reviews = new ArrayList<>();
@@ -339,7 +338,7 @@ public class SingletonManager {
     //REGION # MÉTODOS CART - API #
 
     public ArrayList<Cart> getCartsDB() {
-        carts = cartDbHelper.getAllCartsDb();
+        carts = waypinpointDbHelper.getAllCartsDb();
         return new ArrayList<>(carts);
     }
 
@@ -357,15 +356,15 @@ public class SingletonManager {
         String apiHost = getApiHost(context);
         if (!StatusJsonParser.isConnectionInternet(context)) {
             Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
-            listener.onErrorAdd(context.getString(R.string.error_no_internet));
+            listener.onError(context.getString(R.string.error_no_internet));
 
         } else {
             JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, apiHost + "carts/" + cart.getId(), null, new Response.Listener<JSONArray>() {
                 @Override
                 public void onResponse(JSONArray response) {
-                    System.out.println("------> Cart Data: " + response);
+                    System.out.println("------> Cart Data: " + response.toString());
                     Cart cart = CartJsonParser.parserJsonCart(response.toString());
-                    cartDbHelper.addCartDb(cart);
+                    waypinpointDbHelper.addCartDb(cart);
                 }
             }, new Response.ErrorListener() {
                 @Override
@@ -379,7 +378,12 @@ public class SingletonManager {
         }
     }
 
-    public void getCartByUserId(final Context context, int userId, final CartListener listener) {
+    public void getCartByUserId(final Context context, final CartListener listener) {
+        int userId = getUserId(context);
+        if (userId == 0) {
+            listener.onError("User ID not found in SharedPreferences");
+            return;
+        }
         String apiHost = getApiHost(context);
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, apiHost + "carts/buyers/" + userId,
                 null, new Response.Listener<JSONArray>() {
@@ -395,18 +399,19 @@ public class SingletonManager {
                         listener.onError("Error fetching carts: " + error.getMessage());
                     }
                 });
-        System.out.println("------> Cart Data: " + request.toString());
         volleyQueue.add(request);
     }
 
     public void addCartApi(final Cart cart, final Context context) {
+        User user = getUser(getUserId(context));
         String apiHost = getApiHost(context);
-        StringRequest request = new StringRequest(Request.Method.POST, apiHost + "carts/addtocart/" + cart.getProduct_id(), new Response.Listener<String>() {
+        StringRequest request = new StringRequest(Request.Method.POST, apiHost + "carts/addcart", new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 try {
-                    cartDbHelper.addCartDb(CartJsonParser.parserJsonCart(response));
                     JSONObject jsonResponse = new JSONObject(response);
+                    System.out.println("------> Cart Data: " + response);
+                    waypinpointDbHelper.addCartDb(CartJsonParser.parserJsonCart(response));
                     if (jsonResponse.getBoolean("success")) {
                         Toast.makeText(context, "Cart added successfully", Toast.LENGTH_SHORT).show();
                     } else {
@@ -432,11 +437,26 @@ public class SingletonManager {
             }
         }) {
             @Override
-            protected Map<String, String> getParams() {
+            protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
+                params.put("user_id", String.valueOf(cart.getUser_id()));
+                params.put("product_id", String.valueOf(cart.getProduct_id()));
                 params.put("quantity", String.valueOf(cart.getQuantity()));
+                params.put("status" , "0");
                 params.put("calendar_id", String.valueOf(cart.getCalendar_id()));
+
                 return params;
+            }
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                // Add Basic Authentication Header
+                String username = user.getUsername(); // Replace with your username
+                String password = user.getPassword(); // Replace with your password
+                String credentials = username + ":" + password;
+                String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+                headers.put("Authorization", auth);
+                return headers;
             }
         };
         volleyQueue.add(request);
@@ -472,7 +492,7 @@ public class SingletonManager {
 
     public void removeCartAPI(final Context context, final Cart cart) {
         String apiHost = getApiHost(context);
-        StringRequest request = new StringRequest(Request.Method.DELETE, apiHost + "delete/" + cart.getId(),
+        StringRequest request = new StringRequest(Request.Method.DELETE, apiHost + "carts/delete/" + cart.getId(),
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -521,7 +541,7 @@ public class SingletonManager {
     }
 
     public void addActivitiesDB(ArrayList<Activity> activities) {
-        //activityDbHelper.delAllActivitiesDB();
+        waypinpointDbHelper.delAllActivitiesDB();
         for (Activity a : activities) {
             System.out.println("DB Add --> " + a);
             waypinpointDbHelper.addActivityDB(a);
@@ -529,7 +549,7 @@ public class SingletonManager {
     }
 
     public void getActivities(final Context context) {
-        String apiHost = Utilities.getApiHost(context);
+        String apiHost = getApiHost(context);
         if (!StatusJsonParser.isConnectionInternet(context)) {
             Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
 
@@ -579,7 +599,7 @@ public class SingletonManager {
 
 
     public void getReviewsApi(final Context context, int id) {
-        String apiHost = Utilities.getApiHost(context);
+        String apiHost = getApiHost(context);
         User user = getUser(getUserId(context));
         if (!StatusJsonParser.isConnectionInternet(context)) {
             Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();

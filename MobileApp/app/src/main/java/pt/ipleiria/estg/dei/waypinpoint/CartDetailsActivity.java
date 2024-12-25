@@ -55,8 +55,6 @@ public class CartDetailsActivity extends AppCompatActivity implements CartListen
     private void loadCart() {
         etActivityName.setText(cart.getProduct_id());
         etQuantity.setText(cart.getQuantity());
-        etPrice.setText(""+ cart.getPrice());
-        etDate.setText("" + cart.getDate());
 //        Glide.with(getApplicationContext())
 //                .placeholder(R.drawable.img_default_activity)
 //                .diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -114,23 +112,9 @@ public class CartDetailsActivity extends AppCompatActivity implements CartListen
         finish();
     }
 
-    @Override
-    public void onValidateOperation(int op) {
-
-    }
-
-    @Override
-    public void onErrorAdd(String errorMessage) {
-
-    }
 
     @Override
     public void onSuccess(ArrayList<Cart> carts) {
-
-    }
-
-    @Override
-    public void validateOperation(String s) {
 
     }
 

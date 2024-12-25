@@ -78,8 +78,6 @@ public class CartAdapter extends BaseAdapter {
         private void update(Cart cart) {
             tvProductName.setText(cart.getProduct_id());
             tvQuantity.setText(String.valueOf(cart.getQuantity()));
-            tvPrice.setText(String.format("$%.2f", cart.getPrice()));
-            tvDate.setText(cart.getDate());
 
 //            Glide.with(context)
 //                    //.load(cart.getActivityImg())
