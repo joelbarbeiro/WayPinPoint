@@ -23,7 +23,7 @@ public class ActivityJsonParser {
                 String address = activity.getString("address");
                 int supplier = activity.getInt("user_id");
                 int status = activity.getInt("status");
-                String category = activity.getString("category_id");
+                int category = activity.getInt("category_id");
 
                 Activity auxActivity = new Activity(id, name,description, photo, maxpax, priceperpax, address, supplier, status, category);
                 activities.add(auxActivity);

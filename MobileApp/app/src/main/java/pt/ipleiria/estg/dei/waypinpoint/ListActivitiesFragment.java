@@ -31,6 +31,7 @@ import Listeners.ActivitiesListener;
 import Model.Activity;
 import Model.Calendar;
 import Model.CalendarTime;
+import Model.Category;
 import Model.SingletonManager;
 import adaptors.ActivitiesListAdaptor;
 
@@ -41,6 +42,7 @@ public class ListActivitiesFragment extends Fragment implements SwipeRefreshLayo
     private ArrayList<Activity> activities;
     private ArrayList<Calendar> calendars;
     private ArrayList<CalendarTime> times;
+    private ArrayList<Category> categories;
     private SwipeRefreshLayout swipeRefreshLayout;
     private SearchView searchView;
     private FloatingActionButton fabCrudActivity;
@@ -106,7 +108,7 @@ public class ListActivitiesFragment extends Fragment implements SwipeRefreshLayo
                     }
                 }
 
-                lvActivities.setAdapter(new ActivitiesListAdaptor(getContext(), tempActivity, calendars, times));
+                lvActivities.setAdapter(new ActivitiesListAdaptor(getContext(), tempActivity, calendars, times, categories));
 
                 return true;
             }
@@ -157,9 +159,18 @@ public class ListActivitiesFragment extends Fragment implements SwipeRefreshLayo
     public void onRefreshTimeList(ArrayList<CalendarTime> listCalendarTime) {
 
     }
-    public void onRefreshAllData(ArrayList<Activity> listActivities, ArrayList<Calendar> listCalendar, ArrayList<CalendarTime> listCalendarTime){
-        if (listActivities != null && listCalendar != null && listCalendarTime != null) {
-            lvActivities.setAdapter(new ActivitiesListAdaptor(getContext(), listActivities, listCalendar, listCalendarTime));
+
+    @Override
+    public void onRefreshCategoryList(ArrayList<Category> listCategory) {
+
+    }
+
+    public void onRefreshAllData(ArrayList<Activity> listActivities, ArrayList<Calendar> listCalendar, ArrayList<CalendarTime> listCalendarTime, ArrayList<Category> listCategories){
+        if (listActivities != null && listCalendar != null && listCalendarTime != null && listCategories != null) {
+            lvActivities.setAdapter(new ActivitiesListAdaptor(getContext(), listActivities, listCalendar, listCalendarTime, listCategories));
+        }
+        else{
+            System.out.println("---> something is empty listActivitiesFragment");
         }
     }
 }

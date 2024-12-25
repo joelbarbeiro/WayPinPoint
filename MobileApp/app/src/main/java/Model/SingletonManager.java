@@ -43,6 +43,7 @@ import Listeners.UserListener;
 import pt.ipleiria.estg.dei.waypinpoint.R;
 import pt.ipleiria.estg.dei.waypinpoint.utils.ActivityJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.CalendarJsonParser;
+import pt.ipleiria.estg.dei.waypinpoint.utils.CategoryJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.ReviewJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.StatusJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.TimeJsonParser;
@@ -74,6 +75,7 @@ public class SingletonManager {
     private ArrayList<Activity> activities;
     private ArrayList<Calendar> calendars;
     private ArrayList<CalendarTime> calendarTimes;
+    private ArrayList<Category> categories;
     private ActivityListener activityListener;
 
     //endregion
@@ -368,15 +370,30 @@ public class SingletonManager {
             Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
 
             if (activitiesListener != null) {
-                activitiesListener.onRefreshActivitiesList(waypinpointDbHelper.getActivitiesDB());
+                activitiesListener.onRefreshAllData(waypinpointDbHelper.getActivitiesDB(), waypinpointDbHelper.getCalendarDB(), waypinpointDbHelper.getCalendarTimeDB(), waypinpointDbHelper.getCategoryDB());
             }
         } else {
+            final int totalRequests = 4;
+            final int[] completedRequests = {0};
 
-            JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, apiHost + "activities/all", null, new Response.Listener<JSONArray>() {
+            Runnable onRequestCompleted = () -> {
+                completedRequests[0]++;
+                if (completedRequests[0] == totalRequests && activitiesListener != null) {
+                    activitiesListener.onRefreshAllData(activities, calendars, calendarTimes, categories);
+                }
+            };
+
+            getCalendarTimes(context, onRequestCompleted);
+            getCalendar(context, onRequestCompleted);
+            getCategory(context, onRequestCompleted);
+
+            JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, apiHost + "activities", null, new Response.Listener<JSONArray>() {
                 @Override
                 public void onResponse(JSONArray response) {
                     activities = ActivityJsonParser.parserJsonActivity(response);
                     addActivitiesDB(activities);
+                    onRequestCompleted.run();
+
 
                     if (activitiesListener != null) {
                         activitiesListener.onRefreshActivitiesList(activities);
@@ -387,7 +404,7 @@ public class SingletonManager {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     System.out.println("--> GET --> " + error);
-
+                    onRequestCompleted.run();
                 }
             });
             volleyQueue.add(request);
@@ -400,7 +417,7 @@ public class SingletonManager {
             waypinpointDbHelper.addCalendarDB(c);
         }
     }
-    public void getCalendar(final Context context) {
+    public void getCalendar(final Context context, final Runnable onComplete) {
         String apiHost = Utilities.getApiHost(context);
         if (!StatusJsonParser.isConnectionInternet(context)) {
             Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
@@ -415,6 +432,7 @@ public class SingletonManager {
                 public void onResponse(JSONArray response) {
                     calendars = CalendarJsonParser.parserJsonCalendar(response);
                     addCalendarsDB(calendars);
+                    onComplete.run();
 
                     if (calendarListener != null) {
                         calendarListener.onRefreshCalendarsList(calendars);
@@ -425,7 +443,7 @@ public class SingletonManager {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     System.out.println("--> Calendar GET --> " + error);
-
+                    onComplete.run();
                 }
             });
             volleyQueue.add(request);
@@ -439,27 +457,61 @@ public class SingletonManager {
             waypinpointDbHelper.addCalendarTimeDB(c);
         }
     }
-    private void fetchCalendarTimes(final Context context) {
+    private void getCalendarTimes(final Context context, final Runnable onComplete) {
         String apiHost = Utilities.getApiHost(context);
 
         JsonArrayRequest timesRequest = new JsonArrayRequest(Request.Method.GET, apiHost + "activities/time", null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray timesResponse) {
                 calendarTimes = TimeJsonParser.parserJsonTime(timesResponse);
-                addTimesDB(calendarTimes); // Update the database with fetched times
+                addTimesDB(calendarTimes);
+                onComplete.run();
 
                 if (activitiesListener != null) {
-                    activitiesListener.onRefreshTimeList(calendarTimes); // Notify through the existing listener
+                    activitiesListener.onRefreshTimeList(calendarTimes);
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 System.out.println("--> Time GET --> " + error);
+                onComplete.run();
             }
         });
 
         volleyQueue.add(timesRequest);
+    }
+
+    public void addCategoriesDB(ArrayList<Category> categories) {
+        waypinpointDbHelper.delAllCategoriesDB();
+        for (Category c : categories) {
+            System.out.println("DB Add category --> " + c);
+            waypinpointDbHelper.addCategoryDB(c);
+        }
+    }
+    private void getCategory(final Context context, final Runnable onComplete) {
+        String apiHost = Utilities.getApiHost(context);
+
+        JsonArrayRequest categoryRequest = new JsonArrayRequest(Request.Method.GET, apiHost + "activities/category", null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray categoryResponse) {
+                categories = CategoryJsonParser.parserJsonCategory(categoryResponse);
+                addCategoriesDB(categories);
+                onComplete.run();
+
+                if (activitiesListener != null) {
+                    activitiesListener.onRefreshTimeList(calendarTimes);
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println("--> Category GET --> " + error);
+                onComplete.run();
+            }
+        });
+
+        volleyQueue.add(categoryRequest);
     }
     //endregion
 

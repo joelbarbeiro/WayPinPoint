@@ -11,23 +11,36 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
+import java.sql.Array;
 import java.util.ArrayList;
 
 import Model.Activity;
 import Model.Calendar;
 import Model.CalendarTime;
+import Model.Category;
+import Model.WaypinpointDbHelper;
 import pt.ipleiria.estg.dei.waypinpoint.R;
 import pt.ipleiria.estg.dei.waypinpoint.utils.Utilities;
 
 public class ActivitiesListAdaptor extends BaseAdapter {
 
+
     private Context context;
     private LayoutInflater inflater;
     private ArrayList<Activity> activities;
+    private ArrayList<Calendar> calendars;
+    private ArrayList<CalendarTime> times;
+    private ArrayList<Category> categories;
+    private WaypinpointDbHelper waypinpointDbHelper = null;
 
-    public ActivitiesListAdaptor(Context context, ArrayList<Activity> activities, ArrayList<Calendar> calendars, ArrayList<CalendarTime> times) {
+
+    public ActivitiesListAdaptor(Context context, ArrayList<Activity> activities, ArrayList<Calendar> calendars, ArrayList<CalendarTime> times, ArrayList<Category> categories) {
         this.context = context;
         this.activities = activities;
+        this.calendars = calendars;
+        this.times = times;
+        this.categories = categories;
+        this.waypinpointDbHelper = new WaypinpointDbHelper(context);
     }
 
     @Override
@@ -79,7 +92,7 @@ public class ActivitiesListAdaptor extends BaseAdapter {
 
         public void update(Activity activity) {
             tvName.setText(activity.getName());
-            tvCatgory.setText(activity.getCategory());
+            tvCatgory.setText(waypinpointDbHelper.getCategoryById(activity.getCategory(), categories));
             tvPrice.setText("" + activity.getPriceperpax());
             tvAddress.setText(activity.getAddress());
             String imgPath = Utilities.getImgUri(context) + activity.getSupplier() + "/" + activity.getPhoto();

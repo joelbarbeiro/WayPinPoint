@@ -112,6 +112,7 @@ return [
                         'GET {id}' => 'activityview',
                         'GET calendar' => 'calendar',
                         'GET time' => 'time',
+                        'GET category' => 'category',
                         'POST createactivity' => 'createactivity',
                         'PUT updateactivity/{id}' => 'updateactivity',
                         'DELETE {id}' => 'deleteactivity',

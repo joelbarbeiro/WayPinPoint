@@ -107,27 +107,27 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
 
         String createCategoryTable = "CREATE TABLE " + TABLE_NAME_CATEGORY +
                 "(" +
-                ID + "INTEGER, " +
+                ID + " INTEGER, " +
                 DESCRIPTION + " TEXT NOT NULL" +
                 ")";
         db.execSQL(createCategoryTable);
 
         String createCalendarTable = "CREATE TABLE " + TABLE_NAME_CALENDAR +
                 "(" +
-                ID + "INTEGER, " +
-                ID_ACTIVITY + "INTEGER, " +
-                ID_DATE + "INTEGER, " +
-                DATE + "TEXT NOT NULL, " +
-                ID_TIME + "INTEGER" +
+                ID + " INTEGER, " +
+                ID_ACTIVITY + " INTEGER, " +
+                ID_DATE + " INTEGER, " +
+                DATE + " TEXT NOT NULL, " +
+                ID_TIME + " INTEGER" +
                 ")";
         db.execSQL(createCalendarTable);
 
         String createTimeTable = "CREATE TABLE " + TABLE_NAME_TIME +
                 "(" +
-                ID + "INTEGER, " +
+                ID + " INTEGER, " +
                 HOUR + " TEXT NOT NULL" +
                 ")";
-        db.execSQL(createCategoryTable);
+        db.execSQL(createTimeTable);
 
         String createReviewsTable = "CREATE TABLE " + TABLE_NAME_REVIEWS +
                 "(" +
@@ -145,6 +145,8 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME_USERS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME_ACTIVITIES);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME_CALENDAR);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME_TIME);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME_REVIEWS);
         this.onCreate(db);
     }
@@ -263,7 +265,7 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
             do {
                 Activity auxActivity = new Activity(cursor.getInt(0), cursor.getString(1), cursor.getString(2),
                         cursor.getString(3), cursor.getInt(4), cursor.getFloat(5), cursor.getString(6),
-                        cursor.getInt(7), cursor.getInt(8), cursor.getString(9));
+                        cursor.getInt(7), cursor.getInt(8), cursor.getInt(9));
                 activities.add(auxActivity);
             } while (cursor.moveToNext());
         }
@@ -387,6 +389,18 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
 
     public void delAllCategoriesDB() {
         this.db.delete(TABLE_NAME_CATEGORY, null, null);
+    }
+
+    public String getCategoryById(int categoryId, ArrayList<Category> categories) {
+        if (categories == null) {
+            return null;
+        }
+        for (Category category : categories) {
+            if (category.getId() == categoryId) {
+                return category.getDescription();
+            }
+        }
+        return null;
     }
 
     //endregion

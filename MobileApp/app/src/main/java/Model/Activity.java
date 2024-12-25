@@ -1,11 +1,11 @@
 package Model;
 
 public class Activity {
-    private int id, maxpax, supplier, status;
+    private int id, maxpax, supplier, status, category;
     private double priceperpax;
-    private String name, description, photo, address, category;
+    private String name, description, photo, address;
 
-    public Activity(int id, String name, String description, String photo, int maxpax, double priceperpax, String address, int supplier, int status, String category) {
+    public Activity(int id, String name, String description, String photo, int maxpax, double priceperpax, String address, int supplier, int status, int category) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -90,11 +90,11 @@ public class Activity {
         this.address = address;
     }
 
-    public String getCategory() {
+    public int getCategory() {
         return category;
     }
 
-    public void setCategory(String category) {
+    public void setCategory(int category) {
         this.category = category;
     }
 }

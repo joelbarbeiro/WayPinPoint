@@ -4,6 +4,7 @@ namespace backend\modules\api\controllers;
 
 use \common\models\Activity;
 use common\models\Calendar;
+use common\models\Category;
 use common\models\Time;
 use common\models\User;
 use Yii;
@@ -111,7 +112,7 @@ class ActivityController extends ActiveController
     {
         $calendar = Calendar::getCalendar();
         if ($calendar) {
-            return ['calendar' => $calendar];
+            return $calendar;
         }
         return ['error' => 'Calendar not found'];
     }
@@ -120,7 +121,15 @@ class ActivityController extends ActiveController
     {
         $time = Time::getTimes();
         if ($time) {
-            return ['time' => $time];
+            return $time;
+        }
+        return ['error' => 'Calendar not found'];
+    }
+    public function actionCategory()
+    {
+        $category = Category::getCategory();
+        if ($category) {
+            return $category;
         }
         return ['error' => 'Calendar not found'];
     }
