@@ -8,6 +8,7 @@ import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ID;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.REGISTER;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.TOKEN;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.USER_DATA;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getApiHost;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getUserId;
 
 import android.content.Context;
@@ -35,14 +36,19 @@ import java.util.Map;
 
 import Listeners.ActivitiesListener;
 import Listeners.ActivityListener;
+import Listeners.CartListener;
 import Listeners.LoginListener;
 import Listeners.ReviewListener;
 import Listeners.ReviewsListener;
 import Listeners.UserListener;
 import pt.ipleiria.estg.dei.waypinpoint.R;
+import pt.ipleiria.estg.dei.waypinpoint.utils.CartJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.ActivityJsonParser;
+import pt.ipleiria.estg.dei.waypinpoint.utils.CalendarJsonParser;
+import pt.ipleiria.estg.dei.waypinpoint.utils.CategoryJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.ReviewJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.StatusJsonParser;
+import pt.ipleiria.estg.dei.waypinpoint.utils.TimeJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.UserJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.Utilities;
 
@@ -62,11 +68,19 @@ public class SingletonManager {
     private ReviewListener reviewListener;
     private ArrayList<Review> reviews;
     //endregion
+    //Region Cart Instances
+    private CartListener cartListener;
 
+    private ArrayList<Cart> carts;
+    private Cart cart;
+    //endregion
     //region # Activities instances #
 
     private ActivitiesListener activitiesListener;
     private ArrayList<Activity> activities;
+    private ArrayList<Calendar> calendars;
+    private ArrayList<CalendarTime> calendarTimes;
+    private ArrayList<Category> categories;
     private ActivityListener activityListener;
 
     //endregion
@@ -77,8 +91,13 @@ public class SingletonManager {
         waypinpointDbHelper = new WaypinpointDbHelper(context);
 
         users = new ArrayList<>();
+        carts = new ArrayList<>();
+
         activities = new ArrayList<>();
         reviews = new ArrayList<>();
+        calendars = new ArrayList<>();
+        calendarTimes = new ArrayList<>();
+        categories = new ArrayList<>();
     }
 
     public static synchronized SingletonManager getInstance(Context context) {
@@ -323,6 +342,212 @@ public class SingletonManager {
         }
     }
     //endregion
+    //REGION # MÉTODOS CART - API #
+
+    public ArrayList<Cart> getCartsDB(ArrayList <Cart> carts) {
+        carts = waypinpointDbHelper.getAllCartsDb();
+        return new ArrayList<>(carts);
+    }
+    public ArrayList<Cart> getCarts() {
+        carts = waypinpointDbHelper.getAllCartsDb();
+        return new ArrayList<>(carts);
+    }
+
+    public Cart getCart(int id) {
+        carts = getCarts();
+        for (Cart cart : carts) {
+            if (cart.getId() == id) {
+                return cart;
+            }
+        }
+        return null;
+    }
+
+    public void getCartAPI(final Context context, final CartListener listener, final Cart cart) {
+        String apiHost = getApiHost(context);
+        if (!StatusJsonParser.isConnectionInternet(context)) {
+            Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
+            listener.onError(context.getString(R.string.error_no_internet));
+
+        } else {
+            JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, apiHost + "carts/" + cart.getId(), null, new Response.Listener<JSONArray>() {
+                @Override
+                public void onResponse(JSONArray response) {
+                    System.out.println("------> Cart Data: " + response.toString());
+                    Cart cart = CartJsonParser.parserJsonCart(response.toString());
+                    waypinpointDbHelper.addCartDb(cart);
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    System.out.println("Error fetching cart");
+                    Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            volleyQueue.add(request);
+        }
+    }
+
+    public void getCartByUserId(final Context context) {
+        User user = getUser(getUserId(context));
+        String apiHost = getApiHost(context);
+        int userId = getUserId(context);
+        if (!StatusJsonParser.isConnectionInternet(context)) {
+            Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
+
+            if (cartListener != null) {
+                cartListener.onRefreshCartList(waypinpointDbHelper.getCartByUserId(userId));
+            }
+        } else {
+            JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, apiHost + "carts/buyers/" + userId, null, new Response.Listener<JSONArray>() {
+                @Override
+                public void onResponse(JSONArray response) {
+                    System.out.println("--> CARTGETAPI: " + response);
+                    carts = CartJsonParser.parserJsonCarts(response);
+                    getCartsDB(carts);
+
+                    if (cartListener != null) {
+                        cartListener.onRefreshCartList(waypinpointDbHelper.getCartByUserId(userId));
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    System.out.println("--> GET --> " + error);
+
+                }
+            }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> headers = new HashMap<>();
+                    // Add Basic Authentication Header
+                    String username = user.getUsername(); // Replace with your username
+                    String password = user.getPassword(); // Replace with your password
+                    String credentials = username + ":" + password;
+                    String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+                    headers.put("Authorization", auth);
+                    return headers;
+                }
+            };
+
+            volleyQueue.add(request);
+        }
+    }
+
+    public void addCartApi(final Cart cart, final Context context) {
+        User user = getUser(getUserId(context));
+        String apiHost = getApiHost(context);
+        StringRequest request = new StringRequest(Request.Method.POST, apiHost + "carts/addcart", new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject jsonResponse = new JSONObject(response);
+                    System.out.println("------> Cart Data: " + response);
+                    waypinpointDbHelper.addCartDb(CartJsonParser.parserJsonCart(response));
+                    if (jsonResponse.getBoolean("success")) {
+                    } else {
+                        Toast.makeText(context, "Error: " + jsonResponse.getString("errors"), Toast.LENGTH_SHORT).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                if (error.networkResponse != null) {
+                    int statusCode = error.networkResponse.statusCode;
+                    String responseBody = new String(error.networkResponse.data);
+                    Toast.makeText(context, "Server Error: " + statusCode + "\n" + responseBody, Toast.LENGTH_LONG).show();
+                    Log.e("ServerError", "Code: " + statusCode + " Response: " + responseBody);
+                } else {
+                    Toast.makeText(context, "No response from server.", Toast.LENGTH_SHORT).show();
+                    Log.e("ServerError", "No response from server.");
+                }
+                Toast.makeText(context, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("user_id", String.valueOf(cart.getUser_id()));
+                params.put("product_id", String.valueOf(cart.getProduct_id()));
+                params.put("quantity", String.valueOf(cart.getQuantity()));
+                params.put("status" , "0");
+                params.put("calendar_id", String.valueOf(cart.getCalendar_id()));
+
+                return params;
+            }
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                // Add Basic Authentication Header
+                String username = user.getUsername(); // Replace with your username
+                String password = user.getPassword(); // Replace with your password
+                String credentials = username + ":" + password;
+                String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+                headers.put("Authorization", auth);
+                return headers;
+            }
+        };
+        volleyQueue.add(request);
+    }
+
+    public void editCart(final Cart cart, final Context context) {
+        String apiHost = getApiHost(context);
+        StringRequest request = new StringRequest(Request.Method.PUT, apiHost + "carts/updatecart/" + cart.getId(),
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Toast.makeText(context, "Cart updated successfully", Toast.LENGTH_SHORT).show();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(context, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("quantity", String.valueOf(cart.getQuantity()));
+                if (cart.getCalendar_id() != 0) {
+                    params.put("calendar_id", String.valueOf(cart.getCalendar_id()));
+                }
+                return params;
+            }
+        };
+        volleyQueue.add(request);
+    }
+
+    public void removeCartAPI(final Context context, final Cart cart) {
+        String apiHost = getApiHost(context);
+        StringRequest request = new StringRequest(Request.Method.DELETE, apiHost + "carts/delete/" + cart.getId(),
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Toast.makeText(context, "Cart item deleted", Toast.LENGTH_SHORT).show();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(context, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+        volleyQueue.add(request);
+    }
+
+    public void setCartsListener(CartListener cartsListener) {
+        this.cartListener = cartsListener;
+    }
+    public void setCartListener(CartListener cartListener) {
+        this.cartListener = cartListener;
+    }
+
+    //ENDREGION
 
     //region # Activity API #
     public void setActivitiesListener(ActivitiesListener activitiesListener) {
@@ -348,7 +573,7 @@ public class SingletonManager {
     }
 
     public void addActivitiesDB(ArrayList<Activity> activities) {
-        //activityDbHelper.delAllActivitiesDB();
+        waypinpointDbHelper.delAllActivitiesDB();
         for (Activity a : activities) {
             System.out.println("DB Add --> " + a);
             waypinpointDbHelper.addActivityDB(a);
@@ -356,33 +581,166 @@ public class SingletonManager {
     }
 
     public void getActivities(final Context context) {
+        String apiHost = getApiHost(context);
+        if (!StatusJsonParser.isConnectionInternet(context)) {
+            Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
+
+            if (activitiesListener != null) {
+                activitiesListener.onRefreshAllData(waypinpointDbHelper.getActivitiesDB(), waypinpointDbHelper.getCalendarDB(), waypinpointDbHelper.getCalendarTimeDB(), waypinpointDbHelper.getCategoryDB());
+            }
+        } else {
+            final int totalRequests = 4;
+            final int[] completedRequests = {0};
+
+            Runnable onRequestCompleted = () -> {
+                completedRequests[0]++;
+                if (completedRequests[0] == totalRequests && activitiesListener != null) {
+                    activitiesListener.onRefreshAllData(activities, calendars, calendarTimes, categories);
+                }
+            };
+
+            getCalendarTimes(context, onRequestCompleted);
+            getCalendar(context, onRequestCompleted);
+            getCategory(context, onRequestCompleted);
+
+            JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, apiHost + "activities", null, new Response.Listener<JSONArray>() {
+                @Override
+                public void onResponse(JSONArray response) {
+                    activities = ActivityJsonParser.parserJsonActivity(response);
+                    addActivitiesDB(activities);
+                    onRequestCompleted.run();
+
+
+                    if (activitiesListener != null) {
+                        activitiesListener.onRefreshAllData(activities, calendars, calendarTimes, categories);
+                    }
+                }
+
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    System.out.println("--> GET --> " + error);
+                    onRequestCompleted.run();
+                }
+            });
+            volleyQueue.add(request);
+        }
+    }
+    public void addCalendarsDB(ArrayList<Calendar> calendar) {
+        waypinpointDbHelper.delAllCalendarDB();
+        for (Calendar c : calendar) {
+            System.out.println("DB Add --> " + c);
+            waypinpointDbHelper.addCalendarDB(c);
+        }
+    }
+    public void getCalendar(final Context context, final Runnable onComplete) {
         String apiHost = Utilities.getApiHost(context);
         if (!StatusJsonParser.isConnectionInternet(context)) {
             Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
 
             if (activitiesListener != null) {
-                activitiesListener.onRefreshActivitiesList(waypinpointDbHelper.getActivitiesDB());
+                activitiesListener.onRefreshCalendarList(waypinpointDbHelper.getCalendarDB());
             }
         } else {
-            JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, apiHost + "activities", null, new Response.Listener<JSONArray>() {
+
+            JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, apiHost + "activities/calendar", null, new Response.Listener<JSONArray>() {
                 @Override
                 public void onResponse(JSONArray response) {
-                    System.out.println("--> GETAPI: " + response);
-                    activities = ActivityJsonParser.parserJsonActivity(response);
-                    addActivitiesDB(activities);
+                    calendars = CalendarJsonParser.parserJsonCalendar(response);
+                    addCalendarsDB(calendars);
+                    onComplete.run();
 
                     if (activitiesListener != null) {
-                        activitiesListener.onRefreshActivitiesList(activities);
+                        activitiesListener.onRefreshCalendarList(calendars);
+                    }
+                }
+
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    System.out.println("--> Calendar GET --> " + error);
+                    onComplete.run();
+                }
+            });
+            volleyQueue.add(request);
+        }
+    }
+
+    public void addTimesDB(ArrayList<CalendarTime> calendarTime) {
+        waypinpointDbHelper.delAllCalendarTimeDB();
+        for (CalendarTime c : calendarTime) {
+            System.out.println("DB Add time --> " + c);
+            waypinpointDbHelper.addCalendarTimeDB(c);
+        }
+    }
+    private void getCalendarTimes(final Context context, final Runnable onComplete) {
+        String apiHost = Utilities.getApiHost(context);
+        if (!StatusJsonParser.isConnectionInternet(context)) {
+            Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
+
+            if (activitiesListener != null) {
+                activitiesListener.onRefreshTimeList(waypinpointDbHelper.getCalendarTimeDB());
+            }
+        } else {
+            JsonArrayRequest timesRequest = new JsonArrayRequest(Request.Method.GET, apiHost + "activities/time", null, new Response.Listener<JSONArray>() {
+                @Override
+                public void onResponse(JSONArray timesResponse) {
+                    calendarTimes = TimeJsonParser.parserJsonTime(timesResponse);
+                    addTimesDB(calendarTimes);
+                    onComplete.run();
+
+                    if (activitiesListener != null) {
+                        activitiesListener.onRefreshTimeList(calendarTimes);
+                    }
+                }
+
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    System.out.println("--> Time GET --> " + error);
+                    onComplete.run();
+                }
+            });
+            volleyQueue.add(timesRequest);
+        }
+    }
+
+    public void addCategoriesDB(ArrayList<Category> categories) {
+        waypinpointDbHelper.delAllCategoriesDB();
+        for (Category c : categories) {
+            System.out.println("DB Add category --> " + c);
+            waypinpointDbHelper.addCategoryDB(c);
+        }
+    }
+    private void getCategory(final Context context, final Runnable onComplete) {
+        String apiHost = Utilities.getApiHost(context);
+        if (!StatusJsonParser.isConnectionInternet(context)) {
+            Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
+
+            if (activitiesListener != null) {
+                activitiesListener.onRefreshCategoryList(waypinpointDbHelper.getCategoryDB());
+            }
+        } else {
+            JsonArrayRequest categoryRequest = new JsonArrayRequest(Request.Method.GET, apiHost + "activities/category", null, new Response.Listener<JSONArray>() {
+                @Override
+                public void onResponse(JSONArray categoryResponse) {
+                    categories = CategoryJsonParser.parserJsonCategory(categoryResponse);
+                    addCategoriesDB(categories);
+                    onComplete.run();
+
+                    if (activitiesListener != null) {
+                        activitiesListener.onRefreshCategoryList(categories);
                     }
                 }
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    System.out.println("--> GET --> " + error);
-
+                    System.out.println("--> Category GET --> " + error);
+                    onComplete.run();
                 }
             });
-            volleyQueue.add(request);
+
+            volleyQueue.add(categoryRequest);
         }
     }
     //endregion
@@ -429,7 +787,7 @@ public class SingletonManager {
     }
 
     public void getReviewsApi(final Context context, int id) {
-        String apiHost = Utilities.getApiHost(context);
+        String apiHost = getApiHost(context);
         User user = getUser(getUserId(context));
         if (!StatusJsonParser.isConnectionInternet(context)) {
             Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
@@ -587,6 +945,4 @@ public class SingletonManager {
         }
     }
     //endregion
-
-
 }

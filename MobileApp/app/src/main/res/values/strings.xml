@@ -30,6 +30,8 @@
     <string name="menu_header_image_description">Menu header Image</string>
     <string name="ndOpen">Open</string>
     <string name="ndClose">Close</string>
+    <string name="menu_cart">Cart</string>
+
 
     <!-- My Profile-->
     <string name="my_profile_nif">NIF</string>
@@ -68,6 +70,31 @@
     <string name="dialog_logout_message">Do you really want to logout ?</string>
     <string name="dialog_delete_title">Delete Profile</string>
     <string name="dialog_delete_message">Are you sure you want to delete your profile?\n Such an action cannot be reversed</string>
+    <string name="dialog_yes">Yes</string>
+    <string name="dialog_no">No</string>
+
+
+    <!-- Cart -->
+    <string name="number_of_tickets">Number of Tickets:</string>
+    <string name="cart">Cart</string>
+    <string name="save">Add to Cart</string>
+    <string name="delete_cart_item">Do you really want to delete this cart item?</string>
+    <string name="remove_cart_item">Remove cart item</string>
+    <string name="price">Price</string>
+    <string name="date">Date</string>
+    <string name="activity_name_label">Activity Name Label</string>
+    <string name="activity_name">Activity Name</string>
+    <string name="quantity_label">Quantity Label</string>
+    <string name="price_label">Price Label</string>
+    <string name="date_label">Date Label</string>
+    <string name="remove">Remove</string>
+    <string name="cart_edited">Cart Edited!</string>
+    <string name="cart_deleted">Cart Deleted!</string>
+    <string name="quantity">Quantity</string>
+    <string name="cart_added_successfully">Cart added successfully!</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="img_default">img_default</string>
+
     <string name="dialog_review_remove">Remove Review</string>
     <string name="dialog_review_message">Do you really wish to delete this review?</string>
     <string name="yes_string">Yes</string>
@@ -92,8 +119,11 @@
     <string name="menu_delete">delete</string>
     <string name="activity_review_label">Review</string>
     <string name="activity_pictures_description">Activity Pictures</string>
+    <string name="details_activity_category">Category</string>
+    <string name="activity_details_date_time">Date - time</string>
     <string name="error_rating_required">Rating required to send a review</string>
     <string name="error_message_empty">Please enter a message on the review</string>
+    <string name="my_cart">My Cart</string>
 
 
 </resources>

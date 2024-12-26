@@ -29,6 +29,9 @@ import java.util.ArrayList;
 
 import Listeners.ActivitiesListener;
 import Model.Activity;
+import Model.Calendar;
+import Model.CalendarTime;
+import Model.Category;
 import Model.SingletonManager;
 import adaptors.ActivitiesListAdaptor;
 
@@ -37,6 +40,9 @@ public class ListActivitiesFragment extends Fragment implements SwipeRefreshLayo
 
     private ListView lvActivities;
     private ArrayList<Activity> activities;
+    private ArrayList<Calendar> calendars;
+    private ArrayList<CalendarTime> times;
+    private ArrayList<Category> categories;
     private SwipeRefreshLayout swipeRefreshLayout;
     private SearchView searchView;
     private FloatingActionButton fabCrudActivity;
@@ -94,15 +100,15 @@ public class ListActivitiesFragment extends Fragment implements SwipeRefreshLayo
 
             @Override
             public boolean onQueryTextChange(String s) {
-                ArrayList<Activity> tempLivros = new ArrayList<>();
+                ArrayList<Activity> tempActivity = new ArrayList<>();
 
                 for (Activity a : SingletonManager.getInstance(getContext()).getActivities()) {
                     if (a.getName().toLowerCase().contains(s.toLowerCase())) {
-                        tempLivros.add(a);
+                        tempActivity.add(a);
                     }
                 }
 
-                lvActivities.setAdapter(new ActivitiesListAdaptor(getContext(), tempLivros));
+                lvActivities.setAdapter(new ActivitiesListAdaptor(getContext(), tempActivity, calendars, times, categories));
 
                 return true;
             }
@@ -141,11 +147,30 @@ public class ListActivitiesFragment extends Fragment implements SwipeRefreshLayo
         SingletonManager.getInstance(getContext()).getActivities(getContext());
         swipeRefreshLayout.setRefreshing(false);
     }
-
     @Override
     public void onRefreshActivitiesList(ArrayList<Activity> listActivities) {
-        if (listActivities != null) {
-            lvActivities.setAdapter(new ActivitiesListAdaptor(getContext(), listActivities));
+
+    }
+    @Override
+    public void onRefreshCalendarList(ArrayList<Calendar> listCalendar) {
+
+    }
+    @Override
+    public void onRefreshTimeList(ArrayList<CalendarTime> listCalendarTime) {
+
+    }
+
+    @Override
+    public void onRefreshCategoryList(ArrayList<Category> listCategory) {
+
+    }
+
+    public void onRefreshAllData(ArrayList<Activity> listActivities, ArrayList<Calendar> listCalendar, ArrayList<CalendarTime> listCalendarTime, ArrayList<Category> listCategories){
+        if (listActivities != null && listCalendar != null && listCalendarTime != null && listCategories != null) {
+            lvActivities.setAdapter(new ActivitiesListAdaptor(getContext(), listActivities, listCalendar, listCalendarTime, listCategories));
+        }
+        else{
+            System.out.println("---> something is empty listActivitiesFragment");
         }
     }
 }

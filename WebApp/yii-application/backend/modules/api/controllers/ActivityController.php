@@ -3,6 +3,9 @@
 namespace backend\modules\api\controllers;
 
 use \common\models\Activity;
+use common\models\Calendar;
+use common\models\Category;
+use common\models\Time;
 use common\models\User;
 use Yii;
 use yii\filters\auth\HttpBasicAuth;
@@ -15,7 +18,7 @@ class ActivityController extends ActiveController
     public $hour = [];
     public $date = [];
 
-    public function behaviors()
+    /*public function behaviors()
     {
         $behaviors = parent::behaviors();
         $behaviors['authenticator'] = [
@@ -34,7 +37,7 @@ class ActivityController extends ActiveController
             return $user;
         }
         throw new \yii\web\ForbiddenHttpException('Error auth'); //403
-    }
+    }*/
 
     public function actionActivities()
     {
@@ -104,5 +107,30 @@ class ActivityController extends ActiveController
             'status' => 'error',
             'message' => json_encode($activity->errors),
         ];
+    }
+    public function actionCalendar()
+    {
+        $calendar = Calendar::getCalendar();
+        if ($calendar) {
+            return $calendar;
+        }
+        return ['error' => 'Calendar not found'];
+    }
+
+    public function actionTime()
+    {
+        $time = Time::getTimes();
+        if ($time) {
+            return $time;
+        }
+        return ['error' => 'Calendar not found'];
+    }
+    public function actionCategory()
+    {
+        $category = Category::getCategory();
+        if ($category) {
+            return $category;
+        }
+        return ['error' => 'Calendar not found'];
     }
 }
