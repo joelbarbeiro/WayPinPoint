@@ -205,6 +205,8 @@ public class ActivityDetailsActivity extends AppCompatActivity {
         findViewById(R.id.fragment_container).setVisibility(View.VISIBLE);
 
         // Add the fragment
+        FragmentManager fragmentManager = getSupportFragmentManager();
+
         Fragment fragment = new ListReviewsFragment();
         Bundle args = new Bundle();
         args.putInt(ID_ACTIVITY, getIntent().getIntExtra(ID_ACTIVITY, 2));

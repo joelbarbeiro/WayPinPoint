@@ -320,6 +320,7 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
         }
         return calendars;
     }
+
     public ArrayList<Calendar> getCalendarByActivityId(int activity_id) {
         ArrayList<Calendar> calendars = new ArrayList<>();
 
