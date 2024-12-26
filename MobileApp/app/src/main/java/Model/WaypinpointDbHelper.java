@@ -29,6 +29,8 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
     private static final String PHONE = "phone";
     private static final String PHOTO = "photo";
     private static final String ID = "id";
+    private static final String ROLE = "role";
+
     //endregion
 
     //region = ACTIVITIES DECLARATIONS #
@@ -67,7 +69,8 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
                 PHONE + " TEXT NOT NULL," +
                 PHOTO + " TEXT NOT NULL," +
                 SUPPLIER + " INTEGER," +
-                TOKEN + " TEXT" +
+                TOKEN + " TEXT," +
+                ROLE + " TEXT" +
                 ");";
 
         db.execSQL(createUserTable);
@@ -119,6 +122,7 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
         values.put(NIF, user.getNif());
         values.put(PHONE, user.getPhone());
         values.put(PHOTO, user.getPhoto());
+        values.put(ROLE, user.getRole());
 
         this.db.insert(TABLE_NAME_USERS, null, values);
     }
@@ -132,6 +136,7 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
         values.put(NIF, user.getNif());
         values.put(PHONE, user.getPhone());
         values.put(PHOTO, user.getPhoto());
+        values.put(ROLE, user.getRole());
 
         return this.db.update(TABLE_NAME_USERS, values, ID + "= ?", new String[]{"" + user.getId()}) > 0;
     }
@@ -149,7 +154,7 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
     public ArrayList<User> getAllUsersDb() {
         ArrayList<User> users = new ArrayList<>();
 
-        Cursor cursor = this.db.query(TABLE_NAME_USERS, new String[]{ID, USERNAME, EMAIL, PASSWORD, ADDRESS, PHONE, NIF, PHOTO},
+        Cursor cursor = this.db.query(TABLE_NAME_USERS, new String[]{ID, USERNAME, EMAIL, PASSWORD, ADDRESS, PHONE, NIF, PHOTO, ROLE},
                 null, null, null, null, null);
 
         if (cursor.moveToFirst()) {
@@ -163,7 +168,8 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
                         cursor.getInt(6),
                         cursor.getString(7),
                         0,
-                        ""
+                        "",
+                        cursor.getString(8)
                 );
                 users.add(auxUser);
             } while (cursor.moveToNext());

@@ -1,5 +1,8 @@
 [versions]
 agp = "8.5.2"
+barcodeScanning = "17.3.0"
+cameraLifecycleVersion = "1.5.1"
+cameraViewVersion = "1.5.1"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
@@ -8,8 +11,17 @@ material = "1.12.0"
 activity = "1.9.2"
 constraintlayout = "2.1.4"
 swiperefreshlayout = "1.1.0"
+mlkit-barcode-scanning = "17.0.3"
+playServicesMlkitBarcodeScanning = "18.3.1"
+cameraView = "1.4.1"
+cameraLifecycle = "1.4.1"
 
 [libraries]
+androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "cameraLifecycleVersion" }
+androidx-camera-core = { module = "androidx.camera:camera-core", version.ref = "cameraLifecycleVersion" }
+androidx-camera-lifecycle-v151 = { module = "androidx.camera:camera-lifecycle", version.ref = "cameraLifecycleVersion" }
+barcode-scanning = { module = "com.google.mlkit:barcode-scanning", version.ref = "barcodeScanning" }
+camera-view-v151 = { module = "androidx.camera:camera-view", version.ref = "cameraViewVersion" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -18,6 +30,9 @@ material = { group = "com.google.android.material", name = "material", version.r
 activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 swiperefreshlayout = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swiperefreshlayout" }
+play-services-mlkit-barcode-scanning = { group = "com.google.android.gms", name = "play-services-mlkit-barcode-scanning", version.ref = "playServicesMlkitBarcodeScanning" }
+camera-view = { group = "androidx.camera", name = "camera-view", version.ref = "cameraView" }
+camera-lifecycle = { group = "androidx.camera", name = "camera-lifecycle", version.ref = "cameraLifecycle" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

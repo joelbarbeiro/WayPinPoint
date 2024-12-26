@@ -162,7 +162,8 @@ class UserController extends ActiveController
                     'phone' => $userExtra->phone,
                     'address' => $userExtra->address,
                     'nif' => $userExtra->nif,
-                    'photo' => $userExtra->photo
+                    'photo' => $userExtra->photo,
+                    'role' => $user->getRole()
                 ];
             }
             \Yii::$app->response->statusCode = 400;

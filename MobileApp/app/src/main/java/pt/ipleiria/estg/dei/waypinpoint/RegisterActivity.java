@@ -132,7 +132,8 @@ public class RegisterActivity extends AppCompatActivity implements UserListener 
                     nif,
                     DEFAULT_IMG,
                     0,
-                    ""
+                    "",
+                    null
             );
             SingletonManager.getInstance(getApplicationContext()).addUserApi(apiHost, user, getApplicationContext());
         } else {

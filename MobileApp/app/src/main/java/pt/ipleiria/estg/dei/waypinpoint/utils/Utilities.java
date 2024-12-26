@@ -39,6 +39,7 @@ public class Utilities {
     public static final String ID_REVIEW = "ID_REVIEW";
     public static final String USER_ID = "USER_ID";
     public static final String ACTIVITY_ID = "ACTIVITY_ID";
+    public static final String TAG_QRCODEACTIVITY = "QRCodeScannerActivity";
 
 
     public static final String DB_VERSION = "DB_VERSION";
@@ -94,6 +95,10 @@ public class Utilities {
                         new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                         REQUEST_CODE);
             }
+        }
+        if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(activity, new String[]{android.Manifest.permission.CAMERA}, 1);
         }
     }
 
