@@ -69,6 +69,7 @@ public class CartFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         return view;
     }
 
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (resultCode == Activity.RESULT_OK) {
@@ -76,13 +77,13 @@ public class CartFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                 SingletonManager.getInstance(getContext()).getCartByUserId(getContext());
                 switch (requestCode) {
                     case REGISTER:
-                        Snackbar.make(getView(), "Book Added Successfully", Snackbar.LENGTH_SHORT).show();
+                        Snackbar.make(getView(), "Cart Added Successfully", Snackbar.LENGTH_SHORT).show();
                         break;
                     case EDIT:
                         if (data.getIntExtra(OP_CODE, 0) == DELETE) {
-                            Snackbar.make(getView(), "Book Removed Successfully", Snackbar.LENGTH_SHORT).show();
+                            Snackbar.make(getView(), "Cart Removed Successfully", Snackbar.LENGTH_SHORT).show();
                         } else {
-                            Snackbar.make(getView(), "Book Edited Successfully", Snackbar.LENGTH_SHORT).show();
+                            Snackbar.make(getView(), "Cart Edited Successfully", Snackbar.LENGTH_SHORT).show();
                         }
                         break;
                     default:
