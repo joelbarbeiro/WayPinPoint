@@ -37,9 +37,6 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
     private static final String QUANTITY = "quantity";
     private static final String STATUS_ = "status";
     private static final String CALENDAR_ID = "calendar_id";
-    private static final String TIME = "time";
-    private static final String DATE = "date";
-    private static final String PRICE = "price";
     //endregion
     //region = ACTIVITIES DECLARATIONS #
     private static final String TABLE_NAME_ACTIVITIES = "activities";
@@ -60,9 +57,9 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
     private static final String ID_CALENDAR = "id";
     private static  final String ID_ACTIVITY = "id_activity";
     private static final String ID_DATE = "id_date";
-    private static final String DATE = "date";
     private static final String ID_TIME = "id_time";
     private static final String HOUR = "hour";
+    private static final String DATE = "date";
     //endregion
 
     //region = CALENDAR TIME DECLARATIONS #
