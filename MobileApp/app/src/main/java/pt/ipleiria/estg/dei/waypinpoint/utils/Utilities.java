@@ -19,6 +19,12 @@ import java.util.Date;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import java.util.ArrayList;
+
+import Model.Category;
+import pt.ipleiria.estg.dei.waypinpoint.LoginActivity;
+import pt.ipleiria.estg.dei.waypinpoint.MenuMainActivity;
+
 public class Utilities {
 
     public static final int REGISTER = 100;
@@ -132,6 +138,17 @@ public class Utilities {
     public static String getCredentials(Context context){
         SharedPreferences sharedPreferences = context.getSharedPreferences(USER_DATA, Context.MODE_PRIVATE);
         return sharedPreferences.getString(USER_DATA, null);
+    }
+    public static String getCategoryById(int categoryId, ArrayList<Category> categories) {
+        if (categories == null) {
+            return null;
+        }
+        for (Category category : categories) {
+            if (category.getId() == categoryId) {
+                return category.getDescription();
+            }
+        }
+        return null;
     }
 
     public static String setDateFromTimestamp(int timestamp) {
