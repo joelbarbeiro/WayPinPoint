@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ActivityCreateActivity"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/imgActiviy"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <EditText
+        android:id="@+id/etActivityCreateName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="text"
+        android:minHeight="48dp"
+        android:text="@string/name" />
+
+    <EditText
+        android:id="@+id/etActivityCreateDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="text"
+        android:minHeight="48dp"
+        android:singleLine="false"
+        android:text="@string/description" />
+
+    <EditText
+        android:id="@+id/etActivityCreateMaxPax"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="text"
+        android:minHeight="48dp"
+        android:text="@string/maxpax" />
+
+    <EditText
+        android:id="@+id/etActivityCreatePricePerPax"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="text"
+        android:minHeight="48dp"
+        android:text="@string/priceperpax" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/lvCreateActivity"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:maxHeight="200dp"
+            android:minHeight="100dp"
+            android:orientation="vertical"></LinearLayout>
+    </FrameLayout>
+
+    <Button
+        android:id="@+id/btSaveActivity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/create_activity_save" />
+
+</LinearLayout>

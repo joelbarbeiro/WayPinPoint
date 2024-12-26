@@ -25,6 +25,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".ActivityCreateActivity"
+            android:exported="false" />
+        <activity
             android:name=".CartDetailsActivity"
             android:exported="false" />
         <activity

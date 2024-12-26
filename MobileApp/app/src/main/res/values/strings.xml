@@ -124,6 +124,8 @@
     <string name="error_rating_required">Rating required to send a review</string>
     <string name="error_message_empty">Please enter a message on the review</string>
     <string name="my_cart">My Cart</string>
+    <string name="create_activity_save">Save</string>
+    <string name="selected_date_create_activity">Selected Date</string>
 
 
 </resources>

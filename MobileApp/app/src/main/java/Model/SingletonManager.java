@@ -599,9 +599,9 @@ public class SingletonManager {
                 }
             };
 
-            getCalendarTimes(context, onRequestCompleted);
-            getCalendar(context, onRequestCompleted);
-            getCategory(context, onRequestCompleted);
+            getCalendarTimes(context, apiHost, onRequestCompleted);
+            getCalendar(context, apiHost, onRequestCompleted);
+            getCategory(context, apiHost, onRequestCompleted);
 
             JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, apiHost + "activities", null, new Response.Listener<JSONArray>() {
                 @Override
@@ -633,8 +633,7 @@ public class SingletonManager {
             waypinpointDbHelper.addCalendarDB(c);
         }
     }
-    public void getCalendar(final Context context, final Runnable onComplete) {
-        String apiHost = Utilities.getApiHost(context);
+    public void getCalendar(final Context context, final String apiHost, final Runnable onComplete) {
         if (!StatusJsonParser.isConnectionInternet(context)) {
             Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
 
@@ -673,8 +672,7 @@ public class SingletonManager {
             waypinpointDbHelper.addCalendarTimeDB(c);
         }
     }
-    private void getCalendarTimes(final Context context, final Runnable onComplete) {
-        String apiHost = Utilities.getApiHost(context);
+    private void getCalendarTimes(final Context context, final String apiHost, final Runnable onComplete) {
         if (!StatusJsonParser.isConnectionInternet(context)) {
             Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
 
@@ -712,8 +710,7 @@ public class SingletonManager {
             waypinpointDbHelper.addCategoryDB(c);
         }
     }
-    private void getCategory(final Context context, final Runnable onComplete) {
-        String apiHost = Utilities.getApiHost(context);
+    private void getCategory(final Context context, final String apiHost, final Runnable onComplete) {
         if (!StatusJsonParser.isConnectionInternet(context)) {
             Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
 
