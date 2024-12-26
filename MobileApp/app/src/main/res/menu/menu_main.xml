@@ -24,6 +24,10 @@
             android:id="@+id/navLogout"
             android:icon="@drawable/ic_logout_menu"
             android:title="@string/menu_logout_label" />
+        <item
+            android:id="@+id/drawerCart"
+            android:icon="@drawable/ic_cart"
+            android:title="@string/my_cart" />
 
     </group>
     <item

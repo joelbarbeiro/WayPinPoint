@@ -32,7 +32,6 @@ public class RegisterActivity extends AppCompatActivity implements UserListener 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-
         etUsername = findViewById(R.id.registerTvUsername);
         etEmail = findViewById(R.id.registerTvEmail);
         etPassword = findViewById(R.id.registerTvPassword);

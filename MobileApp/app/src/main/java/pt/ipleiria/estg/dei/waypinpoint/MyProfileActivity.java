@@ -135,10 +135,10 @@ public class MyProfileActivity extends AppCompatActivity implements UserListener
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.dialog_delete_title);
         builder.setMessage(R.string.dialog_delete_message);
-        builder.setPositiveButton(R.string.yes_string, new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.dialog_yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        SingletonManager.getInstance(getApplicationContext()).removeUserApi(apiHost, user, getApplicationContext());
+                        //SingletonManager.getInstance(getApplicationContext()).removeUserApi(apiHost, user, getApplicationContext());
                         SingletonManager.getInstance(getApplicationContext()).setUserListener(MyProfileActivity.this);
                     }
                 })

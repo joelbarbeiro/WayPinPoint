@@ -1,5 +1,6 @@
 package pt.ipleiria.estg.dei.waypinpoint;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 
 import Model.Activity;
+import Model.Cart;
 import Model.Calendar;
 import Model.CalendarTime;
 import Model.Category;
@@ -45,6 +47,8 @@ public class ActivityDetailsActivity extends AppCompatActivity {
     private Spinner spinnerDateTime;
     private ImageView imageActivity;
     private FloatingActionButton fabCrudActivity;
+    private Button btBuyActivity;
+    private Cart cart;
     private FragmentManager fragmentManager;
     private WaypinpointDbHelper waypinpointDbHelper;
 
@@ -72,14 +76,18 @@ public class ActivityDetailsActivity extends AppCompatActivity {
         btnReviews = findViewById(R.id.btnReview);
 
 
-        if(activity != null){
-            loadActivity();
-            // TODO: fabGuardar.setImageResource(R.drawable.ic_action_guardar);
-        }  else {
-            //setTitle(getString(R.string.txt_adicionar_livro));
-            //fabGuardar.setImageResource(R.drawable.ic_action_adicionar);
-        }
+        btBuyActivity = findViewById(R.id.btBuyActivity);
+        btBuyActivity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
+                Intent intent = new Intent(ActivityDetailsActivity.this, CartActivity.class);
+                intent.putExtra("activity_id", activity.getId());
+                intent.putExtra("activity_name", activity.getName());
+                intent.putExtra("activity_price", activity.getPriceperpax());
+                startActivity(intent);
+            }
+        });
     }
     private void loadActivity(){
         setTitle("Detalhes: " + activity.getName());

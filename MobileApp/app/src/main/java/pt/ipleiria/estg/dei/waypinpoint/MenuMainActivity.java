@@ -139,6 +139,10 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
         if (item.getItemId() == R.id.navLogout) {
             dialogLogout(sharedPreferencesUser);
         }
+        if (item.getItemId() == R.id.drawerCart) {
+            fragment = new CartFragment();
+            fragmentManager.beginTransaction().replace(R.id.contentFragment, fragment).commit();
+        }
         if (item.getItemId() == R.id.navQrCode) System.out.println("--> Validate QR-Code");
         drawer.closeDrawer(GravityCompat.START);
         if (fragment != null)

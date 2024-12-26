@@ -30,7 +30,14 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
     private static final String PHOTO = "photo";
     private static final String ID = "id";
     //endregion
+    //region = CART DECLARATIONS #
+    private static final String TABLE_NAME_CART = "cart";
 
+    private static final String PRODUCT_ID = "product_id";
+    private static final String QUANTITY = "quantity";
+    private static final String STATUS_ = "status";
+    private static final String CALENDAR_ID = "calendar_id";
+    //endregion
     //region = ACTIVITIES DECLARATIONS #
     private static final String TABLE_NAME_ACTIVITIES = "activities";
     private static final String NAME = "name";
@@ -50,9 +57,9 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
     private static final String ID_CALENDAR = "id";
     private static  final String ID_ACTIVITY = "id_activity";
     private static final String ID_DATE = "id_date";
-    private static final String DATE = "date";
     private static final String ID_TIME = "id_time";
     private static final String HOUR = "hour";
+    private static final String DATE = "date";
     //endregion
 
     //region = CALENDAR TIME DECLARATIONS #
@@ -139,6 +146,22 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
                 CREATED_AT + " INT NOT NULL" +
                 ")";
         db.execSQL(createReviewsTable);
+
+        String createCartTable = "CREATE TABLE " + TABLE_NAME_CART +
+                "(" + ID + " INTEGER, " +
+                USER_ID + " INTEGER NOT NULL, " +
+                PRODUCT_ID + " INTEGER NOT NULL, " +
+                QUANTITY + " INTEGER NOT NULL, " +
+                STATUS + " INTEGER NOT NULL, " +
+                CALENDAR_ID + " INTEGER NOT NULL" +
+                ");";
+        try {
+            db.execSQL(createCartTable);
+            System.out.println("Table " + TABLE_NAME_CART + " created successfully.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Error creating table: " + e.getMessage());
+        }
     }
 
     @Override
@@ -148,6 +171,7 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME_CALENDAR);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME_TIME);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME_REVIEWS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME_CART);
         this.onCreate(db);
     }
 
@@ -488,6 +512,77 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
         return this.db.delete(TABLE_NAME_REVIEWS, ID + "= ?", new String[]{"" + id}) == 1;
     }
     //endregion
+    //REGION CART DB METHODS #
+    public void addCartDb(Cart cart) {
+        ContentValues values = new ContentValues();
+        System.out.println("------> ID: " + ID + " " + cart.getId());
+        values.put(ID, cart.getId());
+        values.put(USER_ID, cart.getUser_id());
+        values.put(PRODUCT_ID, cart.getProduct_id());
+        values.put(QUANTITY, cart.getQuantity());
+        values.put(STATUS, cart.getStatus());
+        values.put(CALENDAR_ID, cart.getCalendar_id());
+        this.db.insert(TABLE_NAME_CART, null, values);
+    }
 
+    public boolean editCartDb(Cart cart) {
+        ContentValues values = new ContentValues();
+        values.put(QUANTITY, cart.getQuantity());
+        values.put(CALENDAR_ID, cart.getCalendar_id());
+
+        return this.db.update(TABLE_NAME_CART, values, ID + "= ?", new String[]{"" + cart.getId()}) > 0;
+    }
+
+    public boolean removeCartDb(Cart id) {
+        return this.db.delete(TABLE_NAME_CART, ID + "= ?", new String[]{"" + id}) == 1;
+    }
+
+    public ArrayList<Cart> getAllCartsDb() {
+        ArrayList<Cart> carts = new ArrayList<>();
+        Cursor cursor = this.db.query(TABLE_NAME_CART, new String[]{ID, USER_ID, PRODUCT_ID, QUANTITY, STATUS, CALENDAR_ID},
+                null, null, null, null, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                Cart auxCart = new Cart(cursor.getInt(0),
+                        cursor.getInt(1),
+                        cursor.getInt(2),
+                        cursor.getInt(3),
+                        cursor.getInt(4),
+                        cursor.getInt(5)
+                );
+                carts.add(auxCart);
+            } while (cursor.moveToNext());
+        }
+        return carts;
+    }
+
+    public void removeAllCartDb() {
+        this.db.delete(TABLE_NAME_CART, null, null);
+    }
+
+    public ArrayList<Cart> getCartByUserId(int userId) {
+        ArrayList<Cart> carts = new ArrayList<>();
+        Cursor cursor = this.db.query(TABLE_NAME_CART, new String[]{ID, USER_ID, PRODUCT_ID, QUANTITY, STATUS, CALENDAR_ID},
+                USER_ID + "= ?",
+                new String[]{"" + userId}, null, null, null
+        );
+        if (cursor.moveToFirst()) {
+            do {
+                Cart auxCart = new Cart(
+                        cursor.getInt(0),
+                        cursor.getInt(1),
+                        cursor.getInt(2),
+                        cursor.getInt(3),
+                        cursor.getInt(4),
+                        cursor.getInt(5)
+                );
+                carts.add(auxCart);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return carts;
+    }
+    //ENDREGION
 
 }
