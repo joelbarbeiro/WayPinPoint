@@ -82,7 +82,7 @@ return [
                         'GET count' => 'count',
                         'GET activity/{id}' => 'activity',
                         'GET users/{id}' => 'user',
-                        'POST {id}' => 'new'
+                        'POST ' => 'new'
                     ],
                     'tokens' => [
                         '{id}' => '<id:\\d+>',

@@ -13,6 +13,7 @@ import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getUserId;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Base64;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -537,6 +538,15 @@ public class SingletonManager {
         this.reviewListener = reviewListener;
     }
 
+    public Review getReview(int id) {
+        for (Review review : reviews) {
+            if (review.getId() == id) {
+                return review;
+            }
+        }
+        return null;
+    }
+
     public void addReviewsDb(ArrayList<Review> reviews) {
         //activityDbHelper.delAllActivitiesDB();
         for (Review r : reviews) {
@@ -545,6 +555,20 @@ public class SingletonManager {
         }
     }
 
+    public void addReviewDb(Review review) {
+        waypinpointDbHelper.addReviewDB(review);
+    }
+
+    public void editReviewDb(Review review) {
+        waypinpointDbHelper.editReviewDb(review);
+    }
+
+    public void removeReviewDb(int reviewId) {
+        Review r = getReview(reviewId);
+        if (r != null) {
+            waypinpointDbHelper.removeReviewDb(r.getId());
+        }
+    }
 
     public void getReviewsApi(final Context context, int id) {
         String apiHost = Utilities.getApiHost(context);
@@ -560,7 +584,7 @@ public class SingletonManager {
                 @Override
                 public void onResponse(JSONArray response) {
                     System.out.println("--> GETAPI: " + response);
-                    reviews = ReviewJsonParser.parserJsonReview(response);
+                    reviews = ReviewJsonParser.parserJsonReviews(response);
                     addReviewsDb(reviews);
 
                     if (reviewsListener != null) {
@@ -588,8 +612,123 @@ public class SingletonManager {
             };
 
             volleyQueue.add(request);
-            }
         }
-        //endregion
-
     }
+
+    public void addReviewApi(final Review review, Context context) {
+        String apiHost = Utilities.getApiHost(context);
+        int userID = review.getUserId();
+        int activityId = review.getActivityId();
+        int score = review.getScore();
+        String message = review.getMessage();
+
+        if (!StatusJsonParser.isConnectionInternet(context)) {
+            Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
+        } else {
+            StringRequest request = new StringRequest(Request.Method.POST, apiHost + "reviews",
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+
+                            addReviewDb(ReviewJsonParser.parserJsonReview(response));
+                            if (reviewListener != null) {
+                                reviewListener.onValidateReviewOperation(REGISTER);
+                            }
+                        }
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    String responseBody;
+                    try {
+                        responseBody = new String(error.networkResponse.data, "UTF-8");
+                        Log.e("ReviewDetailsActivity", "Error Response Body: " + responseBody);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }) {
+                @Override
+                protected Map<String, String> getParams() {
+                    Map<String, String> params = new HashMap<>();
+                    params.put("user_id", String.valueOf(userID));
+                    params.put("activity_id", String.valueOf(activityId));
+                    params.put("score", String.valueOf(score));
+                    params.put("message", message);
+                    return params;
+                }
+            };
+            volleyQueue.add(request);
+        }
+    }
+
+    public void editReviewApi(final Review review, final Context context) {
+        String apiHost = Utilities.getApiHost(context);
+        int userID = review.getUserId();
+        int activityId = review.getActivityId();
+        int score = review.getScore();
+        String message = review.getMessage();
+
+        if (!StatusJsonParser.isConnectionInternet(context)) {
+            Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
+        } else {
+            StringRequest request = new StringRequest(Request.Method.PUT, apiHost + "reviews/" + review.getId(), new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    editReviewDb(ReviewJsonParser.parserJsonReview(response));
+                    if (reviewListener != null) {
+                        reviewListener.onValidateReviewOperation(EDIT);
+                    }
+                    System.out.println("---> EDIT USER RESPONSE: " + response);
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    System.out.println("---> " + error.getMessage());
+                    Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }) {
+                @Override
+                protected Map<String, String> getParams() {
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("user_id", String.valueOf(userID));
+                    params.put("activity_id", String.valueOf(activityId));
+                    params.put("score", String.valueOf(score));
+                    params.put("message", message);
+                    return params;
+                }
+            };
+            System.out.println("---> REQUEST EDIT REVIEW" + request);
+
+            volleyQueue.add(request);
+        }
+    }
+
+    public void removeReviewApi(final Review review, final Context context) {
+        String apiHost = Utilities.getApiHost(context);
+
+
+        if (!StatusJsonParser.isConnectionInternet(context)) {
+            Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
+        } else {
+            StringRequest request = new StringRequest(Request.Method.DELETE, apiHost + "reviews/" + review.getId(), new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    removeReviewDb(review.getId());
+
+                    if (reviewListener != null) {
+                        reviewListener.onValidateReviewOperation(DELETE);
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+            volleyQueue.add(request);
+        }
+    }
+    //endregion
+
+
+}

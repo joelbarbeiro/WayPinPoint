@@ -1,11 +1,12 @@
 package Model;
 
 public class Review {
-    private int id , userId , activityId, score, createdAt ;
+    private int id , userId , activityId, score ;
+    private Integer createdAt;
     private String message;
 
 
-    public Review(int id, int userId, int activityId, int score, String message, int createdAt) {
+    public Review(int id, int userId, int activityId, int score, String message, Integer createdAt) {
         this.id = id;
         this.userId = userId;
         this.activityId = activityId;
@@ -58,7 +59,7 @@ public class Review {
         return createdAt;
     }
 
-    public void setCreatedAt(int createdAt) {
+    public void setCreatedAt(Integer createdAt) {
         this.createdAt = createdAt;
     }
 }
