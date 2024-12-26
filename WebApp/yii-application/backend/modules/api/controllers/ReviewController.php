@@ -46,7 +46,22 @@ class ReviewController extends ActiveController
     {
         $reviewModel = new $this->modelClass;
         $recs = $reviewModel->findAll(['activity_id' => $id]);
-        return $recs;
+
+        $response = [];
+        foreach ($recs as $rec) {
+            $user = User::findOne(['id' => $rec->user_id]);
+            $response[] = [
+                'id' => $rec->id,
+                'user_id' => $rec->user_id,
+                'activity_id' => $rec->activity_id,
+                'score' => $rec->score,
+                'message' => $rec->message,
+                'created_at' => $rec->created_at,
+                'creator' => $user ? $user->username : null
+            ];
+        }
+
+        return $response;
     }
 
     public function actionUser($id)
@@ -60,6 +75,7 @@ class ReviewController extends ActiveController
     {
         $postData = \Yii::$app->request->post();
         $reviewModel = new $this->modelClass;
+        $user = User::findOne(['id' => $postData['user_id']]);
 
         $reviewModel->user_id = $postData['user_id'];
         $reviewModel->activity_id = $postData['activity_id'];
@@ -67,7 +83,15 @@ class ReviewController extends ActiveController
         $reviewModel->message = $postData['message'];
         $reviewModel->created_at = time();
         $reviewModel->save();
-        return $reviewModel;
+
+        return [
+            'user_id' => $reviewModel->user_id,
+            'activity_id' => $reviewModel->activity_id,
+            'score' => $reviewModel->score,
+            'message' => $reviewModel->message,
+            'created_at' => $reviewModel->created_at,
+            'creator' => $user->username
+        ];
     }
 
 }

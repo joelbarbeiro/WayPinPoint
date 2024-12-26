@@ -57,7 +57,7 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
     //region = CALENDAR #
     private static final String TABLE_NAME_CALENDAR = "calendars";
     private static final String ID_CALENDAR = "id";
-    private static  final String ID_ACTIVITY = "id_activity";
+    private static final String ID_ACTIVITY = "id_activity";
     private static final String ID_DATE = "id_date";
     private static final String ID_TIME = "id_time";
     private static final String HOUR = "hour";
@@ -75,6 +75,7 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
     private static final String SCORE = "score";
     private static final String MESSAGE = "message";
     private static final String CREATED_AT = "created_at";
+    private static final String CREATOR = "creator";
     //endregion
 
     public WaypinpointDbHelper(@Nullable Context context) {
@@ -146,7 +147,8 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
                 ACTIVITY_ID + " INTEGER NOT NULL, " +
                 SCORE + " INTEGER NOT NULL, " +
                 MESSAGE + " TEXT NOT NULL, " +
-                CREATED_AT + " INT NOT NULL" +
+                CREATED_AT + " INT NOT NULL, " +
+                CREATOR + " TEXT" +
                 ")";
         db.execSQL(createReviewsTable);
 
@@ -361,7 +363,7 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
                 new String[]{ID, ID_ACTIVITY, ID_DATE, DATE, ID_TIME},
                 selection,
                 selectionArgs,
-                null,null,null);
+                null, null, null);
         System.out.println("calendar cursor >>>>- " + cursor);
         if (cursor.moveToFirst()) {
             System.out.println(" if move first >>>>- entrou");
@@ -480,13 +482,14 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
         val.put(SCORE, r.getScore());
         val.put(MESSAGE, r.getMessage());
         val.put(CREATED_AT, r.getCreatedAt());
+        val.put(CREATOR, r.getCreator());
 
         this.db.insert(TABLE_NAME_REVIEWS, null, val);
     }
 
     public ArrayList<Review> getReviewsDb() {
         ArrayList<Review> reviews = new ArrayList<>();
-        Cursor cursor = this.db.query(TABLE_NAME_REVIEWS, new String[]{ID, USER_ID, ACTIVITY_ID, SCORE, MESSAGE, CREATED_AT},
+        Cursor cursor = this.db.query(TABLE_NAME_REVIEWS, new String[]{ID, USER_ID, ACTIVITY_ID, SCORE, MESSAGE, CREATED_AT, CREATOR},
                 null, null, null, null, null);
         if (cursor.moveToFirst()) {
             do {
@@ -496,7 +499,8 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
                         cursor.getInt(2),
                         cursor.getInt(3),
                         cursor.getString(4),
-                        cursor.getInt(5));
+                        cursor.getInt(5),
+                        cursor.getString(6));
                 reviews.add(auxReview);
             } while (cursor.moveToNext());
         }
@@ -510,6 +514,7 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
         values.put(SCORE, review.getScore());
         values.put(MESSAGE, review.getMessage());
         values.put(CREATED_AT, review.getCreatedAt());
+        values.put(CREATOR, review.getCreator());
 
         return this.db.update(TABLE_NAME_REVIEWS, values, ID + "= ?", new String[]{"" + review.getId()}) > 0;
     }
@@ -517,6 +522,11 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
     public boolean removeReviewDb(int id) {
         return this.db.delete(TABLE_NAME_REVIEWS, ID + "= ?", new String[]{"" + id}) == 1;
     }
+
+    public void delAllReviewsDb() {
+        this.db.delete(TABLE_NAME_REVIEWS, null, null);
+    }
+
     //endregion
     //REGION CART DB METHODS #
     public void addCartDb(Cart cart) {

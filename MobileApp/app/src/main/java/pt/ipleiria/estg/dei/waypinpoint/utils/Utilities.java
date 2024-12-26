@@ -13,17 +13,15 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.provider.MediaStore;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import Model.Category;
-import pt.ipleiria.estg.dei.waypinpoint.LoginActivity;
-import pt.ipleiria.estg.dei.waypinpoint.MenuMainActivity;
 
 public class Utilities {
 
@@ -42,8 +40,6 @@ public class Utilities {
     public static final String SNACKBAR_MESSAGE = "SNACKBAR_MESSAGE";
     public static final String ID_CART = "ID_CART";
     public static final int DB_VERSION = 3;
-
-
 
     public static final String DEFAULT_IMG = "https://images.app.goo.gl/WRUpq3qmgD331B64A";
     public static final String PROFILE_PIC = "PROFILE_PIC";
@@ -140,10 +136,12 @@ public class Utilities {
         editor.putString(IMG_URI_USER, imgUserPath);
         editor.apply();
     }
-    public static String getCredentials(Context context){
+
+    public static String getCredentials(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(USER_DATA, Context.MODE_PRIVATE);
         return sharedPreferences.getString(USER_DATA, null);
     }
+
     public static String getCategoryById(int categoryId, ArrayList<Category> categories) {
         if (categories == null) {
             return null;

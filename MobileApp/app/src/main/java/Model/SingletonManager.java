@@ -42,9 +42,9 @@ import Listeners.ReviewListener;
 import Listeners.ReviewsListener;
 import Listeners.UserListener;
 import pt.ipleiria.estg.dei.waypinpoint.R;
-import pt.ipleiria.estg.dei.waypinpoint.utils.CartJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.ActivityJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.CalendarJsonParser;
+import pt.ipleiria.estg.dei.waypinpoint.utils.CartJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.CategoryJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.ReviewJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.StatusJsonParser;
@@ -344,10 +344,11 @@ public class SingletonManager {
     //endregion
     //REGION # MÉTODOS CART - API #
 
-    public ArrayList<Cart> getCartsDB(ArrayList <Cart> carts) {
+    public ArrayList<Cart> getCartsDB(ArrayList<Cart> carts) {
         carts = waypinpointDbHelper.getAllCartsDb();
         return new ArrayList<>(carts);
     }
+
     public ArrayList<Cart> getCarts() {
         carts = waypinpointDbHelper.getAllCartsDb();
         return new ArrayList<>(carts);
@@ -474,11 +475,12 @@ public class SingletonManager {
                 params.put("user_id", String.valueOf(cart.getUser_id()));
                 params.put("product_id", String.valueOf(cart.getProduct_id()));
                 params.put("quantity", String.valueOf(cart.getQuantity()));
-                params.put("status" , "0");
+                params.put("status", "0");
                 params.put("calendar_id", String.valueOf(cart.getCalendar_id()));
 
                 return params;
             }
+
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
@@ -543,6 +545,7 @@ public class SingletonManager {
     public void setCartsListener(CartListener cartsListener) {
         this.cartListener = cartsListener;
     }
+
     public void setCartListener(CartListener cartListener) {
         this.cartListener = cartListener;
     }
@@ -626,6 +629,7 @@ public class SingletonManager {
             volleyQueue.add(request);
         }
     }
+
     public void addCalendarsDB(ArrayList<Calendar> calendar) {
         waypinpointDbHelper.delAllCalendarDB();
         for (Calendar c : calendar) {
@@ -633,6 +637,7 @@ public class SingletonManager {
             waypinpointDbHelper.addCalendarDB(c);
         }
     }
+
     public void getCalendar(final Context context, final Runnable onComplete) {
         String apiHost = Utilities.getApiHost(context);
         if (!StatusJsonParser.isConnectionInternet(context)) {
@@ -673,6 +678,7 @@ public class SingletonManager {
             waypinpointDbHelper.addCalendarTimeDB(c);
         }
     }
+
     private void getCalendarTimes(final Context context, final Runnable onComplete) {
         String apiHost = Utilities.getApiHost(context);
         if (!StatusJsonParser.isConnectionInternet(context)) {
@@ -712,6 +718,7 @@ public class SingletonManager {
             waypinpointDbHelper.addCategoryDB(c);
         }
     }
+
     private void getCategory(final Context context, final Runnable onComplete) {
         String apiHost = Utilities.getApiHost(context);
         if (!StatusJsonParser.isConnectionInternet(context)) {
@@ -764,7 +771,7 @@ public class SingletonManager {
     }
 
     public void addReviewsDb(ArrayList<Review> reviews) {
-        //activityDbHelper.delAllActivitiesDB();
+        waypinpointDbHelper.delAllReviewsDb();
         for (Review r : reviews) {
             System.out.println("DB Add review--> " + r);
             waypinpointDbHelper.addReviewDB(r);

@@ -23,9 +23,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 
 import Model.Activity;
-import Model.Cart;
 import Model.Calendar;
 import Model.CalendarTime;
+import Model.Cart;
 import Model.Category;
 import Model.SingletonManager;
 import Model.WaypinpointDbHelper;
@@ -74,10 +74,8 @@ public class ActivityDetailsActivity extends AppCompatActivity {
         spinnerDateTime = findViewById(R.id.spinnerActivityDateTime);
 
         btnReviews = findViewById(R.id.btnReview);
-
-
-        btBuyActivity = findViewById(R.id.btBuyActivity);
         loadActivity();
+        btBuyActivity = findViewById(R.id.btBuyActivity);
         btBuyActivity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -90,7 +88,8 @@ public class ActivityDetailsActivity extends AppCompatActivity {
             }
         });
     }
-    private void loadActivity(){
+
+    private void loadActivity() {
         setTitle("Detalhes: " + activity.getName());
 
         etName.setText(activity.getName());
@@ -139,7 +138,7 @@ public class ActivityDetailsActivity extends AppCompatActivity {
                 this,
                 android.R.layout.simple_spinner_item,
                 calendars
-        ){
+        ) {
             @Override
             public View getDropDownView(int position, View convertView, ViewGroup parent) {
                 View view = super.getDropDownView(position, convertView, parent);
@@ -155,6 +154,7 @@ public class ActivityDetailsActivity extends AppCompatActivity {
 
                 return view;
             }
+
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
@@ -197,13 +197,12 @@ public class ActivityDetailsActivity extends AppCompatActivity {
         //endregion
 
         String imgPath = Utilities.getImgUri(getApplicationContext()) + activity.getSupplier() + "/" + activity.getPhoto();
-                Glide.with(getApplicationContext())
+        Glide.with(getApplicationContext())
                 .load(imgPath)
                 .placeholder(R.drawable.img_default_activity)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(imageActivity);
     }
-
 
     public void onClickReviews(View view) {
         // Hide background views
@@ -222,7 +221,6 @@ public class ActivityDetailsActivity extends AppCompatActivity {
         fragment.setArguments(args);
         fragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, fragment)
-                .addToBackStack(null) // Add to back stack for navigation
                 .commit();
     }
 }

@@ -46,7 +46,6 @@ public class ReviewDetailsActivity extends AppCompatActivity implements ReviewLi
         etMessage = findViewById(R.id.etMessage);
         rbScore = findViewById(R.id.ratingBarScore);
 
-
         if (review != null) {
             loadReview();
             fabSave.setImageResource(R.drawable.ic_save);
@@ -86,6 +85,7 @@ public class ReviewDetailsActivity extends AppCompatActivity implements ReviewLi
                             activityId,
                             (int) rating,
                             message,
+                            null,
                             null
                     );
                     SingletonManager.getInstance(getApplicationContext()).addReviewApi(review, getApplicationContext());

@@ -9,7 +9,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.OptIn;
 import androidx.appcompat.app.AppCompatActivity;
-
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.ExperimentalGetImage;
 import androidx.camera.core.ImageAnalysis;
@@ -102,8 +101,11 @@ public class QRCodeScannerActivity extends AppCompatActivity {
             String rawValue = barcode.getRawValue();
             Log.d(TAG_QRCODEACTIVITY, "Scanned QR Code: " + rawValue);
 
-            // Handle the scanned QR code
-            Toast.makeText(this, "QR Code: " + rawValue, Toast.LENGTH_SHORT).show();
+            if (rawValue.contains("Activity")) {
+                Toast.makeText(this, getString(R.string.QR_Code_valid) + rawValue, Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, R.string.QR_Code_invalid, Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
