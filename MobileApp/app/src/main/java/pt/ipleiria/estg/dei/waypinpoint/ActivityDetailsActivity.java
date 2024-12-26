@@ -1,6 +1,7 @@
 package pt.ipleiria.estg.dei.waypinpoint;
 
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,7 +16,10 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.ArrayList;
+
 import Model.Activity;
+import Model.Category;
 import Model.SingletonManager;
 import Model.WaypinpointDbHelper;
 import pt.ipleiria.estg.dei.waypinpoint.utils.Utilities;
@@ -23,6 +27,8 @@ import pt.ipleiria.estg.dei.waypinpoint.utils.Utilities;
 public class ActivityDetailsActivity extends AppCompatActivity {
 
     public static final String ID_ACTIVITY = "ID_ACTIVITY";
+    public static final ArrayList<Category> CATEGORIES = new ArrayList<>();
+    private ArrayList<Category> categories;
     private Activity activity;
     private EditText etName;
     private EditText etDescription;
@@ -41,6 +47,7 @@ public class ActivityDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
         int id = getIntent().getIntExtra(ID_ACTIVITY, 0);
+        categories = getIntent().getParcelableArrayListExtra("CATEGORIES");
 
         activity = SingletonManager.getInstance(getApplicationContext()).getActivity(id);
 
@@ -71,7 +78,8 @@ public class ActivityDetailsActivity extends AppCompatActivity {
         etDescription.setText(activity.getDescription());
         etMaxPax.setText("" + activity.getMaxpax());
         etPricePerPax.setText("" + activity.getPriceperpax());
-
+        etCategory.setText(Utilities.getCategoryById(activity.getCategory(), categories));
+        System.out.println("--> " + categories);
         String imgPath = Utilities.getImgUri(getApplicationContext()) + activity.getSupplier() + "/" + activity.getPhoto();
                 Glide.with(getApplicationContext())
                 .load(imgPath)
