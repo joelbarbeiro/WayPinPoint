@@ -34,11 +34,9 @@ import java.util.Map;
 
 import Listeners.ActivitiesListener;
 import Listeners.ActivityListener;
-import Listeners.CalendarListener;
 import Listeners.LoginListener;
 import Listeners.ReviewListener;
 import Listeners.ReviewsListener;
-import Listeners.TimeListener;
 import Listeners.UserListener;
 import pt.ipleiria.estg.dei.waypinpoint.R;
 import pt.ipleiria.estg.dei.waypinpoint.utils.ActivityJsonParser;
@@ -70,8 +68,6 @@ public class SingletonManager {
     //region # Activities instances #
 
     private ActivitiesListener activitiesListener;
-    private CalendarListener calendarListener;
-    private TimeListener timeListener;
     private ArrayList<Activity> activities;
     private ArrayList<Calendar> calendars;
     private ArrayList<CalendarTime> calendarTimes;
@@ -88,6 +84,9 @@ public class SingletonManager {
         users = new ArrayList<>();
         activities = new ArrayList<>();
         reviews = new ArrayList<>();
+        calendars = new ArrayList<>();
+        calendarTimes = new ArrayList<>();
+        categories = new ArrayList<>();
     }
 
     public static synchronized SingletonManager getInstance(Context context) {
@@ -396,7 +395,7 @@ public class SingletonManager {
 
 
                     if (activitiesListener != null) {
-                        activitiesListener.onRefreshActivitiesList(activities);
+                        activitiesListener.onRefreshAllData(activities, calendars, calendarTimes, categories);
                     }
                 }
 
@@ -422,8 +421,8 @@ public class SingletonManager {
         if (!StatusJsonParser.isConnectionInternet(context)) {
             Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
 
-            if (calendarListener != null) {
-                calendarListener.onRefreshCalendarsList(waypinpointDbHelper.getCalendarDB());
+            if (activitiesListener != null) {
+                activitiesListener.onRefreshCalendarList(waypinpointDbHelper.getCalendarDB());
             }
         } else {
 
@@ -434,8 +433,8 @@ public class SingletonManager {
                     addCalendarsDB(calendars);
                     onComplete.run();
 
-                    if (calendarListener != null) {
-                        calendarListener.onRefreshCalendarsList(calendars);
+                    if (activitiesListener != null) {
+                        activitiesListener.onRefreshCalendarList(calendars);
                     }
                 }
 
@@ -459,27 +458,34 @@ public class SingletonManager {
     }
     private void getCalendarTimes(final Context context, final Runnable onComplete) {
         String apiHost = Utilities.getApiHost(context);
+        if (!StatusJsonParser.isConnectionInternet(context)) {
+            Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
 
-        JsonArrayRequest timesRequest = new JsonArrayRequest(Request.Method.GET, apiHost + "activities/time", null, new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray timesResponse) {
-                calendarTimes = TimeJsonParser.parserJsonTime(timesResponse);
-                addTimesDB(calendarTimes);
-                onComplete.run();
+            if (activitiesListener != null) {
+                activitiesListener.onRefreshTimeList(waypinpointDbHelper.getCalendarTimeDB());
+            }
+        } else {
+            JsonArrayRequest timesRequest = new JsonArrayRequest(Request.Method.GET, apiHost + "activities/time", null, new Response.Listener<JSONArray>() {
+                @Override
+                public void onResponse(JSONArray timesResponse) {
+                    calendarTimes = TimeJsonParser.parserJsonTime(timesResponse);
+                    addTimesDB(calendarTimes);
+                    onComplete.run();
 
-                if (activitiesListener != null) {
-                    activitiesListener.onRefreshTimeList(calendarTimes);
+                    if (activitiesListener != null) {
+                        activitiesListener.onRefreshTimeList(calendarTimes);
+                    }
                 }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                System.out.println("--> Time GET --> " + error);
-                onComplete.run();
-            }
-        });
 
-        volleyQueue.add(timesRequest);
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    System.out.println("--> Time GET --> " + error);
+                    onComplete.run();
+                }
+            });
+            volleyQueue.add(timesRequest);
+        }
     }
 
     public void addCategoriesDB(ArrayList<Category> categories) {
@@ -491,27 +497,34 @@ public class SingletonManager {
     }
     private void getCategory(final Context context, final Runnable onComplete) {
         String apiHost = Utilities.getApiHost(context);
+        if (!StatusJsonParser.isConnectionInternet(context)) {
+            Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
 
-        JsonArrayRequest categoryRequest = new JsonArrayRequest(Request.Method.GET, apiHost + "activities/category", null, new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray categoryResponse) {
-                categories = CategoryJsonParser.parserJsonCategory(categoryResponse);
-                addCategoriesDB(categories);
-                onComplete.run();
+            if (activitiesListener != null) {
+                activitiesListener.onRefreshCategoryList(waypinpointDbHelper.getCategoryDB());
+            }
+        } else {
+            JsonArrayRequest categoryRequest = new JsonArrayRequest(Request.Method.GET, apiHost + "activities/category", null, new Response.Listener<JSONArray>() {
+                @Override
+                public void onResponse(JSONArray categoryResponse) {
+                    categories = CategoryJsonParser.parserJsonCategory(categoryResponse);
+                    addCategoriesDB(categories);
+                    onComplete.run();
 
-                if (activitiesListener != null) {
-                    activitiesListener.onRefreshTimeList(calendarTimes);
+                    if (activitiesListener != null) {
+                        activitiesListener.onRefreshCategoryList(categories);
+                    }
                 }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                System.out.println("--> Category GET --> " + error);
-                onComplete.run();
-            }
-        });
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    System.out.println("--> Category GET --> " + error);
+                    onComplete.run();
+                }
+            });
 
-        volleyQueue.add(categoryRequest);
+            volleyQueue.add(categoryRequest);
+        }
     }
     //endregion
 

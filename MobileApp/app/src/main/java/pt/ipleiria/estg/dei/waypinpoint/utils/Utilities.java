@@ -18,6 +18,9 @@ import android.provider.MediaStore;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import java.util.ArrayList;
+
+import Model.Category;
 import pt.ipleiria.estg.dei.waypinpoint.LoginActivity;
 import pt.ipleiria.estg.dei.waypinpoint.MenuMainActivity;
 
@@ -124,7 +127,17 @@ public class Utilities {
         editor.putString(IMG_URI_USER, imgUserPath);
         editor.apply();
     }
-
+    public static String getCategoryById(int categoryId, ArrayList<Category> categories) {
+        if (categories == null) {
+            return null;
+        }
+        for (Category category : categories) {
+            if (category.getId() == categoryId) {
+                return category.getDescription();
+            }
+        }
+        return null;
+    }
 
 
 }

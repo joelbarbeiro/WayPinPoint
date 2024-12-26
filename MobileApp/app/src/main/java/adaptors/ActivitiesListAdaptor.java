@@ -31,7 +31,6 @@ public class ActivitiesListAdaptor extends BaseAdapter {
     private ArrayList<Calendar> calendars;
     private ArrayList<CalendarTime> times;
     private ArrayList<Category> categories;
-    private WaypinpointDbHelper waypinpointDbHelper = null;
 
 
     public ActivitiesListAdaptor(Context context, ArrayList<Activity> activities, ArrayList<Calendar> calendars, ArrayList<CalendarTime> times, ArrayList<Category> categories) {
@@ -40,7 +39,6 @@ public class ActivitiesListAdaptor extends BaseAdapter {
         this.calendars = calendars;
         this.times = times;
         this.categories = categories;
-        this.waypinpointDbHelper = new WaypinpointDbHelper(context);
     }
 
     @Override
@@ -92,7 +90,7 @@ public class ActivitiesListAdaptor extends BaseAdapter {
 
         public void update(Activity activity) {
             tvName.setText(activity.getName());
-            tvCatgory.setText(waypinpointDbHelper.getCategoryById(activity.getCategory(), categories));
+            tvCatgory.setText(Utilities.getCategoryById(activity.getCategory(), categories));
             tvPrice.setText("" + activity.getPriceperpax());
             tvAddress.setText(activity.getAddress());
             String imgPath = Utilities.getImgUri(context) + activity.getSupplier() + "/" + activity.getPhoto();

@@ -17,6 +17,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import Model.Activity;
 import Model.SingletonManager;
+import Model.WaypinpointDbHelper;
 import pt.ipleiria.estg.dei.waypinpoint.utils.Utilities;
 
 public class ActivityDetailsActivity extends AppCompatActivity {
@@ -27,6 +28,7 @@ public class ActivityDetailsActivity extends AppCompatActivity {
     private EditText etDescription;
     private EditText etMaxPax;
     private EditText etPricePerPax;
+    private EditText etCategory;
     private Button btnReviews;
     private Spinner spinnerDateTime;
     private ImageView imageActivity;
@@ -47,6 +49,7 @@ public class ActivityDetailsActivity extends AppCompatActivity {
         etDescription = findViewById(R.id.etActivityDescription);
         etMaxPax = findViewById(R.id.etActivityMaxPax);
         etPricePerPax = findViewById(R.id.etActivityPricePerPax);
+        etCategory = findViewById(R.id.etActivityCategory);
         //spinnerDateTime = findViewById(R.id.spinnerActivityDateTime);
 
         btnReviews = findViewById(R.id.btnReview);
@@ -68,6 +71,7 @@ public class ActivityDetailsActivity extends AppCompatActivity {
         etDescription.setText(activity.getDescription());
         etMaxPax.setText("" + activity.getMaxpax());
         etPricePerPax.setText("" + activity.getPriceperpax());
+
         String imgPath = Utilities.getImgUri(getApplicationContext()) + activity.getSupplier() + "/" + activity.getPhoto();
                 Glide.with(getApplicationContext())
                 .load(imgPath)

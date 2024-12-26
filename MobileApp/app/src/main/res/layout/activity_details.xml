@@ -65,10 +65,21 @@
                 android:minHeight="48dp"
                 android:text="@string/priceperpax" />
 
+            <EditText
+                android:id="@+id/etActivityCategory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="text"
+                android:minHeight="48dp"
+                android:text="Name" />
+
             <Spinner
                 android:id="@+id/spinnerActivityDateTime"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                />
 
             <Button
                 android:id="@+id/btBuyActivity"

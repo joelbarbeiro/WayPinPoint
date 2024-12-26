@@ -390,19 +390,6 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
     public void delAllCategoriesDB() {
         this.db.delete(TABLE_NAME_CATEGORY, null, null);
     }
-
-    public String getCategoryById(int categoryId, ArrayList<Category> categories) {
-        if (categories == null) {
-            return null;
-        }
-        for (Category category : categories) {
-            if (category.getId() == categoryId) {
-                return category.getDescription();
-            }
-        }
-        return null;
-    }
-
     //endregion
 
 
