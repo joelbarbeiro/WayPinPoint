@@ -65,14 +65,11 @@
                 android:minHeight="48dp"
                 android:text="@string/priceperpax" />
 
-            <EditText
-                android:id="@+id/etActivityCategory"
+            <Spinner
+                android:id="@+id/spinnerActivityDetailsCategory"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:ems="10"
-                android:inputType="text"
-                android:minHeight="48dp"
-                android:text="Name" />
+                android:minHeight="48dp" />
 
             <Spinner
                 android:id="@+id/spinnerActivityDateTime"

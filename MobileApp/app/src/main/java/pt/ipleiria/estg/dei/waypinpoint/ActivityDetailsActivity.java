@@ -3,6 +3,7 @@ package pt.ipleiria.estg.dei.waypinpoint;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -27,19 +28,19 @@ import pt.ipleiria.estg.dei.waypinpoint.utils.Utilities;
 public class ActivityDetailsActivity extends AppCompatActivity {
 
     public static final String ID_ACTIVITY = "ID_ACTIVITY";
-    public static final ArrayList<Category> CATEGORIES = new ArrayList<>();
-    private ArrayList<Category> categories;
+    private ArrayList<Category> categories = new ArrayList<>();
     private Activity activity;
     private EditText etName;
     private EditText etDescription;
     private EditText etMaxPax;
     private EditText etPricePerPax;
-    private EditText etCategory;
     private Button btnReviews;
+    private Spinner spinnerCategories;
     private Spinner spinnerDateTime;
     private ImageView imageActivity;
     private FloatingActionButton fabCrudActivity;
     private FragmentManager fragmentManager;
+    private WaypinpointDbHelper waypinpointDbHelper;
 
 
     @Override
@@ -47,16 +48,17 @@ public class ActivityDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
         int id = getIntent().getIntExtra(ID_ACTIVITY, 0);
-        categories = getIntent().getParcelableArrayListExtra("CATEGORIES");
 
+        waypinpointDbHelper = new WaypinpointDbHelper(getApplicationContext());
         activity = SingletonManager.getInstance(getApplicationContext()).getActivity(id);
+        categories = waypinpointDbHelper.getCategoryDB();
 
         imageActivity = findViewById(R.id.imgActiviy);
         etName = findViewById(R.id.etActivityName);
         etDescription = findViewById(R.id.etActivityDescription);
         etMaxPax = findViewById(R.id.etActivityMaxPax);
         etPricePerPax = findViewById(R.id.etActivityPricePerPax);
-        etCategory = findViewById(R.id.etActivityCategory);
+        spinnerCategories = findViewById(R.id.spinnerActivityDetailsCategory);
         //spinnerDateTime = findViewById(R.id.spinnerActivityDateTime);
 
         btnReviews = findViewById(R.id.btnReview);
@@ -78,7 +80,26 @@ public class ActivityDetailsActivity extends AppCompatActivity {
         etDescription.setText(activity.getDescription());
         etMaxPax.setText("" + activity.getMaxpax());
         etPricePerPax.setText("" + activity.getPriceperpax());
-        etCategory.setText(Utilities.getCategoryById(activity.getCategory(), categories));
+
+        ArrayAdapter<Category> adapter = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_spinner_item,
+                categories
+        );
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerCategories.setAdapter(adapter);
+        int positionToSelect = -1;
+
+        for (int i = 0; i < categories.size(); i++) {
+            if (categories.get(i).getId() == activity.getCategory()) {
+                positionToSelect = i;
+                break;
+            }
+        }
+        if (positionToSelect != -1) {
+            spinnerCategories.setSelection(positionToSelect);
+        }
+
         System.out.println("--> " + categories);
         String imgPath = Utilities.getImgUri(getApplicationContext()) + activity.getSupplier() + "/" + activity.getPhoto();
                 Glide.with(getApplicationContext())

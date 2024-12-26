@@ -72,7 +72,6 @@ public class ListActivitiesFragment extends Fragment implements SwipeRefreshLayo
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), ActivityDetailsActivity.class);
-                intent.putParcelableArrayListExtra("CATEGORIES", categories);
                 startActivityForResult(intent, REGISTER);
             }
         });
