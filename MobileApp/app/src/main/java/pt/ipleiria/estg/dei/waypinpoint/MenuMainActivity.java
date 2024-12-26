@@ -17,16 +17,13 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -141,6 +138,10 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
         if (item.getItemId() == R.id.navChangeHost) System.out.println("--> Change Host");
         if (item.getItemId() == R.id.navLogout) {
             dialogLogout(sharedPreferencesUser);
+        }
+        if (item.getItemId() == R.id.drawerCart) {
+            fragment = new CartFragment();
+            fragmentManager.beginTransaction().replace(R.id.contentFragment, fragment).commit();
         }
         if (item.getItemId() == R.id.navQrCode) System.out.println("--> Validate QR-Code");
         drawer.closeDrawer(GravityCompat.START);

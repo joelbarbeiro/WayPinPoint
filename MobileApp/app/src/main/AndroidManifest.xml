@@ -25,6 +25,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".CartDetailsActivity"
+            android:exported="false" />
+        <activity
             android:name=".ReviewDetailsActivity"
             android:exported="false" />
         <activity
@@ -56,6 +59,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="your.package.name.fileprovider"

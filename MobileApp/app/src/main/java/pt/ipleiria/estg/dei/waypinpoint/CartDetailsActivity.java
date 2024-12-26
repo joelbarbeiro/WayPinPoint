@@ -30,7 +30,6 @@ import pt.ipleiria.estg.dei.waypinpoint.utils.CartJsonParser;
 
 public class CartDetailsActivity extends AppCompatActivity implements CartListener {
     private Cart cart;
-
     private EditText etActivityName, etQuantity, etPrice, etDate;
     private ImageView iv_activityImg;
     public static final String DEFAULT_IMG = null;
@@ -55,10 +54,7 @@ public class CartDetailsActivity extends AppCompatActivity implements CartListen
     private void loadCart() {
         etActivityName.setText(cart.getProduct_id());
         etQuantity.setText(cart.getQuantity());
-//        Glide.with(getApplicationContext())
-//                .placeholder(R.drawable.img_default_activity)
-//                .diskCacheStrategy(DiskCacheStrategy.ALL)
-//                .into(iv_activityImg);
+        Glide.with(getApplicationContext());
     }
 
     @Override
@@ -120,6 +116,11 @@ public class CartDetailsActivity extends AppCompatActivity implements CartListen
 
     @Override
     public void onError(String s) {
+
+    }
+
+    @Override
+    public void onRefreshCartList(ArrayList<Cart> cartList) {
 
     }
 }

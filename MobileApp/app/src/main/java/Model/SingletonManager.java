@@ -9,14 +9,11 @@ import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.REGISTER;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.TOKEN;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.USER_DATA;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getApiHost;
-import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getCredentials;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getUserId;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Base64;
-import android.net.http.UrlRequest;
-import android.util.Log;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -338,13 +335,17 @@ public class SingletonManager {
     //endregion
     //REGION # MÉTODOS CART - API #
 
-    public ArrayList<Cart> getCartsDB() {
+    public ArrayList<Cart> getCartsDB(ArrayList <Cart> carts) {
+        carts = waypinpointDbHelper.getAllCartsDb();
+        return new ArrayList<>(carts);
+    }
+    public ArrayList<Cart> getCarts() {
         carts = waypinpointDbHelper.getAllCartsDb();
         return new ArrayList<>(carts);
     }
 
     public Cart getCart(int id) {
-        carts = getCartsDB();
+        carts = getCarts();
         for (Cart cart : carts) {
             if (cart.getId() == id) {
                 return cart;
@@ -379,28 +380,50 @@ public class SingletonManager {
         }
     }
 
-    public void getCartByUserId(final Context context, final CartListener listener) {
-        int userId = getUserId(context);
-        if (userId == 0) {
-            listener.onError("User ID not found in SharedPreferences");
-            return;
-        }
+    public void getCartByUserId(final Context context) {
+        User user = getUser(getUserId(context));
         String apiHost = getApiHost(context);
-        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, apiHost + "carts/buyers/" + userId,
-                null, new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                ArrayList<Cart> carts = CartJsonParser.parserJsonCarts(response);
-                listener.onSuccess(carts);
+        int userId = getUserId(context);
+        if (!StatusJsonParser.isConnectionInternet(context)) {
+            Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
+
+            if (cartListener != null) {
+                cartListener.onRefreshCartList(waypinpointDbHelper.getCartByUserId(userId));
             }
-        },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        listener.onError("Error fetching carts: " + error.getMessage());
+        } else {
+            JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, apiHost + "carts/buyers/" + userId, null, new Response.Listener<JSONArray>() {
+                @Override
+                public void onResponse(JSONArray response) {
+                    System.out.println("--> CARTGETAPI: " + response);
+                    carts = CartJsonParser.parserJsonCarts(response);
+                    getCartsDB(carts);
+
+                    if (cartListener != null) {
+                        cartListener.onRefreshCartList(waypinpointDbHelper.getCartByUserId(userId));
                     }
-                });
-        volleyQueue.add(request);
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    System.out.println("--> GET --> " + error);
+
+                }
+            }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> headers = new HashMap<>();
+                    // Add Basic Authentication Header
+                    String username = user.getUsername(); // Replace with your username
+                    String password = user.getPassword(); // Replace with your password
+                    String credentials = username + ":" + password;
+                    String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+                    headers.put("Authorization", auth);
+                    return headers;
+                }
+            };
+
+            volleyQueue.add(request);
+        }
     }
 
     public void addCartApi(final Cart cart, final Context context) {
@@ -414,7 +437,6 @@ public class SingletonManager {
                     System.out.println("------> Cart Data: " + response);
                     waypinpointDbHelper.addCartDb(CartJsonParser.parserJsonCart(response));
                     if (jsonResponse.getBoolean("success")) {
-                        Toast.makeText(context, "Cart added successfully", Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(context, "Error: " + jsonResponse.getString("errors"), Toast.LENGTH_SHORT).show();
                     }

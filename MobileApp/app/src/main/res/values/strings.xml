@@ -90,12 +90,10 @@
     <string name="remove">Remove</string>
     <string name="cart_edited">Cart Edited!</string>
     <string name="cart_deleted">Cart Deleted!</string>
-    <string name="yes_string">yes string</string>
-    <string name="no_string">no string</string>
+    <string name="quantity">Quantity</string>
     <string name="cart_added_successfully">Cart added successfully!</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="img_default">img_default</string>
-    <string name="quantity">Quantity</string>
 
     <string name="dialog_review_remove">Remove Review</string>
     <string name="dialog_review_message">Do you really wish to delete this review?</string>
@@ -123,6 +121,7 @@
     <string name="activity_pictures_description">Activity Pictures</string>
     <string name="error_rating_required">Rating required to send a review</string>
     <string name="error_message_empty">Please enter a message on the review</string>
+    <string name="my_cart">My Cart</string>
 
 
 </resources>

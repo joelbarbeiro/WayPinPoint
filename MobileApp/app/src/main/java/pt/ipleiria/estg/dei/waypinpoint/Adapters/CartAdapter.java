@@ -76,14 +76,8 @@ public class CartAdapter extends BaseAdapter {
         }
 
         private void update(Cart cart) {
-            tvProductName.setText(cart.getProduct_id());
+            tvProductName.setText(String.valueOf(cart.getProduct_id()));
             tvQuantity.setText(String.valueOf(cart.getQuantity()));
-
-//            Glide.with(context)
-//                    //.load(cart.getActivityImg())
-//                    .placeholder(R.drawable.img_default_activity)
-//                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-//                    .into(imageViewCartItem);
         }
     }
 }

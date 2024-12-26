@@ -38,6 +38,7 @@ public class Utilities {
     public static final int DB_VERSION = 3;
 
 
+
     public static final String DEFAULT_IMG = "https://images.app.goo.gl/WRUpq3qmgD331B64A";
     public static final String PROFILE_PIC = "PROFILE_PIC";
     public static final String BACKEND_PORT = ":8080";
