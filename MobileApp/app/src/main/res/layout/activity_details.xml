@@ -69,14 +69,15 @@
                 android:id="@+id/spinnerActivityDetailsCategory"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="48dp" />
+                android:minHeight="48dp"
+                android:text="@string/details_activity_category"/>
 
             <Spinner
                 android:id="@+id/spinnerActivityDateTime"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="48dp"
-                />
+                android:text="@string/activity_details_date_time"/>
 
             <Button
                 android:id="@+id/btBuyActivity"

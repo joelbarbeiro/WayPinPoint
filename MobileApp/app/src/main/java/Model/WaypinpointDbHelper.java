@@ -115,10 +115,10 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
         String createCalendarTable = "CREATE TABLE " + TABLE_NAME_CALENDAR +
                 "(" +
                 ID + " INTEGER, " +
-                ID_ACTIVITY + " INTEGER, " +
-                ID_DATE + " INTEGER, " +
+                ID_ACTIVITY + " INTEGER NOT NULL, " +
+                ID_DATE + " INTEGER NOT NULL, " +
                 DATE + " TEXT NOT NULL, " +
-                ID_TIME + " INTEGER" +
+                ID_TIME + " INTEGER NOT NULL" +
                 ")";
         db.execSQL(createCalendarTable);
 
@@ -282,6 +282,7 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
     public void addCalendarDB(Calendar c) {
         ContentValues val = new ContentValues();
         val.put(ID, c.getId());
+        val.put(ID_ACTIVITY, c.getActivity_id());
         val.put(ID_CALENDAR, c.getActivity_id());
         val.put(ID_DATE, c.getDate_id());
         val.put(DATE, c.getDate());
@@ -293,6 +294,7 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
     public boolean editCalendarDB(Calendar c) {
         ContentValues val = new ContentValues();
         val.put(ID, c.getId());
+        val.put(ID_ACTIVITY, c.getActivity_id());
         val.put(ID_CALENDAR, c.getActivity_id());
         val.put(ID_DATE, c.getDate_id());
         val.put(DATE, c.getDate());
@@ -318,6 +320,31 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
         }
         return calendars;
     }
+    public ArrayList<Calendar> getCalendarByActivityId(int activity_id) {
+        ArrayList<Calendar> calendars = new ArrayList<>();
+
+        String selection = ID_ACTIVITY + " = ?";
+        String[] selectionArgs = {String.valueOf(activity_id)};
+
+        Cursor cursor = this.db.query(TABLE_NAME_CALENDAR,
+                new String[]{ID, ID_ACTIVITY, ID_DATE, DATE, ID_TIME},
+                selection,
+                selectionArgs,
+                null,null,null);
+        System.out.println("calendar cursor >>>>- " + cursor);
+        if (cursor.moveToFirst()) {
+            System.out.println(" if move first >>>>- entrou");
+            do {
+                Calendar auxCalendar = new Calendar(cursor.getInt(0), cursor.getInt(1), cursor.getInt(2),
+                        cursor.getString(3), cursor.getInt(4));
+                calendars.add(auxCalendar);
+                System.out.println("Cal >>>>- " + auxCalendar);
+            } while (cursor.moveToNext());
+        } else {
+            System.out.println(" if move first >>>>- vazio");
+        }
+        return calendars;
+    }
 
     public void delAllCalendarDB() {
         this.db.delete(TABLE_NAME_CALENDAR, null, null);
@@ -338,6 +365,26 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
         ArrayList<CalendarTime> time = new ArrayList<>();
         Cursor cursor = this.db.query(TABLE_NAME_TIME, new String[]{ID, HOUR},
                 null, null, null, null, null);
+        if (cursor.moveToFirst()) {
+            do {
+                CalendarTime auxTime = new CalendarTime(cursor.getInt(0), cursor.getString(1));
+                time.add(auxTime);
+            } while (cursor.moveToNext());
+        }
+        return time;
+    }
+
+    public ArrayList<CalendarTime> getCalendarTimeById(int id) {
+        ArrayList<CalendarTime> time = new ArrayList<>();
+
+        String selection = ID + " = ?";
+        String[] selectionArgs = {String.valueOf(id)};
+
+        Cursor cursor = this.db.query(TABLE_NAME_TIME,
+                new String[]{ID, HOUR},
+                selection,
+                selectionArgs,
+                null, null, null);
         if (cursor.moveToFirst()) {
             do {
                 CalendarTime auxTime = new CalendarTime(cursor.getInt(0), cursor.getString(1));

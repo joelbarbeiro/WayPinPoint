@@ -82,5 +82,7 @@
     <string name="menu_delete">delete</string>
     <string name="activity_review_label">Review</string>
     <string name="activity_pictures_description">Activity Pictures</string>
+    <string name="details_activity_category">Category</string>
+    <string name="activity_details_date_time">Date - time</string>
 
 </resources>
