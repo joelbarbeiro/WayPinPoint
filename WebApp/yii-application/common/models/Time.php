@@ -41,14 +41,19 @@ class Time extends \yii\db\ActiveRecord
             'hour' => 'Hour',
         ];
     }
-
+    public static function getTimes()
+    {
+        return Time::find()->all();
+    }
     /**
      * Gets query for [[Calendars]].
      *
      * @return \yii\db\ActiveQuery
      */
+
     public function getCalendars()
     {
         return $this->hasMany(Calendar::class, ['time_id' => 'id']);
     }
+
 }
