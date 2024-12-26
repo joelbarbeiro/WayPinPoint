@@ -77,6 +77,7 @@ public class ActivityDetailsActivity extends AppCompatActivity {
 
 
         btBuyActivity = findViewById(R.id.btBuyActivity);
+        loadActivity();
         btBuyActivity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
