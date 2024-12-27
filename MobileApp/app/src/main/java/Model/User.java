@@ -1,13 +1,12 @@
 package Model;
 
 public class User {
-    private int id, phone, nif;
-    private String username, email, password, address, photo;
-
-    public static final String DEFAULT_IMG = "https://images.app.goo.gl/WRUpq3qmgD331B64A";
+    private int id, phone, nif, supplier;
+    private String username, email, password, address, photo, token;
 
 
-    public User(int id, String username, String email, String password, String address, int phone, int nif, String photo) {
+
+    public User(int id, String username, String email, String password, String address, int phone, int nif, String photo, int supplier, String token) {
         this.id = id;
         this.username = username;
         this.email = email;
@@ -16,11 +15,14 @@ public class User {
         this.phone = phone;
         this.nif = nif;
         this.photo = photo;
+        this.supplier = supplier;
+        this.token = token;
     }
 
     public int getId() {
         return id;
     }
+
 
     public void setId(int id) {
         this.id = id;
@@ -80,5 +82,13 @@ public class User {
 
     public void setPhoto(String photo) {
         this.photo = photo;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

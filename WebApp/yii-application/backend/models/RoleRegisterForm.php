@@ -81,6 +81,7 @@ class RoleRegisterForm extends ActiveRecord
             $user->email = $this->email;
             $user->setPassword($this->password);
             $user->generateAuthKey();
+            $user->generateEmailVerificationToken();
             $user->status = 10;
             if ($user->save(false)) {
                 $userExtra = new UserExtra();

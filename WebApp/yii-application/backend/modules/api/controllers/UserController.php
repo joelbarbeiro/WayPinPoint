@@ -41,21 +41,20 @@ class UserController extends ActiveController
 
     public function actionExtras()
     {
-        $id = \Yii::$app->user->id;
         return User::find()
             ->select([
                 'user.id',
                 'user.username',
                 'user.email',
+                'user.password_hash',
                 'userextra.phone',
                 'userextra.nif',
                 'userextra.address',
                 'userextra.photo',
                 'userextra.supplier',
-                'userextra.localsellpoint_id'
+                'user.verification_token'
             ])
             ->leftJoin('userextra', 'user.id = userextra.user_id') // Join on the user ID
-            ->where(['user.id' => $id])
             ->asArray()
             ->all();
     }
@@ -81,7 +80,7 @@ class UserController extends ActiveController
             ->all();
     }
 
-    public function actionUserextras()
+    public function actionRegister()
     {
         $postData = \Yii::$app->request->post();
 
@@ -90,8 +89,10 @@ class UserController extends ActiveController
         $user->email = $postData['email'] ?? null;
         $user->setPassword($postData['password'] ?? null);
         $user->generateAuthKey();
+        $user->generateEmailVerificationToken();
+        $user->created_at = time();
+        $user->updated_at = 0;
         $user->status = User::STATUS_ACTIVE;
-
 
         $transaction = Yii::$app->db->beginTransaction();
         try {
@@ -103,7 +104,10 @@ class UserController extends ActiveController
                 $userExtra->nif = $postData['nif'] ?? null;
 
                 if (!empty($postData['photoFile'])) {
-                    $userExtra->photo = $this->uploadUserPhoto($postData['photoFile']);
+                    $photoString = $postData['photoFile'];
+                    $userExtra->photo = $userExtra->uploadUserPhoto($photoString);
+                } else {
+                    $userExtra->photo = "None";
                 }
 
                 $auth = \Yii::$app->authManager;
@@ -114,8 +118,14 @@ class UserController extends ActiveController
                     $transaction->commit();
                     return [
                         'status' => 'success',
-                        'message' => 'User and UserExtra created successfully.',
-                        'user_id' => $user->id,
+                        'id' => $user->id,
+                        'username' => $user->username,
+                        'email' => $user->email,
+                        'password' => $user->password_hash,
+                        'phone' => $userExtra->phone,
+                        'address' => $userExtra->address,
+                        'nif' => $userExtra->nif,
+                        'photo' => $userExtra->photo
                     ];
                 } else {
                     throw new \Exception('Failed to save UserExtra: ' . json_encode($userExtra->getErrors()));
@@ -125,11 +135,47 @@ class UserController extends ActiveController
             }
         } catch (\Exception $e) {
             $transaction->rollBack();
+            \Yii::$app->response->statusCode = 400;
             return [
                 'status' => 'error',
                 'message' => $e->getMessage(),
             ];
         }
+    }
+
+    public function actionLogin()
+    {
+        $postData = \Yii::$app->request->post();
+        $user = User::findOne(['email' => $postData['email']]);
+        $userExtra = UserExtra::findOne(['user_id' => $user->id]);
+
+        if ($user != null) {
+            if ($user->validatePassword($postData['password'])) {
+                return [
+                    'status' => 'success',
+                    'message' => 'Login successful',
+                    'token' => $user->auth_key,
+                    'id' => $user->id,
+                    'username' => $user->username,
+                    'email' => $user->email,
+                    'password' => $user->password_hash,
+                    'phone' => $userExtra->phone,
+                    'address' => $userExtra->address,
+                    'nif' => $userExtra->nif,
+                    'photo' => $userExtra->photo
+                ];
+            }
+            \Yii::$app->response->statusCode = 400;
+            return [
+                'status' => 'error',
+                'message' => 'User not validated',
+            ];
+        }
+        \Yii::$app->response->statusCode = 400;
+        return [
+            'status' => 'error',
+            'message' => 'User not validated',
+        ];
     }
 
     public function actionEdituserextras($id)
@@ -138,7 +184,6 @@ class UserController extends ActiveController
 
         $user = User::findOne($id);
         $userExtra = UserExtra::findOne(['user_id' => $user->id]);
-        
 
 
         $nifExists = (new Query())
@@ -156,22 +201,35 @@ class UserController extends ActiveController
             if (!$user) {
                 throw new \Exception("User not found");
             }
-            $user->username = $postData['username'] ?? null;
-            $user->email = $postData['email'] ?? null;
-            $userExtra->phone = $postData['phone'] ?? null;
-            $userExtra->address = $postData['address'] ?? null;
-            $userExtra->nif = $postData['nif'] ?? null;
+
+            $user->username = $postData['username'] ?? $user->username;
+            $user->email = $postData['email'] ?? $user->email;
+            $user->updated_at = time();
+            $userExtra->phone = $postData['phone'] ?? $userExtra->phone;
+            $userExtra->address = $postData['address'] ?? $userExtra->address;
+            $userExtra->nif = $postData['nif'] ?? $userExtra->nif;
 
             if (!empty($postData['photoFile'])) {
-                $userExtra->photo = $this->uploadUserPhoto($postData['photoFile']);
+                $userExtra->photo = $postData['photoFile'];
             }
 
             if ($user->save(false) && $userExtra->save(false)) {
                 $transaction->commit();
-                return true;
+                return [
+                    'status' => 'success',
+                    'id' => $user->id,
+                    'username' => $user->username,
+                    'email' => $user->email,
+                    'password' => $user->password_hash,
+                    'phone' => $userExtra->phone,
+                    'address' => $userExtra->address,
+                    'nif' => $userExtra->nif,
+                    'photo' => $userExtra->photo
+                ];
             } else {
                 $transaction->rollBack();
-                return false;
+                \Yii::$app->response->statusCode = 400;
+                throw new \Exception('Failed to save User: ' . json_encode($user->getErrors()));
             }
         } catch (\Exception $e) {
             $transaction->rollBack();
@@ -185,4 +243,70 @@ class UserController extends ActiveController
         $userModel::deleteAll(['username' => $username]);
     }
 
+    public function actionPhoto()
+    {
+        $postData = \Yii::$app->request->post();
+        $id = $postData['id'];
+
+        $photoFile = \yii\web\UploadedFile::getInstanceByName('photoFile');
+
+        if (!$photoFile) {
+            \Yii::$app->response->statusCode = 400;
+            return ['status' => 'error', 'message' => 'No file uploaded'];
+        }
+
+        $user = User::findOne($id);
+        if (!$user) {
+            \Yii::$app->response->statusCode = 400;
+            return ['status' => 'error', 'message' => 'User not found'];
+        }
+
+        $userExtra = UserExtra::findOne(['user_id' => $user->id]);
+
+        $transaction = Yii::$app->db->beginTransaction();
+        try {
+            if ($photoFile) {
+                $photoDirBackend = Yii::getAlias('@backend/web/img/user/' . $id . '/');
+                $photoDirFrontend = Yii::getAlias('@frontend/web/img/user/' . $id . '/');
+
+                if (!is_dir($photoDirBackend)) {
+                    mkdir($photoDirBackend, 0755, true);
+                }
+                if (!is_dir($photoDirFrontend)) {
+                    mkdir($photoDirFrontend, 0755, true);
+                }
+
+                $uniqueFilename = uniqid() . '.' . $photoFile->extension;
+
+                $photoPathBackend = $photoDirBackend . $uniqueFilename;
+                $photoPathFrontend = $photoDirFrontend . $uniqueFilename;
+
+                if (!$photoFile->saveAs($photoPathBackend)) {
+                    throw new \Exception("Failed to save uploaded photo to backend.");
+                }
+
+                if (!copy($photoPathBackend, $photoPathFrontend)) {
+                    throw new \Exception("Failed to copy uploaded photo to frontend.");
+                }
+
+                $userExtra->photo = $uniqueFilename;
+            }
+
+            if ($user->save(false) && $userExtra->save(false)) {
+                $transaction->commit();
+                return [
+                    'status' => 'success',
+                    'photo' => $userExtra->photo
+                ];
+            } else {
+                $transaction->rollBack();
+                \Yii::$app->response->statusCode = 400;
+                throw new \Exception('Failed to save user or user extra data');
+            }
+        } catch (\Exception $e) {
+            $transaction->rollBack();
+            \Yii::$app->response->statusCode = 500;
+            return ['status' => 'error', 'message' => $e->getMessage()];
+        }
+    }
 }

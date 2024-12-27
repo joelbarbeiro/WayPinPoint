@@ -8,12 +8,16 @@
     <string name="login_textview_password">Password</string>
     <string name="login_button">Login</string>
     <string name="login_register_label">Not a member? Sign Up</string>
+    <string name="login_register_success_message">User Registered Successfully</string>
+    <string name="login_sign_up">Sign Up</string>
 
     <!-- Register -->
     <string name="register_title">Register</string>
     <string name="register_button">Register</string>
     <string name="register_confirm_password_label">Confirm Password</string>
-
+    <string name="register_address_hint">Address</string>
+    <string name="register_phone_number_hint">Phone Number</string>
+    <string name="register_nif_hint">NIF</string>
 
     <!-- Menu -->
     <string name="menu_my_profile_label">My Profile</string>
@@ -26,25 +30,105 @@
     <string name="menu_header_image_description">Menu header Image</string>
     <string name="ndOpen">Open</string>
     <string name="ndClose">Close</string>
+    <string name="menu_cart">Cart</string>
+
 
     <!-- My Profile-->
     <string name="my_profile_nif">NIF</string>
+    <string name="my_profile_address">Address</string>
+    <string name="my_profile_phone">Phone</string>
     <string name="my_profile_save_button">Save Changes</string>
     <string name="my_profile_delete_button">Delete Profile</string>
+    <string name="my_profile_deleted">Profile Deleted With Success</string>
+    <string name="my_profile_fields_warning">You have to fill all the fields</string>
+    <string name="my_profile_nif_phone_warning">Nif/Phone has to be valid</string>
+    <string name="menu_main_user_edited">User Edited With Success</string>
 
     <!-- Dashboard -->
     <string name="dashboard_name_label">Name: </string>
     <string name="dashboard_description_label">Description: </string>
     <string name="dashboard_category_label">Category: </string>
-    <string name="dashboard_price_label">Price per Ticket :</string>
-    <string name="dashboard_date_label">Dates: </string>
-
-
+    <string name="dashboard_price_label">Price: </string>
+    <string name="dashboard_address_label">Address: </string>
 
     <!-- Errors-->
     <string name="error_no_internet">No Internet Connection</string>
-    <string name="register_address_hint">Address</string>
-    <string name="register_phone_number_hint">Phone Number</string>
-    <string name="register_nif_hint">NIF</string>
+    <string name="login_error_message">Something went wrong</string>
+    <string name="login_invalid_login">Invalid Login</string>
+    <string name="login_error_parse_response">Failed to parse response.</string>
+    <string name="api_hostname_config">ApiHostnameConfig</string>
+    <string name="bt_hostname_save">Save</string>
+    <string name="config_api_hostname_title">Config Api Hostname</string>
+    <string name="api_hostname_back_login">Back</string>
+    <string name="error_invalid_token">Invalid token</string>
+    <string name="error_default">Something went wrong</string>
+
+    <!-- General Messages -->
+    <string name="message_save_changes">Save changes</string>
+
+    <!-- Dialogs-->
+    <string name="dialog_logout_message">Do you really want to logout ?</string>
+    <string name="dialog_delete_title">Delete Profile</string>
+    <string name="dialog_delete_message">Are you sure you want to delete your profile?\n Such an action cannot be reversed</string>
+    <string name="dialog_yes">Yes</string>
+    <string name="dialog_no">No</string>
+
+
+    <!-- Cart -->
+    <string name="number_of_tickets">Number of Tickets:</string>
+    <string name="cart">Cart</string>
+    <string name="save">Add to Cart</string>
+    <string name="delete_cart_item">Do you really want to delete this cart item?</string>
+    <string name="remove_cart_item">Remove cart item</string>
+    <string name="price">Price</string>
+    <string name="date">Date</string>
+    <string name="activity_name_label">Activity Name: </string>
+    <string name="activity_name">Activity Name</string>
+    <string name="quantity_label">Quantity: </string>
+    <string name="price_label">Price: </string>
+    <string name="date_label">Date: </string>
+    <string name="remove">Remove</string>
+    <string name="cart_edited">Cart Edited!</string>
+    <string name="cart_deleted">Cart Deleted!</string>
+    <string name="quantity">Quantity</string>
+    <string name="my_cart">My Cart</string>
+    <string name="cart_added_successfully">Cart added successfully!</string>
+    <string name="cart_activity_name">Activity Name:</string>
+    <string name="cart_quantity">Quantity:</string>
+    <string name="cart_total">Total:</string>
+    <string name="cart_date">Date:</string>
+    <string name="save_Cart">Save</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="img_default">img_default</string>
+
+    <string name="dialog_review_remove">Remove Review</string>
+    <string name="dialog_review_message">Do you really wish to delete this review?</string>
+    <string name="yes_string">Yes</string>
+    <string name="no_string">No</string>
+
+    <!-- Review -->
+    <string name="review_details_message_hint">Message</string>
+    <string name="review_add_message">Add Review</string>
+    <string name="review_details_title">Review Details</string>
+    <string name="review_user_mismatch">You are not the author of this review</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="priceperpax">PricePerPax</string>
+    <string name="maxpax">MaxPax</string>
+    <string name="description">Description</string>
+    <string name="name">Name</string>
+    <string name="add_to_cart">Add to cart</string>
+    <string name="fab_add_activity">Add Activity</string>
+    <string name="fab_add_Review">Add Review</string>
+    <string name="menu_search_title_search">Search</string>
+    <string name="menu_delete">delete</string>
+    <string name="activity_review_label">Review</string>
+    <string name="activity_pictures_description">Activity Pictures</string>
+    <string name="details_activity_category">Category</string>
+    <string name="activity_details_date_time">Date - time</string>
+    <string name="error_rating_required">Rating required to send a review</string>
+    <string name="error_message_empty">Please enter a message on the review</string>
+
 
 </resources>

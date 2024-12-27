@@ -65,8 +65,10 @@ return [
                         'GET extras' => 'extras',
                         'GET employees' => 'employees',
                         'DELETE {username}' => 'delbyusername',
-                        'POST userextras' => 'userextras',
+                        'POST register' => 'register',
+                        'POST login' => 'login',
                         'PUT {id}' => 'edituserextras',
+                        'PUT photo' => 'photo',
                     ],
                     'tokens' => [
                         '{id}' => '<id:\\d+>',
@@ -80,7 +82,7 @@ return [
                         'GET count' => 'count',
                         'GET activity/{id}' => 'activity',
                         'GET users/{id}' => 'user',
-                        'POST {id}' => 'new'
+                        'POST ' => 'new'
                     ],
                     'tokens' => [
                         '{id}' => '<id:\\d+>',
@@ -106,10 +108,13 @@ return [
                     'class' => 'yii\rest\UrlRule',
                     'controller' => 'api/activity',
                     'extraPatterns' => [
-                        'GET' => 'activities',
+                        'GET all' => 'activities',
                         'GET {id}' => 'activityview',
-                        'POST' => 'createactivity',
-                        'PUT {id}' => 'updateactivity',
+                        'GET calendar' => 'calendar',
+                        'GET time' => 'time',
+                        'GET category' => 'category',
+                        'POST createactivity' => 'createactivity',
+                        'PUT updateactivity/{id}' => 'updateactivity',
                         'DELETE {id}' => 'deleteactivity',
                     ],
                 ],

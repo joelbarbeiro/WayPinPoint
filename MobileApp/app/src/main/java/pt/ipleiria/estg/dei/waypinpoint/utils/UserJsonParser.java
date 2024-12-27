@@ -1,9 +1,5 @@
 package pt.ipleiria.estg.dei.waypinpoint.utils;
 
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -20,9 +16,9 @@ public class UserJsonParser {
             String usernameUser = User.getString("username");
             String emailUser = User.getString("email");
             String passwordUser = User.getString("password");
-            int nifUser = User.getInt("nif");
-            int phoneUser = User.getInt("phone");
             String addressUser = User.getString("address");
+            int phoneUser = User.getInt("phone");
+            int nifUser = User.getInt("nif");
             String photoUser = User.getString("photo");
 
             auxUser = new User(
@@ -33,20 +29,25 @@ public class UserJsonParser {
                     addressUser,
                     phoneUser,
                     nifUser,
-                    photoUser
+                    photoUser,
+                    0,
+                    null
             );
-
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
         return auxUser;
     }
 
-    public static boolean isConnectionInternet(Context context){
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = cm.getActiveNetworkInfo();
-
-        return networkInfo != null && networkInfo.isConnected();
+    public static String parserJsonPhoto(String response) {
+        String photo = null;
+        try {
+            JSONObject String = new JSONObject(response);
+            photo = String.getString("photo");
+            return photo;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return photo;
     }
 }
