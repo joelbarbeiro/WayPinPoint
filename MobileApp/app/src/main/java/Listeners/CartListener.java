@@ -11,4 +11,5 @@ public interface CartListener {
 
     void onRefreshCartList(ArrayList<Cart> cartList);
 
+    void onValidateOperation(int op);
 }

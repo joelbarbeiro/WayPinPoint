@@ -63,7 +63,6 @@ public class CartDetailsActivity extends AppCompatActivity implements CartListen
     }
 
     private void loadCart() {
-
         etActivityName.setText(activity.getName());
         etQuantity.setText("" + cart.getQuantity());
         etPrice.setText("" + activity.getPriceperpax());
@@ -74,6 +73,7 @@ public class CartDetailsActivity extends AppCompatActivity implements CartListen
                 .placeholder(R.drawable.img_default_activity)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(iv_activityImg);
+        SingletonManager.getInstance(getApplicationContext()).setCartListener(this);
 
     }
 
@@ -115,16 +115,13 @@ public class CartDetailsActivity extends AppCompatActivity implements CartListen
                         dialog.cancel();
                     }
                 })
-                .setIcon(R.drawable.ic_cross)
+                .setIcon(R.drawable.ic_dialog_remove)
                 .show();
     }
 
     //Maybe needs an Override
     public void onRefreshDetails(int op) {
-        Intent intent = new Intent();
-        intent.putExtra(OP_CODE, EDIT);
-        setResult(RESULT_OK, intent);
-        finish();
+
     }
 
 
@@ -141,5 +138,13 @@ public class CartDetailsActivity extends AppCompatActivity implements CartListen
     @Override
     public void onRefreshCartList(ArrayList<Cart> cartList) {
 
+    }
+
+    @Override
+    public void onValidateOperation(int op) {
+        Intent intent = new Intent();
+        intent.putExtra(OP_CODE, op);
+        setResult(RESULT_OK, intent);
+        finish();
     }
 }

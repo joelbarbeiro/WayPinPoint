@@ -1,7 +1,5 @@
 package pt.ipleiria.estg.dei.waypinpoint;
 
-import static pt.ipleiria.estg.dei.waypinpoint.ActivityDetailsActivity.ID_ACTIVITY;
-import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ACTIVITY_ID;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.DELETE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EDIT;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ID_CART;
@@ -77,8 +75,6 @@ public class CartFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     }
 
 
-
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (resultCode == Activity.RESULT_OK) {
@@ -124,5 +120,10 @@ public class CartFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         if (cartArrayList != null) {
             lvCart.setAdapter(new CartAdapter(getContext(), cartArrayList, activities, calendars));
         }
+    }
+
+    @Override
+    public void onValidateOperation(int op) {
+
     }
 }

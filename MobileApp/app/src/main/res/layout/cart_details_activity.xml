@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
+    android:layout_height="match_parent"
     tools:context=".CartDetailsActivity">
 
     <ScrollView
@@ -15,46 +14,107 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:orientation="vertical"
+            android:padding="16dp">
 
             <ImageView
                 android:id="@+id/iv_activityImg"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
+                android:layout_marginBottom="16dp"
                 android:contentDescription="@string/img_default"
+                android:scaleType="centerCrop"
                 app:srcCompat="@drawable/img_default_activity" />
+
+            <!-- Activity Name -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/cart_activity_name"
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:textColor="@color/black"
+                android:layout_marginBottom="4dp" />
 
             <TextView
                 android:id="@+id/etActivityName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Activity Name"
-                android:minHeight="48dp"
-                tools:ignore="VisualLintTextFieldSize" />
+                android:padding="12dp"
+                android:textSize="16sp"
+                android:textColor="@color/black" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginVertical="8dp"
+                android:background="#DDDDDD" />
+
+            <!-- Quantity -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/cart_quantity"
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:textColor="@color/black"
+                android:layout_marginBottom="4dp" />
 
             <TextView
                 android:id="@+id/etQuantity"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/quantity"
-                android:minHeight="48dp"
-                tools:ignore="VisualLintTextFieldSize" />
+                android:padding="12dp"
+                android:textSize="16sp"
+                android:textColor="@color/black" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginVertical="8dp"
+                android:background="#DDDDDD" />
+
+            <!-- Price -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/cart_total"
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:textColor="@color/black"
+                android:layout_marginBottom="4dp" />
 
             <TextView
                 android:id="@+id/etPrice"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/price"
-                android:minHeight="48dp"
-                tools:ignore="VisualLintTextFieldSize" />
+                android:padding="12dp"
+                android:textSize="16sp"
+                android:textColor="@color/black" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginVertical="8dp"
+                android:background="#DDDDDD" />
+
+            <!-- Date -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/cart_date"
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:textColor="@color/black"
+                android:layout_marginBottom="4dp" />
 
             <TextView
                 android:id="@+id/etDate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/date"
-                android:minHeight="48dp"
-                tools:ignore="VisualLintTextFieldSize" />
+                android:padding="12dp"
+                android:textSize="16sp"
+                android:textColor="@color/black" />
 
             <Space
                 android:layout_width="match_parent"
@@ -64,7 +124,7 @@
                 android:id="@+id/fabCheckout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom|end"
+                android:layout_gravity="end"
                 android:layout_margin="16dp"
                 android:clickable="true"
                 app:srcCompat="@drawable/ic_cart_checkout" />

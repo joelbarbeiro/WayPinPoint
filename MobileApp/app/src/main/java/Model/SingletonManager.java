@@ -354,6 +354,13 @@ public class SingletonManager {
         return new ArrayList<>(carts);
     }
 
+    public void removeCartDb(int cartId) {
+        Cart cart = getCart(cartId);
+        if (cart != null) {
+            waypinpointDbHelper.removeCartDb(cart.getId());
+        }
+    }
+
     public Cart getCart(int id) {
         carts = getCarts();
         for (Cart cart : carts) {
@@ -530,7 +537,11 @@ public class SingletonManager {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+                        waypinpointDbHelper.removeCartDb(cart.getId());
                         Toast.makeText(context, "Cart item deleted", Toast.LENGTH_SHORT).show();
+                        if (cartListener != null) {
+                            cartListener.onValidateOperation(DELETE);
+                        }
                     }
                 },
                 new Response.ErrorListener() {
