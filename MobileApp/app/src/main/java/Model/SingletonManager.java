@@ -479,7 +479,7 @@ public class SingletonManager {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
-                params.put("user_id", String.valueOf(cart.getUser_id()));
+                params.put("user_id", String.valueOf(getUserId(context)));
                 params.put("product_id", String.valueOf(cart.getProduct_id()));
                 params.put("quantity", String.valueOf(cart.getQuantity()));
                 params.put("status", "0");
@@ -509,6 +509,7 @@ public class SingletonManager {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+                        waypinpointDbHelper.editCartDb(cart);
                         Toast.makeText(context, "Cart updated successfully", Toast.LENGTH_SHORT).show();
                     }
                 },
@@ -539,6 +540,7 @@ public class SingletonManager {
                     public void onResponse(String response) {
                         waypinpointDbHelper.removeCartDb(cart.getId());
                         Toast.makeText(context, "Cart item deleted", Toast.LENGTH_SHORT).show();
+
                         if (cartListener != null) {
                             cartListener.onValidateOperation(DELETE);
                         }
@@ -780,6 +782,7 @@ public class SingletonManager {
         }
         return null;
     }
+
 
     public void addReviewsDb(ArrayList<Review> reviews) {
         //activityDbHelper.delAllActivitiesDB();
