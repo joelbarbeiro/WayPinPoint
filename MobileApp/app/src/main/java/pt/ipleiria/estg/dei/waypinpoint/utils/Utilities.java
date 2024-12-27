@@ -3,8 +3,8 @@ package pt.ipleiria.estg.dei.waypinpoint.utils;
 import static android.content.Context.MODE_PRIVATE;
 import static android.os.Looper.getMainLooper;
 
-import android.Manifest;
 import android.app.Activity;
+import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -14,6 +14,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.provider.MediaStore;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import androidx.core.app.ActivityCompat;
@@ -135,10 +136,41 @@ public class Utilities {
         editor.putString(IMG_URI_USER, imgUserPath);
         editor.apply();
     }
-    public static String getCredentials(Context context){
-        SharedPreferences sharedPreferences = context.getSharedPreferences(USER_DATA, Context.MODE_PRIVATE);
-        return sharedPreferences.getString(USER_DATA, null);
+    public static double getPriceById(int activityId, ArrayList<Model.Activity> activities) {
+        if (activities == null) {
+            return 0;
+        }
+        for (Model.Activity activity : activities) {
+            if (activity.getId() == activityId) {
+                return activity.getPriceperpax();
+            }
+        }
+        return 0;
     }
+    public static String getCalendarDateById(int calendar_id, ArrayList<Model.Calendar> calendars) {
+        if (calendars == null) {
+            return null;
+        }
+        for (Model.Calendar calendar : calendars) {
+            if (calendar.getId() == calendar_id) {
+                return calendar.getDate();
+            }
+        }
+        return null;
+    }
+
+    public static String getActivityNameById(int activityId, ArrayList<Model.Activity> activities) {
+        if (activities == null) {
+            return null;
+        }
+        for (Model.Activity activity : activities) {
+            if (activity.getId() == activityId) {
+                return activity.getName();
+            }
+        }
+        return null;
+    }
+
     public static String getCategoryById(int categoryId, ArrayList<Category> categories) {
         if (categories == null) {
             return null;
@@ -150,6 +182,24 @@ public class Utilities {
         }
         return null;
     }
+
+    public static String getImgFromActivities(int activityId, ArrayList<Model.Activity> activities)
+    {
+        if(activities == null)
+        {
+            return null;
+        }
+        for(Model.Activity activity : activities)
+        {
+            if(activity.getId() == activityId)
+            {
+                return activity.getSupplier() + "/" + activity.getPhoto();
+            }
+        }
+        return null;
+    }
+
+
 
     public static String setDateFromTimestamp(int timestamp) {
         // Convert the timestamp (seconds since Unix Epoch) into a Date object
