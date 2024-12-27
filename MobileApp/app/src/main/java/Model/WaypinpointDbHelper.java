@@ -588,7 +588,7 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
         return this.db.update(TABLE_NAME_CART, values, ID + "= ?", new String[]{"" + cart.getId()}) > 0;
     }
 
-    public boolean removeCartDb(Cart id) {
+    public boolean removeCartDb(int id) {
         return this.db.delete(TABLE_NAME_CART, ID + "= ?", new String[]{"" + id}) == 1;
     }
 
