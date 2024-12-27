@@ -93,6 +93,10 @@
     <string name="quantity">Quantity</string>
     <string name="my_cart">My Cart</string>
     <string name="cart_added_successfully">Cart added successfully!</string>
+    <string name="cart_activity_name">Activity Name:</string>
+    <string name="cart_quantity">Quantity:</string>
+    <string name="cart_total">Total:</string>
+    <string name="cart_date">Date:</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="img_default">img_default</string>
 
@@ -124,6 +128,7 @@
     <string name="activity_details_date_time">Date - time</string>
     <string name="error_rating_required">Rating required to send a review</string>
     <string name="error_message_empty">Please enter a message on the review</string>
+
 
 
 </resources>

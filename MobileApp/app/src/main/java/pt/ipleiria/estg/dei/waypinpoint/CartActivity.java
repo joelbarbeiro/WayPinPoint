@@ -116,5 +116,10 @@ public class CartActivity extends AppCompatActivity implements CartListener {
     public void onRefreshCartList(ArrayList<Cart> cartList) {
 
     }
+
+    @Override
+    public void onValidateOperation(int op) {
+
+    }
 }
 
