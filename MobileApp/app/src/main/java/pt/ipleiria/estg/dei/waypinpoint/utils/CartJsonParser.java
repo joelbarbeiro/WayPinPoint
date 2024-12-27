@@ -18,14 +18,14 @@ public class CartJsonParser {
         try {
             for (int i = 0; i < response.length(); i++) {
                 JSONObject cart = (JSONObject) response.get(i);
-                int idCart = cart.getInt("id");
+                int id = cart.getInt("id");
                 int user_id = cart.getInt("user_id");
                 int product_id = cart.getInt("product_id");
                 int quantity = cart.getInt("quantity");
                 int status = cart.getInt("status");
                 int calendar_id = cart.getInt("calendar_id");
                 Cart auxCart = new Cart(
-                        idCart,
+                        id,
                         user_id,
                         product_id,
                         quantity,
@@ -45,8 +45,8 @@ public class CartJsonParser {
 
         try {
             JSONObject Cart = new JSONObject(response);
-            int idCart = Cart.getInt("id");
-            System.out.println("PARSERERROR ID CART: " + idCart);
+            int id = Cart.getInt("id");
+            System.out.println("PARSERERROR ID CART: " + id);
             int user_id = Cart.getInt("user_id");
             System.out.println("PARSERERROR USER ID: " + user_id);
             int product_id = Cart.getInt("product_id");
@@ -59,7 +59,7 @@ public class CartJsonParser {
             System.out.println("PARSERERROR CALENDAR ID: " + calendar_id);
 
             auxCart = new Cart(
-                    idCart,
+                    id,
                     user_id,
                     product_id,
                     quantity,
