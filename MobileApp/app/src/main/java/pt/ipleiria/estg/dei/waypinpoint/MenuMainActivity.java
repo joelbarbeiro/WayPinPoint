@@ -40,6 +40,8 @@ import com.bumptech.glide.Glide;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 
+import org.eclipse.paho.android.service.MqttService;
+
 import Model.SingletonManager;
 import Model.User;
 import Model.WaypinpointDbHelper;
@@ -80,6 +82,10 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
         drawer.addDrawerListener(toggle);
         loadHeader(sharedPreferencesUser, profilePic);
         navigationView.setNavigationItemSelectedListener(this);
+
+        Intent serviceIntent = new Intent(getApplicationContext(), MqttForegroundService.class);
+        getApplicationContext().startForegroundService(serviceIntent);
+
         loadDefaultFragment();
     }
 

@@ -37,6 +37,10 @@ public class Utilities {
     public static final String ID = "ID";
     public static final String APIHOST = "APIHOST";
     public static final String API_HOSTNAME = "API_HOSTNAME";
+    public static final String MOSQUITTO_URI = "MOSQUITTO_URI";
+    public static final String MOSQUITTO_CLIENT = "MosquittoClient";
+    public static final String ACTIVITY_SUBS = "waypinpoint/activity";
+    public static final String CHANNEL_ID = "MqttChannel";
     public static final String USER_DATA = "USER_DATA";
     public static final String TOKEN = "TOKEN";
     public static final String SNACKBAR_MESSAGE = "SNACKBAR_MESSAGE";
@@ -135,10 +139,25 @@ public class Utilities {
         editor.putString(IMG_URI_USER, imgUserPath);
         editor.apply();
     }
+
+    public static String getMosquittoUri(Context context){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(MOSQUITTO_URI, MODE_PRIVATE);
+        System.out.println("--> Get IMG URI FOR USER " + sharedPreferences.getString(MOSQUITTO_URI, null));
+        return sharedPreferences.getString(MOSQUITTO_URI, null);
+    }
+    public static void setMosquittoUri(String uri, Context context){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(MOSQUITTO_URI, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        String mqttUri = "http://" + uri + ":1883";
+        editor.putString(MOSQUITTO_URI, mqttUri);
+        editor.apply();
+    }
+
     public static String getCredentials(Context context){
         SharedPreferences sharedPreferences = context.getSharedPreferences(USER_DATA, Context.MODE_PRIVATE);
         return sharedPreferences.getString(USER_DATA, null);
     }
+
     public static String getCategoryById(int categoryId, ArrayList<Category> categories) {
         if (categories == null) {
             return null;

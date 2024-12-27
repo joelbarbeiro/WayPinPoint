@@ -399,11 +399,11 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
         return time;
     }
 
-    public ArrayList<CalendarTime> getCalendarTimeById(int id) {
+    public ArrayList<CalendarTime> getCalendarTimeById(int time_id) {
         ArrayList<CalendarTime> time = new ArrayList<>();
 
         String selection = ID + " = ?";
-        String[] selectionArgs = {String.valueOf(id)};
+        String[] selectionArgs = {String.valueOf(time_id)};
 
         Cursor cursor = this.db.query(TABLE_NAME_TIME,
                 new String[]{ID, HOUR},
