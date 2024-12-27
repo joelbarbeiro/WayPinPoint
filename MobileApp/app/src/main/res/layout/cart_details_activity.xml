@@ -60,13 +60,33 @@
                 android:textColor="@color/black"
                 android:layout_marginBottom="4dp" />
 
-            <TextView
-                android:id="@+id/etQuantity"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="12dp"
-                android:textSize="16sp"
-                android:textColor="@color/black" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <EditText
+                    android:id="@+id/etQuantity"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:padding="12dp"
+                    android:textSize="16sp"
+                    android:textColor="@color/black"
+                    android:inputType="number"
+                    android:hint="Enter Quantity" />
+
+                <Button
+                    android:id="@+id/btnEditQuantity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:padding="12dp"
+                    android:text="@string/save_Cart"
+                    android:backgroundTint="@color/blue_500"
+                    android:textColor="@color/white" />
+            </LinearLayout>
 
             <View
                 android:layout_width="match_parent"

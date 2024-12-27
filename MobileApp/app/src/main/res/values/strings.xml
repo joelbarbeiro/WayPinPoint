@@ -102,6 +102,7 @@
     <string name="cart_quantity">Quantity:</string>
     <string name="cart_total">Total:</string>
     <string name="cart_date">Date:</string>
+    <string name="save_Cart">Save</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="img_default">img_default</string>
 
@@ -135,7 +136,6 @@
     <string name="activity_pictures_description">Activity Pictures</string>
     <string name="details_activity_category">Category</string>
     <string name="activity_details_date_time">Date - time</string>
-
 
 
 </resources>

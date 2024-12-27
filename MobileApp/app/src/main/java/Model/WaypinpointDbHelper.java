@@ -34,7 +34,7 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
     //endregion
     //region = CART DECLARATIONS #
     private static final String TABLE_NAME_CART = "cart";
-
+    public static final String USER = "user";
     private static final String PRODUCT_ID = "product_id";
     private static final String QUANTITY = "quantity";
     private static final String STATUS_ = "status";
@@ -585,7 +585,6 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
     //REGION CART DB METHODS #
     public void addCartDb(Cart cart) {
         ContentValues values = new ContentValues();
-        System.out.println("------> ID: " + ID + " " + cart.getId());
         values.put(ID, cart.getId());
         values.put(USER_ID, cart.getUser_id());
         values.put(PRODUCT_ID, cart.getProduct_id());
