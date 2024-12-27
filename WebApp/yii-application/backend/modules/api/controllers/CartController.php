@@ -18,6 +18,7 @@ class CartController extends ActiveController
     public $calendar_id;
 
     public $modelClass = 'common\models\Cart';
+
     public function behaviors()
     {
         $behaviors = parent::behaviors();
@@ -28,6 +29,7 @@ class CartController extends ActiveController
         ];
         return $behaviors;
     }
+
     public function authintercept($username, $password)
     {
         $user = User::findByUsername($username);
@@ -51,6 +53,7 @@ class CartController extends ActiveController
         $recs = $cartModel::findOne(['id' => $id]);
         return $recs;
     }
+
     public function actionBuyer($id)
     {
         $cartModel = new $this->modelClass;
@@ -62,10 +65,10 @@ class CartController extends ActiveController
             ->all();
         $data = array_map(function ($cart) {
             return [
-                'cart_id' => $cart['id'],
+                'id' => $cart['id'],
                 'product_id' => $cart['activity']['name'] ?? 'Unknown Product',
                 'quantity' => $cart['quantity'],
-                'user' => $cart['user']['username'] ?? 'Unknown User',
+                'user_id' => $cart['user']['id'] ?? 'Unknown User',
                 'status' => $cart['status'],
                 'date' => $cart['calendar']['date']['date'] ?? 'Unknown Date',
                 'time' => $cart['calendar']['time']['hour'] ?? 'Unknown Time',
@@ -90,32 +93,27 @@ class CartController extends ActiveController
             'message' => 'Cart has been deleted'];
     }
 
-    public function actionAddtocart($id)
+    public function actionAddCart($id)
     {
-        $userId = Yii::$app->user->id;
-        if (!$userId) {
-            return ['error' => 'User not logged in'];
-        }
-        $postData = Yii::$app->request->post();
         $cart = new Cart();
-        $cart->product_id = $id;
-        $cart->user_id = $userId;
-        $cart->quantity = $postData['quantity'] ?? null;
-        $cart->status = 0;
-        $cart->calendar_id = $postData['calendar_id'] ?? null;
-
-        if ($cart->save()) {
-            return [
-                'success' => true,
-                'message' => 'Item successfully added to cart',
-                'cart_id' => $cart->id,
-            ];
-        } else {
-            return [
-                'success' => false,
-                'errors' => $cart->getErrors(),
-            ];
+        if ($cart->load(Yii::$app->request->post(), '')) {
+            if ($cart->save()) {
+                return [
+                    'success' => true,
+                    'message' => 'Cart created successfully',
+                    'id' => $cart->id,
+                    'user_id' => $cart->user_id,
+                    'product_id' => $cart->product_id,
+                    'status' => $cart->status = 0,
+                    'quantity' => $cart->quantity,
+                    'calendar_id' => $cart->calendar_id,
+                ];
+            }
         }
+        return [
+            'status' => 'error',
+            'message' => json_encode($cart->getErrors()),
+        ];
     }
 
     public function actionUpdatecart($id)
@@ -153,7 +151,10 @@ class CartController extends ActiveController
                 'errors' => $cartItems->getErrors(),
             ];
         }
+    }
 
+    public function actionCheckout()
+    {
 
     }
 

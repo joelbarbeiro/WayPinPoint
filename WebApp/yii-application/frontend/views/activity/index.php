@@ -47,10 +47,6 @@ $this->registerCssFile('@web/css/site.css');
                         'calendar',
                         null,
                         $dropdownOptions,
-                        [
-                            'class' => 'form-select mb-3',
-                            'prompt' => 'Select a date',
-                        ]
                     );
 
                     echo '<div class="d-flex justify-content-between">';
