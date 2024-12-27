@@ -308,6 +308,35 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
         this.db.delete(TABLE_NAME_ACTIVITIES, null, null);
     }
 
+    public Activity getActivityById(int activity_id) {
+
+        Activity activity = null;
+        String selection = ID + " = ?";
+        String[] selectionArgs = {String.valueOf(activity_id)};
+
+        Cursor cursor = this.db.query(TABLE_NAME_ACTIVITIES,
+                new String[]{ID, NAME, DESCRIPTION, PHOTO, MAXPAX, PRICEPERPAX, ADDRESS, SUPPLIER, STATUS, CATEGORY_ID},
+                selection,
+                selectionArgs,
+                null, null, null);
+        if (cursor.moveToFirst()) {
+            activity = new Activity(
+                    cursor.getInt(0),
+                    cursor.getString(1),
+                    cursor.getString(2),
+                    cursor.getString(3),
+                    cursor.getInt(4),
+                    cursor.getFloat(5),
+                    cursor.getString(6),
+                    cursor.getInt(7),
+                    cursor.getInt(8),
+                    cursor.getInt(9));
+        } else {
+            System.out.println(" if move first >>>>- vazio");
+        }
+        return activity;
+    }
+
     //endregion
 
     //region CALENDAR DB METHODS#
@@ -351,6 +380,31 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
         return calendars;
+    }
+
+    public Calendar getCalendarById(int calendar_id) {
+
+        Calendar calendar = null;
+        String selection = ID + " = ?";
+        String[] selectionArgs = {String.valueOf(calendar_id)};
+
+        Cursor cursor = this.db.query(TABLE_NAME_CALENDAR,
+                new String[]{ID, ID_ACTIVITY, ID_DATE, DATE, ID_TIME},
+                selection,
+                selectionArgs,
+                null, null, null);
+        if (cursor.moveToFirst()) {
+            calendar = new Calendar(
+                    cursor.getInt(0),
+                    cursor.getInt(1),
+                    cursor.getInt(2),
+                    cursor.getString(3),
+                    cursor.getInt(4)
+            );
+        } else {
+            System.out.println(" if move first >>>>- vazio");
+        }
+        return calendar;
     }
 
     public ArrayList<Calendar> getCalendarByActivityId(int activity_id) {
@@ -599,6 +653,35 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
         cursor.close();
         return carts;
     }
+
+
+    public Cart getCartById(int id) {
+
+        Cart cart = null;
+        String selection = ID + " = ?";
+        String[] selectionArgs = {String.valueOf(id)};
+
+        Cursor cursor = this.db.query(TABLE_NAME_CART,
+                new String[]{ID, USER_ID, PRODUCT_ID, QUANTITY, STATUS, CALENDAR_ID},
+                selection,
+                selectionArgs,
+                null, null, null);
+        if (cursor.moveToFirst()) {
+            cart = new Cart(
+                    cursor.getInt(0),
+                    cursor.getInt(1),
+                    cursor.getInt(2),
+                    cursor.getInt(3),
+                    cursor.getInt(4),
+                    cursor.getInt(5));
+        } else {
+            System.out.println(" if move first >>>>- vazio");
+        }
+        return cart;
+    }
+
+
+
     //ENDREGION
 
 }

@@ -23,9 +23,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 
 import Model.Activity;
+import Model.Cart;
 import Model.Calendar;
 import Model.CalendarTime;
-import Model.Cart;
 import Model.Category;
 import Model.SingletonManager;
 import Model.WaypinpointDbHelper;
@@ -74,22 +74,20 @@ public class ActivityDetailsActivity extends AppCompatActivity {
         spinnerDateTime = findViewById(R.id.spinnerActivityDateTime);
 
         btnReviews = findViewById(R.id.btnReview);
-        loadActivity();
+
+
         btBuyActivity = findViewById(R.id.btBuyActivity);
-        btBuyActivity.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Intent intent = new Intent(ActivityDetailsActivity.this, CartActivity.class);
-                intent.putExtra("activity_id", activity.getId());
-                intent.putExtra("activity_name", activity.getName());
-                intent.putExtra("activity_price", activity.getPriceperpax());
-                startActivity(intent);
-            }
-        });
+        loadActivity();
+//        btBuyActivity.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(ActivityDetailsActivity.this, CartActivity.class);
+//                intent.putExtra("ACTIVITY_ID", activity.getId());
+//                startActivity(intent);
+//            }
+//        });
     }
-
-    private void loadActivity() {
+    private void loadActivity(){
         setTitle("Detalhes: " + activity.getName());
 
         etName.setText(activity.getName());
@@ -138,7 +136,7 @@ public class ActivityDetailsActivity extends AppCompatActivity {
                 this,
                 android.R.layout.simple_spinner_item,
                 calendars
-        ) {
+        ){
             @Override
             public View getDropDownView(int position, View convertView, ViewGroup parent) {
                 View view = super.getDropDownView(position, convertView, parent);
@@ -154,7 +152,6 @@ public class ActivityDetailsActivity extends AppCompatActivity {
 
                 return view;
             }
-
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
@@ -197,12 +194,23 @@ public class ActivityDetailsActivity extends AppCompatActivity {
         //endregion
 
         String imgPath = Utilities.getImgUri(getApplicationContext()) + activity.getSupplier() + "/" + activity.getPhoto();
-        Glide.with(getApplicationContext())
+                Glide.with(getApplicationContext())
                 .load(imgPath)
                 .placeholder(R.drawable.img_default_activity)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(imageActivity);
+
+        btBuyActivity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ActivityDetailsActivity.this, CartActivity.class);
+                intent.putExtra("ACTIVITY_ID", activity.getId());
+                intent.putExtra("CALENDAR_ID", calendars.get(spinnerDateTime.getSelectedItemPosition()).getId());
+                startActivity(intent);
+            }
+        });
     }
+
 
     public void onClickReviews(View view) {
         // Hide background views

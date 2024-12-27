@@ -9,8 +9,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -24,15 +24,22 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 
 import Listeners.CartListener;
+import Model.Activity;
+import Model.Calendar;
 import Model.Cart;
 import Model.SingletonManager;
+import Model.WaypinpointDbHelper;
 import pt.ipleiria.estg.dei.waypinpoint.utils.CartJsonParser;
+import pt.ipleiria.estg.dei.waypinpoint.utils.Utilities;
 
 public class CartDetailsActivity extends AppCompatActivity implements CartListener {
     private Cart cart;
-    private EditText etActivityName, etQuantity, etPrice, etDate;
+    private TextView etActivityName, etQuantity, etPrice, etDate;
     private ImageView iv_activityImg;
     public static final String DEFAULT_IMG = null;
+    private Activity activity;
+    private Calendar calendar;
+    private WaypinpointDbHelper waypinpointDbHelper;
     private FloatingActionButton fabCheckout;
 
     @Override
@@ -41,20 +48,33 @@ public class CartDetailsActivity extends AppCompatActivity implements CartListen
         setContentView(R.layout.cart_details_activity);
 
         int id = getIntent().getIntExtra(ID_CART, 0);
+        waypinpointDbHelper = new WaypinpointDbHelper(getApplicationContext());
+        cart = waypinpointDbHelper.getCartById(id);
+        activity = waypinpointDbHelper.getActivityById(cart.getProduct_id());
+        calendar = waypinpointDbHelper.getCalendarById(cart.getCalendar_id());
 
-        cart = SingletonManager.getInstance(getApplicationContext()).getCart(id);
         fabCheckout = findViewById(R.id.fabCheckout);
         etActivityName = findViewById(R.id.etActivityName);
         etQuantity = findViewById(R.id.etQuantity);
         etPrice = findViewById(R.id.etPrice);
         etDate = findViewById(R.id.etDate);
         iv_activityImg = findViewById(R.id.iv_activityImg);
+        loadCart();
     }
 
     private void loadCart() {
-        etActivityName.setText(cart.getProduct_id());
-        etQuantity.setText(cart.getQuantity());
-        Glide.with(getApplicationContext());
+
+        etActivityName.setText(activity.getName());
+        etQuantity.setText("" + cart.getQuantity());
+        etPrice.setText("" + activity.getPriceperpax());
+        etDate.setText("" + calendar.getDate());
+        String imgPath = Utilities.getImgUri(getApplicationContext()) + activity.getSupplier() + "/" + activity.getPhoto();
+        Glide.with(getApplicationContext())
+                .load(imgPath)
+                .placeholder(R.drawable.img_default_activity)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(iv_activityImg);
+
     }
 
     @Override
@@ -69,9 +89,8 @@ public class CartDetailsActivity extends AppCompatActivity implements CartListen
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.itemRemove) {
-            if(!CartJsonParser.isConnectionInternet(getApplicationContext()))
-            {
-                Toast.makeText(this, "Não tens net bro", Toast.LENGTH_SHORT).show();
+            if (!CartJsonParser.isConnectionInternet(getApplicationContext())) {
+                Toast.makeText(this, "No internet amigo", Toast.LENGTH_SHORT).show();
             } else {
                 dialogRemove();
             }

@@ -87,15 +87,16 @@
     <string name="remove_cart_item">Remove cart item</string>
     <string name="price">Price</string>
     <string name="date">Date</string>
-    <string name="activity_name_label">Activity Name Label</string>
+    <string name="activity_name_label">Activity Name: </string>
     <string name="activity_name">Activity Name</string>
-    <string name="quantity_label">Quantity Label</string>
-    <string name="price_label">Price Label</string>
-    <string name="date_label">Date Label</string>
+    <string name="quantity_label">Quantity: </string>
+    <string name="price_label">Price: </string>
+    <string name="date_label">Date: </string>
     <string name="remove">Remove</string>
     <string name="cart_edited">Cart Edited!</string>
     <string name="cart_deleted">Cart Deleted!</string>
     <string name="quantity">Quantity</string>
+    <string name="my_cart">My Cart</string>
     <string name="cart_added_successfully">Cart added successfully!</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="img_default">img_default</string>
@@ -130,8 +131,6 @@
     <string name="activity_pictures_description">Activity Pictures</string>
     <string name="details_activity_category">Category</string>
     <string name="activity_details_date_time">Date - time</string>
-
-    <string name="my_cart">My Cart</string>
 
 
 </resources>
