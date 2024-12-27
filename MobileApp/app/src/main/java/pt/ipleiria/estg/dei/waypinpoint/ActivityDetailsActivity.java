@@ -78,17 +78,14 @@ public class ActivityDetailsActivity extends AppCompatActivity {
 
         btBuyActivity = findViewById(R.id.btBuyActivity);
         loadActivity();
-        btBuyActivity.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Intent intent = new Intent(ActivityDetailsActivity.this, CartActivity.class);
-                intent.putExtra("activity_id", activity.getId());
-                intent.putExtra("activity_name", activity.getName());
-                intent.putExtra("activity_price", activity.getPriceperpax());
-                startActivity(intent);
-            }
-        });
+//        btBuyActivity.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(ActivityDetailsActivity.this, CartActivity.class);
+//                intent.putExtra("ACTIVITY_ID", activity.getId());
+//                startActivity(intent);
+//            }
+//        });
     }
     private void loadActivity(){
         setTitle("Detalhes: " + activity.getName());
@@ -202,6 +199,16 @@ public class ActivityDetailsActivity extends AppCompatActivity {
                 .placeholder(R.drawable.img_default_activity)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(imageActivity);
+
+        btBuyActivity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ActivityDetailsActivity.this, CartActivity.class);
+                intent.putExtra("ACTIVITY_ID", activity.getId());
+                intent.putExtra("CALENDAR_ID", calendars.get(spinnerDateTime.getSelectedItemPosition()).getId());
+                startActivity(intent);
+            }
+        });
     }
 
 

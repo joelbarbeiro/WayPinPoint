@@ -24,39 +24,35 @@
                 android:contentDescription="@string/img_default"
                 app:srcCompat="@drawable/img_default_activity" />
 
-            <EditText
+            <TextView
                 android:id="@+id/etActivityName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Activity Name"
-                android:inputType="text"
                 android:minHeight="48dp"
                 tools:ignore="VisualLintTextFieldSize" />
 
-            <EditText
+            <TextView
                 android:id="@+id/etQuantity"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/quantity"
-                android:inputType="number"
                 android:minHeight="48dp"
                 tools:ignore="VisualLintTextFieldSize" />
 
-            <EditText
+            <TextView
                 android:id="@+id/etPrice"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/price"
-                android:inputType="numberDecimal"
                 android:minHeight="48dp"
                 tools:ignore="VisualLintTextFieldSize" />
 
-            <EditText
+            <TextView
                 android:id="@+id/etDate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/date"
-                android:inputType="date"
                 android:minHeight="48dp"
                 tools:ignore="VisualLintTextFieldSize" />
 
