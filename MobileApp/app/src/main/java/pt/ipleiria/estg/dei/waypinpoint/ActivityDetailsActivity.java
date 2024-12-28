@@ -1,5 +1,7 @@
 package pt.ipleiria.estg.dei.waypinpoint;
 
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.setPhotosUri;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -58,7 +60,7 @@ public class ActivityDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
         int id = getIntent().getIntExtra(ID_ACTIVITY, 0);
-
+        setPhotosUri(Utilities.getApiHost(getApplicationContext()), id, getApplicationContext());
         waypinpointDbHelper = new WaypinpointDbHelper(getApplicationContext());
         activity = SingletonManager.getInstance(getApplicationContext()).getActivity(id);
         categories = waypinpointDbHelper.getCategoryDB();
@@ -225,6 +227,25 @@ public class ActivityDetailsActivity extends AppCompatActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         Fragment fragment = new ListReviewsFragment();
+        Bundle args = new Bundle();
+        args.putInt(ID_ACTIVITY, getIntent().getIntExtra(ID_ACTIVITY, 2));
+        fragment.setArguments(args);
+        fragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .commit();
+    }
+
+    public void onClickPhotos(View view) {
+        // Hide background views
+        findViewById(R.id.scrollView).setVisibility(View.GONE);
+        findViewById(R.id.button_container).setVisibility(View.GONE);
+
+        // Show fragment container
+        findViewById(R.id.fragment_container).setVisibility(View.VISIBLE);
+
+        // Add the fragment
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        Fragment fragment = new ActivityPhotosFragment();
         Bundle args = new Bundle();
         args.putInt(ID_ACTIVITY, getIntent().getIntExtra(ID_ACTIVITY, 2));
         fragment.setArguments(args);

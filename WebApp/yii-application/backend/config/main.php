@@ -117,6 +117,7 @@ return [
                         'POST createactivity' => 'createactivity',
                         'PUT updateactivity/{id}' => 'updateactivity',
                         'DELETE {id}' => 'deleteactivity',
+                        'POST photo' => 'photo'
                     ],
                 ],
             ],

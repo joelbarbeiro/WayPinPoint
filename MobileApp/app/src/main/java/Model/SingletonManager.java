@@ -9,6 +9,7 @@ import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.REGISTER;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.TOKEN;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.USER_DATA;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getApiHost;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getPhotosUri;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getUserId;
 
 import android.content.Context;
@@ -30,6 +31,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,6 +40,7 @@ import Listeners.ActivitiesListener;
 import Listeners.ActivityListener;
 import Listeners.CartListener;
 import Listeners.LoginListener;
+import Listeners.PhotosListener;
 import Listeners.ReviewListener;
 import Listeners.ReviewsListener;
 import Listeners.UserListener;
@@ -61,6 +64,10 @@ public class SingletonManager {
     private ArrayList<User> users;
     private UserListener userListener;
     private LoginListener loginListener;
+    //endregion
+
+    //region # Photos instances #
+    private PhotosListener photosListener;
     //endregion
 
     //region # Reviews instances #
@@ -250,37 +257,47 @@ public class SingletonManager {
             volleyQueue.add(request);
         }
     }
+    //endregion
 
-    public void addPhotoApi(String apiHost, final int id, final String photoProfile, final Context context) {
-        if (!StatusJsonParser.isConnectionInternet(context)) {
-            Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
-        } else {
-            StringRequest request = new StringRequest(Request.Method.PUT, apiHost + "user/photo", new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                    System.out.println("---> SUCCESS NO RESPONSE " + response);
-                    editPhotoDb(UserJsonParser.parserJsonPhoto(response), id);
-                    Toast.makeText(context, "Photo Uploaded Successfully", Toast.LENGTH_SHORT).show();
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    System.out.println("---> ERRO NO RESPONSE " + error.getMessage());
-                    Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            }) {
+    //region = API PHOTOS METHODS #
 
-                @Override
-                public Map<String, String> getParams() {
-                    Map<String, String> params = new HashMap<>();
-                    params.put("id", "" + id);
-                    params.put("photoFile", photoProfile);
-                    return params;
-                }
-            };
-            System.out.println("---> REQUEST  " + request);
-            volleyQueue.add(request);
+    public void setPhotosListener(PhotosListener photosListener) {
+        this.photosListener = photosListener;
+    }
+
+    public ArrayList<String> getAllPhotos(Context context) {
+        ArrayList<String> photoList = new ArrayList<>();
+
+        // Get the directory path from SharedPreferences
+        String photosDirPath = getPhotosUri(context);
+        if (photosDirPath == null) {
+            System.out.println("--> No photos directory path found in SharedPreferences");
+            return photoList; // Return empty list if no path is found
         }
+
+        File photosDir = new File(photosDirPath);
+
+        // Check if the directory exists and is a directory
+        if (photosDir.exists() && photosDir.isDirectory()) {
+            // List all files in the directory
+            File[] files = photosDir.listFiles();
+
+            if (files != null) {
+                for (File file : files) {
+                    // Check if the file is an image (you can add more extensions if needed)
+                    if (file.isFile() && (file.getName().endsWith(".jpg") || file.getName().endsWith(".png"))) {
+                        // Add the absolute path of the image file to the list
+                        photoList.add(file.getAbsolutePath());
+                        if (photosListener != null) {
+                            photosListener.onRefreshPhotosList(photoList);
+                        }
+                    }
+                }
+            }
+        } else {
+            System.out.println("--> Photos directory does not exist or is not a directory: " + photosDirPath);
+        }
+        return photoList;
     }
     //endregion
 
@@ -908,7 +925,7 @@ public class SingletonManager {
         if (!StatusJsonParser.isConnectionInternet(context)) {
             Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
         } else {
-            StringRequest request = new StringRequest(Request.Method.PUT, apiHost + "reviews/edit" , new Response.Listener<String>() {
+            StringRequest request = new StringRequest(Request.Method.PUT, apiHost + "reviews/edit", new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
                     editReviewDb(ReviewJsonParser.parserJsonReview(response));

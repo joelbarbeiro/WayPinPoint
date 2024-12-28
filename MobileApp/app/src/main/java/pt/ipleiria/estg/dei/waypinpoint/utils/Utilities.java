@@ -13,6 +13,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.provider.MediaStore;
+
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -57,6 +59,7 @@ public class Utilities {
 
 
     public static final String IMG_URI = "IMG_URI";
+    public static final String PHOTOS_URI = "PHOTOS_URI";
     public static final String IMG_URI_USER = "IMG_URI_USER";
 
     public static String getApiHost(Context context) {
@@ -127,6 +130,12 @@ public class Utilities {
         return sharedPreferences.getString(IMG_URI_USER, null);
     }
 
+    public static String getPhotosUri(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(PHOTOS_URI, MODE_PRIVATE);
+        System.out.println("--> Get PHOTOS URI " + sharedPreferences.getString(PHOTOS_URI, null));
+        return sharedPreferences.getString(PHOTOS_URI, null);
+    }
+
     public static void setImgUri(String uri, Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(IMG_URI, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -142,6 +151,15 @@ public class Utilities {
         editor.putString(IMG_URI_USER, imgUserPath);
         editor.apply();
     }
+
+    public static void setPhotosUri(String uri, int activityId, Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(PHOTOS_URI, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        String imgPath = "http://" + uri + "/img/activity/photos/" + activityId + "/";
+        editor.putString(PHOTOS_URI, imgPath);
+        editor.apply();
+    }
+
     public static double getPriceById(int activityId, ArrayList<Model.Activity> activities) {
         if (activities == null) {
             return 0;

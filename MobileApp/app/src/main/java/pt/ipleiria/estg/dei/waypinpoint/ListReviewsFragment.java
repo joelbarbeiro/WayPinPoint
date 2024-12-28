@@ -21,6 +21,7 @@ import android.widget.ListView;
 import android.widget.SearchView;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
@@ -53,7 +54,9 @@ public class ListReviewsFragment extends Fragment implements SwipeRefreshLayout.
         lvReviews = view.findViewById(R.id.lvReviews);
         int activityId = getArguments().getInt(ID_ACTIVITY);
         int userId = getUserId(getContext());
-
+        if (requireActivity() instanceof AppCompatActivity) {
+            ((AppCompatActivity) requireActivity()).getSupportActionBar().setTitle("Reviews for Activity");
+        }
         lvReviews.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
