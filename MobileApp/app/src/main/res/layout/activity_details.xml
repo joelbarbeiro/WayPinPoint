@@ -26,96 +26,138 @@
                 android:id="@+id/imgActiviy"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
                 tools:srcCompat="@tools:sample/avatars" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:baselineAligned="true"
+                android:layout_marginBottom="8dp">
 
                 <TextView
                     android:id="@+id/textView"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
                     android:textSize="20sp"
+                    android:layout_weight="1"
+                    android:gravity="start"
                     android:text="@string/name" />
 
                 <TextView
                     android:id="@+id/tvActivityDetailsName"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:textSize="20sp"
+                    android:layout_weight="2"
+                    android:gravity="start"
                     android:text="@string/name" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:baselineAligned="true"
+                android:layout_marginBottom="8dp">
 
                 <TextView
                     android:id="@+id/textView2"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
                     android:textSize="20sp"
-                    android:text="Description" />
+                    android:layout_weight="1"
+                    android:gravity="start"
+                    android:text="@string/activity_descritpion" />
 
                 <TextView
                     android:id="@+id/tvActivityDetailsDescription"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:singleLine="false"
                     android:textSize="20sp"
+                    android:layout_weight="2"
+                    android:gravity="start"
                     android:text="@string/description" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:baselineAligned="true"
+                android:layout_marginBottom="8dp">
                 <TextView
                     android:id="@+id/textView3"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
                     android:textSize="20sp"
-                    android:text="Description" />
+                    android:layout_weight="1"
+                    android:gravity="start"
+                    android:text="@string/availabillity" />
                 <TextView
-                    android:id="@+id/etActivityMaxPax"
-                    android:layout_width="match_parent"
+                    android:id="@+id/tvActivityDetailsMaxPax"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:textSize="20sp"
+                    android:layout_weight="2"
+                    android:gravity="start"
                     android:text="@string/maxpax" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal">
-
-                <EditText
-                    android:id="@+id/etActivityPricePerPax"
-                    android:layout_width="match_parent"
+                android:orientation="horizontal"
+                android:baselineAligned="true"
+                android:layout_marginBottom="8dp">
+                <TextView
+                    android:id="@+id/textView4"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:inputType="text"
-                    android:minHeight="48dp"
+                    android:textStyle="bold"
+                    android:textSize="20sp"
+                    android:layout_weight="1"
+                    android:gravity="start"
+                    android:text="@string/ticket_price" />
+                <TextView
+                    android:id="@+id/tvActivityDetailsPricePerPax"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp"
+                    android:layout_weight="2"
+                    android:gravity="start"
                     android:text="@string/priceperpax" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal"></LinearLayout>
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp">
+                <TextView
+                    android:id="@+id/textView5"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textSize="20sp"
+                    android:layout_weight="1"
+                    android:gravity="start"
+                    android:text="@string/category" />
+                <TextView
+                    android:id="@+id/tvActivityDetailsCategory"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp"
+                    android:layout_weight="2"
+                    android:gravity="start"
+                    android:text="@string/category" />
 
-            <Spinner
-                android:id="@+id/spinnerActivityDetailsCategory"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="48dp"
-                android:text="@string/details_activity_category"/>
+            </LinearLayout>
 
             <Spinner
                 android:id="@+id/spinnerActivityDateTime"

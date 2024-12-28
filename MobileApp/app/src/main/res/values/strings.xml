@@ -126,6 +126,10 @@
     <string name="my_cart">My Cart</string>
     <string name="create_activity_save">Save</string>
     <string name="selected_date_create_activity">Selected Date</string>
+    <string name="category">Category</string>
+    <string name="availabillity">Availabillity</string>
+    <string name="ticket_price">Ticket price</string>
+    <string name="activity_descritpion">Descritpion</string>
 
 
 </resources>
