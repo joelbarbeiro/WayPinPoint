@@ -11,7 +11,6 @@ import android.widget.ListView;
 
 
 public class DateTimeActivityCreateFragment extends Fragment {
-    private ListView lv
 
     public DateTimeActivityCreateFragment() {
     }

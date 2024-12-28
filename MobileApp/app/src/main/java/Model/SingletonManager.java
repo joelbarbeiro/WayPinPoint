@@ -92,7 +92,6 @@ public class SingletonManager {
 
         users = new ArrayList<>();
         carts = new ArrayList<>();
-
         activities = new ArrayList<>();
         reviews = new ArrayList<>();
         calendars = new ArrayList<>();

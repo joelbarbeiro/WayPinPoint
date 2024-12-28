@@ -66,8 +66,8 @@ public class ActivityDetailsActivity extends AppCompatActivity {
         calendarTimesList = waypinpointDbHelper.getCalendarTimeDB();
 
         imageActivity = findViewById(R.id.imgActiviy);
-        etName = findViewById(R.id.etActivityName);
-        etDescription = findViewById(R.id.etActivityDescription);
+        etName = findViewById(R.id.tvActivityDetailsName);
+        etDescription = findViewById(R.id.tvActivityDetailsDescription);
         etMaxPax = findViewById(R.id.etActivityMaxPax);
         etPricePerPax = findViewById(R.id.etActivityPricePerPax);
         spinnerCategories = findViewById(R.id.spinnerActivityDetailsCategory);

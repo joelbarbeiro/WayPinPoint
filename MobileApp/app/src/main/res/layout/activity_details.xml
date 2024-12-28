@@ -28,42 +28,83 @@
                 android:layout_height="wrap_content"
                 tools:srcCompat="@tools:sample/avatars" />
 
-            <EditText
-                android:id="@+id/etActivityName"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:ems="10"
-                android:inputType="text"
-                android:minHeight="48dp"
-                android:text="@string/name" />
+                android:orientation="horizontal">
 
-            <EditText
-                android:id="@+id/etActivityDescription"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:inputType="text"
-                android:minHeight="48dp"
-                android:singleLine="false"
-                android:text="@string/description" />
+                <TextView
+                    android:id="@+id/textView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textSize="20dp"
+                    android:text="Name: " />
 
-            <EditText
-                android:id="@+id/etActivityMaxPax"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:inputType="text"
-                android:minHeight="48dp"
-                android:text="@string/maxpax" />
+                <TextView
+                    android:id="@+id/tvActivityDetailsName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="20dp"
+                    android:text="@string/name" />
+            </LinearLayout>
 
-            <EditText
-                android:id="@+id/etActivityPricePerPax"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:inputType="text"
-                android:minHeight="48dp"
-                android:text="@string/priceperpax" />
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textView2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textSize="20sp"
+                    android:text="Description" />
+
+                <TextView
+                    android:id="@+id/tvActivityDetailsDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:singleLine="false"
+                    android:textSize="20dp"
+                    android:text="@string/description" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/etActivityMaxPax"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="text"
+                    android:minHeight="48dp"
+                    android:text="@string/maxpax" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/etActivityPricePerPax"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="text"
+                    android:minHeight="48dp"
+                    android:text="@string/priceperpax" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"></LinearLayout>
 
             <Spinner
                 android:id="@+id/spinnerActivityDetailsCategory"
