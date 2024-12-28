@@ -23,6 +23,8 @@ import androidx.core.content.ContextCompat;
 import java.util.ArrayList;
 
 import Model.Category;
+import pt.ipleiria.estg.dei.waypinpoint.LoginActivity;
+import pt.ipleiria.estg.dei.waypinpoint.MenuMainActivity;
 
 public class Utilities {
 
@@ -42,6 +44,8 @@ public class Utilities {
     public static final String ID_CART = "ID_CART";
     public static final int DB_VERSION = 3;
 
+
+
     public static final String DEFAULT_IMG = "https://images.app.goo.gl/WRUpq3qmgD331B64A";
     public static final String PROFILE_PIC = "PROFILE_PIC";
     public static final String BACKEND_PORT = ":8080";
@@ -49,6 +53,7 @@ public class Utilities {
     public static final String USER_ID = "USER_ID";
     public static final String ACTIVITY_ID = "ACTIVITY_ID";
     public static final String TAG_QRCODEACTIVITY = "QRCodeScannerActivity";
+
 
 
     public static final String IMG_URI = "IMG_URI";
@@ -106,7 +111,7 @@ public class Utilities {
         }
         if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(activity, new String[]{android.Manifest.permission.CAMERA}, 1);
+            ActivityCompat.requestPermissions(activity, new String[]{android.Manifest.permission.CAMERA}, REQUEST_CODE);
         }
     }
 

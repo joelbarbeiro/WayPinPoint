@@ -87,6 +87,7 @@ public class ActivityDetailsActivity extends AppCompatActivity {
 //            }
 //        });
     }
+
     private void loadActivity(){
         setTitle("Detalhes: " + activity.getName());
 

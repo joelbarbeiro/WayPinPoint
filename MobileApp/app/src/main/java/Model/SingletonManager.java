@@ -687,7 +687,7 @@ public class SingletonManager {
     public void addTimesDB(ArrayList<CalendarTime> calendarTime) {
         waypinpointDbHelper.delAllCalendarTimeDB();
         for (CalendarTime c : calendarTime) {
-            System.out.println("DB Add time --> " + c);
+//            System.out.println("DB Add time --> " + c);
             waypinpointDbHelper.addCalendarTimeDB(c);
         }
     }
@@ -908,7 +908,7 @@ public class SingletonManager {
         if (!StatusJsonParser.isConnectionInternet(context)) {
             Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
         } else {
-            StringRequest request = new StringRequest(Request.Method.PUT, apiHost + "reviews/" + review.getId(), new Response.Listener<String>() {
+            StringRequest request = new StringRequest(Request.Method.PUT, apiHost + "reviews/edit" , new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
                     editReviewDb(ReviewJsonParser.parserJsonReview(response));
@@ -927,6 +927,7 @@ public class SingletonManager {
                 @Override
                 protected Map<String, String> getParams() {
                     Map<String, String> params = new HashMap<String, String>();
+                    params.put("id", String.valueOf(review.getId()));
                     params.put("user_id", String.valueOf(userID));
                     params.put("activity_id", String.valueOf(activityId));
                     params.put("score", String.valueOf(score));
