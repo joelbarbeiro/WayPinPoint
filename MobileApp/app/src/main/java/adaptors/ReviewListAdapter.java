@@ -5,16 +5,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-
 import java.util.ArrayList;
 
-import Model.Activity;
 import Model.Review;
 import pt.ipleiria.estg.dei.waypinpoint.R;
 import pt.ipleiria.estg.dei.waypinpoint.utils.Utilities;
@@ -65,7 +60,7 @@ public class ReviewListAdapter extends BaseAdapter {
     }
 
     private class ViewHolderReview {
-        private TextView tvMessage, tvDate;
+        private TextView tvMessage, tvDate, tvCreator;
         private RatingBar ratingBar;
 
 
@@ -73,6 +68,7 @@ public class ReviewListAdapter extends BaseAdapter {
             ratingBar = view.findViewById(R.id.ratingBarScore);
             tvMessage = view.findViewById(R.id.tvMessageContent);
             tvDate = view.findViewById(R.id.tvDateContent);
+            tvCreator = view.findViewById(R.id.tvCreatorContent);
         }
 
         public void update(Review review) {
@@ -82,6 +78,7 @@ public class ReviewListAdapter extends BaseAdapter {
             tvMessage.setText(review.getMessage());
             dateToinsert = Utilities.setDateFromTimestamp(date);
             tvDate.setText(dateToinsert);
+            tvCreator.setText(review.getCreator());
         }
     }
 }

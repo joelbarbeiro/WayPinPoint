@@ -91,7 +91,7 @@ public class ListReviewsFragment extends Fragment implements SwipeRefreshLayout.
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == REGISTER || requestCode == EDIT) {
 
-                SingletonManager.getInstance(getContext()).getReviewsApi(getContext(),activityId);
+                SingletonManager.getInstance(getContext()).getReviewsApi(getContext(), activityId);
 
                 switch (requestCode) {
                     case REGISTER:
@@ -116,6 +116,7 @@ public class ListReviewsFragment extends Fragment implements SwipeRefreshLayout.
     public void onRefresh() {
         int activityId = getArguments().getInt(ID_ACTIVITY);
         SingletonManager.getInstance(getContext()).getReviewsApi(getContext(), activityId);
+        swipeRefreshLayout.setRefreshing(false);
     }
 
     @Override

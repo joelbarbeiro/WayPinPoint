@@ -2,11 +2,10 @@ package Model;
 
 public class User {
     private int id, phone, nif, supplier;
-    private String username, email, password, address, photo, token;
+    private String username, email, password, address, photo, token, role;
 
 
-
-    public User(int id, String username, String email, String password, String address, int phone, int nif, String photo, int supplier, String token) {
+    public User(int id, String username, String email, String password, String address, int phone, int nif, String photo, int supplier, String token, String role) {
         this.id = id;
         this.username = username;
         this.email = email;
@@ -17,12 +16,12 @@ public class User {
         this.photo = photo;
         this.supplier = supplier;
         this.token = token;
+        this.role = role;
     }
 
     public int getId() {
         return id;
     }
-
 
     public void setId(int id) {
         this.id = id;
@@ -90,5 +89,14 @@ public class User {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }

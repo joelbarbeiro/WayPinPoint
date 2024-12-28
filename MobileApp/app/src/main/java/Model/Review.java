@@ -1,18 +1,19 @@
 package Model;
 
 public class Review {
-    private int id , userId , activityId, score ;
+    private int id, userId, activityId, score;
     private Integer createdAt;
-    private String message;
+    private String message, creator;
 
 
-    public Review(int id, int userId, int activityId, int score, String message, Integer createdAt) {
+    public Review(int id, int userId, int activityId, int score, String message, Integer createdAt, String creator) {
         this.id = id;
         this.userId = userId;
         this.activityId = activityId;
         this.score = score;
         this.message = message;
         this.createdAt = createdAt;
+        this.creator = creator;
     }
 
     public int getId() {
@@ -25,6 +26,14 @@ public class Review {
 
     public int getUserId() {
         return userId;
+    }
+
+    public String getCreator() {
+        return creator;
+    }
+
+    public void setCreator(String creator) {
+        this.creator = creator;
     }
 
     public void setUserId(int userId) {

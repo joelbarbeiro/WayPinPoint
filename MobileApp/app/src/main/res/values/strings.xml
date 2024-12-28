@@ -62,6 +62,8 @@
     <string name="api_hostname_back_login">Back</string>
     <string name="error_invalid_token">Invalid token</string>
     <string name="error_default">Something went wrong</string>
+    <string name="error_rating_required">Rating required to send a review</string>
+    <string name="error_message_empty">Please enter a message on the review</string>
 
     <!-- General Messages -->
     <string name="message_save_changes">Save changes</string>
@@ -73,6 +75,9 @@
     <string name="dialog_yes">Yes</string>
     <string name="dialog_no">No</string>
 
+    <!-- QR Code -->
+    <string name="QR_Code_valid"><bold>"Valid QR Code: "</bold></string>
+   <string name="QR_Code_invalid"> <bold>Invalid Ticket</bold></string>
 
     <!-- Cart -->
     <string name="number_of_tickets">Number of Tickets:</string>
@@ -111,6 +116,11 @@
     <string name="review_add_message">Add Review</string>
     <string name="review_details_title">Review Details</string>
     <string name="review_user_mismatch">You are not the author of this review</string>
+    <string name="fab_add_Review">Add Review</string>
+    <string name="review_author_title">Author:</string>
+    <string name="review_date_title">Date:</string>
+    <string name="review_message_title">Message:</string>
+    <string name="review_score_title">Score:</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -120,15 +130,12 @@
     <string name="name">Name</string>
     <string name="add_to_cart">Add to cart</string>
     <string name="fab_add_activity">Add Activity</string>
-    <string name="fab_add_Review">Add Review</string>
     <string name="menu_search_title_search">Search</string>
     <string name="menu_delete">delete</string>
     <string name="activity_review_label">Review</string>
     <string name="activity_pictures_description">Activity Pictures</string>
     <string name="details_activity_category">Category</string>
     <string name="activity_details_date_time">Date - time</string>
-    <string name="error_rating_required">Rating required to send a review</string>
-    <string name="error_message_empty">Please enter a message on the review</string>
 
 
 </resources>

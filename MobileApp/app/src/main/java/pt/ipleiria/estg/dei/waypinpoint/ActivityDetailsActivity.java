@@ -87,6 +87,7 @@ public class ActivityDetailsActivity extends AppCompatActivity {
 //            }
 //        });
     }
+
     private void loadActivity(){
         setTitle("Detalhes: " + activity.getName());
 
@@ -229,7 +230,6 @@ public class ActivityDetailsActivity extends AppCompatActivity {
         fragment.setArguments(args);
         fragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, fragment)
-                .addToBackStack(null) // Add to back stack for navigation
                 .commit();
     }
 }
