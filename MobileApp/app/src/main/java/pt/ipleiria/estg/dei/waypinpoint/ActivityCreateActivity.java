@@ -135,7 +135,7 @@ public class ActivityCreateActivity extends AppCompatActivity implements Activit
                             categoryId
                     );
 
-                    SingletonManager.getInstance(getApplicationContext()).postActivityAPI(activity, getApplicationContext());
+                    SingletonManager.getInstance(getApplicationContext()).postActivityAPI(activity, dateHour, getApplicationContext());
                 }
             }
         });

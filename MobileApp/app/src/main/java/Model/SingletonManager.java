@@ -657,7 +657,7 @@ public class SingletonManager {
             volleyQueue.add(request);
         }
     }
-     public void postActivityAPI(final Activity activity, final Context context){
+     public void postActivityAPI(final Activity activity, final ArrayList<DateTimeParser> dateTimeParser, final Context context){
         String apiHost = getApiHost(context);
         if(!StatusJsonParser.isConnectionInternet(context)){
             Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
@@ -687,6 +687,18 @@ public class SingletonManager {
                     params.put("maxpax", "" + activity.getMaxpax());
                     params.put("priceperpax", ""+ activity.getPriceperpax());
                     params.put("photo", activity.getPhoto() == null ? DEFAULT_IMG : activity.getPhoto());
+                   JSONArray dateTimeArray = new JSONArray();
+                   for (DateTimeParser dateTime : dateTimeParser) {
+                       try {
+                           JSONObject dateTimeObject = new JSONObject();
+                           dateTimeObject.put("date", dateTime.getParserDate());
+                           dateTimeObject.put("timeId", dateTime.getParserTime());
+                           dateTimeArray.put(dateTimeObject);
+                       } catch (JSONException e) {
+                           e.printStackTrace(); // Log any issues with JSON creation
+                       }
+                   }
+                   params.put("dateTimes", dateTimeArray.toString());
                     return params;
                 }
             };

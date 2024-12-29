@@ -39,7 +39,7 @@
                 android:id="@+id/textView6"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Click in the image to edit" />
+                android:text="Click the image to edit" />
 
             <EditText
                 android:id="@+id/etActivityCreateName"
