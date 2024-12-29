@@ -1,7 +1,5 @@
 package pt.ipleiria.estg.dei.waypinpoint;
 
-import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.setPhotosUri;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -25,9 +23,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 
 import Model.Activity;
-import Model.Cart;
 import Model.Calendar;
 import Model.CalendarTime;
+import Model.Cart;
 import Model.Category;
 import Model.SingletonManager;
 import Model.WaypinpointDbHelper;
@@ -60,7 +58,6 @@ public class ActivityDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
         int id = getIntent().getIntExtra(ID_ACTIVITY, 0);
-        setPhotosUri(Utilities.getApiHost(getApplicationContext()), id, getApplicationContext());
         waypinpointDbHelper = new WaypinpointDbHelper(getApplicationContext());
         activity = SingletonManager.getInstance(getApplicationContext()).getActivity(id);
         categories = waypinpointDbHelper.getCategoryDB();
@@ -90,7 +87,7 @@ public class ActivityDetailsActivity extends AppCompatActivity {
 //        });
     }
 
-    private void loadActivity(){
+    private void loadActivity() {
         setTitle("Detalhes: " + activity.getName());
 
         etName.setText(activity.getName());
@@ -139,7 +136,7 @@ public class ActivityDetailsActivity extends AppCompatActivity {
                 this,
                 android.R.layout.simple_spinner_item,
                 calendars
-        ){
+        ) {
             @Override
             public View getDropDownView(int position, View convertView, ViewGroup parent) {
                 View view = super.getDropDownView(position, convertView, parent);
@@ -155,6 +152,7 @@ public class ActivityDetailsActivity extends AppCompatActivity {
 
                 return view;
             }
+
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
@@ -197,7 +195,7 @@ public class ActivityDetailsActivity extends AppCompatActivity {
         //endregion
 
         String imgPath = Utilities.getImgUri(getApplicationContext()) + activity.getSupplier() + "/" + activity.getPhoto();
-                Glide.with(getApplicationContext())
+        Glide.with(getApplicationContext())
                 .load(imgPath)
                 .placeholder(R.drawable.img_default_activity)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -239,10 +237,8 @@ public class ActivityDetailsActivity extends AppCompatActivity {
         // Hide background views
         findViewById(R.id.scrollView).setVisibility(View.GONE);
         findViewById(R.id.button_container).setVisibility(View.GONE);
-
         // Show fragment container
         findViewById(R.id.fragment_container).setVisibility(View.VISIBLE);
-
         // Add the fragment
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment fragment = new ActivityPhotosFragment();

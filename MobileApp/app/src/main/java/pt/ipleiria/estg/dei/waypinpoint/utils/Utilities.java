@@ -3,8 +3,8 @@ package pt.ipleiria.estg.dei.waypinpoint.utils;
 import static android.content.Context.MODE_PRIVATE;
 import static android.os.Looper.getMainLooper;
 
-import android.app.Activity;
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -14,19 +14,14 @@ import android.os.Build;
 import android.os.Handler;
 import android.provider.MediaStore;
 
-import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import Model.Category;
-import pt.ipleiria.estg.dei.waypinpoint.LoginActivity;
-import pt.ipleiria.estg.dei.waypinpoint.MenuMainActivity;
 
 public class Utilities {
 
@@ -46,8 +41,6 @@ public class Utilities {
     public static final String ID_CART = "ID_CART";
     public static final int DB_VERSION = 3;
 
-
-
     public static final String DEFAULT_IMG = "https://images.app.goo.gl/WRUpq3qmgD331B64A";
     public static final String PROFILE_PIC = "PROFILE_PIC";
     public static final String BACKEND_PORT = ":8080";
@@ -56,11 +49,14 @@ public class Utilities {
     public static final String ACTIVITY_ID = "ACTIVITY_ID";
     public static final String TAG_QRCODEACTIVITY = "QRCodeScannerActivity";
 
-
-
     public static final String IMG_URI = "IMG_URI";
     public static final String PHOTOS_URI = "PHOTOS_URI";
     public static final String IMG_URI_USER = "IMG_URI_USER";
+
+    //region #ENDPOINTS TO SEND IMAGE
+    public static final String ENDPOINT_ACTIVITY = "activity/photo";
+    public static final String ENDPOINT_USER = "user/photo";
+    //endregion
 
     public static String getApiHost(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(API_HOSTNAME, MODE_PRIVATE);
@@ -144,19 +140,19 @@ public class Utilities {
         editor.apply();
     }
 
+    public static void setPhotoUri(String uri, Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(PHOTOS_URI, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        String imgPath = "http://" + uri + "/img/activity/photos";
+        editor.putString(PHOTOS_URI, imgPath);
+        editor.apply();
+    }
+
     public static void setImgUriUser(String uri, Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(IMG_URI_USER, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         String imgUserPath = "http://" + uri + "/img/user/";
         editor.putString(IMG_URI_USER, imgUserPath);
-        editor.apply();
-    }
-
-    public static void setPhotosUri(String uri, int activityId, Context context) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences(PHOTOS_URI, MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        String imgPath = "http://" + uri + "/img/activity/photos/" + activityId + "/";
-        editor.putString(PHOTOS_URI, imgPath);
         editor.apply();
     }
 
@@ -171,6 +167,7 @@ public class Utilities {
         }
         return 0;
     }
+
     public static String getCalendarDateById(int calendar_id, ArrayList<Model.Calendar> calendars) {
         if (calendars == null) {
             return null;
@@ -207,23 +204,17 @@ public class Utilities {
         return null;
     }
 
-    public static String getImgFromActivities(int activityId, ArrayList<Model.Activity> activities)
-    {
-        if(activities == null)
-        {
+    public static String getImgFromActivities(int activityId, ArrayList<Model.Activity> activities) {
+        if (activities == null) {
             return null;
         }
-        for(Model.Activity activity : activities)
-        {
-            if(activity.getId() == activityId)
-            {
+        for (Model.Activity activity : activities) {
+            if (activity.getId() == activityId) {
                 return activity.getSupplier() + "/" + activity.getPhoto();
             }
         }
         return null;
     }
-
-
 
     public static String setDateFromTimestamp(int timestamp) {
         // Convert the timestamp (seconds since Unix Epoch) into a Date object
@@ -237,6 +228,4 @@ public class Utilities {
 
         return formattedDate;
     }
-
-
 }

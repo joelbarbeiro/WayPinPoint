@@ -12,7 +12,6 @@ import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 
-import Model.Photo;
 import pt.ipleiria.estg.dei.waypinpoint.R;
 
 public class PhotoListAdapter extends BaseAdapter {

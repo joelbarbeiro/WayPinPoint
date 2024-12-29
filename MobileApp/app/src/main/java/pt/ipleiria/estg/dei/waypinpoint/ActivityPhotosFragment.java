@@ -1,6 +1,7 @@
 package pt.ipleiria.estg.dei.waypinpoint;
 
 import static pt.ipleiria.estg.dei.waypinpoint.ActivityDetailsActivity.ID_ACTIVITY;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ENDPOINT_ACTIVITY;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.PICK_IMAGE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getApiHost;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getUserId;
@@ -20,6 +21,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -54,6 +57,8 @@ public class ActivityPhotosFragment extends Fragment implements SwipeRefreshLayo
         View view = inflater.inflate(R.layout.fragment_activity_photos, container, false);
         lvPhotos = view.findViewById(R.id.lvPhotos);
         int userId = getUserId(getContext());
+        int activityId = getArguments().getInt(ID_ACTIVITY);
+
         fabPhotos = view.findViewById(R.id.fabPhotos);
         if (requireActivity() instanceof AppCompatActivity) {
             ((AppCompatActivity) requireActivity()).getSupportActionBar().setTitle("Photos for Activity");
@@ -68,6 +73,10 @@ public class ActivityPhotosFragment extends Fragment implements SwipeRefreshLayo
 
         swipeRefreshLayout = view.findViewById(R.id.srl_photos);
         swipeRefreshLayout.setOnRefreshListener(this);
+
+        SingletonManager.getInstance(getContext()).setPhotosListener(this);
+        SingletonManager.getInstance(getContext()).getAllPhotos(getContext(), activityId);
+
         return view;
     }
 
@@ -78,22 +87,33 @@ public class ActivityPhotosFragment extends Fragment implements SwipeRefreshLayo
             Uri imageUri = data.getData();
             id = getUserId(requireContext());
             apiHost = getApiHost(requireContext());
-
             ImageSender imageSender = new ImageSender(requireContext());
-            imageSender.sendPhotosToServer(apiHost, activityId, imageUri, 600);
+            imageSender.sendImageToServer(apiHost, ENDPOINT_ACTIVITY, activityId, imageUri, 600,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            SingletonManager.getInstance(getContext()).getAllPhotos(getContext(), activityId);
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            System.out.println("Error: " + error.getMessage());
+                        }
+                    });
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
     public void onRefresh() {
-        SingletonManager.getInstance(getContext()).getAllPhotos(getContext());
+        int activityId = getArguments().getInt(ID_ACTIVITY);
+        SingletonManager.getInstance(getContext()).getAllPhotos(getContext(), activityId);
         swipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
     public void onRefreshPhotosList(ArrayList<String> listPhotos) {
-        if(listPhotos != null) {
+        if (listPhotos != null) {
             lvPhotos.setAdapter(new PhotoListAdapter(getContext(), listPhotos));
         }
     }

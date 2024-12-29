@@ -138,7 +138,7 @@ public class MyProfileActivity extends AppCompatActivity implements UserListener
         builder.setPositiveButton(R.string.dialog_yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        //SingletonManager.getInstance(getApplicationContext()).removeUserApi(apiHost, user, getApplicationContext());
+                        SingletonManager.getInstance(getApplicationContext()).removeUserApi(apiHost, user, getApplicationContext());
                         SingletonManager.getInstance(getApplicationContext()).setUserListener(MyProfileActivity.this);
                     }
                 })

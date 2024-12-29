@@ -5,6 +5,9 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
@@ -49,14 +52,15 @@ public class ImageSender {
     }
 
     // Send image file to the server using multipart/form-data
-    public void sendImageToServer(String apiHost, int id, Uri imageUri, int targetWidth) {
+    public void sendImageToServer(String apiHost, String endpoint, int idOfFolder, Uri imageUri, int targetWidth, Response.Listener<String> successListener,
+                                  Response.ErrorListener errorListener) {
         new Thread(() -> {
             try {
                 // Resize the image and save it as a temporary file
                 File tempFile = resizeImageToTempFile(imageUri, targetWidth);
 
                 // Prepare the connection for multipart/form-data
-                URL url = new URL(apiHost + "user/photo");
+                URL url = new URL(apiHost + endpoint);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("POST");
                 conn.setRequestProperty("Content-Type", "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW");
@@ -64,7 +68,7 @@ public class ImageSender {
 
                 try (OutputStream os = new BufferedOutputStream(conn.getOutputStream())) {
                     // Write the multipart form-data
-                    writeMultipartFormData(os, tempFile, id);
+                    writeMultipartFormData(os, tempFile, idOfFolder);
                     os.flush();
                 }
 
@@ -72,6 +76,7 @@ public class ImageSender {
                 int responseCode = conn.getResponseCode();
                 if (responseCode >= 200 && responseCode < 300) {
                     System.out.println("Response Code: " + responseCode + " Success");
+                    successListener.onResponse("Image Saved with Success");
                 } else {
                     // Read the error stream to get the server's response
                     InputStream errorStream = conn.getErrorStream();
@@ -81,6 +86,7 @@ public class ImageSender {
                     } else {
                         System.err.println("Error Response Code: " + responseCode + ", No additional error message.");
                     }
+                    errorListener.onErrorResponse(new VolleyError(String.valueOf(errorStream)));
                 }
                 conn.disconnect();
 
@@ -131,54 +137,6 @@ public class ImageSender {
         os.write(lineEnd.getBytes());
         os.write((twoHyphens + boundary + twoHyphens + lineEnd).getBytes());
     }
-
-    // Send image file to the server using multipart/form-data
-    public void sendPhotosToServer(String apiHost, int activityId, Uri imageUri, int targetWidth) {
-        new Thread(() -> {
-            try {
-                // Resize the image and save it as a temporary file
-                File tempFile = resizeImageToTempFile(imageUri, targetWidth);
-
-                // Prepare the connection for multipart/form-data
-                URL url = new URL(apiHost + "activity/photo");
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestMethod("POST");
-                conn.setRequestProperty("Content-Type", "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW");
-                conn.setDoOutput(true);
-
-                try (OutputStream os = new BufferedOutputStream(conn.getOutputStream())) {
-                    // Write the multipart form-data
-                    writeMultipartFormData(os, tempFile, activityId);
-                    os.flush();
-                }
-
-                // Get response from the server
-                int responseCode = conn.getResponseCode();
-                if (responseCode >= 200 && responseCode < 300) {
-                    System.out.println("Response Code: " + responseCode + " Success");
-                } else {
-                    // Read the error stream to get the server's response
-                    InputStream errorStream = conn.getErrorStream();
-                    if (errorStream != null) {
-                        String errorMessage = readStream(errorStream);
-                        System.err.println("Error Response Code: " + responseCode + ", Error: " + errorMessage);
-                    } else {
-                        System.err.println("Error Response Code: " + responseCode + ", No additional error message.");
-                    }
-                }
-                conn.disconnect();
-
-                // Optionally delete the temporary file after sending the request
-                if (tempFile.exists()) {
-                    tempFile.delete();
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }).start();
-    }
-
 
     private String readStream(InputStream stream) throws IOException {
         StringBuilder builder = new StringBuilder();
