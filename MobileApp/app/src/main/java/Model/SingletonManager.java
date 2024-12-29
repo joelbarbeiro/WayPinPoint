@@ -38,6 +38,7 @@ import Listeners.ActivitiesListener;
 import Listeners.ActivityListener;
 import Listeners.CartListener;
 import Listeners.LoginListener;
+import Listeners.PhotosListener;
 import Listeners.ReviewListener;
 import Listeners.ReviewsListener;
 import Listeners.UserListener;
@@ -61,6 +62,10 @@ public class SingletonManager {
     private ArrayList<User> users;
     private UserListener userListener;
     private LoginListener loginListener;
+    //endregion
+
+    //region # Photos instances #
+    private PhotosListener photosListener;
     //endregion
 
     //region # Reviews instances #
@@ -250,35 +255,44 @@ public class SingletonManager {
             volleyQueue.add(request);
         }
     }
+    //endregion
 
-    public void addPhotoApi(String apiHost, final int id, final String photoProfile, final Context context) {
+    //region = API PHOTOS METHODS #
+
+    public void setPhotosListener(PhotosListener photosListener) {
+        this.photosListener = photosListener;
+    }
+
+    public void getAllPhotos(final Context context, final int activityId) {
+        String apiHost = getApiHost(context);
         if (!StatusJsonParser.isConnectionInternet(context)) {
             Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
         } else {
-            StringRequest request = new StringRequest(Request.Method.PUT, apiHost + "user/photo", new Response.Listener<String>() {
+            JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, apiHost + "activities/pictures/" + activityId, null, new Response.Listener<JSONArray>() {
                 @Override
-                public void onResponse(String response) {
-                    System.out.println("---> SUCCESS NO RESPONSE " + response);
-                    editPhotoDb(UserJsonParser.parserJsonPhoto(response), id);
-                    Toast.makeText(context, "Photo Uploaded Successfully", Toast.LENGTH_SHORT).show();
+                public void onResponse(JSONArray response) {
+                    try {
+                        ArrayList<String> photos = new ArrayList<>();
+                        for (int i = 0; i < response.length(); i++) {
+                            String photoUrl = response.getString(i); // Extract URLs from the response
+                            photos.add(photoUrl);
+                        }
+                        System.out.println("---> PHOTOS: " + photos);
+                        // Notify listener with the updated photos list
+                        if (photosListener != null) {
+                            photosListener.onRefreshPhotosList(photos);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Toast.makeText(context, "Error parsing JSON response", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    System.out.println("---> ERRO NO RESPONSE " + error.getMessage());
-                    Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
+                    System.out.println("---> GET PHOTOS ERROR --> " + error);
                 }
-            }) {
-
-                @Override
-                public Map<String, String> getParams() {
-                    Map<String, String> params = new HashMap<>();
-                    params.put("id", "" + id);
-                    params.put("photoFile", photoProfile);
-                    return params;
-                }
-            };
-            System.out.println("---> REQUEST  " + request);
+            });
             volleyQueue.add(request);
         }
     }
@@ -908,7 +922,7 @@ public class SingletonManager {
         if (!StatusJsonParser.isConnectionInternet(context)) {
             Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
         } else {
-            StringRequest request = new StringRequest(Request.Method.PUT, apiHost + "reviews/edit" , new Response.Listener<String>() {
+            StringRequest request = new StringRequest(Request.Method.PUT, apiHost + "reviews/edit", new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
                     editReviewDb(ReviewJsonParser.parserJsonReview(response));

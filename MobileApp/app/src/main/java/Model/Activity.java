@@ -1,6 +1,6 @@
 package Model;
 
-public class Activity {
+public class        Activity {
     private int id, maxpax, supplier, status, category;
     private double priceperpax;
     private String name, description, photo, address;
