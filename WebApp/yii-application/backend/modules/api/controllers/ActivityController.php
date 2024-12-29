@@ -187,4 +187,24 @@ class ActivityController extends ActiveController
             return ['status' => 'error', 'message' => $e->getMessage()];
         }
     }
+
+    public function actionPictures($id)
+    {
+        $photosDirectory = Yii::getAlias('@backend/web/img/activity/photos/' . $id . '/') ;
+
+        if (!is_dir($photosDirectory)) {
+            return $this->asJson([]); // Return an empty array if the directory doesn't exist
+        }
+
+        $files = scandir($photosDirectory);
+        $photoUrls = [];
+
+        foreach ($files as $file) {
+            if (is_file($photosDirectory . '/' . $file)) {
+                $photoUrls[] = Yii::$app->request->hostInfo . "/img/activity/photos/" . $id . "/" . $file;
+            }
+        }
+
+        return $this->asJson($photoUrls);
+    }
 }

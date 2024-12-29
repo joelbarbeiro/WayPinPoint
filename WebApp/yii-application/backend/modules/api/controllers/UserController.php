@@ -125,7 +125,8 @@ class UserController extends ActiveController
                         'phone' => $userExtra->phone,
                         'address' => $userExtra->address,
                         'nif' => $userExtra->nif,
-                        'photo' => $userExtra->photo
+                        'photo' => $userExtra->photo,
+                        'role' => $user->getRole()
                     ];
                 } else {
                     throw new \Exception('Failed to save UserExtra: ' . json_encode($userExtra->getErrors()));
@@ -225,7 +226,8 @@ class UserController extends ActiveController
                     'phone' => $userExtra->phone,
                     'address' => $userExtra->address,
                     'nif' => $userExtra->nif,
-                    'photo' => $userExtra->photo
+                    'photo' => $userExtra->photo,
+                    'role' => $user->getRole()
                 ];
             } else {
                 $transaction->rollBack();
