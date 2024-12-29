@@ -28,10 +28,6 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value' => function ($model) {
                     return Yii::$app->user->identity->username;
                 }],
-            ['attribute' => 'Status',
-                'value' => function ($model) {
-                    return $model->status;
-                }],
             [
                 'class' => ActionColumn::className(),
                 'template' => '{view} {delete} {print}',

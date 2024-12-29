@@ -24,9 +24,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 
 import Model.Activity;
-import Model.Cart;
 import Model.Calendar;
 import Model.CalendarTime;
+import Model.Cart;
 import Model.Category;
 import Model.SingletonManager;
 import Model.WaypinpointDbHelper;
@@ -59,7 +59,6 @@ public class ActivityDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
         int id = getIntent().getIntExtra(ID_ACTIVITY, 0);
-
         waypinpointDbHelper = new WaypinpointDbHelper(getApplicationContext());
         activity = SingletonManager.getInstance(getApplicationContext()).getActivity(id);
         categories = waypinpointDbHelper.getCategoryDB();
@@ -79,19 +78,17 @@ public class ActivityDetailsActivity extends AppCompatActivity {
 
         btBuyActivity = findViewById(R.id.btBuyActivity);
         loadActivity();
-        btBuyActivity.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Intent intent = new Intent(ActivityDetailsActivity.this, CartActivity.class);
-                intent.putExtra("activity_id", activity.getId());
-                intent.putExtra("activity_name", activity.getName());
-                intent.putExtra("activity_price", activity.getPriceperpax());
-                startActivity(intent);
-            }
-        });
+//        btBuyActivity.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(ActivityDetailsActivity.this, CartActivity.class);
+//                intent.putExtra("ACTIVITY_ID", activity.getId());
+//                startActivity(intent);
+//            }
+//        });
     }
-    private void loadActivity(){
+
+    private void loadActivity() {
         setTitle("Detalhes: " + activity.getName());
 
         tvName.setText(activity.getName());
@@ -106,7 +103,7 @@ public class ActivityDetailsActivity extends AppCompatActivity {
                 this,
                 android.R.layout.simple_spinner_item,
                 calendars
-        ){
+        ) {
             @Override
             public View getDropDownView(int position, View convertView, ViewGroup parent) {
                 View view = super.getDropDownView(position, convertView, parent);
@@ -122,6 +119,7 @@ public class ActivityDetailsActivity extends AppCompatActivity {
 
                 return view;
             }
+
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
@@ -164,11 +162,21 @@ public class ActivityDetailsActivity extends AppCompatActivity {
         //endregion
 
         String imgPath = Utilities.getImgUri(getApplicationContext()) + activity.getSupplier() + "/" + activity.getPhoto();
-                Glide.with(getApplicationContext())
+        Glide.with(getApplicationContext())
                 .load(imgPath)
                 .placeholder(R.drawable.img_default_activity)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(imageActivity);
+
+        btBuyActivity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ActivityDetailsActivity.this, CartActivity.class);
+                intent.putExtra("ACTIVITY_ID", activity.getId());
+                intent.putExtra("CALENDAR_ID", calendars.get(spinnerDateTime.getSelectedItemPosition()).getId());
+                startActivity(intent);
+            }
+        });
     }
 
 
@@ -189,7 +197,23 @@ public class ActivityDetailsActivity extends AppCompatActivity {
         fragment.setArguments(args);
         fragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, fragment)
-                .addToBackStack(null) // Add to back stack for navigation
+                .commit();
+    }
+
+    public void onClickPhotos(View view) {
+        // Hide background views
+        findViewById(R.id.scrollView).setVisibility(View.GONE);
+        findViewById(R.id.button_container).setVisibility(View.GONE);
+        // Show fragment container
+        findViewById(R.id.fragment_container).setVisibility(View.VISIBLE);
+        // Add the fragment
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        Fragment fragment = new ActivityPhotosFragment();
+        Bundle args = new Bundle();
+        args.putInt(ID_ACTIVITY, getIntent().getIntExtra(ID_ACTIVITY, 2));
+        fragment.setArguments(args);
+        fragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, fragment)
                 .commit();
     }
 }

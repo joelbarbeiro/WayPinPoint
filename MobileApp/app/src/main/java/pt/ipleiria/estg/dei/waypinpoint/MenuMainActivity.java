@@ -4,12 +4,14 @@ import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.DELETE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EDIT;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.REGISTER;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EMAIL;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ENDPOINT_USER;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.OP_CODE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.PICK_IMAGE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.PROFILE_PIC;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.SNACKBAR_MESSAGE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.TOKEN;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.USER_DATA;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.checkAndRequestPermissions;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getApiHost;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getImgUriUser;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getUserId;
@@ -21,10 +23,12 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -37,6 +41,8 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.bumptech.glide.Glide;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
@@ -55,7 +61,7 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
     private FragmentManager fragmentManager;
     private int id;
     private User user;
-    private String apiHost;
+    private String apiHost, role;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +71,8 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
         id = getUserId(getApplicationContext());
         user = SingletonManager.getInstance(getApplicationContext()).getUser(id);
         String profilePic = getImgUriUser(getApplicationContext()) + user.getId() + "/" + user.getPhoto();
+        role = user.getRole();
+
 
         SharedPreferences sharedPreferencesUser = getSharedPreferences(USER_DATA, MODE_PRIVATE);
         fragmentManager = getSupportFragmentManager();
@@ -81,6 +89,11 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
         drawer.addDrawerListener(toggle);
         loadHeader(sharedPreferencesUser, profilePic);
         navigationView.setNavigationItemSelectedListener(this);
+
+        Menu menu = navigationView.getMenu();
+        MenuItem employeeSection = menu.findItem(R.id.navQrCode);
+
+        employeeSection.setVisible(!"client".equals(role));
         loadDefaultFragment();
     }
 
@@ -149,6 +162,11 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
         if (item.getItemId() == R.id.navLogout) {
             dialogLogout(sharedPreferencesUser);
         }
+        if (item.getItemId() == R.id.navQrCode) {
+            checkAndRequestPermissions(getApplicationContext(), MenuMainActivity.this);
+            Intent intent = new Intent(this, QRCodeScannerActivity.class);
+            startActivity(intent);
+        }
         if (item.getItemId() == R.id.drawerCart) {
             fragment = new CartFragment();
             fragmentManager.beginTransaction().replace(R.id.contentFragment, fragment).commit();
@@ -186,7 +204,19 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
                 apiHost = getApiHost(getApplicationContext());
 
                 ImageSender imageSender = new ImageSender(getApplicationContext());
-                imageSender.sendImageToServer(apiHost, id, imageUri, 600);
+                imageSender.sendImageToServer(apiHost, ENDPOINT_USER, id, imageUri, 600,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
+                            }
+                        }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                );
                 // Save the selected image URI for future use
                 SharedPreferences sharedPreferences = getSharedPreferences(USER_DATA, MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();

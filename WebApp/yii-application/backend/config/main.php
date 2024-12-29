@@ -82,7 +82,8 @@ return [
                         'GET count' => 'count',
                         'GET activity/{id}' => 'activity',
                         'GET users/{id}' => 'user',
-                        'POST ' => 'new'
+                        'POST ' => 'new',
+                        'PUT edit' => 'edit'
                     ],
                     'tokens' => [
                         '{id}' => '<id:\\d+>',
@@ -113,9 +114,11 @@ return [
                         'GET calendar' => 'calendar',
                         'GET time' => 'time',
                         'GET category' => 'category',
+                        'GET pictures/{id}' => 'pictures',
                         'POST createactivity' => 'createactivity',
                         'PUT updateactivity/{id}' => 'updateactivity',
                         'DELETE {id}' => 'deleteactivity',
+                        'POST photo' => 'photo'
                     ],
                 ],
             ],

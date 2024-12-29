@@ -20,6 +20,7 @@ public class UserJsonParser {
             int phoneUser = User.getInt("phone");
             int nifUser = User.getInt("nif");
             String photoUser = User.getString("photo");
+            String roleUser = User.getString("role");
 
             auxUser = new User(
                     idUser,
@@ -31,7 +32,8 @@ public class UserJsonParser {
                     nifUser,
                     photoUser,
                     0,
-                    null
+                    null,
+                    roleUser
             );
         } catch (JSONException e) {
             e.printStackTrace();

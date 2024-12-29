@@ -3,6 +3,7 @@ package pt.ipleiria.estg.dei.waypinpoint;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.BACKEND_PORT;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.setImgUri;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.setImgUriUser;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.setPhotoUri;
 
 import android.content.Context;
 import android.content.Intent;
@@ -43,6 +44,7 @@ public class ApiHostnameSetupActivity extends AppCompatActivity {
     public void onClickSaveHostname(View view) {
         hostname = "http://" + etHostname.getText().toString() + ":8080/api/";
         setImgUri(etHostname.getText().toString(), getApplicationContext());
+        setPhotoUri(etHostname.getText().toString(), getApplicationContext());
         setImgUriUser(etHostname.getText().toString() + BACKEND_PORT, getApplicationContext());
         try {
             SharedPreferences sharedPreferences = getSharedPreferences("API_HOSTNAME", Context.MODE_PRIVATE);

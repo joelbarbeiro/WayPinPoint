@@ -21,6 +21,7 @@ import android.widget.ListView;
 import android.widget.SearchView;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
@@ -53,7 +54,9 @@ public class ListReviewsFragment extends Fragment implements SwipeRefreshLayout.
         lvReviews = view.findViewById(R.id.lvReviews);
         int activityId = getArguments().getInt(ID_ACTIVITY);
         int userId = getUserId(getContext());
-
+        if (requireActivity() instanceof AppCompatActivity) {
+            ((AppCompatActivity) requireActivity()).getSupportActionBar().setTitle("Reviews for Activity");
+        }
         lvReviews.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -91,7 +94,7 @@ public class ListReviewsFragment extends Fragment implements SwipeRefreshLayout.
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == REGISTER || requestCode == EDIT) {
 
-                SingletonManager.getInstance(getContext()).getReviewsApi(getContext(),activityId);
+                SingletonManager.getInstance(getContext()).getReviewsApi(getContext(), activityId);
 
                 switch (requestCode) {
                     case REGISTER:
@@ -116,6 +119,7 @@ public class ListReviewsFragment extends Fragment implements SwipeRefreshLayout.
     public void onRefresh() {
         int activityId = getArguments().getInt(ID_ACTIVITY);
         SingletonManager.getInstance(getContext()).getReviewsApi(getContext(), activityId);
+        swipeRefreshLayout.setRefreshing(false);
     }
 
     @Override

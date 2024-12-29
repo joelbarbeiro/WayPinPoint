@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission
@@ -12,6 +16,7 @@
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
         android:allowBackup="true"
@@ -28,8 +33,13 @@
             android:name=".ActivityCreateActivity"
             android:exported="false" />
         <activity
+            android:name=".QRCodeScannerActivity"
+            android:exported="true" />
+        <activity
             android:name=".CartDetailsActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:parentActivityName=".MenuMainActivity"/>
+
         <activity
             android:name=".ReviewDetailsActivity"
             android:exported="false" />

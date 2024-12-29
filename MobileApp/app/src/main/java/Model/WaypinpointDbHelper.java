@@ -33,10 +33,12 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
     private static final String PHONE = "phone";
     private static final String PHOTO = "photo";
     private static final String ID = "id";
+    private static final String ROLE = "role";
+
     //endregion
     //region = CART DECLARATIONS #
     private static final String TABLE_NAME_CART = "cart";
-
+    public static final String USER = "user";
     private static final String PRODUCT_ID = "product_id";
     private static final String QUANTITY = "quantity";
     private static final String STATUS_ = "status";
@@ -59,7 +61,7 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
     //region = CALENDAR #
     private static final String TABLE_NAME_CALENDAR = "calendars";
     private static final String ID_CALENDAR = "id";
-    private static  final String ID_ACTIVITY = "id_activity";
+    private static final String ID_ACTIVITY = "id_activity";
     private static final String ID_DATE = "id_date";
     private static final String ID_TIME = "id_time";
     private static final String HOUR = "hour";
@@ -77,6 +79,7 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
     private static final String SCORE = "score";
     private static final String MESSAGE = "message";
     private static final String CREATED_AT = "created_at";
+    private static final String CREATOR = "creator";
     //endregion
 
     public WaypinpointDbHelper(@Nullable Context context) {
@@ -96,7 +99,8 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
                 PHONE + " TEXT NOT NULL," +
                 PHOTO + " TEXT NOT NULL," +
                 SUPPLIER + " INTEGER," +
-                TOKEN + " TEXT" +
+                TOKEN + " TEXT," +
+                ROLE + " TEXT" +
                 ");";
         try {
             db.execSQL(createUserTable);
@@ -176,7 +180,8 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
                 ACTIVITY_ID + " INTEGER NOT NULL, " +
                 SCORE + " INTEGER NOT NULL, " +
                 MESSAGE + " TEXT NOT NULL, " +
-                CREATED_AT + " INT NOT NULL" +
+                CREATED_AT + " INT NOT NULL, " +
+                CREATOR + " TEXT" +
                 ")";
         try {
             db.execSQL(createReviewsTable);
@@ -227,6 +232,7 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
         values.put(NIF, user.getNif());
         values.put(PHONE, user.getPhone());
         values.put(PHOTO, user.getPhoto());
+        values.put(ROLE, user.getRole());
 
         this.db.insert(TABLE_NAME_USERS, null, values);
     }
@@ -240,6 +246,7 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
         values.put(NIF, user.getNif());
         values.put(PHONE, user.getPhone());
         values.put(PHOTO, user.getPhoto());
+        values.put(ROLE, user.getRole());
 
         return this.db.update(TABLE_NAME_USERS, values, ID + "= ?", new String[]{"" + user.getId()}) > 0;
     }
@@ -257,7 +264,7 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
     public ArrayList<User> getAllUsersDb() {
         ArrayList<User> users = new ArrayList<>();
 
-        Cursor cursor = this.db.query(TABLE_NAME_USERS, new String[]{ID, USERNAME, EMAIL, PASSWORD, ADDRESS, PHONE, NIF, PHOTO},
+        Cursor cursor = this.db.query(TABLE_NAME_USERS, new String[]{ID, USERNAME, EMAIL, PASSWORD, ADDRESS, PHONE, NIF, PHOTO, ROLE},
                 null, null, null, null, null);
 
         if (cursor.moveToFirst()) {
@@ -271,7 +278,8 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
                         cursor.getInt(6),
                         cursor.getString(7),
                         0,
-                        ""
+                        "",
+                        cursor.getString(8)
                 );
                 users.add(auxUser);
             } while (cursor.moveToNext());
@@ -340,6 +348,35 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
         this.db.delete(TABLE_NAME_ACTIVITIES, null, null);
     }
 
+    public Activity getActivityById(int activity_id) {
+
+        Activity activity = null;
+        String selection = ID + " = ?";
+        String[] selectionArgs = {String.valueOf(activity_id)};
+
+        Cursor cursor = this.db.query(TABLE_NAME_ACTIVITIES,
+                new String[]{ID, NAME, DESCRIPTION, PHOTO, MAXPAX, PRICEPERPAX, ADDRESS, SUPPLIER, STATUS, CATEGORY_ID},
+                selection,
+                selectionArgs,
+                null, null, null);
+        if (cursor.moveToFirst()) {
+            activity = new Activity(
+                    cursor.getInt(0),
+                    cursor.getString(1),
+                    cursor.getString(2),
+                    cursor.getString(3),
+                    cursor.getInt(4),
+                    cursor.getFloat(5),
+                    cursor.getString(6),
+                    cursor.getInt(7),
+                    cursor.getInt(8),
+                    cursor.getInt(9));
+        } else {
+            System.out.println(" if move first >>>>- vazio");
+        }
+        return activity;
+    }
+
     //endregion
 
     //region CALENDAR DB METHODS#
@@ -385,6 +422,31 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
         return calendars;
     }
 
+    public Calendar getCalendarById(int calendar_id) {
+
+        Calendar calendar = null;
+        String selection = ID + " = ?";
+        String[] selectionArgs = {String.valueOf(calendar_id)};
+
+        Cursor cursor = this.db.query(TABLE_NAME_CALENDAR,
+                new String[]{ID, ID_ACTIVITY, ID_DATE, DATE, ID_TIME},
+                selection,
+                selectionArgs,
+                null, null, null);
+        if (cursor.moveToFirst()) {
+            calendar = new Calendar(
+                    cursor.getInt(0),
+                    cursor.getInt(1),
+                    cursor.getInt(2),
+                    cursor.getString(3),
+                    cursor.getInt(4)
+            );
+        } else {
+            System.out.println(" if move first >>>>- vazio");
+        }
+        return calendar;
+    }
+
     public ArrayList<Calendar> getCalendarByActivityId(int activity_id) {
         ArrayList<Calendar> calendars = new ArrayList<>();
 
@@ -395,7 +457,7 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
                 new String[]{ID, ID_ACTIVITY, ID_DATE, DATE, ID_TIME},
                 selection,
                 selectionArgs,
-                null,null,null);
+                null, null, null);
         System.out.println("calendar cursor >>>>- " + cursor);
         if (cursor.moveToFirst()) {
             System.out.println(" if move first >>>>- entrou");
@@ -514,13 +576,14 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
         val.put(SCORE, r.getScore());
         val.put(MESSAGE, r.getMessage());
         val.put(CREATED_AT, r.getCreatedAt());
+        val.put(CREATOR, r.getCreator());
 
         this.db.insert(TABLE_NAME_REVIEWS, null, val);
     }
 
     public ArrayList<Review> getReviewsDb() {
         ArrayList<Review> reviews = new ArrayList<>();
-        Cursor cursor = this.db.query(TABLE_NAME_REVIEWS, new String[]{ID, USER_ID, ACTIVITY_ID, SCORE, MESSAGE, CREATED_AT},
+        Cursor cursor = this.db.query(TABLE_NAME_REVIEWS, new String[]{ID, USER_ID, ACTIVITY_ID, SCORE, MESSAGE, CREATED_AT, CREATOR},
                 null, null, null, null, null);
         if (cursor.moveToFirst()) {
             do {
@@ -530,7 +593,8 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
                         cursor.getInt(2),
                         cursor.getInt(3),
                         cursor.getString(4),
-                        cursor.getInt(5));
+                        cursor.getInt(5),
+                        cursor.getString(6));
                 reviews.add(auxReview);
             } while (cursor.moveToNext());
         }
@@ -544,6 +608,7 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
         values.put(SCORE, review.getScore());
         values.put(MESSAGE, review.getMessage());
         values.put(CREATED_AT, review.getCreatedAt());
+        values.put(CREATOR, review.getCreator());
 
         return this.db.update(TABLE_NAME_REVIEWS, values, ID + "= ?", new String[]{"" + review.getId()}) > 0;
     }
@@ -551,11 +616,15 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
     public boolean removeReviewDb(int id) {
         return this.db.delete(TABLE_NAME_REVIEWS, ID + "= ?", new String[]{"" + id}) == 1;
     }
+
+    public void delAllReviewsDb() {
+        this.db.delete(TABLE_NAME_REVIEWS, null, null);
+    }
+
     //endregion
     //REGION CART DB METHODS #
     public void addCartDb(Cart cart) {
         ContentValues values = new ContentValues();
-        System.out.println("------> ID: " + ID + " " + cart.getId());
         values.put(ID, cart.getId());
         values.put(USER_ID, cart.getUser_id());
         values.put(PRODUCT_ID, cart.getProduct_id());
@@ -573,7 +642,7 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
         return this.db.update(TABLE_NAME_CART, values, ID + "= ?", new String[]{"" + cart.getId()}) > 0;
     }
 
-    public boolean removeCartDb(Cart id) {
+    public boolean removeCartDb(int id) {
         return this.db.delete(TABLE_NAME_CART, ID + "= ?", new String[]{"" + id}) == 1;
     }
 
@@ -623,6 +692,35 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
         cursor.close();
         return carts;
     }
+
+
+    public Cart getCartById(int id) {
+
+        Cart cart = null;
+        String selection = ID + " = ?";
+        String[] selectionArgs = {String.valueOf(id)};
+
+        Cursor cursor = this.db.query(TABLE_NAME_CART,
+                new String[]{ID, USER_ID, PRODUCT_ID, QUANTITY, STATUS, CALENDAR_ID},
+                selection,
+                selectionArgs,
+                null, null, null);
+        if (cursor.moveToFirst()) {
+            cart = new Cart(
+                    cursor.getInt(0),
+                    cursor.getInt(1),
+                    cursor.getInt(2),
+                    cursor.getInt(3),
+                    cursor.getInt(4),
+                    cursor.getInt(5));
+        } else {
+            System.out.println(" if move first >>>>- vazio");
+        }
+        return cart;
+    }
+
+
+
     //ENDREGION
 
 }

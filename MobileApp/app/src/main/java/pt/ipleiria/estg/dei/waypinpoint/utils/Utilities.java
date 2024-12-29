@@ -13,17 +13,15 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.provider.MediaStore;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import Model.Category;
-import pt.ipleiria.estg.dei.waypinpoint.LoginActivity;
-import pt.ipleiria.estg.dei.waypinpoint.MenuMainActivity;
 
 public class Utilities {
 
@@ -43,18 +41,22 @@ public class Utilities {
     public static final String ID_CART = "ID_CART";
     public static final int DB_VERSION = 4;
 
-
-
     public static final String DEFAULT_IMG = "https://images.app.goo.gl/WRUpq3qmgD331B64A";
     public static final String PROFILE_PIC = "PROFILE_PIC";
     public static final String BACKEND_PORT = ":8080";
     public static final String ID_REVIEW = "ID_REVIEW";
     public static final String USER_ID = "USER_ID";
     public static final String ACTIVITY_ID = "ACTIVITY_ID";
-
+    public static final String TAG_QRCODEACTIVITY = "QRCodeScannerActivity";
 
     public static final String IMG_URI = "IMG_URI";
+    public static final String PHOTOS_URI = "PHOTOS_URI";
     public static final String IMG_URI_USER = "IMG_URI_USER";
+
+    //region #ENDPOINTS TO SEND IMAGE
+    public static final String ENDPOINT_ACTIVITY = "activity/photo";
+    public static final String ENDPOINT_USER = "user/photo";
+    //endregion
 
     public static String getApiHost(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(API_HOSTNAME, MODE_PRIVATE);
@@ -106,6 +108,10 @@ public class Utilities {
                         REQUEST_CODE);
             }
         }
+        if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(activity, new String[]{android.Manifest.permission.CAMERA}, REQUEST_CODE);
+        }
     }
 
     public static String getImgUri(Context context) {
@@ -120,11 +126,25 @@ public class Utilities {
         return sharedPreferences.getString(IMG_URI_USER, null);
     }
 
+    public static String getPhotosUri(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(PHOTOS_URI, MODE_PRIVATE);
+        System.out.println("--> Get PHOTOS URI " + sharedPreferences.getString(PHOTOS_URI, null));
+        return sharedPreferences.getString(PHOTOS_URI, null);
+    }
+
     public static void setImgUri(String uri, Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(IMG_URI, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         String imgPath = "http://" + uri + "/img/activity/";
         editor.putString(IMG_URI, imgPath);
+        editor.apply();
+    }
+
+    public static void setPhotoUri(String uri, Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(PHOTOS_URI, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        String imgPath = "http://" + uri + "/img/activity/photos";
+        editor.putString(PHOTOS_URI, imgPath);
         editor.apply();
     }
 
@@ -135,10 +155,43 @@ public class Utilities {
         editor.putString(IMG_URI_USER, imgUserPath);
         editor.apply();
     }
-    public static String getCredentials(Context context){
-        SharedPreferences sharedPreferences = context.getSharedPreferences(USER_DATA, Context.MODE_PRIVATE);
-        return sharedPreferences.getString(USER_DATA, null);
+
+    public static double getPriceById(int activityId, ArrayList<Model.Activity> activities) {
+        if (activities == null) {
+            return 0;
+        }
+        for (Model.Activity activity : activities) {
+            if (activity.getId() == activityId) {
+                return activity.getPriceperpax();
+            }
+        }
+        return 0;
     }
+
+    public static String getCalendarDateById(int calendar_id, ArrayList<Model.Calendar> calendars) {
+        if (calendars == null) {
+            return null;
+        }
+        for (Model.Calendar calendar : calendars) {
+            if (calendar.getId() == calendar_id) {
+                return calendar.getDate();
+            }
+        }
+        return null;
+    }
+
+    public static String getActivityNameById(int activityId, ArrayList<Model.Activity> activities) {
+        if (activities == null) {
+            return null;
+        }
+        for (Model.Activity activity : activities) {
+            if (activity.getId() == activityId) {
+                return activity.getName();
+            }
+        }
+        return null;
+    }
+
     public static String getCategoryById(int categoryId, ArrayList<Category> categories) {
         if (categories == null) {
             return null;
@@ -146,6 +199,18 @@ public class Utilities {
         for (Category category : categories) {
             if (category.getId() == categoryId) {
                 return category.getDescription();
+            }
+        }
+        return null;
+    }
+
+    public static String getImgFromActivities(int activityId, ArrayList<Model.Activity> activities) {
+        if (activities == null) {
+            return null;
+        }
+        for (Model.Activity activity : activities) {
+            if (activity.getId() == activityId) {
+                return activity.getSupplier() + "/" + activity.getPhoto();
             }
         }
         return null;

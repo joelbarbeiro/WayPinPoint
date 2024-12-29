@@ -7,6 +7,7 @@ use common\models\Calendar;
 use common\models\Category;
 use common\models\Time;
 use common\models\User;
+use common\models\UserExtra;
 use Yii;
 use yii\filters\auth\HttpBasicAuth;
 use yii\rest\ActiveController;
@@ -132,5 +133,78 @@ class ActivityController extends ActiveController
             return $category;
         }
         return ['error' => 'Calendar not found'];
+    }
+
+    public function actionPhoto()
+    {
+        $postData = \Yii::$app->request->post();
+        $id = $postData['id'];
+
+        $photoFile = \yii\web\UploadedFile::getInstanceByName('photoFile');
+
+        if (!$photoFile) {
+            \Yii::$app->response->statusCode = 400;
+            return ['status' => 'error', 'message' => 'No file uploaded'];
+        }
+
+        $activity = Activity::findOne($id);
+        if (!$activity) {
+            \Yii::$app->response->statusCode = 400;
+            return ['status' => 'error', 'message' => 'Activity not found'];
+        }
+
+        $transaction = Yii::$app->db->beginTransaction();
+        try {
+            if ($photoFile) {
+                $photoDirBackend = Yii::getAlias('@backend/web/img/activity/photos/' . $id . '/');
+
+                if (!is_dir($photoDirBackend)) {
+                    mkdir($photoDirBackend, 0755, true);
+                }
+
+                $uniqueFilename = uniqid() . '.' . $photoFile->extension;
+
+                $photoPathBackend = $photoDirBackend . $uniqueFilename;
+
+                if (!$photoFile->saveAs($photoPathBackend)) {
+                    $transaction->rollBack();
+                    \Yii::$app->response->statusCode = 400;
+                    throw new \Exception('Failed to save photo data');
+                } else{
+                    $transaction->commit();
+                    return [
+                        'status' => 'success',
+                        'photo' => $uniqueFilename
+                    ];
+                }
+            } else{
+                \Yii::$app->response->statusCode = 400;
+                throw new \Exception('Empty photo file');
+            }
+        } catch (\Exception $e) {
+            $transaction->rollBack();
+            \Yii::$app->response->statusCode = 500;
+            return ['status' => 'error', 'message' => $e->getMessage()];
+        }
+    }
+
+    public function actionPictures($id)
+    {
+        $photosDirectory = Yii::getAlias('@backend/web/img/activity/photos/' . $id . '/') ;
+
+        if (!is_dir($photosDirectory)) {
+            return $this->asJson([]); // Return an empty array if the directory doesn't exist
+        }
+
+        $files = scandir($photosDirectory);
+        $photoUrls = [];
+
+        foreach ($files as $file) {
+            if (is_file($photosDirectory . '/' . $file)) {
+                $photoUrls[] = Yii::$app->request->hostInfo . "/img/activity/photos/" . $id . "/" . $file;
+            }
+        }
+
+        return $this->asJson($photoUrls);
     }
 }

@@ -21,8 +21,9 @@ public class ReviewJsonParser {
                 int score = review.getInt("score");
                 String message = review.getString("message");
                 int createdAt = review.getInt("created_at");
+                String creator = review.getString("creator");
 
-                Review auxReview = new Review(id, userId, activityId, score, message, createdAt);
+                Review auxReview = new Review(id, userId, activityId, score, message, createdAt, creator);
                 reviews.add(auxReview);
             }
         } catch (JSONException e) {
@@ -42,6 +43,7 @@ public class ReviewJsonParser {
             int score = Review.getInt("score");
             String message = Review.getString("message");
             int createAt = Review.getInt("created_at");
+            String creator = Review.getString("creator");
 
             auxReview = new Review(
                     reviewId,
@@ -49,7 +51,8 @@ public class ReviewJsonParser {
                     activityId,
                     score,
                     message,
-                    createAt
+                    createAt,
+                    creator
             );
         } catch (JSONException e) {
             e.printStackTrace();
