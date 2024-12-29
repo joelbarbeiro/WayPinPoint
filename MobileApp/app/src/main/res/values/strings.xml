@@ -130,6 +130,9 @@
     <string name="availabillity">Availabillity</string>
     <string name="ticket_price">Ticket price</string>
     <string name="activity_descritpion">Descritpion</string>
+    <string name="menu_list_activities_label">List Activities</string>
+    <string name="fab_save">Save</string>
+    <string name="activity_create_address">Address</string>
 
 
 </resources>

@@ -163,6 +163,15 @@ public class Utilities {
 
         return formattedDate;
     }
+    public static ArrayList<Model.Activity> filterActivitiesBySupplier(Context context, ArrayList<Model.Activity> listActivities){
+        ArrayList<Model.Activity> filteredActivities = new ArrayList<>();
+        for (Model.Activity a : listActivities){
+            if (Utilities.getUserId(context) == a.getSupplier()) {
+                filteredActivities.add(a);
+                System.out.println(">>> " + a );
+            }
+        }
 
-
+        return filteredActivities;
+    }
 }

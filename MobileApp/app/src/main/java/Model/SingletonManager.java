@@ -41,6 +41,9 @@ import Listeners.LoginListener;
 import Listeners.ReviewListener;
 import Listeners.ReviewsListener;
 import Listeners.UserListener;
+import pt.ipleiria.estg.dei.waypinpoint.ActivityCreateActivity;
+import pt.ipleiria.estg.dei.waypinpoint.ActivityDetailsActivity;
+import pt.ipleiria.estg.dei.waypinpoint.MenuMainActivity;
 import pt.ipleiria.estg.dei.waypinpoint.R;
 import pt.ipleiria.estg.dei.waypinpoint.utils.CartJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.ActivityJsonParser;
@@ -77,11 +80,12 @@ public class SingletonManager {
     //region # Activities instances #
 
     private ActivitiesListener activitiesListener;
+    private ActivityListener activityListener;
+
     private ArrayList<Activity> activities;
     private ArrayList<Calendar> calendars;
     private ArrayList<CalendarTime> calendarTimes;
     private ArrayList<Category> categories;
-    private ActivityListener activityListener;
 
     //endregion
 
@@ -605,7 +609,7 @@ public class SingletonManager {
             JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, apiHost + "activities", null, new Response.Listener<JSONArray>() {
                 @Override
                 public void onResponse(JSONArray response) {
-                    activities = ActivityJsonParser.parserJsonActivity(response);
+                    activities = ActivityJsonParser.parserJsonActivities(response);
                     addActivitiesDB(activities);
                     onRequestCompleted.run();
 
@@ -622,6 +626,42 @@ public class SingletonManager {
                     onRequestCompleted.run();
                 }
             });
+            volleyQueue.add(request);
+        }
+    }
+     public void postActivityAPI(final Activity activity, final Context context){
+        String apiHost = getApiHost(context);
+        if(!StatusJsonParser.isConnectionInternet(context)){
+            Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
+        } else {
+            StringRequest request = new StringRequest(Request.Method.POST, apiHost + "activities/createactivity", new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    waypinpointDbHelper.addActivityDB(ActivityJsonParser.parserJsonActivity(response));
+
+                    if(activitiesListener != null){
+                        activityListener.onRefreshActivityDetails(REGISTER);
+                        //activityListener.onRefreshActivitiesDetails(MenuMainActivity.REGISTER);
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }) {
+               @Override
+                protected Map<String, String> getParams(){
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("token", "AMSI-TOKEN");
+                    params.put("name", activity.getName());
+                    params.put("descriprion", activity.getDescription());
+                    params.put("maxpax", "" + activity.getMaxpax());
+                    params.put("priceperpax", ""+ activity.getPriceperpax());
+                    params.put("photo", activity.getPhoto() == null ? DEFAULT_IMG : activity.getPhoto());
+                    return params;
+                }
+            };
             volleyQueue.add(request);
         }
     }
