@@ -114,6 +114,7 @@ return [
                         'GET calendar' => 'calendar',
                         'GET time' => 'time',
                         'GET category' => 'category',
+                        'GET pictures/{id}' => 'pictures',
                         'POST createactivity' => 'createactivity',
                         'PUT updateactivity/{id}' => 'updateactivity',
                         'DELETE {id}' => 'deleteactivity',
