@@ -3,6 +3,7 @@ package pt.ipleiria.estg.dei.waypinpoint;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.DEFAULT_IMG;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ACTIVITY_ID;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EDIT;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ID;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.OP_CODE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getImgUri;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getUserId;
@@ -10,6 +11,7 @@ import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getUserId;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -37,10 +39,12 @@ import Listeners.ActivityListener;
 import Model.Activity;
 import Model.CalendarTime;
 import Model.Category;
+import Model.DateTimeParser;
 import Model.SingletonManager;
 import Model.WaypinpointDbHelper;
 
 public class ActivityCreateActivity extends AppCompatActivity implements ActivityListener {
+    private int categoryId;
     private ImageView imgActivity;
     private EditText etName;
     private EditText etDescription;
@@ -53,9 +57,9 @@ public class ActivityCreateActivity extends AppCompatActivity implements Activit
     private FloatingActionButton fabCreateActivity;
     private Activity activity;
     private ArrayList<Category> categories;
-    private int categoryId;
+    private ArrayList<Model.Calendar> calendars;
     private ArrayList<CalendarTime> calendarTimes;
-    private ArrayList<String> dateHour = new ArrayList<>();
+    private ArrayList<DateTimeParser> dateHour = new ArrayList<>();
     private WaypinpointDbHelper waypinpointDbHelper;
 
     @Override
@@ -86,7 +90,9 @@ public class ActivityCreateActivity extends AppCompatActivity implements Activit
         fabCreateActivity = findViewById(R.id.fabCreateActivity);
 
         if (activity != null) {
+
             loadActivity();
+            loadExistingDateTime(activity.getId());
             fabCreateActivity.setImageResource(R.drawable.ic_save);
         } else {
             Glide.with(getApplicationContext())
@@ -110,6 +116,8 @@ public class ActivityCreateActivity extends AppCompatActivity implements Activit
                     activity.setSupplier(getUserId(getApplicationContext()));
                     activity.setStatus(1);
                     activity.setCategory(categoryId);
+
+
                     //TODO: EDIT ACTIVITY
                     //SingletonManager.getInstance(getApplicationContext()).putActivitiesApi(livro, getApplicationContext());
 
@@ -125,7 +133,7 @@ public class ActivityCreateActivity extends AppCompatActivity implements Activit
                             getUserId(getApplicationContext()),
                             1,
                             categoryId
-                            );
+                    );
 
                     SingletonManager.getInstance(getApplicationContext()).postActivityAPI(activity, getApplicationContext());
                 }
@@ -153,6 +161,7 @@ public class ActivityCreateActivity extends AppCompatActivity implements Activit
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(imgActivity);
     }
+
     private void showDatePickerDialog() {
         final Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
@@ -191,9 +200,10 @@ public class ActivityCreateActivity extends AppCompatActivity implements Activit
                 int hourId = selectedTime.getId();
                 String hourString = selectedTime.getHour();
 
-                String dateHourPair = selectedDate + " " + hourString;
-                if (!dateHour.contains(dateHourPair)) {
-                    dateHour.add(dateHourPair);
+                DateTimeParser tmpDateHour = new DateTimeParser(selectedDate, hourId);
+
+                if (!dateHour.contains(tmpDateHour)) {
+                    dateHour.add(tmpDateHour);
                 }
             }
 
@@ -206,9 +216,6 @@ public class ActivityCreateActivity extends AppCompatActivity implements Activit
         dateHourRow.addView(spHours);
 
         lvDateHour.addView(dateHourRow);
-    }
-    public void loadDateTime(Model.Calendar calendar){
-
     }
 
     public void loadCategory() {
@@ -240,6 +247,93 @@ public class ActivityCreateActivity extends AppCompatActivity implements Activit
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+    }
+    public void loadExistingDateTime(int activity_id) {
+        dateTimeForActivity(activity_id);
+        for (DateTimeParser i : dateHour){
+            LinearLayout dateHourRow = new LinearLayout(this);
+            dateHourRow.setOrientation(LinearLayout.HORIZONTAL);
+
+            TextView tvDate = new TextView(this);
+            tvDate.setText(i.getParserDate());
+            tvDate.setPadding(8, 8, 8, 8);
+
+            Spinner spHours = new Spinner(this);
+            ArrayAdapter<CalendarTime> hourAdapter = new ArrayAdapter<CalendarTime>(
+                    this,
+                    android.R.layout.simple_spinner_item,
+                    calendarTimes) {
+                @Override
+                public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                    View view = super.getDropDownView(position, convertView, parent);
+
+                    CalendarTime calendarTime = getItem(position);
+                    if (calendarTime != null) {
+                        String displayText = calendarTime.getHour();
+                        TextView textView = view.findViewById(android.R.id.text1);
+                        textView.setText(displayText);
+                    }
+
+                    return view;
+                }
+
+                @Override
+                public View getView(int position, View convertView, ViewGroup parent) {
+                    View view = super.getView(position, convertView, parent);
+
+                    CalendarTime calendarTime = getItem(position);
+                    if (calendarTime != null) {
+                        TextView textView = view.findViewById(android.R.id.text1);
+                        String displayText = calendarTime.getHour();
+                        textView.setText(displayText);
+                    }
+
+                    return view;
+                }
+            };
+
+            spHours.setAdapter(hourAdapter);
+            int preselectedIndex = getIndexForTimeId(i.getParserTime());
+            if (preselectedIndex != -1) {
+                spHours.setSelection(preselectedIndex);
+            }
+
+            spHours.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    CalendarTime selectedTime = (CalendarTime) parent.getItemAtPosition(position);
+                    if (selectedTime != null) {
+                        int timeId = selectedTime.getId();
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                }
+            });
+
+            dateHourRow.addView(tvDate);
+            dateHourRow.addView(spHours);
+
+            lvDateHour.addView(dateHourRow);
+        }
+    }
+
+    private int getIndexForTimeId(int timeId) {
+        for (int i = 0; i < calendarTimes.size(); i++) {
+            if (calendarTimes.get(i).getId() == timeId) {
+                return i;
+            }
+        }
+        return -1;
+    }
+    public void dateTimeForActivity(int id){
+        calendars = waypinpointDbHelper.getCalendarByActivityId(id);
+        for (Model.Calendar c : calendars) {
+            int tmpHour = waypinpointDbHelper.getCalendarTimeById(c.getTime_id()).getId();
+            DateTimeParser tmpTimeParser = new DateTimeParser(c.getDate(), tmpHour);
+            dateHour.add(tmpTimeParser);
+        }
     }
 
     @Override

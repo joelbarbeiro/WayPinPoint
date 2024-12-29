@@ -91,7 +91,6 @@ public class SingletonManager {
     private ArrayList<Calendar> calendars;
     private ArrayList<CalendarTime> calendarTimes;
     private ArrayList<Category> categories;
-    private ActivityListener activityListener;
 
     //endregion
 
@@ -638,7 +637,7 @@ public class SingletonManager {
             JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, apiHost + "activities", null, new Response.Listener<JSONArray>() {
                 @Override
                 public void onResponse(JSONArray response) {
-                    activities = ActivityJsonParser.parserJsonActivity(response);
+                    activities = ActivityJsonParser.parserJsonActivities(response);
                     addActivitiesDB(activities);
                     onRequestCompleted.run();
 

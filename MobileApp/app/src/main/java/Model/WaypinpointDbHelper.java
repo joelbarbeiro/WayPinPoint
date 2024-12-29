@@ -501,8 +501,8 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
         return time;
     }
 
-    public ArrayList<CalendarTime> getCalendarTimeById(int id) {
-        ArrayList<CalendarTime> time = new ArrayList<>();
+    public CalendarTime getCalendarTimeById(int id) {
+        CalendarTime time = null;
 
         String selection = ID + " = ?";
         String[] selectionArgs = {String.valueOf(id)};
@@ -514,8 +514,7 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
                 null, null, null);
         if (cursor.moveToFirst()) {
             do {
-                CalendarTime auxTime = new CalendarTime(cursor.getInt(0), cursor.getString(1));
-                time.add(auxTime);
+                time = new CalendarTime(cursor.getInt(0), cursor.getString(1));
             } while (cursor.moveToNext());
         }
         return time;
