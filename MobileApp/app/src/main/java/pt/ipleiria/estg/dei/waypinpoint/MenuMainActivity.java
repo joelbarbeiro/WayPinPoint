@@ -118,7 +118,7 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
 
         ImageView profileImageView = hView.findViewById(R.id.profilePhoto);
 
-        if (profilePic == null) {
+        if (profilePic == null || profilePic.isEmpty() || profilePic.contains("None")) {
             Glide.with(this)
                     .load(R.drawable.ic_default_profile)
                     .placeholder(R.drawable.ic_default_profile)
@@ -198,12 +198,14 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
                         new Response.Listener<String>() {
                             @Override
                             public void onResponse(String response) {
-                                Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
+                                View rootview = findViewById(R.id.drawerLayout);
+                                Snackbar.make(rootview, R.string.menu_main_pic_edited, Snackbar.LENGTH_SHORT).show();
                             }
                         }, new Response.ErrorListener() {
                             @Override
                             public void onErrorResponse(VolleyError error) {
-                                Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
+                                View rootview = findViewById(R.id.drawerLayout);
+                                Snackbar.make(rootview, R.string.error_default, Snackbar.LENGTH_SHORT).show();
                             }
                         }
                 );

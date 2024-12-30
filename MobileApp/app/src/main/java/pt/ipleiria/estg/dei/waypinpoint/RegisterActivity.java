@@ -129,7 +129,7 @@ public class RegisterActivity extends AppCompatActivity implements UserListener 
                     address,
                     phone,
                     nif,
-                    DEFAULT_IMG,
+                   null,
                     0,
                     "",
                     null

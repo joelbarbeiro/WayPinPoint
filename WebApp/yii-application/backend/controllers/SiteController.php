@@ -2,8 +2,16 @@
 
 namespace backend\controllers;
 
+use backend\models\Localsellpoint;
 use backend\models\RegisterForm;
+use common\models\Activity;
+use common\models\Booking;
+use common\models\Category;
+use common\models\Invoice;
 use common\models\LoginForm;
+use common\models\Sale;
+use common\models\User;
+use common\models\UserExtra;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
@@ -30,12 +38,17 @@ class SiteController extends Controller
                         'allow' => true,
                     ],
                     [
+                        'actions' => ['index', 'create', 'update', 'delete', 'view'], // Adjust actions as needed
+                        'allow' => true,
+                        'roles' => ['admin'], // Ensure this matches the role returned by getRole()
+                    ],
+                    [
                         'actions' => ['index', 'create', 'update', 'delete', 'view'], // Backoffice actions
                         'allow' => false,
                         'roles' => ['client'], // Explicitly deny client access to backoffice
                     ],
                     [
-                        'actions' => ['index', 'create', 'update', 'delete'],
+                        'actions' => ['index', 'create', 'update', 'delete', 'login', 'view'],
                         'allow' => true,
                         'roles' => ['admin', 'supplier', 'manager', 'salesperson', 'guide'],
                     ],
@@ -83,7 +96,53 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        $userId = Yii::$app->user->id;
+        $user = User::findOne(['id' => $userId]);
+        $role = $user->getRole();
+        $userExtra = $user->getUserExtra();
+        $supplierId = $userExtra->supplier;
+        $localsellpointId = $userExtra->localsellpoint_id;
+        $activities = Activity::find()->where(['user_id' => $supplierId])->asArray()->all();
+
+        $numActivities = Activity::getActivityCount($supplierId);
+        $numCategories = Category::getCategoryCount();
+        $numLocalShops = Localsellpoint::getLocalsellpointCount($supplierId);
+        $numEmployees = UserExtra::getUserExtraCount($supplierId);
+        $numClients = User::getClientsCount();
+        $numSuppliers = User::getSupplierCount();
+        $numManagers = User::getManagerCount();
+        $numSellers = User::getSellerCount();
+        $numGuides = User::getGuideCount();
+        $numSalesSeller = Sale::getSalesSellerCount($userId);
+        $numSalesShop = Sale::getSalesShopCount($localsellpointId);
+        $numInvoices = Invoice::getInvoiceCount();
+        $numBookings = Booking::getBookingsCount($userId);
+        $totalInvoiced = Sale::getTotalSales();
+        $shopInvoiced = Sale::getSalesForShop($localsellpointId);
+        $dayInvoiced = Sale::getSalesTotalForDay();
+
+
+        return $this->render('index', [
+            'user' => $user,
+            'role' => $role,
+            'activities' => $activities,
+            'numActivities' => $numActivities,
+            'numCategories' => $numCategories,
+            'numLocalShops' => $numLocalShops,
+            'numEmployees' => $numEmployees,
+            'numClients' => $numClients,
+            'numSuppliers' => $numSuppliers,
+            'numManagers' => $numManagers,
+            'numSellers' => $numSellers,
+            'numGuides' => $numGuides,
+            'numSalesSeller' => $numSalesSeller,
+            'numSalesShop' => $numSalesShop,
+            'numInvoices' => $numInvoices,
+            'numBookings' => $numBookings,
+            'totalInvoiced' => $totalInvoiced,
+            'shopInvoiced' => $shopInvoiced,
+            'dayInvoiced' => $dayInvoiced
+        ]);
     }
 
     public function actionRegister()

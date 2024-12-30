@@ -47,7 +47,7 @@ $imgUserPath = Url::to('@web/img/user/' . Yii::$app->user->id . '/');
         <!-- Sidebar Menu -->
         <nav class="mt-2">
             <?php
-            if ($user->getRole() == "supplier") {
+            if ($user->getRole() == "supplier" || $user->getRole() == "admin") {
                 echo \hail812\adminlte\widgets\Menu::widget([
                     'items' => [
                         /*[

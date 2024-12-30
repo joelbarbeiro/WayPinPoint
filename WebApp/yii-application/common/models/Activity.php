@@ -1,12 +1,12 @@
 <?php
 
 namespace common\models;
+
 use backend\models\Sale;
 use backend\models\Ticket;
 use Yii;
 use yii\helpers\ArrayHelper;
 use yii\web\UploadedFile;
-use function PHPUnit\Framework\isEmpty;
 
 
 /**
@@ -437,4 +437,11 @@ class Activity extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Calendar::class, ['activity_id' => 'id']);
     }
+
+    public static function getActivityCount($id)
+    {
+        $activities = Activity::find()->where(['user_id' => $id])->all();
+        return count($activities);
+    }
+
 }

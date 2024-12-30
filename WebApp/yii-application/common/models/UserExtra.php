@@ -167,4 +167,11 @@ class UserExtra extends \yii\db\ActiveRecord
             ->asArray()
             ->all();
     }
+
+    public static function getUserExtraCount($id)
+    {
+        $employeesCount = UserExtra::find()->where(['supplier' => $id])->all();
+        return count($employeesCount);
+    }
+
 }
