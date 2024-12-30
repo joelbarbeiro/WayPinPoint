@@ -55,6 +55,7 @@ import pt.ipleiria.estg.dei.waypinpoint.utils.StatusJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.TimeJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.UserJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.Utilities;
+import pt.ipleiria.estg.dei.waypinpoint.utils.ImageSender;
 
 public class SingletonManager {
 
@@ -659,17 +660,32 @@ public class SingletonManager {
     }
      public void postActivityAPI(final Activity activity, final ArrayList<DateTimeParser> dateTimeParser, final Context context){
         String apiHost = getApiHost(context);
+        System.out.println("->> Entrou no post activity " + activity.getId());
+        System.out.println("->> " + activity.getName());
+        System.out.println("->> " + activity.getDescription());
+        System.out.println("->> " + activity.getMaxpax());
+        System.out.println("->> " + activity.getPriceperpax());
+        System.out.println("->> " + activity.getAddress());
+        System.out.println("->> " + activity.getPhoto());
+        System.out.println("->> " + activity.getStatus());
+        System.out.println("->> " + activity.getCategory());
+
+
+
+
         if(!StatusJsonParser.isConnectionInternet(context)){
             Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
         } else {
+            System.out.println("->> Entrou no tem ligacao a internet");
             StringRequest request = new StringRequest(Request.Method.POST, apiHost + "activities/createactivity", new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
+                    System.out.println("->> Entrou na resposta do server " + response);
+
                     waypinpointDbHelper.addActivityDB(ActivityJsonParser.parserJsonActivity(response));
 
                     if(activitiesListener != null){
                         activityListener.onRefreshActivityDetails(REGISTER);
-                        //activityListener.onRefreshActivitiesDetails(MenuMainActivity.REGISTER);
                     }
                 }
             }, new Response.ErrorListener() {
@@ -681,12 +697,17 @@ public class SingletonManager {
                @Override
                 protected Map<String, String> getParams(){
                     Map<String, String> params = new HashMap<String, String>();
-                    params.put("token", "AMSI-TOKEN");
+                    //params.put("token", "AMSI-TOKEN");
                     params.put("name", activity.getName());
-                    params.put("descriprion", activity.getDescription());
+                    params.put("description", activity.getDescription());
                     params.put("maxpax", "" + activity.getMaxpax());
                     params.put("priceperpax", ""+ activity.getPriceperpax());
-                    params.put("photo", activity.getPhoto() == null ? DEFAULT_IMG : activity.getPhoto());
+                    params.put("address", activity.getAddress());
+                    params.put("category_id", ""+activity.getCategory());
+
+                   String encodedImage = ImageSender.encodeImage(activity.getPhoto() );
+                   params.put("photoFile", encodedImage == null ? DEFAULT_IMG : encodedImage);
+
                    JSONArray dateTimeArray = new JSONArray();
                    for (DateTimeParser dateTime : dateTimeParser) {
                        try {
@@ -699,6 +720,8 @@ public class SingletonManager {
                        }
                    }
                    params.put("dateTimes", dateTimeArray.toString());
+                   System.out.println("->> json post " + params);
+
                     return params;
                 }
             };

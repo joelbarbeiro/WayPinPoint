@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import Listeners.PhotosListener;
 import Model.SingletonManager;
 import Model.User;
-import adaptors.PhotoListAdapter;
+import Adapters.PhotoListAdapter;
 import pt.ipleiria.estg.dei.waypinpoint.utils.ImageSender;
 
 

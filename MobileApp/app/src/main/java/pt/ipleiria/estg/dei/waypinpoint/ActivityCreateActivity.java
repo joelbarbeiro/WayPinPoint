@@ -2,14 +2,25 @@ package pt.ipleiria.estg.dei.waypinpoint;
 
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.DEFAULT_IMG;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ACTIVITY_ID;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.DELETE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EDIT;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ENDPOINT_USER;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ID;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.OP_CODE;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.PICK_IMAGE;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.PROFILE_PIC;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.SNACKBAR_MESSAGE;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.TOKEN;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.USER_DATA;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getApiHost;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getImgUri;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getUserId;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -21,16 +32,21 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.app.DatePickerDialog;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -42,6 +58,7 @@ import Model.Category;
 import Model.DateTimeParser;
 import Model.SingletonManager;
 import Model.WaypinpointDbHelper;
+import pt.ipleiria.estg.dei.waypinpoint.utils.ImageSender;
 
 public class ActivityCreateActivity extends AppCompatActivity implements ActivityListener {
     private int categoryId;
@@ -61,6 +78,7 @@ public class ActivityCreateActivity extends AppCompatActivity implements Activit
     private ArrayList<CalendarTime> calendarTimes;
     private ArrayList<DateTimeParser> dateHour = new ArrayList<>();
     private WaypinpointDbHelper waypinpointDbHelper;
+    private Uri imageUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,11 +104,19 @@ public class ActivityCreateActivity extends AppCompatActivity implements Activit
         btCreateDateHour = findViewById(R.id.btCreateDateHour);
 
         btCreateDateHour.setOnClickListener(v -> showDatePickerDialog());
-
+        
+        imgActivity.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(ActivityCreateActivity.this, "IMAGE CLICKED MOTHER FUCKER!!!!!", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(intent, PICK_IMAGE);
+            }
+        });
+        
         fabCreateActivity = findViewById(R.id.fabCreateActivity);
 
         if (activity != null) {
-
             loadActivity();
             loadExistingDateTime(activity.getId());
             fabCreateActivity.setImageResource(R.drawable.ic_save);
@@ -117,16 +143,14 @@ public class ActivityCreateActivity extends AppCompatActivity implements Activit
                     activity.setStatus(1);
                     activity.setCategory(categoryId);
 
-
-                    //TODO: EDIT ACTIVITY
-                    //SingletonManager.getInstance(getApplicationContext()).putActivitiesApi(livro, getApplicationContext());
+                    //SingletonManager.getInstance(getApplicationContext()).putActivitiesApi(livro, dateHour, getApplicationContext());
 
                 } else {
                     activity = new Activity(
                             0,
                             etName.getText().toString(),
                             etDescription.getText().toString(),
-                            DEFAULT_IMG,
+                            imageUri.toString(),
                             Integer.parseInt(etMaxPax.getText().toString()),
                             Double.parseDouble(etPricePerPax.getText().toString()),
                             etAddress.getText().toString(),
@@ -240,7 +264,7 @@ public class ActivityCreateActivity extends AppCompatActivity implements Activit
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Category selectedCategory = (Category) parent.getItemAtPosition(position);
                 categoryId = selectedCategory.getId();
-                String categoryDescription = selectedCategory.getDescription();
+                System.out.println("->> Category id " + categoryId);
             }
 
             @Override
@@ -342,5 +366,16 @@ public class ActivityCreateActivity extends AppCompatActivity implements Activit
         intent.putExtra(OP_CODE, EDIT);
         setResult(RESULT_OK, intent);
         finish();
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+            if (requestCode == PICK_IMAGE && resultCode == android.app.Activity.RESULT_OK && data != null) {
+                imageUri = data.getData();
+
+                if (imageUri != null) {
+                    imgActivity.setImageURI(imageUri);
+                }
+            }
     }
 }

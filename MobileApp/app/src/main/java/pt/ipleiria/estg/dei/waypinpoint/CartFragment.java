@@ -30,7 +30,7 @@ import Model.Calendar;
 import Model.Cart;
 import Model.SingletonManager;
 import Model.WaypinpointDbHelper;
-import pt.ipleiria.estg.dei.waypinpoint.Adapters.CartAdapter;
+import Adapters.CartAdapter;
 
 public class CartFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, CartListener {
     private SwipeRefreshLayout swipeRefreshLayout;

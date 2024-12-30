@@ -32,7 +32,7 @@ import Model.Calendar;
 import Model.CalendarTime;
 import Model.Category;
 import Model.SingletonManager;
-import adaptors.ActivitiesListAdaptor;
+import Adapters.ActivitiesListAdaptor;
 
 
 public class ListActivitiesFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, ActivitiesListener {

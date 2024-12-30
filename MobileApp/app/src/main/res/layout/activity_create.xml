@@ -48,8 +48,7 @@
                 android:ems="10"
                 android:hint="Name"
                 android:inputType="text"
-                android:minHeight="48dp"
-                android:text="@string/name" />
+                android:minHeight="48dp" />
 
             <EditText
                 android:id="@+id/etActivityCreateDescription"
@@ -59,8 +58,7 @@
                 android:hint="Description"
                 android:inputType="text"
                 android:minHeight="48dp"
-                android:singleLine="false"
-                android:text="@string/description" />
+                android:singleLine="false" />
 
             <EditText
                 android:id="@+id/etActivityCreateMaxPax"
@@ -69,8 +67,7 @@
                 android:ems="10"
                 android:hint="Maximun Participants"
                 android:inputType="text"
-                android:minHeight="48dp"
-                android:text="@string/maxpax" />
+                android:minHeight="48dp" />
 
             <EditText
                 android:id="@+id/etActivityCreatePricePerPax"
@@ -79,8 +76,7 @@
                 android:ems="10"
                 android:hint="Ticket price"
                 android:inputType="text"
-                android:minHeight="48dp"
-                android:text="@string/priceperpax" />
+                android:minHeight="48dp" />
 
             <EditText
                 android:id="@+id/etActivityCreateAddress"
@@ -89,8 +85,7 @@
                 android:ems="10"
                 android:hint="Address"
                 android:inputType="text"
-                android:minHeight="48dp"
-                android:text="@string/activity_create_address" />
+                android:minHeight="48dp" />
 
         <Spinner
             android:id="@+id/spinnerActivityCreateCategory"

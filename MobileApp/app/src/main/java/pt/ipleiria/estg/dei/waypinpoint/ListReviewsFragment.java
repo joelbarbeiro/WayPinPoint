@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import Listeners.ReviewsListener;
 import Model.Review;
 import Model.SingletonManager;
-import adaptors.ReviewListAdapter;
+import Adapters.ReviewListAdapter;
 
 public class ListReviewsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, ReviewsListener {
 

@@ -1,4 +1,4 @@
-package adaptors;
+package Adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -20,7 +20,9 @@ import Model.Category;
 import pt.ipleiria.estg.dei.waypinpoint.R;
 import pt.ipleiria.estg.dei.waypinpoint.utils.Utilities;
 
-public class MyActivitiesAdapter extends BaseAdapter {
+public class ActivitiesListAdaptor extends BaseAdapter {
+
+
     private Context context;
     private LayoutInflater inflater;
     private ArrayList<Activity> activities;
@@ -29,7 +31,7 @@ public class MyActivitiesAdapter extends BaseAdapter {
     private ArrayList<Category> categories;
 
 
-    public MyActivitiesAdapter(Context context, ArrayList<Activity> activities, ArrayList<Calendar> calendars, ArrayList<CalendarTime> times, ArrayList<Category> categories) {
+    public ActivitiesListAdaptor(Context context, ArrayList<Activity> activities, ArrayList<Calendar> calendars, ArrayList<CalendarTime> times, ArrayList<Category> categories) {
         this.context = context;
         this.activities = activities;
         this.calendars = calendars;
@@ -69,7 +71,7 @@ public class MyActivitiesAdapter extends BaseAdapter {
         }
         viewHolderActivity.update(activities.get(i));
 
-       return view;
+        return view;
     }
 
     private class ViewHolderActivity {

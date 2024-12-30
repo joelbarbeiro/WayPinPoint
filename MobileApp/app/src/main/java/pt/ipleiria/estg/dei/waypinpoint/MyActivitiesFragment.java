@@ -8,7 +8,6 @@ import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.REGISTER;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.filterActivitiesBySupplier;
 
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -31,7 +30,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import Listeners.ActivitiesListener;
 import Model.Activity;
@@ -39,8 +37,8 @@ import Model.Calendar;
 import Model.CalendarTime;
 import Model.Category;
 import Model.SingletonManager;
-import adaptors.ActivitiesListAdaptor;
-import adaptors.MyActivitiesAdapter;
+import Adapters.ActivitiesListAdaptor;
+import Adapters.MyActivitiesAdapter;
 
 
 public class MyActivitiesFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, ActivitiesListener {
