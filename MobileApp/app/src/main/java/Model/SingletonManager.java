@@ -1,5 +1,6 @@
 package Model;
 
+import static pt.ipleiria.estg.dei.waypinpoint.utils.ImageSender.getImageData;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.DEFAULT_IMG;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.DELETE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EDIT;
@@ -13,15 +14,22 @@ import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getUserId;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkError;
+import com.android.volley.NetworkResponse;
+import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.ServerError;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
@@ -30,6 +38,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -505,6 +516,7 @@ public class SingletonManager {
 
                 return params;
             }
+
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
@@ -575,6 +587,7 @@ public class SingletonManager {
     public void setCartsListener(CartListener cartsListener) {
         this.cartListener = cartsListener;
     }
+
     public void setCartListener(CartListener cartListener) {
         this.cartListener = cartListener;
     }
@@ -658,74 +671,100 @@ public class SingletonManager {
             volleyQueue.add(request);
         }
     }
-     public void postActivityAPI(final Activity activity, final ArrayList<DateTimeParser> dateTimeParser, final Context context){
+
+    public void postActivityAPI(final Activity activity, final ArrayList<DateTimeParser> dateTimeParser, final Context context) {
         String apiHost = getApiHost(context);
-        System.out.println("->> Entrou no post activity " + activity.getId());
-        System.out.println("->> " + activity.getName());
-        System.out.println("->> " + activity.getDescription());
-        System.out.println("->> " + activity.getMaxpax());
-        System.out.println("->> " + activity.getPriceperpax());
-        System.out.println("->> " + activity.getAddress());
-        System.out.println("->> " + activity.getPhoto());
-        System.out.println("->> " + activity.getStatus());
-        System.out.println("->> " + activity.getCategory());
 
-
-
-
-        if(!StatusJsonParser.isConnectionInternet(context)){
+        if (!StatusJsonParser.isConnectionInternet(context)) {
             Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
         } else {
-            System.out.println("->> Entrou no tem ligacao a internet");
-            StringRequest request = new StringRequest(Request.Method.POST, apiHost + "activities/createactivity", new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                    System.out.println("->> Entrou na resposta do server " + response);
+                Map<String, String> params = new HashMap<String, String>();
+                //params.put("token", "AMSI-TOKEN");
+                params.put("name", activity.getName());
+                params.put("description", activity.getDescription());
+                params.put("maxpax", "" + activity.getMaxpax());
+                params.put("priceperpax", "" + activity.getPriceperpax());
+                params.put("address", activity.getAddress());
+                params.put("category_id", "" + activity.getCategory());
+                JSONArray dateArray = new JSONArray();
+                JSONArray hourArray = new JSONArray();
 
-                    waypinpointDbHelper.addActivityDB(ActivityJsonParser.parserJsonActivity(response));
+                for (DateTimeParser dateTime : dateTimeParser) {
+                    dateArray.put(dateTime.getParserDate());
+                    hourArray.put(dateTime.getParserTime());
+                }
 
-                    if(activitiesListener != null){
-                        activityListener.onRefreshActivityDetails(REGISTER);
+                params.put("date", dateArray.toString());
+                params.put("hour", hourArray.toString());
+
+                Uri imgUri = Uri.parse(activity.getPhoto());
+                byte[] imageData = getImageData(context, imgUri);
+                DataPart filePart = new DataPart("photoFile", "image/jpeg", imageData);
+
+                Map<String, DataPart> files = new HashMap<>();
+                files.put("photoFile", filePart);
+
+            VolleyMultipartRequest multipartRequest = new VolleyMultipartRequest(
+                    Request.Method.POST,
+                    apiHost + "activities/createactivity",
+                    params,
+                    files,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            System.out.println("->> " + params);
+
+                            System.out.println("->> Server Response: " + response);
+                            waypinpointDbHelper.addActivityDB(ActivityJsonParser.parserJsonActivity(response));
+
+                            if (activitiesListener != null) {
+                                activityListener.onRefreshActivityDetails(REGISTER);
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            System.out.println("->> onErrorResponse: " + error.getMessage());
+                            // Log the basic error message
+                            System.out.println("->> onErrorResponse: " + error.getMessage());
+                            System.out.println("->> " + params);
+
+                            // Check if the error is a network error
+                            if (error instanceof NetworkError) {
+                                System.out.println("->> Network error occurred: " + error.getMessage());
+                            }
+                            // Check if the error is a server error (such as a 500 Internal Server Error)
+                            else if (error instanceof ServerError) {
+                                System.out.println("->> Server error occurred: " + error.getMessage());
+                                // Optionally log the response code if available
+                                NetworkResponse response = error.networkResponse;
+                                if (response != null) {
+                                    System.out.println("->> Server returned status code: " + response.statusCode);
+                                }
+                            }
+                            // Check for parsing errors (e.g., if the server returned malformed JSON)
+                            else if (error instanceof ParseError) {
+                                System.out.println("->> Parse error: " + error.getMessage());
+                            }
+                            // Handle timeout errors
+                            else if (error instanceof TimeoutError) {
+                                System.out.println("->> Timeout error: " + error.getMessage());
+                            }
+
+                            // Log more details of the error if networkResponse is available
+                            if (error.networkResponse != null) {
+                                System.out.println("->> Response code: " + error.networkResponse.statusCode);
+                                System.out.println("->> Response body: " + new String(error.networkResponse.data));
+                            }
+
+                            // Optionally, print the stack trace to debug further
+                            error.printStackTrace();
+                        }
                     }
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            }) {
-               @Override
-                protected Map<String, String> getParams(){
-                    Map<String, String> params = new HashMap<String, String>();
-                    //params.put("token", "AMSI-TOKEN");
-                    params.put("name", activity.getName());
-                    params.put("description", activity.getDescription());
-                    params.put("maxpax", "" + activity.getMaxpax());
-                    params.put("priceperpax", ""+ activity.getPriceperpax());
-                    params.put("address", activity.getAddress());
-                    params.put("category_id", ""+activity.getCategory());
+            );
 
-                   String encodedImage = ImageSender.encodeImage(activity.getPhoto() );
-                   params.put("photoFile", encodedImage == null ? DEFAULT_IMG : encodedImage);
-
-                   JSONArray dateTimeArray = new JSONArray();
-                   for (DateTimeParser dateTime : dateTimeParser) {
-                       try {
-                           JSONObject dateTimeObject = new JSONObject();
-                           dateTimeObject.put("date", dateTime.getParserDate());
-                           dateTimeObject.put("timeId", dateTime.getParserTime());
-                           dateTimeArray.put(dateTimeObject);
-                       } catch (JSONException e) {
-                           e.printStackTrace(); // Log any issues with JSON creation
-                       }
-                   }
-                   params.put("dateTimes", dateTimeArray.toString());
-                   System.out.println("->> json post " + params);
-
-                    return params;
-                }
-            };
-            volleyQueue.add(request);
+            Volley.newRequestQueue(context).add(multipartRequest);
         }
     }
 
@@ -736,6 +775,7 @@ public class SingletonManager {
             waypinpointDbHelper.addCalendarDB(c);
         }
     }
+
     public void getCalendar(final Context context, final Runnable onComplete) {
         String apiHost = Utilities.getApiHost(context);
         if (!StatusJsonParser.isConnectionInternet(context)) {
@@ -776,6 +816,7 @@ public class SingletonManager {
             waypinpointDbHelper.addCalendarTimeDB(c);
         }
     }
+
     private void getCalendarTimes(final Context context, final Runnable onComplete) {
         String apiHost = Utilities.getApiHost(context);
         if (!StatusJsonParser.isConnectionInternet(context)) {
@@ -815,6 +856,7 @@ public class SingletonManager {
             waypinpointDbHelper.addCategoryDB(c);
         }
     }
+
     private void getCategory(final Context context, final Runnable onComplete) {
         String apiHost = Utilities.getApiHost(context);
         if (!StatusJsonParser.isConnectionInternet(context)) {

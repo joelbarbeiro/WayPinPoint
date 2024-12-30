@@ -1,11 +1,13 @@
 package pt.ipleiria.estg.dei.waypinpoint.utils;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Base64;
+import android.util.Log;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -152,20 +154,29 @@ public class ImageSender {
         return builder.toString();
     }
 
-    public static String encodeImage(String imagePath) {
-        if (imagePath == null || imagePath.isEmpty()) {
-            return null;
-        }
-
+    public static byte[] getImageData(Context context, Uri imageUri) {
         try {
-            Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+            int targetWidth = 200, quality = 20;
+            InputStream inputStream = context.getContentResolver().openInputStream(imageUri);
+            Bitmap originalBitmap = BitmapFactory.decodeStream(inputStream);
 
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 60, outputStream);
+            int targetHeight = (targetWidth * originalBitmap.getHeight()) / originalBitmap.getWidth();
 
-            byte[] imageBytes = outputStream.toByteArray();
-            return Base64.encodeToString(imageBytes, Base64.DEFAULT);
-        } catch (Exception e) {
+
+            if (originalBitmap == null) {
+                throw new IOException("Unable to decode image from URI: " + imageUri.toString());
+            }
+
+            // Scale the image to a smaller size
+            Bitmap scaledBitmap = Bitmap.createScaledBitmap(originalBitmap, targetWidth, targetHeight, true);
+
+            // Compress the scaled image
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            scaledBitmap.compress(Bitmap.CompressFormat.JPEG, quality, byteArrayOutputStream);
+
+            return byteArrayOutputStream.toByteArray();
+        } catch (IOException e) {
+            Log.e("getCompressedImageData", "Error compressing image: " + e.getMessage());
             e.printStackTrace();
             return null;
         }
