@@ -8,6 +8,12 @@
     android:padding="16dp"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
+    <TextView
+        android:id="@+id/editPhotoTv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/my_profile_photo_edit_label" />
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profilePhoto"

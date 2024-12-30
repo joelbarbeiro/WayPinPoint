@@ -32,7 +32,6 @@
     <string name="ndClose">Close</string>
     <string name="menu_cart">Cart</string>
 
-
     <!-- My Profile-->
     <string name="my_profile_nif">NIF</string>
     <string name="my_profile_address">Address</string>
@@ -44,6 +43,7 @@
     <string name="my_profile_nif_phone_warning">Nif/Phone has to be valid</string>
     <string name="menu_main_user_edited">User Edited With Success</string>
     <string name="menu_main_pic_edited">Photo edited With Success</string>
+    <string name="my_profile_photo_edit_label">Click the photo to edit</string>
 
     <!-- Dashboard -->
     <string name="dashboard_name_label">Name: </string>

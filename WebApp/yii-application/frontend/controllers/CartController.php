@@ -174,10 +174,24 @@ class CartController extends Controller
                     } else {
                         Yii::$app->session->setFlash('error', 'Failed to Checkout');
                     }
-                    $content = $this->renderPartial('receipt', [
-                        'cart' => $cart,
-                    ]);
-                    $this->generatePdf($content);
+                    // Generate PDF content
+                    $content = $this->renderPartial('receipt', ['cart' => $cart]);
+                    $qrCodeImage = $qrCode->writeString(); // QR Code as PNG string
+
+                    // Send email with attachments
+                    if (Yii::$app->mailer->compose()
+                        ->setFrom('waypinpoint@gmail.com')
+                        ->setTo($cart->user->email)
+                        ->setSubject('Your Booking Receipt and Ticket')
+                        ->setTextBody('Your receipt and ticket are attached.')
+                        ->setHtmlBody('<b>Thank you for your booking! Your receipt and ticket are attached.</b>')
+                        ->attachContent($content, ['fileName' => 'receipt.pdf', 'contentType' => 'application/pdf'])
+                        ->attachContent($qrCodeImage, ['fileName' => 'ticket.png', 'contentType' => 'image/png'])
+                        ->send()) {
+                        Yii::$app->session->setFlash('success', 'Email sent successfully!');
+                    } else {
+                        Yii::$app->session->setFlash('error', 'Failed to send email!');
+                    }
                     return $this->redirect(['activity/index']);
                 }
             }
@@ -199,5 +213,7 @@ class CartController extends Controller
         $pdf = new Mpdf();
         $pdf->WriteHTML($content);
         $pdf->Output('receipt.pdf','D');
+        return $pdf;
     }
+
 }
