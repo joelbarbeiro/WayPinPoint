@@ -56,4 +56,8 @@ class Category extends \yii\db\ActiveRecord
         return Category::find()
             ->all();
     }
+
+    public static function getCategoryCount(){
+        return static::find()->count();
+    }
 }

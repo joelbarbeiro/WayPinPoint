@@ -187,7 +187,7 @@ public class SingletonManager {
                     params.put("address", user.getAddress());
                     params.put("phone", "" + user.getPhone());
                     params.put("nif", "" + user.getNif());
-                    params.put("photo", user.getPhoto() == null ? DEFAULT_IMG : user.getPhoto());
+                    params.put("photo", "null");
                     return params;
                 }
             };

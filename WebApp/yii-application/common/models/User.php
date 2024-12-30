@@ -298,6 +298,7 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return $this->hasMany(Review::class, ['user_id' => 'id']);
     }
+
     /**
      * Gets query for [[Pictures]].
      *
@@ -345,6 +346,67 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function getUserextras()
     {
-        return $this->hasMany(Userextra::class, ['user_id' => 'id']);
+        return $this->hasOne(Userextra::class, ['user_id' => 'id']);
     }
+
+    public static function getClientsCount()
+    {
+        $users = User::find()->all();
+        $clientCount = 0; // Initialize outside the loop
+        foreach ($users as $user) {
+            if ($user->getRole() === "client") { // Use strict comparison for better accuracy
+                $clientCount++;
+            }
+        }
+        return $clientCount;
+    }
+
+    public static function getSupplierCount()
+    {
+        $users = User::find()->all();
+        $supplierCount = 0; // Initialize outside the loop
+        foreach ($users as $user) {
+            if ($user->getRole() === "supplier") { // Use strict comparison for better accuracy
+                $supplierCount++;
+            }
+        }
+        return $supplierCount;
+    }
+
+    public static function getSellerCount()
+    {
+        $users = User::find()->all();
+        $sellerCount = 0; // Initialize outside the loop
+        foreach ($users as $user) {
+            if ($user->getRole() === "salesperson") { // Use strict comparison for better accuracy
+                $sellerCount++;
+            }
+        }
+        return $sellerCount;
+    }
+
+    public static function getManagerCount()
+    {
+        $users = User::find()->all();
+        $managerCount = 0; // Initialize outside the loop
+        foreach ($users as $user) {
+            if ($user->getRole() === "manager") { // Use strict comparison for better accuracy
+                $managerCount++;
+            }
+        }
+        return $managerCount;
+    }
+
+    public static function getGuideCount()
+    {
+        $users = User::find()->all();
+        $guideCount = 0; // Initialize outside the loop
+        foreach ($users as $user) {
+            if ($user->getRole() === "guide") { // Use strict comparison for better accuracy
+                $guideCount++;
+            }
+        }
+        return $guideCount;
+    }
+
 }

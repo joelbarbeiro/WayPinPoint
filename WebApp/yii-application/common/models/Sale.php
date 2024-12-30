@@ -176,4 +176,53 @@ class Sale extends \yii\db\ActiveRecord
             ])
             ->all();
     }
+
+    public static function getSalesSellerCount($id)
+    {
+        $salesSellerCount = Sale::find()->where(['seller_id' => $id])->all();
+        return count($salesSellerCount);
+    }
+
+    public static function getSalesShopCount($id)
+    {
+        $salesShopCount = Sale::find()->where(['localsellpoint_id' => $id])->all();
+        return count($salesShopCount);
+    }
+
+    public static function getTotalSales()
+    {
+        $total = Sale::find()->select(['total'])->all();
+        $totalInvoiced = 0;
+        foreach ($total as $sale) {
+            $totalInvoiced += $sale->total;
+        }
+        return $totalInvoiced;
+    }
+
+    public static function getSalesForShop($id)
+    {
+        $total = Sale::find()->where(['localsellpoint_id' => $id])->select(['total'])->all();
+        $totalInvoiced = 0;
+        foreach ($total as $sale) {
+            $totalInvoiced += $sale->total;
+        }
+        return $totalInvoiced;
+    }
+
+    public static function getSalesTotalForDay()
+    {
+        $today = date('Y-m-d');
+
+        $sales = Sale::find()
+            ->where(['DATE(purchase_date)' => $today])
+            ->select(['total'])
+            ->all();
+
+        $totalInvoiced = 0;
+        foreach ($sales as $sale) {
+            $totalInvoiced += $sale->total;
+        }
+        return $totalInvoiced;
+    }
+
 }

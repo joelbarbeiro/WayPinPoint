@@ -98,6 +98,7 @@ class Localsellpoint extends \yii\db\ActiveRecord
         return $this->hasMany(UserExtra::class, ['id' => 'userextra_id'])
             ->via('localsellpointUserextra');
     }
+
     public static function getLocalStoreForSupplier($userId): array
     {
         return Localsellpoint::find()
@@ -106,6 +107,7 @@ class Localsellpoint extends \yii\db\ActiveRecord
             ->asArray()
             ->all();
     }
+
     public static function getEmployeesForLocalStore($id, $userId): array
     {
         $localStore = Localsellpoint::findOne($id);
@@ -121,6 +123,12 @@ class Localsellpoint extends \yii\db\ActiveRecord
             ])
             ->asArray()
             ->all();
+    }
+
+    public static function getLocalsellpointCount($id)
+    {
+        $localshops = Localsellpoint::find()->where(['user_id' => $id])->all();
+        return count($localshops);
     }
 
 }

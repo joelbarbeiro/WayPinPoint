@@ -107,4 +107,17 @@ class Booking extends \yii\db\ActiveRecord
             return false;
         }
     }
+
+    public static function getBookingsCount($id)
+    {
+        $bookingsCount = Booking::find()->where(['user_id' => $id])->all();
+        return count($bookingsCount);
+    }
+
+    public static function getBookingsForActivityCount($id)
+    {
+        $bookingsCount = Booking::find()->where(['activity_id' => $id])->all();
+        return count($bookingsCount);
+    }
+
 }

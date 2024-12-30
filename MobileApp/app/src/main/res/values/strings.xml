@@ -43,6 +43,7 @@
     <string name="my_profile_fields_warning">You have to fill all the fields</string>
     <string name="my_profile_nif_phone_warning">Nif/Phone has to be valid</string>
     <string name="menu_main_user_edited">User Edited With Success</string>
+    <string name="menu_main_pic_edited">Photo edited With Success</string>
 
     <!-- Dashboard -->
     <string name="dashboard_name_label">Name: </string>

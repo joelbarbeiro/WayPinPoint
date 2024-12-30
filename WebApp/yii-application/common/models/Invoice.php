@@ -95,4 +95,9 @@ class Invoice extends \yii\db\ActiveRecord
         }
     }
 
+    public static function getInvoiceCount()
+    {
+        return static::find()->count();
+    }
+
 }
