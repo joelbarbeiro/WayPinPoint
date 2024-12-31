@@ -648,7 +648,7 @@ public class SingletonManager {
             getCalendar(context, onRequestCompleted);
             getCategory(context, onRequestCompleted);
 
-            JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, apiHost + "activities", null, new Response.Listener<JSONArray>() {
+            JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, apiHost + "activities/all", null, new Response.Listener<JSONArray>() {
                 @Override
                 public void onResponse(JSONArray response) {
                     activities = ActivityJsonParser.parserJsonActivities(response);
@@ -674,6 +674,7 @@ public class SingletonManager {
 
     public void postActivityAPI(final Activity activity, final ArrayList<DateTimeParser> dateTimeParser, final Context context) throws IOException {
         String apiHost = getApiHost(context);
+        System.out.println("Running create");
 
         if (!StatusJsonParser.isConnectionInternet(context)) {
             Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
@@ -766,7 +767,7 @@ public class SingletonManager {
     }
     public void editActivityAPI(final Activity activity, final ArrayList<DateTimeParser> dateTimeParser, final Context context) throws IOException {
         String apiHost = getApiHost(context);
-
+        System.out.println("Running update");
         if (!StatusJsonParser.isConnectionInternet(context)) {
             Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
         } else {

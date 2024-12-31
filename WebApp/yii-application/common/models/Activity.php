@@ -1,6 +1,7 @@
 <?php
 
 namespace common\models;
+
 use backend\models\Sale;
 use backend\models\Ticket;
 use Yii;
@@ -279,7 +280,6 @@ class Activity extends \yii\db\ActiveRecord
         return Activity::find()
             ->joinWith('calendar')
             ->where([
-                'activity.status' => 1,
                 'calendar.status' => 1
             ])
             ->all();
@@ -327,7 +327,6 @@ class Activity extends \yii\db\ActiveRecord
         $getDateTimeUpdate = $model->setCalendar($model->id, $model->date, $model->hour);
         $model->uploadPhoto();
         if ($model->validate() && $model->save()) {
-
             foreach ($getDateTimeUpdate as $dateVal => $timeId) {
                 $date = $model->getDateIfExists($dateVal);
                 if ($date == null) {

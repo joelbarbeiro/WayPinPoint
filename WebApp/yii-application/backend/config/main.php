@@ -116,7 +116,7 @@ return [
                         'GET category' => 'category',
                         'GET pictures/{id}' => 'pictures',
                         'POST createactivity' => 'createactivity',
-                        'PUT updateactivity/{id}' => 'updateactivity',
+                        'POST updateactivity/{id}' => 'updateactivity',
                         'DELETE {id}' => 'deleteactivity',
                         'POST photo' => 'photo'
                     ],

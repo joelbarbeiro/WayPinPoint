@@ -82,10 +82,8 @@ class ActivityController extends ActiveController
             $activity = $activity->getActivityView($id);
             $activity->load(Yii::$app->request->post(), '');
             if ($activity->updateActivity($activity)) {
-                return [
-                    'activity' => 'success',
-                    'message' => 'Update successfully',
-                ];
+                return $activity;
+
             }
         }
         return [
