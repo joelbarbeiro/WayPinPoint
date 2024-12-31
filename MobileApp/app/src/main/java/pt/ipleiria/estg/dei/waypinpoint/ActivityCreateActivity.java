@@ -48,6 +48,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -159,7 +160,11 @@ public class ActivityCreateActivity extends AppCompatActivity implements Activit
                             categoryId
                     );
 
-                    SingletonManager.getInstance(getApplicationContext()).postActivityAPI(activity, dateHour, getApplicationContext());
+                    try {
+                        SingletonManager.getInstance(getApplicationContext()).postActivityAPI(activity, dateHour, getApplicationContext());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
         });
@@ -195,7 +200,7 @@ public class ActivityCreateActivity extends AppCompatActivity implements Activit
         DatePickerDialog datePickerDialog = new DatePickerDialog(
                 this,
                 (view, selectedYear, selectedMonth, selectedDay) -> {
-                    String selectedDate = selectedDay + "/" + (selectedMonth + 1) + "/" + selectedYear;
+                    String selectedDate = selectedYear + "-" + (selectedMonth + 1) + "-" + selectedDay;
                     showHourDropdown(selectedDate);
                 },
                 year, month, day

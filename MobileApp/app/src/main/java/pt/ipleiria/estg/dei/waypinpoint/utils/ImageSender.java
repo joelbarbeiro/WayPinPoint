@@ -32,7 +32,7 @@ public class ImageSender {
     }
 
     // Resize image and save it as a temporary file
-    private File resizeImageToTempFile(Uri imageUri, int width) throws IOException {
+    public static File resizeImageToTempFile(Context context, Uri imageUri, int width) throws IOException {
         // Decode image from URI
         Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), imageUri);
         if (bitmap == null) {
@@ -62,7 +62,7 @@ public class ImageSender {
         new Thread(() -> {
             try {
                 // Resize the image and save it as a temporary file
-                File tempFile = resizeImageToTempFile(imageUri, targetWidth);
+                File tempFile = resizeImageToTempFile(context.getApplicationContext(), imageUri, targetWidth);
 
                 // Prepare the connection for multipart/form-data
                 URL url = new URL(apiHost + endpoint);
@@ -111,17 +111,14 @@ public class ImageSender {
         String lineEnd = "\r\n";
         String twoHyphens = "--";
 
-        // Write form data boundary
         os.write((twoHyphens + boundary + lineEnd).getBytes());
 
-        // Write the ID field
         os.write("Content-Disposition: form-data; name=\"id\"".getBytes());
         os.write(lineEnd.getBytes());
         os.write(lineEnd.getBytes());
         os.write(String.valueOf(id).getBytes());
         os.write(lineEnd.getBytes());
 
-        // Write the file field
         os.write((twoHyphens + boundary + lineEnd).getBytes());
         os.write("Content-Disposition: form-data; name=\"photoFile\"; filename=\"temp_image.jpg\"".getBytes());
         os.write(lineEnd.getBytes());
@@ -129,7 +126,6 @@ public class ImageSender {
         os.write(lineEnd.getBytes());
         os.write(lineEnd.getBytes());
 
-        // Write the file content
         try (InputStream fileInputStream = new java.io.FileInputStream(tempFile)) {
             byte[] buffer = new byte[4096];
             int bytesRead;
@@ -152,33 +148,5 @@ public class ImageSender {
             }
         }
         return builder.toString();
-    }
-
-    public static byte[] getImageData(Context context, Uri imageUri) {
-        try {
-            int targetWidth = 200, quality = 20;
-            InputStream inputStream = context.getContentResolver().openInputStream(imageUri);
-            Bitmap originalBitmap = BitmapFactory.decodeStream(inputStream);
-
-            int targetHeight = (targetWidth * originalBitmap.getHeight()) / originalBitmap.getWidth();
-
-
-            if (originalBitmap == null) {
-                throw new IOException("Unable to decode image from URI: " + imageUri.toString());
-            }
-
-            // Scale the image to a smaller size
-            Bitmap scaledBitmap = Bitmap.createScaledBitmap(originalBitmap, targetWidth, targetHeight, true);
-
-            // Compress the scaled image
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            scaledBitmap.compress(Bitmap.CompressFormat.JPEG, quality, byteArrayOutputStream);
-
-            return byteArrayOutputStream.toByteArray();
-        } catch (IOException e) {
-            Log.e("getCompressedImageData", "Error compressing image: " + e.getMessage());
-            e.printStackTrace();
-            return null;
-        }
     }
 }

@@ -1,6 +1,5 @@
 package Model;
 
-import static pt.ipleiria.estg.dei.waypinpoint.utils.ImageSender.getImageData;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.DEFAULT_IMG;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.DELETE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EDIT;
@@ -40,6 +39,7 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -672,37 +672,41 @@ public class SingletonManager {
         }
     }
 
-    public void postActivityAPI(final Activity activity, final ArrayList<DateTimeParser> dateTimeParser, final Context context) {
+    public void postActivityAPI(final Activity activity, final ArrayList<DateTimeParser> dateTimeParser, final Context context) throws IOException {
         String apiHost = getApiHost(context);
 
         if (!StatusJsonParser.isConnectionInternet(context)) {
             Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
         } else {
-                Map<String, String> params = new HashMap<String, String>();
-                //params.put("token", "AMSI-TOKEN");
+            JSONObject params = new JSONObject();
+            try {
                 params.put("name", activity.getName());
                 params.put("description", activity.getDescription());
-                params.put("maxpax", "" + activity.getMaxpax());
-                params.put("priceperpax", "" + activity.getPriceperpax());
+                params.put("maxpax", activity.getMaxpax());
+                params.put("priceperpax", activity.getPriceperpax());
                 params.put("address", activity.getAddress());
-                params.put("category_id", "" + activity.getCategory());
+                params.put("category_id", activity.getCategory());
+                params.put("user_id", getUserId(context));
+                params.put("status", 1);
+
                 JSONArray dateArray = new JSONArray();
                 JSONArray hourArray = new JSONArray();
 
+                int i = 0;
                 for (DateTimeParser dateTime : dateTimeParser) {
-                    dateArray.put(dateTime.getParserDate());
-                    hourArray.put(dateTime.getParserTime());
+                    params.put("date[" + i + "]", dateTime.getParserDate());
+                    params.put("hour[" + i + "]", dateTime.getParserTime());
+                    i++;
                 }
 
-                params.put("date", dateArray.toString());
-                params.put("hour", hourArray.toString());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            Uri imgUri = Uri.parse(activity.getPhoto());
 
-                Uri imgUri = Uri.parse(activity.getPhoto());
-                byte[] imageData = getImageData(context, imgUri);
-                DataPart filePart = new DataPart("photoFile", "image/jpeg", imageData);
-
-                Map<String, DataPart> files = new HashMap<>();
-                files.put("photoFile", filePart);
+            Map<String, File> files = new HashMap<>();
+            File file = new File(String.valueOf(ImageSender.resizeImageToTempFile(context, imgUri, 640)));
+            files.put("photoFile", file);
 
             VolleyMultipartRequest multipartRequest = new VolleyMultipartRequest(
                     Request.Method.POST,
@@ -730,29 +734,22 @@ public class SingletonManager {
                             System.out.println("->> onErrorResponse: " + error.getMessage());
                             System.out.println("->> " + params);
 
-                            // Check if the error is a network error
+                            // Handle different types of errors
                             if (error instanceof NetworkError) {
                                 System.out.println("->> Network error occurred: " + error.getMessage());
-                            }
-                            // Check if the error is a server error (such as a 500 Internal Server Error)
-                            else if (error instanceof ServerError) {
+                            } else if (error instanceof ServerError) {
                                 System.out.println("->> Server error occurred: " + error.getMessage());
-                                // Optionally log the response code if available
                                 NetworkResponse response = error.networkResponse;
                                 if (response != null) {
                                     System.out.println("->> Server returned status code: " + response.statusCode);
                                 }
-                            }
-                            // Check for parsing errors (e.g., if the server returned malformed JSON)
-                            else if (error instanceof ParseError) {
+                            } else if (error instanceof ParseError) {
                                 System.out.println("->> Parse error: " + error.getMessage());
-                            }
-                            // Handle timeout errors
-                            else if (error instanceof TimeoutError) {
+                            } else if (error instanceof TimeoutError) {
                                 System.out.println("->> Timeout error: " + error.getMessage());
                             }
 
-                            // Log more details of the error if networkResponse is available
+                            // Log more details if networkResponse is available
                             if (error.networkResponse != null) {
                                 System.out.println("->> Response code: " + error.networkResponse.statusCode);
                                 System.out.println("->> Response body: " + new String(error.networkResponse.data));
