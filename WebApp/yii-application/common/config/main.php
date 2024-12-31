@@ -14,18 +14,18 @@ return [
             //'cache' => 'cache',
         ],
         'mailer' => [
-            'class' => 'yii\symfonymailer\Mailer',
+            'class' => \yii\symfonymailer\Mailer::class,
             'useFileTransport' => false,
             'transport' => [
-                'class' => 'Swift_SmtpTransport',
-                'dsn' => 'smtp://waypinpoint@gmail.com', // Gmail SMTP settings
-                'username' => 'waypinpoint@gmail.com', // Your Gmail email address
-                'password' => 'yxqb eccz rahl vxuo', // Your Gmail password or app password
-                'port' => '587', // Use 465 for SSL or 587 for TLS
-                'encryption' => 'tls', // Use 'tls' if you are using port 587
-                'enableTls' => true, // Required for Gmail
+                'scheme' => 'smtp',
+                'host' => 'smtp.gmail.com', // Correct SMTP host
+                'username' => 'waypinpoint@gmail.com', // Your Gmail email
+                'password' => 'yxqb eccz rahl vxuo', // Gmail app password
+                'port' => 587, // Use 587 for TLS
+                'encryption' => 'tls', // Encryption type
             ],
         ],
+        //Logger to see the emails to send in frontend/runtime/mail
         'log' => [
             'targets' => [
                 [
