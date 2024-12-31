@@ -16,11 +16,16 @@ import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getApiHost;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getImgUri;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getUserId;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -35,7 +40,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -44,13 +51,21 @@ import androidx.core.view.WindowInsetsCompat;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.FutureTarget;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.concurrent.ExecutionException;
 
 import Listeners.ActivityListener;
 import Model.Activity;
@@ -59,7 +74,7 @@ import Model.Category;
 import Model.DateTimeParser;
 import Model.SingletonManager;
 import Model.WaypinpointDbHelper;
-import pt.ipleiria.estg.dei.waypinpoint.utils.ImageSender;
+import pt.ipleiria.estg.dei.waypinpoint.utils.StatusJsonParser;
 
 public class ActivityCreateActivity extends AppCompatActivity implements ActivityListener {
     private int categoryId;
@@ -105,19 +120,19 @@ public class ActivityCreateActivity extends AppCompatActivity implements Activit
         btCreateDateHour = findViewById(R.id.btCreateDateHour);
 
         btCreateDateHour.setOnClickListener(v -> showDatePickerDialog());
-        
+
         imgActivity.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                Toast.makeText(ActivityCreateActivity.this, "IMAGE CLICKED MOTHER FUCKER!!!!!", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(intent, PICK_IMAGE);
             }
         });
-        
+
         fabCreateActivity = findViewById(R.id.fabCreateActivity);
 
         if (activity != null) {
+            imageUri = Uri.parse(activity.getPhoto());
             loadActivity();
             loadExistingDateTime(activity.getId());
             fabCreateActivity.setImageResource(R.drawable.ic_save);
@@ -136,7 +151,7 @@ public class ActivityCreateActivity extends AppCompatActivity implements Activit
                 if (activity != null) {
                     activity.setName(etName.getText().toString());
                     activity.setDescription(etDescription.getText().toString());
-                    activity.setPhoto(DEFAULT_IMG);
+                    activity.setPhoto(imageUri.toString());
                     activity.setMaxpax(Integer.parseInt(etMaxPax.getText().toString()));
                     activity.setPriceperpax(Double.parseDouble(etPricePerPax.getText().toString()));
                     activity.setAddress(etAddress.getText().toString());
@@ -144,7 +159,11 @@ public class ActivityCreateActivity extends AppCompatActivity implements Activit
                     activity.setStatus(1);
                     activity.setCategory(categoryId);
 
-                    //SingletonManager.getInstance(getApplicationContext()).putActivitiesApi(livro, dateHour, getApplicationContext());
+                    try {
+                        SingletonManager.getInstance(getApplicationContext()).editActivityAPI(activity, dateHour, getApplicationContext());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
 
                 } else {
                     activity = new Activity(
@@ -170,22 +189,22 @@ public class ActivityCreateActivity extends AppCompatActivity implements Activit
         });
 
         SingletonManager.getInstance(getApplicationContext()).setActivityListener(this);
-
     }
 
-    private void loadActivity() {
+    private void loadActivity(){
         setTitle("Edit: " + activity.getName());
 
         etName.setText(activity.getName());
         etDescription.setText(activity.getDescription());
         etMaxPax.setText("" + activity.getMaxpax());
         etPricePerPax.setText("" + activity.getPriceperpax());
+        etAddress.setText(activity.getAddress());
 
         loadCategory();
 
         String imgPath = getImgUri(getApplicationContext());
         Glide.with(getApplicationContext())
-                .load(imgPath + activity.getSupplier() + "/" + activity.getPhoto())
+                .load( imgPath + activity.getSupplier()+ "/" + activity.getPhoto())
                 .placeholder(R.drawable.img_default_activity)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(imgActivity);
@@ -382,5 +401,42 @@ public class ActivityCreateActivity extends AppCompatActivity implements Activit
                     imgActivity.setImageURI(imageUri);
                 }
             }
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        if(activity != null){
+            getMenuInflater().inflate(R.menu.menu_delete, menu);
+            return super.onCreateOptionsMenu(menu);
+        }
+        return false;
+    }
+
+    public boolean onOptionsItemSelected(@NonNull MenuItem item){
+        if(item.getItemId() == R.id.itemRemover){
+            if(!StatusJsonParser.isConnectionInternet(getApplicationContext())){
+                Toast.makeText(this, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
+            } else {
+                dialogRemover();
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void dialogRemover(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Delete activity")
+                .setMessage("Do you really whant to remove it")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        SingletonManager.getInstance(getApplicationContext()).delActivityAPI(activity, getApplicationContext());
+                    }
+                }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                }).setIcon(android.R.drawable.ic_delete)
+                .show();
     }
 }

@@ -78,26 +78,27 @@ public class VolleyMultipartRequest extends Request<String> {
 
             if (mFiles != null && !mFiles.isEmpty()) {
                 for (Map.Entry<String, File> entry : mFiles.entrySet()) {
-                    String key = entry.getKey(); // The form field name
-                    File file = entry.getValue(); // The actual file
+                    if(entry.getValue() != null) {
+                        String key = entry.getKey();
+                        File file = entry.getValue();
 
-                    String fileName = file.getName();
-                    String mimeType = "application/octet-stream"; // Default MIME type, update as needed
+                        String fileName = file.getName();
+                        String mimeType = "application/octet-stream";
 
-                    dataOutputStream.writeBytes("--boundary\r\n");
-                    dataOutputStream.writeBytes("Content-Disposition: form-data; name=\"" + key + "\"; filename=\"" + fileName + "\"\r\n");
-                    dataOutputStream.writeBytes("Content-Type: " + mimeType + "\r\n\r\n");
+                        dataOutputStream.writeBytes("--boundary\r\n");
+                        dataOutputStream.writeBytes("Content-Disposition: form-data; name=\"" + key + "\"; filename=\"" + fileName + "\"\r\n");
+                        dataOutputStream.writeBytes("Content-Type: " + mimeType + "\r\n\r\n");
 
-                    // Write the file content
-                    FileInputStream fileInputStream = new FileInputStream(file);
-                    byte[] buffer = new byte[1024];
-                    int bytesRead;
-                    while ((bytesRead = fileInputStream.read(buffer)) != -1) {
-                        dataOutputStream.write(buffer, 0, bytesRead);
+                        FileInputStream fileInputStream = new FileInputStream(file);
+                        byte[] buffer = new byte[1024];
+                        int bytesRead;
+                        while ((bytesRead = fileInputStream.read(buffer)) != -1) {
+                            dataOutputStream.write(buffer, 0, bytesRead);
+                        }
+                        fileInputStream.close();
+
+                        dataOutputStream.writeBytes("\r\n");
                     }
-                    fileInputStream.close();
-
-                    dataOutputStream.writeBytes("\r\n");
                 }
             }
 

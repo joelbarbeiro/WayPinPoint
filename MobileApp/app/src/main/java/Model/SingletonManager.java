@@ -764,7 +764,130 @@ public class SingletonManager {
             Volley.newRequestQueue(context).add(multipartRequest);
         }
     }
+    public void editActivityAPI(final Activity activity, final ArrayList<DateTimeParser> dateTimeParser, final Context context) throws IOException {
+        String apiHost = getApiHost(context);
 
+        if (!StatusJsonParser.isConnectionInternet(context)) {
+            Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
+        } else {
+            JSONObject params = new JSONObject();
+            try {
+                params.put("name", activity.getName());
+                params.put("description", activity.getDescription());
+                params.put("maxpax", activity.getMaxpax());
+                params.put("priceperpax", activity.getPriceperpax());
+                params.put("address", activity.getAddress());
+                params.put("category_id", activity.getCategory());
+                params.put("user_id", getUserId(context));
+                params.put("status", 1);
+
+                JSONArray dateArray = new JSONArray();
+                JSONArray hourArray = new JSONArray();
+
+                int i = 0;
+                for (DateTimeParser dateTime : dateTimeParser) {
+                    params.put("date[" + i + "]", dateTime.getParserDate());
+                    params.put("hour[" + i + "]", dateTime.getParserTime());
+                    i++;
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            Map<String, File> files = new HashMap<>();
+
+                Uri imgUri = Uri.parse(activity.getPhoto());
+            if(imgUri.getScheme() != null) {
+                File file = new File(String.valueOf(ImageSender.resizeImageToTempFile(context, imgUri, 640)));
+                files.put("photoFile", file);
+            } else {
+                files.put("photoFile", null);
+            }
+            VolleyMultipartRequest multipartRequest = new VolleyMultipartRequest(
+                    Request.Method.POST,
+                    apiHost + "activities/updateactivity/" + activity.getId(),
+                    params,
+                    files,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            System.out.println("->> " + params);
+
+                            System.out.println("->> Server Response: " + response);
+                            waypinpointDbHelper.addActivityDB(ActivityJsonParser.parserJsonActivity(response));
+
+                            if (activitiesListener != null) {
+                                activityListener.onRefreshActivityDetails(REGISTER);
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            System.out.println("->> onErrorResponse: " + error.getMessage());
+                            // Log the basic error message
+                            System.out.println("->> onErrorResponse: " + error.getMessage());
+                            System.out.println("->> " + params);
+
+                            // Handle different types of errors
+                            if (error instanceof NetworkError) {
+                                System.out.println("->> Network error occurred: " + error.getMessage());
+                            } else if (error instanceof ServerError) {
+                                System.out.println("->> Server error occurred: " + error.getMessage());
+                                NetworkResponse response = error.networkResponse;
+                                if (response != null) {
+                                    System.out.println("->> Server returned status code: " + response.statusCode);
+                                }
+                            } else if (error instanceof ParseError) {
+                                System.out.println("->> Parse error: " + error.getMessage());
+                            } else if (error instanceof TimeoutError) {
+                                System.out.println("->> Timeout error: " + error.getMessage());
+                            }
+
+                            // Log more details if networkResponse is available
+                            if (error.networkResponse != null) {
+                                System.out.println("->> Response code: " + error.networkResponse.statusCode);
+                                System.out.println("->> Response body: " + new String(error.networkResponse.data));
+                            }
+
+                            // Optionally, print the stack trace to debug further
+                            error.printStackTrace();
+                        }
+                    }
+            );
+
+            Volley.newRequestQueue(context).add(multipartRequest);
+        }
+    }
+    public void delActivityAPI(final Activity activity, final Context context){
+        String apiHost = getApiHost(context);
+
+        if(!StatusJsonParser.isConnectionInternet(context)){
+            Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
+        } else {
+            StringRequest request = new StringRequest(Request.Method.DELETE, apiHost + "activities/" + activity.getId(), new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+
+                    removeActivityBD(activity.getId());
+
+                    if(activityListener != null){
+                        activityListener.onRefreshActivityDetails(DELETE);
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+            volleyQueue.add(request);
+        }
+    }
+    public void removeActivityBD(int id){
+        Activity a = getActivity(id);
+        waypinpointDbHelper.delActivityDB(a.getId());
+    }
     public void addCalendarsDB(ArrayList<Calendar> calendar) {
         waypinpointDbHelper.delAllCalendarDB();
         for (Calendar c : calendar) {
