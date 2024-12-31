@@ -44,7 +44,7 @@ class ActivityController extends ActiveController
     {
         $activities = Activity::getActivities();
         if ($activities) {
-            return ['activities' => $activities];
+            return $activities;
         }
         return ['error' => 'Activity not found'];
     }
@@ -63,10 +63,7 @@ class ActivityController extends ActiveController
         $activity = new Activity();
         if ($activity->load(Yii::$app->request->post(), '')) {
             if (Activity::createActivity($activity)) {
-                return [
-                    'activity' => 'success',
-                    'message' => 'Activity created successfully',
-                ];
+                return $activity;
             }
         }
         return [
@@ -94,7 +91,6 @@ class ActivityController extends ActiveController
 
     public function actionDeleteactivity($id)
     {
-        echo $id;
         $activity = new Activity();
         if ($activity->deleteActivity($id)) {
             return [
@@ -191,7 +187,7 @@ class ActivityController extends ActiveController
         $photosDirectory = Yii::getAlias('@backend/web/img/activity/photos/' . $id . '/') ;
 
         if (!is_dir($photosDirectory)) {
-            return $this->asJson([]); // Return an empty array if the directory doesn't exist
+            return $this->asJson([]);
         }
 
         $files = scandir($photosDirectory);
