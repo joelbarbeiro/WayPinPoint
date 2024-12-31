@@ -20,7 +20,7 @@ import Model.Category;
 import pt.ipleiria.estg.dei.waypinpoint.R;
 import pt.ipleiria.estg.dei.waypinpoint.utils.Utilities;
 
-public class ActivitiesListAdaptor extends BaseAdapter {
+public class ActivitiesListAdapter extends BaseAdapter {
 
 
     private Context context;
@@ -31,7 +31,7 @@ public class ActivitiesListAdaptor extends BaseAdapter {
     private ArrayList<Category> categories;
 
 
-    public ActivitiesListAdaptor(Context context, ArrayList<Activity> activities, ArrayList<Calendar> calendars, ArrayList<CalendarTime> times, ArrayList<Category> categories) {
+    public ActivitiesListAdapter(Context context, ArrayList<Activity> activities, ArrayList<Calendar> calendars, ArrayList<CalendarTime> times, ArrayList<Category> categories) {
         this.context = context;
         this.activities = activities;
         this.calendars = calendars;

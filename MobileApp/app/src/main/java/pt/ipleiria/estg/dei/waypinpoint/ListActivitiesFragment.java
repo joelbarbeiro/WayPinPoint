@@ -32,7 +32,7 @@ import Model.Calendar;
 import Model.CalendarTime;
 import Model.Category;
 import Model.SingletonManager;
-import Adapters.ActivitiesListAdaptor;
+import Adapters.ActivitiesListAdapter;
 
 
 public class ListActivitiesFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, ActivitiesListener {
@@ -98,7 +98,7 @@ public class ListActivitiesFragment extends Fragment implements SwipeRefreshLayo
                     }
                 }
 
-                lvActivities.setAdapter(new ActivitiesListAdaptor(getContext(), tempActivity, calendars, times, categories));
+                lvActivities.setAdapter(new ActivitiesListAdapter(getContext(), tempActivity, calendars, times, categories));
 
                 return true;
             }
@@ -158,7 +158,7 @@ public class ListActivitiesFragment extends Fragment implements SwipeRefreshLayo
     @Override
     public void onRefreshAllData(ArrayList<Activity> listActivities, ArrayList<Calendar> listCalendar, ArrayList<CalendarTime> listCalendarTime, ArrayList<Category> listCategories){
         if (listActivities != null && listCalendar != null && listCalendarTime != null && listCategories != null) {
-            lvActivities.setAdapter(new ActivitiesListAdaptor(getContext(), listActivities, listCalendar, listCalendarTime, listCategories));
+            lvActivities.setAdapter(new ActivitiesListAdapter(getContext(), listActivities, listCalendar, listCalendarTime, listCategories));
         }
         else{
             System.out.println("---> something is empty listActivitiesFragment");

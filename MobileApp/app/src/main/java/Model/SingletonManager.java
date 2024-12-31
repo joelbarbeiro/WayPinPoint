@@ -765,6 +765,7 @@ public class SingletonManager {
             Volley.newRequestQueue(context).add(multipartRequest);
         }
     }
+
     public void editActivityAPI(final Activity activity, final ArrayList<DateTimeParser> dateTimeParser, final Context context) throws IOException {
         String apiHost = getApiHost(context);
         System.out.println("Running update");
@@ -797,8 +798,8 @@ public class SingletonManager {
             }
             Map<String, File> files = new HashMap<>();
 
-                Uri imgUri = Uri.parse(activity.getPhoto());
-            if(imgUri.getScheme() != null) {
+            Uri imgUri = Uri.parse(activity.getPhoto());
+            if (imgUri.getScheme() != null) {
                 File file = new File(String.valueOf(ImageSender.resizeImageToTempFile(context, imgUri, 640)));
                 files.put("photoFile", file);
             } else {
@@ -818,7 +819,7 @@ public class SingletonManager {
                             waypinpointDbHelper.editActivityDB(ActivityJsonParser.parserJsonActivity(response));
 
                             if (activitiesListener != null) {
-                                activityListener.onRefreshActivityDetails(REGISTER);
+                                activityListener.onRefreshActivityDetails(EDIT);
                             }
                         }
                     },
@@ -860,10 +861,11 @@ public class SingletonManager {
             Volley.newRequestQueue(context).add(multipartRequest);
         }
     }
-    public void delActivityAPI(final Activity activity, final Context context){
+
+    public void delActivityAPI(final Activity activity, final Context context) {
         String apiHost = getApiHost(context);
 
-        if(!StatusJsonParser.isConnectionInternet(context)){
+        if (!StatusJsonParser.isConnectionInternet(context)) {
             Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
         } else {
             StringRequest request = new StringRequest(Request.Method.DELETE, apiHost + "activities/" + activity.getId(), new Response.Listener<String>() {
@@ -872,7 +874,7 @@ public class SingletonManager {
 
                     removeActivityBD(activity.getId());
 
-                    if(activityListener != null){
+                    if (activityListener != null) {
                         activityListener.onRefreshActivityDetails(DELETE);
                     }
                 }
@@ -885,10 +887,12 @@ public class SingletonManager {
             volleyQueue.add(request);
         }
     }
-    public void removeActivityBD(int id){
+
+    public void removeActivityBD(int id) {
         Activity a = getActivity(id);
         waypinpointDbHelper.delActivityDB(a.getId());
     }
+
     public void addCalendarsDB(ArrayList<Calendar> calendar) {
         waypinpointDbHelper.delAllCalendarDB();
         for (Calendar c : calendar) {
