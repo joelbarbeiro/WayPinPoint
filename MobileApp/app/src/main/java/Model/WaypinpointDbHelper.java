@@ -311,7 +311,6 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
 
     public boolean editActivityDB(Activity a) {
         ContentValues val = new ContentValues();
-        val.put(ID, a.getId());
         val.put(NAME, a.getName());
         val.put(DESCRIPTION, a.getDescription());
         val.put(PHOTO, a.getPhoto());

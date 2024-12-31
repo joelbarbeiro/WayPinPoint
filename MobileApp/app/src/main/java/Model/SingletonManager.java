@@ -815,7 +815,7 @@ public class SingletonManager {
                             System.out.println("->> " + params);
 
                             System.out.println("->> Server Response: " + response);
-                            waypinpointDbHelper.addActivityDB(ActivityJsonParser.parserJsonActivity(response));
+                            waypinpointDbHelper.editActivityDB(ActivityJsonParser.parserJsonActivity(response));
 
                             if (activitiesListener != null) {
                                 activityListener.onRefreshActivityDetails(REGISTER);
