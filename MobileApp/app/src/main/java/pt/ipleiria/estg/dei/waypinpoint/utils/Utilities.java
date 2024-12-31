@@ -39,7 +39,7 @@ public class Utilities {
     public static final String TOKEN = "TOKEN";
     public static final String SNACKBAR_MESSAGE = "SNACKBAR_MESSAGE";
     public static final String ID_CART = "ID_CART";
-    public static final int DB_VERSION = 3;
+    public static final int DB_VERSION = 4;
 
     public static final String DEFAULT_IMG = "https://images.app.goo.gl/WRUpq3qmgD331B64A";
     public static final String PROFILE_PIC = "PROFILE_PIC";
@@ -227,5 +227,16 @@ public class Utilities {
         String formattedDate = dateFormat.format(date);
 
         return formattedDate;
+    }
+    public static ArrayList<Model.Activity> filterActivitiesBySupplier(Context context, ArrayList<Model.Activity> listActivities){
+        ArrayList<Model.Activity> filteredActivities = new ArrayList<>();
+        for (Model.Activity a : listActivities){
+            if (Utilities.getUserId(context) == a.getSupplier()) {
+                filteredActivities.add(a);
+                System.out.println(">>> " + a );
+            }
+        }
+
+        return filteredActivities;
     }
 }

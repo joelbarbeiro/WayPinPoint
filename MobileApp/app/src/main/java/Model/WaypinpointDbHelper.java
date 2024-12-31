@@ -1,5 +1,7 @@
 package Model;
 
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.DB_VERSION;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -8,13 +10,15 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.Nullable;
 
+import com.bumptech.glide.util.Util;
+
 import java.util.ArrayList;
+
+import pt.ipleiria.estg.dei.waypinpoint.utils.Utilities;
 
 public class WaypinpointDbHelper extends SQLiteOpenHelper {
 
     private static final String DB_NAME = "waypinpointmobile";
-    private static final int DB_VERSION = 4;
-
     private final SQLiteDatabase db;
 
     //region = USER DECLARATIONS #
@@ -51,7 +55,7 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
     //endregion
 
     //region = CATEGORY DECLARATIONS #
-    private static String TABLE_NAME_CATEGORY = "categories";
+    private static final String TABLE_NAME_CATEGORY = "categories";
     //endregion
 
     //region = CALENDAR #
@@ -98,8 +102,13 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
                 TOKEN + " TEXT," +
                 ROLE + " TEXT" +
                 ");";
-
-        db.execSQL(createUserTable);
+        try {
+            db.execSQL(createUserTable);
+            System.out.println("->>> Table " + TABLE_NAME_CART + " created successfully.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("->>> Error creating table: " + e.getMessage());
+        }
 
         String createActivitiesTable = "CREATE TABLE " + TABLE_NAME_ACTIVITIES +
                 "(" +
@@ -114,14 +123,26 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
                 STATUS + " INTEGER NOT NULL, " +
                 CATEGORY_ID + " TEXT NOT NULL" +
                 ")";
-        db.execSQL(createActivitiesTable);
+        try {
+            db.execSQL(createActivitiesTable);
+            System.out.println("->>> Table " + TABLE_NAME_CART + " created successfully.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("->>> Error creating table: " + e.getMessage());
+        }
 
         String createCategoryTable = "CREATE TABLE " + TABLE_NAME_CATEGORY +
                 "(" +
                 ID + " INTEGER, " +
                 DESCRIPTION + " TEXT NOT NULL" +
                 ")";
-        db.execSQL(createCategoryTable);
+        try {
+            db.execSQL(createCategoryTable);
+            System.out.println("->>> Table " + TABLE_NAME_CART + " created successfully.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("->>> Error creating table: " + e.getMessage());
+        }
 
         String createCalendarTable = "CREATE TABLE " + TABLE_NAME_CALENDAR +
                 "(" +
@@ -131,14 +152,26 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
                 DATE + " TEXT NOT NULL, " +
                 ID_TIME + " INTEGER NOT NULL" +
                 ")";
-        db.execSQL(createCalendarTable);
+        try {
+            db.execSQL(createCalendarTable);
+            System.out.println("->>> Table " + TABLE_NAME_CART + " created successfully.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("->>> Error creating table: " + e.getMessage());
+        }
 
         String createTimeTable = "CREATE TABLE " + TABLE_NAME_TIME +
                 "(" +
                 ID + " INTEGER, " +
                 HOUR + " TEXT NOT NULL" +
                 ")";
-        db.execSQL(createTimeTable);
+        try {
+            db.execSQL(createTimeTable);
+            System.out.println("->>> Table " + TABLE_NAME_CART + " created successfully.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("->>> Error creating table: " + e.getMessage());
+        }
 
         String createReviewsTable = "CREATE TABLE " + TABLE_NAME_REVIEWS +
                 "(" +
@@ -150,7 +183,13 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
                 CREATED_AT + " INT NOT NULL, " +
                 CREATOR + " TEXT" +
                 ")";
-        db.execSQL(createReviewsTable);
+        try {
+            db.execSQL(createReviewsTable);
+            System.out.println("->>> Table " + TABLE_NAME_CART + " created successfully.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("->>> Error creating table: " + e.getMessage());
+        }
 
         String createCartTable = "CREATE TABLE " + TABLE_NAME_CART +
                 "(" + ID + " INTEGER, " +
@@ -162,10 +201,10 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
                 ");";
         try {
             db.execSQL(createCartTable);
-            System.out.println("Table " + TABLE_NAME_CART + " created successfully.");
+            System.out.println("->>> Table " + TABLE_NAME_CART + " created successfully.");
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("Error creating table: " + e.getMessage());
+            System.out.println("->>> Error creating table: " + e.getMessage());
         }
     }
 
@@ -173,6 +212,7 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME_USERS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME_ACTIVITIES);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME_CATEGORY);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME_CALENDAR);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME_TIME);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME_REVIEWS);
@@ -271,7 +311,6 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
 
     public boolean editActivityDB(Activity a) {
         ContentValues val = new ContentValues();
-        val.put(ID, a.getId());
         val.put(NAME, a.getName());
         val.put(DESCRIPTION, a.getDescription());
         val.put(PHOTO, a.getPhoto());
@@ -461,8 +500,8 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
         return time;
     }
 
-    public ArrayList<CalendarTime> getCalendarTimeById(int id) {
-        ArrayList<CalendarTime> time = new ArrayList<>();
+    public CalendarTime getCalendarTimeById(int id) {
+        CalendarTime time = null;
 
         String selection = ID + " = ?";
         String[] selectionArgs = {String.valueOf(id)};
@@ -474,8 +513,7 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
                 null, null, null);
         if (cursor.moveToFirst()) {
             do {
-                CalendarTime auxTime = new CalendarTime(cursor.getInt(0), cursor.getString(1));
-                time.add(auxTime);
+                time = new CalendarTime(cursor.getInt(0), cursor.getString(1));
             } while (cursor.moveToNext());
         }
         return time;

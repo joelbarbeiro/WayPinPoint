@@ -13,15 +13,22 @@ import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getUserId;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkError;
+import com.android.volley.NetworkResponse;
+import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.ServerError;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
@@ -30,6 +37,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,6 +53,9 @@ import Listeners.PhotosListener;
 import Listeners.ReviewListener;
 import Listeners.ReviewsListener;
 import Listeners.UserListener;
+import pt.ipleiria.estg.dei.waypinpoint.ActivityCreateActivity;
+import pt.ipleiria.estg.dei.waypinpoint.ActivityDetailsActivity;
+import pt.ipleiria.estg.dei.waypinpoint.MenuMainActivity;
 import pt.ipleiria.estg.dei.waypinpoint.R;
 import pt.ipleiria.estg.dei.waypinpoint.utils.ActivityJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.CalendarJsonParser;
@@ -52,6 +66,7 @@ import pt.ipleiria.estg.dei.waypinpoint.utils.StatusJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.TimeJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.UserJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.Utilities;
+import pt.ipleiria.estg.dei.waypinpoint.utils.ImageSender;
 
 public class SingletonManager {
 
@@ -82,11 +97,12 @@ public class SingletonManager {
     //region # Activities instances #
 
     private ActivitiesListener activitiesListener;
+    private ActivityListener activityListener;
+
     private ArrayList<Activity> activities;
     private ArrayList<Calendar> calendars;
     private ArrayList<CalendarTime> calendarTimes;
     private ArrayList<Category> categories;
-    private ActivityListener activityListener;
 
     //endregion
 
@@ -97,7 +113,6 @@ public class SingletonManager {
 
         users = new ArrayList<>();
         carts = new ArrayList<>();
-
         activities = new ArrayList<>();
         reviews = new ArrayList<>();
         calendars = new ArrayList<>();
@@ -633,10 +648,10 @@ public class SingletonManager {
             getCalendar(context, onRequestCompleted);
             getCategory(context, onRequestCompleted);
 
-            JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, apiHost + "activities", null, new Response.Listener<JSONArray>() {
+            JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, apiHost + "activities/all", null, new Response.Listener<JSONArray>() {
                 @Override
                 public void onResponse(JSONArray response) {
-                    activities = ActivityJsonParser.parserJsonActivity(response);
+                    activities = ActivityJsonParser.parserJsonActivities(response);
                     addActivitiesDB(activities);
                     onRequestCompleted.run();
 
@@ -655,6 +670,227 @@ public class SingletonManager {
             });
             volleyQueue.add(request);
         }
+    }
+
+    public void postActivityAPI(final Activity activity, final ArrayList<DateTimeParser> dateTimeParser, final Context context) throws IOException {
+        String apiHost = getApiHost(context);
+        System.out.println("Running create");
+
+        if (!StatusJsonParser.isConnectionInternet(context)) {
+            Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
+        } else {
+            JSONObject params = new JSONObject();
+            try {
+                params.put("name", activity.getName());
+                params.put("description", activity.getDescription());
+                params.put("maxpax", activity.getMaxpax());
+                params.put("priceperpax", activity.getPriceperpax());
+                params.put("address", activity.getAddress());
+                params.put("category_id", activity.getCategory());
+                params.put("user_id", getUserId(context));
+                params.put("status", 1);
+
+                JSONArray dateArray = new JSONArray();
+                JSONArray hourArray = new JSONArray();
+
+                int i = 0;
+                for (DateTimeParser dateTime : dateTimeParser) {
+                    params.put("date[" + i + "]", dateTime.getParserDate());
+                    params.put("hour[" + i + "]", dateTime.getParserTime());
+                    i++;
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            Uri imgUri = Uri.parse(activity.getPhoto());
+
+            Map<String, File> files = new HashMap<>();
+            File file = new File(String.valueOf(ImageSender.resizeImageToTempFile(context, imgUri, 640)));
+            files.put("photoFile", file);
+
+            VolleyMultipartRequest multipartRequest = new VolleyMultipartRequest(
+                    Request.Method.POST,
+                    apiHost + "activities/createactivity",
+                    params,
+                    files,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            System.out.println("->> " + params);
+
+                            System.out.println("->> Server Response: " + response);
+                            waypinpointDbHelper.addActivityDB(ActivityJsonParser.parserJsonActivity(response));
+
+                            if (activitiesListener != null) {
+                                activityListener.onRefreshActivityDetails(REGISTER);
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            System.out.println("->> onErrorResponse: " + error.getMessage());
+                            // Log the basic error message
+                            System.out.println("->> onErrorResponse: " + error.getMessage());
+                            System.out.println("->> " + params);
+
+                            // Handle different types of errors
+                            if (error instanceof NetworkError) {
+                                System.out.println("->> Network error occurred: " + error.getMessage());
+                            } else if (error instanceof ServerError) {
+                                System.out.println("->> Server error occurred: " + error.getMessage());
+                                NetworkResponse response = error.networkResponse;
+                                if (response != null) {
+                                    System.out.println("->> Server returned status code: " + response.statusCode);
+                                }
+                            } else if (error instanceof ParseError) {
+                                System.out.println("->> Parse error: " + error.getMessage());
+                            } else if (error instanceof TimeoutError) {
+                                System.out.println("->> Timeout error: " + error.getMessage());
+                            }
+
+                            // Log more details if networkResponse is available
+                            if (error.networkResponse != null) {
+                                System.out.println("->> Response code: " + error.networkResponse.statusCode);
+                                System.out.println("->> Response body: " + new String(error.networkResponse.data));
+                            }
+
+                            // Optionally, print the stack trace to debug further
+                            error.printStackTrace();
+                        }
+                    }
+            );
+
+            Volley.newRequestQueue(context).add(multipartRequest);
+        }
+    }
+
+    public void editActivityAPI(final Activity activity, final ArrayList<DateTimeParser> dateTimeParser, final Context context) throws IOException {
+        String apiHost = getApiHost(context);
+        System.out.println("Running update");
+        if (!StatusJsonParser.isConnectionInternet(context)) {
+            Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
+        } else {
+            JSONObject params = new JSONObject();
+            try {
+                params.put("name", activity.getName());
+                params.put("description", activity.getDescription());
+                params.put("maxpax", activity.getMaxpax());
+                params.put("priceperpax", activity.getPriceperpax());
+                params.put("address", activity.getAddress());
+                params.put("category_id", activity.getCategory());
+                params.put("user_id", getUserId(context));
+                params.put("status", 1);
+
+                JSONArray dateArray = new JSONArray();
+                JSONArray hourArray = new JSONArray();
+
+                int i = 0;
+                for (DateTimeParser dateTime : dateTimeParser) {
+                    params.put("date[" + i + "]", dateTime.getParserDate());
+                    params.put("hour[" + i + "]", dateTime.getParserTime());
+                    i++;
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            Map<String, File> files = new HashMap<>();
+
+            Uri imgUri = Uri.parse(activity.getPhoto());
+            if (imgUri.getScheme() != null) {
+                File file = new File(String.valueOf(ImageSender.resizeImageToTempFile(context, imgUri, 640)));
+                files.put("photoFile", file);
+            } else {
+                files.put("photoFile", null);
+            }
+            VolleyMultipartRequest multipartRequest = new VolleyMultipartRequest(
+                    Request.Method.POST,
+                    apiHost + "activities/updateactivity/" + activity.getId(),
+                    params,
+                    files,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            System.out.println("->> " + params);
+
+                            System.out.println("->> Server Response: " + response);
+                            waypinpointDbHelper.editActivityDB(ActivityJsonParser.parserJsonActivity(response));
+
+                            if (activitiesListener != null) {
+                                activityListener.onRefreshActivityDetails(EDIT);
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            System.out.println("->> onErrorResponse: " + error.getMessage());
+                            // Log the basic error message
+                            System.out.println("->> onErrorResponse: " + error.getMessage());
+                            System.out.println("->> " + params);
+
+                            // Handle different types of errors
+                            if (error instanceof NetworkError) {
+                                System.out.println("->> Network error occurred: " + error.getMessage());
+                            } else if (error instanceof ServerError) {
+                                System.out.println("->> Server error occurred: " + error.getMessage());
+                                NetworkResponse response = error.networkResponse;
+                                if (response != null) {
+                                    System.out.println("->> Server returned status code: " + response.statusCode);
+                                }
+                            } else if (error instanceof ParseError) {
+                                System.out.println("->> Parse error: " + error.getMessage());
+                            } else if (error instanceof TimeoutError) {
+                                System.out.println("->> Timeout error: " + error.getMessage());
+                            }
+
+                            // Log more details if networkResponse is available
+                            if (error.networkResponse != null) {
+                                System.out.println("->> Response code: " + error.networkResponse.statusCode);
+                                System.out.println("->> Response body: " + new String(error.networkResponse.data));
+                            }
+
+                            // Optionally, print the stack trace to debug further
+                            error.printStackTrace();
+                        }
+                    }
+            );
+
+            Volley.newRequestQueue(context).add(multipartRequest);
+        }
+    }
+
+    public void delActivityAPI(final Activity activity, final Context context) {
+        String apiHost = getApiHost(context);
+
+        if (!StatusJsonParser.isConnectionInternet(context)) {
+            Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
+        } else {
+            StringRequest request = new StringRequest(Request.Method.DELETE, apiHost + "activities/" + activity.getId(), new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+
+                    removeActivityBD(activity.getId());
+
+                    if (activityListener != null) {
+                        activityListener.onRefreshActivityDetails(DELETE);
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+            volleyQueue.add(request);
+        }
+    }
+
+    public void removeActivityBD(int id) {
+        Activity a = getActivity(id);
+        waypinpointDbHelper.delActivityDB(a.getId());
     }
 
     public void addCalendarsDB(ArrayList<Calendar> calendar) {
@@ -796,7 +1032,6 @@ public class SingletonManager {
         }
         return null;
     }
-
 
     public void addReviewsDb(ArrayList<Review> reviews) {
         waypinpointDbHelper.delAllReviewsDb();

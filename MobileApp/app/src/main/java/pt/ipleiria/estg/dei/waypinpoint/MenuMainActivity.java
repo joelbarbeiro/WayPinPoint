@@ -2,6 +2,7 @@ package pt.ipleiria.estg.dei.waypinpoint;
 
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.DELETE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EDIT;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.REGISTER;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EMAIL;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ENDPOINT_USER;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.OP_CODE;
@@ -146,7 +147,16 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
             Intent intent = new Intent(this, MyProfileActivity.class);
             startActivityForResult(intent, EDIT);
         }
-        if (item.getItemId() == R.id.navMyActivities) System.out.println("--> My Activities");
+        if (item.getItemId() == R.id.navListActivities) {
+            System.out.println("--> Activities");
+            fragment = new ListActivitiesFragment();
+            fragmentManager.beginTransaction().replace(R.id.contentFragment, fragment).commit();
+        }
+        if (item.getItemId() == R.id.navMyActivities) {
+            System.out.println("--> My Activities");
+            fragment = new MyActivitiesFragment();
+            fragmentManager.beginTransaction().replace(R.id.contentFragment, fragment).commit();
+        }
         if (item.getItemId() == R.id.navMyReceipts) System.out.println("--> My Receipts");
         if (item.getItemId() == R.id.navChangeHost) System.out.println("--> Change Host");
         if (item.getItemId() == R.id.navLogout) {

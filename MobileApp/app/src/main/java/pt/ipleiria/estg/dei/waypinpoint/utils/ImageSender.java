@@ -1,15 +1,20 @@
 package pt.ipleiria.estg.dei.waypinpoint.utils;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.util.Base64;
+import android.util.Log;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -27,7 +32,7 @@ public class ImageSender {
     }
 
     // Resize image and save it as a temporary file
-    private File resizeImageToTempFile(Uri imageUri, int width) throws IOException {
+    public static File resizeImageToTempFile(Context context, Uri imageUri, int width) throws IOException {
         // Decode image from URI
         Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), imageUri);
         if (bitmap == null) {
@@ -57,7 +62,7 @@ public class ImageSender {
         new Thread(() -> {
             try {
                 // Resize the image and save it as a temporary file
-                File tempFile = resizeImageToTempFile(imageUri, targetWidth);
+                File tempFile = resizeImageToTempFile(context.getApplicationContext(), imageUri, targetWidth);
 
                 // Prepare the connection for multipart/form-data
                 URL url = new URL(apiHost + endpoint);
@@ -106,17 +111,14 @@ public class ImageSender {
         String lineEnd = "\r\n";
         String twoHyphens = "--";
 
-        // Write form data boundary
         os.write((twoHyphens + boundary + lineEnd).getBytes());
 
-        // Write the ID field
         os.write("Content-Disposition: form-data; name=\"id\"".getBytes());
         os.write(lineEnd.getBytes());
         os.write(lineEnd.getBytes());
         os.write(String.valueOf(id).getBytes());
         os.write(lineEnd.getBytes());
 
-        // Write the file field
         os.write((twoHyphens + boundary + lineEnd).getBytes());
         os.write("Content-Disposition: form-data; name=\"photoFile\"; filename=\"temp_image.jpg\"".getBytes());
         os.write(lineEnd.getBytes());
@@ -124,7 +126,6 @@ public class ImageSender {
         os.write(lineEnd.getBytes());
         os.write(lineEnd.getBytes());
 
-        // Write the file content
         try (InputStream fileInputStream = new java.io.FileInputStream(tempFile)) {
             byte[] buffer = new byte[4096];
             int bytesRead;
@@ -148,4 +149,5 @@ public class ImageSender {
         }
         return builder.toString();
     }
+
 }

@@ -1,4 +1,4 @@
-package pt.ipleiria.estg.dei.waypinpoint.Adapters;
+package Adapters;
 
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getActivityNameById;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getCalendarDateById;

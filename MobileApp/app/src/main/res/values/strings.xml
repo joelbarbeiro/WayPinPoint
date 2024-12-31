@@ -97,7 +97,6 @@
     <string name="cart_edited">Cart Edited!</string>
     <string name="cart_deleted">Cart Deleted!</string>
     <string name="quantity">Quantity</string>
-    <string name="my_cart">My Cart</string>
     <string name="cart_added_successfully">Cart added successfully!</string>
     <string name="cart_activity_name">Activity Name:</string>
     <string name="cart_quantity">Quantity:</string>
@@ -137,6 +136,16 @@
     <string name="activity_pictures_description">Activity Pictures</string>
     <string name="details_activity_category">Category</string>
     <string name="activity_details_date_time">Date - time</string>
+    <string name="my_cart">My Cart</string>
+    <string name="create_activity_save">Save</string>
+    <string name="selected_date_create_activity">Selected Date</string>
+    <string name="category">Category</string>
+    <string name="availabillity">Availabillity</string>
+    <string name="ticket_price">Ticket price</string>
+    <string name="activity_descritpion">Descritpion</string>
+    <string name="menu_list_activities_label">List Activities</string>
+    <string name="fab_save">Save</string>
+    <string name="activity_create_address">Address</string>
     <string name="fab_add_photo">Add Photo</string>
 
 

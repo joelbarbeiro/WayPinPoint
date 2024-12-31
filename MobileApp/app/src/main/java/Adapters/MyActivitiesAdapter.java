@@ -1,4 +1,4 @@
-package adaptors;
+package Adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -11,20 +11,16 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
-import java.sql.Array;
 import java.util.ArrayList;
 
 import Model.Activity;
 import Model.Calendar;
 import Model.CalendarTime;
 import Model.Category;
-import Model.WaypinpointDbHelper;
 import pt.ipleiria.estg.dei.waypinpoint.R;
 import pt.ipleiria.estg.dei.waypinpoint.utils.Utilities;
 
-public class ActivitiesListAdaptor extends BaseAdapter {
-
-
+public class MyActivitiesAdapter extends BaseAdapter {
     private Context context;
     private LayoutInflater inflater;
     private ArrayList<Activity> activities;
@@ -33,7 +29,7 @@ public class ActivitiesListAdaptor extends BaseAdapter {
     private ArrayList<Category> categories;
 
 
-    public ActivitiesListAdaptor(Context context, ArrayList<Activity> activities, ArrayList<Calendar> calendars, ArrayList<CalendarTime> times, ArrayList<Category> categories) {
+    public MyActivitiesAdapter(Context context, ArrayList<Activity> activities, ArrayList<Calendar> calendars, ArrayList<CalendarTime> times, ArrayList<Category> categories) {
         this.context = context;
         this.activities = activities;
         this.calendars = calendars;
@@ -73,7 +69,7 @@ public class ActivitiesListAdaptor extends BaseAdapter {
         }
         viewHolderActivity.update(activities.get(i));
 
-        return view;
+       return view;
     }
 
     private class ViewHolderActivity {

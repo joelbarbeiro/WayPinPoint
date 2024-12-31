@@ -1,5 +1,7 @@
 package pt.ipleiria.estg.dei.waypinpoint;
 
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getCategoryById;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -7,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -38,12 +39,12 @@ public class ActivityDetailsActivity extends AppCompatActivity {
     private ArrayList<Calendar> calendars = new ArrayList<>();
     private ArrayList<CalendarTime> calendarTimesList = new ArrayList<>();
     private Activity activity;
-    private EditText etName;
-    private EditText etDescription;
-    private EditText etMaxPax;
-    private EditText etPricePerPax;
+    private TextView tvName;
+    private TextView tvDescription;
+    private TextView tvMaxPax;
+    private TextView tvPricePerPax;
+    private TextView tvCategory;
     private Button btnReviews;
-    private Spinner spinnerCategories;
     private Spinner spinnerDateTime;
     private ImageView imageActivity;
     private FloatingActionButton fabCrudActivity;
@@ -65,11 +66,11 @@ public class ActivityDetailsActivity extends AppCompatActivity {
         calendarTimesList = waypinpointDbHelper.getCalendarTimeDB();
 
         imageActivity = findViewById(R.id.imgActiviy);
-        etName = findViewById(R.id.etActivityName);
-        etDescription = findViewById(R.id.etActivityDescription);
-        etMaxPax = findViewById(R.id.etActivityMaxPax);
-        etPricePerPax = findViewById(R.id.etActivityPricePerPax);
-        spinnerCategories = findViewById(R.id.spinnerActivityDetailsCategory);
+        tvName = findViewById(R.id.tvActivityDetailsName);
+        tvDescription = findViewById(R.id.tvActivityDetailsDescription);
+        tvMaxPax = findViewById(R.id.tvActivityDetailsMaxPax);
+        tvPricePerPax = findViewById(R.id.tvActivityDetailsPricePerPax);
+        tvCategory = findViewById(R.id.tvActivityDetailsCategory);
         spinnerDateTime = findViewById(R.id.spinnerActivityDateTime);
 
         btnReviews = findViewById(R.id.btnReview);
@@ -90,45 +91,11 @@ public class ActivityDetailsActivity extends AppCompatActivity {
     private void loadActivity() {
         setTitle("Detalhes: " + activity.getName());
 
-        etName.setText(activity.getName());
-        etDescription.setText(activity.getDescription());
-        etMaxPax.setText("" + activity.getMaxpax());
-        etPricePerPax.setText("" + activity.getPriceperpax());
-
-        //region # Category spinner #
-        // ######################################################################
-        ArrayAdapter<Category> categoryAdapter = new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_spinner_item,
-                categories
-        );
-        categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerCategories.setAdapter(categoryAdapter);
-        int positionToSelect = -1;
-
-        for (int i = 0; i < categories.size(); i++) {
-            if (categories.get(i).getId() == activity.getCategory()) {
-                positionToSelect = i;
-                break;
-            }
-        }
-        if (positionToSelect != -1) {
-            spinnerCategories.setSelection(positionToSelect);
-        }
-
-        spinnerCategories.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Category selectedCategory = (Category) parent.getItemAtPosition(position);
-                int categoryId = selectedCategory.getId();
-                String categoryDescription = selectedCategory.getDescription();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
-        //endregion
+        tvName.setText(activity.getName());
+        tvDescription.setText(activity.getDescription());
+        tvMaxPax.setText("" + activity.getMaxpax());
+        tvPricePerPax.setText("" + activity.getPriceperpax());
+        tvCategory.setText(getCategoryById(activity.getId(), categories));
 
         //region # DateTime spinner #
         // ######################################################################
