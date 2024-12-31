@@ -104,6 +104,8 @@ class SignupForm extends Model
             $user->email = $this->email;
             $user->setPassword($this->password);
             $user->generateAuthKey();
+            $user->created_at = time();
+            $user->updated_at = 0;
             $user->status = 10;
             if ($user->save(false)) {
                 $userExtra = new UserExtra();
@@ -150,6 +152,7 @@ class SignupForm extends Model
             if ($this->password) {
                 $user->setPassword($this->password);
             }
+            $user->updated_at = time();
             $userExtra->uploadUserPhoto($this);
             $userExtra->phone = $this->phone;
             $userExtra->address = $this->address;

@@ -76,6 +76,7 @@ class ReviewController extends Controller
         $model->activity_id = $id;
         $userId = Yii::$app->user->id;
         $model->user_id = $userId;
+        $model->created_at = time();
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {

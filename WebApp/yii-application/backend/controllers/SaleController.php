@@ -85,6 +85,7 @@ class SaleController extends Controller
         $clientsMap = ArrayHelper::map($clients, 'id', 'username');
         $model->seller_id = $seller->id;
         $model->localsellpoint_id = $seller->localsellpoint_id;
+        $calendar_id = $model->calendar_id;
         if (!$seller || !$seller->supplier) {
             throw new NotFoundHttpException('Supplier information is missing.');
         }
