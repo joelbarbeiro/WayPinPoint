@@ -10,7 +10,7 @@ use common\models\Invoice;
 use common\models\Sale;
 use common\models\Ticket;
 use Da\QrCode\QrCode;
-use Mpdf\Mpdf;
+use Dompdf\Dompdf;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
@@ -175,6 +175,7 @@ class CartController extends Controller
                     }
                     // Generate PDF content
                     $content = $this->renderPartial('receipt', ['cart' => $cart]);
+                    $pdfContent = $this->generatePdf($content);
                     $qrCodeImage = $qrCode->writeString(); // QR Code as PNG string
 
                     // Send email with attachments
@@ -184,7 +185,7 @@ class CartController extends Controller
                         ->setSubject('Your Booking Receipt and Ticket')
                         ->setTextBody('Your receipt and ticket are attached.')
                         ->setHtmlBody('<b>Thank you for your booking! Your receipt and ticket are attached.</b>')
-                        ->attachContent($content, ['fileName' => 'receipt.pdf', 'contentType' => 'application/pdf'])
+                        ->attachContent($pdfContent, ['fileName' => 'receipt.pdf', 'contentType' => 'application/pdf'])
                         ->attachContent($qrCodeImage, ['fileName' => 'ticket.png', 'contentType' => 'image/png'])
                         ->send()) {
                         Yii::$app->session->setFlash('success', 'Email sent successfully!');
@@ -207,11 +208,20 @@ class CartController extends Controller
         return $qrCode;
     }
 
-    public function generatePdf($content)
+//    public function generatePdf/($content)
+//    {
+//        $pdf = new Mpdf();
+//        $pdf->WriteHTML($content);
+//        $pdf->Output('receipt.pdf', 'D');
+//    }
+
+    public function generatePdf($content): ?string
     {
-        $pdf = new Mpdf();
-        $pdf->WriteHTML($content);
-        $pdf->Output('receipt.pdf', 'D');
+        $dompdf = new Dompdf();
+        $dompdf->loadHtml($content);
+        $dompdf->setPaper('A4');
+        $dompdf->render();
+        return $dompdf->output();
     }
 
 }

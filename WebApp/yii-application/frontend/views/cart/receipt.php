@@ -27,12 +27,15 @@ use common\models\User;
         }
     </style>
 </head>
+<body>
 <p>
 <h1>Receipt</h1>
 <p><strong>User:</strong> <?= $cart->user->username ?></p>
+<p><strong>NIF:</strong> <?= $cart->user->userextra->nif ?></p>
+<p><strong>Address:</strong> <?= $cart->user->userextra->address ?></p>
 <p><strong>Activity Name:</strong> <?= $cart->activity->name ?></p>
 <p><strong>Activity Description:</strong> <?= $cart->activity->description ?></p>
-<p><strong>Price per Pax:</strong> <?= ($cart->activity->priceperpax) . "€" ?></p>
+<p><strong>Total</strong> <?= ($cart->activity->priceperpax * $cart->quantity) . "€" ?></p>
 <p><strong>Day:</strong> <?= $cart->calendar->date->date ?> </p>
 <p><strong>Hour:</strong> <?= $cart->calendar->time->hour ?> </p>
 <p><strong>Quantity:</strong> <?= $cart->quantity ?></p>
