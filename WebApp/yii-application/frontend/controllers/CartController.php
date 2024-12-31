@@ -92,7 +92,6 @@ class CartController extends Controller
                 if ($model->save()) {
                     return $this->redirect(['cart/index', 'user_id' => $model->user_id, 'product_id' => $model->product_id, 'calendar_id' => $model->calendar_id]);
                 }
-                dd($model->errors);
             }
         } else {
             Yii::$app->session->setFlash('Not enough tickets available');
@@ -212,8 +211,7 @@ class CartController extends Controller
     {
         $pdf = new Mpdf();
         $pdf->WriteHTML($content);
-        $pdf->Output('receipt.pdf','D');
-        return $pdf;
+        $pdf->Output('receipt.pdf', 'D');
     }
 
 }

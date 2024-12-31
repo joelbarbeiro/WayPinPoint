@@ -2,7 +2,7 @@
 
 namespace common\models;
 
-use backend\models\Localsellpoint;
+use common\models\UserExtra;
 use Yii;
 use yii\db\Expression;
 use yii\web\ServerErrorHttpException;
@@ -22,6 +22,7 @@ use yii\web\ServerErrorHttpException;
  * @property Activity $activity
  * @property User $buyer0
  * @property Invoice[] $invoices
+ * @property UserExtra $localsellpoint
  * @property User $seller
  */
 class Sale extends \yii\db\ActiveRecord
@@ -48,7 +49,7 @@ class Sale extends \yii\db\ActiveRecord
             [['purchase_date'], 'safe'],
             [['activity_id'], 'exist', 'skipOnError' => true, 'targetClass' => Activity::class, 'targetAttribute' => ['activity_id' => 'id']],
             [['buyer'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['buyer' => 'id']],
-            [['localsellpoint_id'], 'exist', 'skipOnError' => true, 'targetAttribute' => ['localsellpoint_id' => 'localsellpoint_id']],
+            [['localsellpoint_id'], 'exist', 'skipOnError' => true, 'targetClass' => UserExtra::class, 'targetAttribute' => ['localsellpoint_id' => 'localsellpoint_id']],
             [['seller_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['seller_id' => 'id']],
             [['calendar_id'], 'safe'],
         ];
@@ -109,7 +110,7 @@ class Sale extends \yii\db\ActiveRecord
      */
     public function getLocalsellpoint()
     {
-        return $this->hasOne(Localsellpoint::class, ['localsellpoint_id' => 'localsellpoint_id']);
+        return $this->hasOne(UserExtra::class, ['localsellpoint_id' => 'localsellpoint_id']);
     }
 
     /**
@@ -124,7 +125,7 @@ class Sale extends \yii\db\ActiveRecord
 
     public function getSellerExtra()
     {
-        return $this->hasOne(Userextra::class, ['user_id' => 'seller_id']);
+        return $this->hasOne(UserExtra::class, ['user_id' => 'seller_id']);
     }
 
     public static function createSale($cart)

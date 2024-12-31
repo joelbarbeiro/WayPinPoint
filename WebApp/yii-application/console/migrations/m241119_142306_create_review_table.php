@@ -18,7 +18,7 @@ class m241119_142306_create_review_table extends Migration
             'user_id' => $this->integer()->notNull(),
             'score' => $this->tinyInteger(1)->notNull()->check('score BETWEEN 1 AND 5'),
             'message' => $this->text()->null(),
-            'created_at' => $this->integer()->notNull(),
+            'created_at' => $this->integer(),
         ]);
 
         $this->addForeignKey(

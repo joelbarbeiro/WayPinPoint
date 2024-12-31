@@ -35,7 +35,7 @@ $this->registerCssFile('@web/css/site.css');
                     echo '<h5 class="card-title">' . 'Activity: ' . Html::encode($review->activity->name) . '</h5>';
                     echo '<p class="card-text">' . 'Score: ' . Html::encode($review->score) . ' out of 5.</p>';
                     echo '<p class="card-text">' . 'Comment: ' . Html::encode($review->message) . '</p>';
-                    echo '<p class="card-text">' . 'Creation Date: ' . Html::encode($review->created_at) . '</p>';
+                    echo '<p class="card-text">' . 'Creation Date: ' . Html::encode(date('Y-m-d H:i:s', $review->created_at)) . '</p>';
                     if($review->user->id == Yii::$app->user->id){
                         echo '<a href="' . Url::to(['review/update', 'id' => $review->id]) . '" class="btn btn-warning">Edit</a>';
                     }
