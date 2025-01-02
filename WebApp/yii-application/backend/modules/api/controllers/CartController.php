@@ -23,26 +23,26 @@ class CartController extends ActiveController
 
     public $modelClass = 'common\models\Cart';
 
-    public function behaviors()
-    {
-        $behaviors = parent::behaviors();
-        $behaviors['authenticator'] = [
-            'class' => HttpBasicAuth::className(), // ou QueryParamAuth::className(),
-            'except' => ['index', 'view'],
-            'auth' => [$this, 'authintercept']
-        ];
-        return $behaviors;
-    }
-
-    public function authintercept($username, $password)
-    {
-        $user = User::findByUsername($username);
-        if ($user && $user->validatePassword($password)) {
-            $this->user = $user; //Guardar user autenticado         r
-            return $user;
-        }
-        throw new \yii\web\ForbiddenHttpException('Error auth'); //403
-    }
+//    public function behaviors()
+//    {
+//        $behaviors = parent::behaviors();
+//        $behaviors['authenticator'] = [
+//            'class' => HttpBasicAuth::className(), // ou QueryParamAuth::className(),
+//            'except' => ['index', 'view'],
+//            'auth' => [$this, 'authintercept']
+//        ];
+//        return $behaviors;
+//    }
+//
+//    public function authintercept($username, $password)
+//    {
+//        $user = User::findByUsername($username);
+//        if ($user && $user->validatePassword($password)) {
+//            $this->user = $user; //Guardar user autenticado         r
+//            return $user;
+//        }
+//        throw new \yii\web\ForbiddenHttpException('Error auth'); //403
+//    }
 
     public function actionCount()
     {
@@ -186,7 +186,7 @@ class CartController extends ActiveController
                 throw new \Exception("Failed to save Cart ID: $id. Errors: " . json_encode($cart->getErrors()));
             }
 
-            $content = $this->renderPartial('receipt', ['cart' => $cart]);
+            $content = $this->renderPartial('receiptApi', ['cart' => $cart]);
             $pdfContent = Cart::generatePdf($content);
             $qrCodeImage = $qrCode->writeString();
 
@@ -203,8 +203,10 @@ class CartController extends ActiveController
             if (!$mailSent) {
                 throw new \Exception("Failed to send email for Cart ID: $id");
             }
-            \Yii::$app->response->statusCode = 200;
-            throw new \Exception('Ticket and receipt sent to your email.');
+            return[
+                'status' => 'success',
+                'message' => 'Ticket and receipt sent to your email'
+            ];
         } catch (\Exception $e) {
             Yii::error($e->getMessage(), __METHOD__);
             \Yii::$app->response->statusCode = 400;
@@ -212,4 +214,3 @@ class CartController extends ActiveController
         }
     }
 }
-
