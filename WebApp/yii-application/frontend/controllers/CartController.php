@@ -165,8 +165,9 @@ class CartController extends Controller
         if ($bookingId = Booking::createBooking($cart)) {
             if ($saleId = Sale::createSale($cart)) {
                 if (Invoice::createInvoice($cart, $saleId, $bookingId)) {
-                    $qrCode = $this->generateQrCode($cart->user, $cart->activity);
+                    $qrCode = Cart::generateQrCode($cart->user, $cart->activity);
                     Ticket::createTicket($cart, $qrCode);
+                    //In this case status 1 is cart inactive
                     $cart->status = 1;
                     if ($cart->save()) {
                         Yii::$app->session->setFlash('success', 'Checkout completed successfully.');
@@ -175,7 +176,7 @@ class CartController extends Controller
                     }
                     // Generate PDF content
                     $content = $this->renderPartial('receipt', ['cart' => $cart]);
-                    $pdfContent = $this->generatePdf($content);
+                    $pdfContent = Cart::generatePdf($content);
                     $qrCodeImage = $qrCode->writeString(); // QR Code as PNG string
 
                     // Send email with attachments
@@ -188,40 +189,14 @@ class CartController extends Controller
                         ->attachContent($pdfContent, ['fileName' => 'receipt.pdf', 'contentType' => 'application/pdf'])
                         ->attachContent($qrCodeImage, ['fileName' => 'ticket.png', 'contentType' => 'image/png'])
                         ->send()) {
-                        Yii::$app->session->setFlash('success', 'Email sent successfully!');
+                        Yii::$app->session->setFlash('success', 'Ticket and Receipt sent by Email! You can find them in your personal area as well to download');
                     } else {
-                        Yii::$app->session->setFlash('error', 'Failed to send email!');
+                        Yii::$app->session->setFlash('error', 'Failed to send ticket and receipt by email! Don\'t worry you can find them in your personal area to download');
                     }
                     return $this->redirect(['activity/index']);
                 }
             }
         }
-    }
-
-    public static function generateQrCode($user, $activity)
-    {
-        $qrCodeData = "User: $user->username, Activity: $activity->description, Price: $activity->priceperpax";
-        $qrCode = (new QrCode($qrCodeData))
-            ->setSize(250)
-            ->setMargin(5)
-            ->setBackgroundColor(51, 153, 255);
-        return $qrCode;
-    }
-
-//    public function generatePdf/($content)
-//    {
-//        $pdf = new Mpdf();
-//        $pdf->WriteHTML($content);
-//        $pdf->Output('receipt.pdf', 'D');
-//    }
-
-    public function generatePdf($content): ?string
-    {
-        $dompdf = new Dompdf();
-        $dompdf->loadHtml($content);
-        $dompdf->setPaper('A4');
-        $dompdf->render();
-        return $dompdf->output();
     }
 
 }

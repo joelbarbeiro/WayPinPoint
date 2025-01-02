@@ -1,5 +1,6 @@
 package Model;
 
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.CHECKOUT;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.DEFAULT_IMG;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.DELETE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EDIT;
@@ -581,6 +582,26 @@ public class SingletonManager {
                         Toast.makeText(context, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
+        volleyQueue.add(request);
+    }
+
+    public void checkoutCart(final Context context, final Cart cart){
+        String apiHost = getApiHost(context);
+        StringRequest request = new StringRequest(Request.Method.POST, apiHost + "carts/checkout/" + cart.getId(), new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Toast.makeText(context, R.string.cart_checkout_success, Toast.LENGTH_SHORT).show();
+                if (cartListener != null) {
+                    cartListener.onValidateOperation(CHECKOUT);
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(context, R.string.cart_checkout_error, Toast.LENGTH_SHORT).show();
+
+            }
+        });
         volleyQueue.add(request);
     }
 

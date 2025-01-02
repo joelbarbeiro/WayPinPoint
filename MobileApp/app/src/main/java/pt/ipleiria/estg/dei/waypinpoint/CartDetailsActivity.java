@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -146,5 +147,11 @@ public class CartDetailsActivity extends AppCompatActivity implements CartListen
         intent.putExtra(OP_CODE, op);
         setResult(RESULT_OK, intent);
         finish();
+    }
+
+    public void onClickCheckout(View view) {
+        int id = getIntent().getIntExtra(ID_CART, 0);
+        cart = waypinpointDbHelper.getCartById(id);
+        SingletonManager.getInstance(getApplicationContext()).checkoutCart(getApplicationContext(), cart);
     }
 }

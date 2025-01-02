@@ -2,8 +2,12 @@
 
 namespace backend\modules\api\controllers;
 
+use common\models\Booking;
 use common\models\Activity;
 use common\models\Cart;
+use common\models\Invoice;
+use common\models\Sale;
+use common\models\Ticket;
 use common\models\User;
 use Yii;
 use yii\filters\auth\HttpBasicAuth;
@@ -148,12 +152,48 @@ class CartController extends ActiveController
     }
 
 
-    public function actionCheckout()
+    public function actionCheckout($id)
     {
+        $cart = Cart::findOne(['id' => $id]);
+        if ($bookingId = Booking::createBooking($cart)) {
+            if ($saleId = Sale::createSale($cart)) {
+                if (Invoice::createInvoice($cart, $saleId, $bookingId)) {
+                    $qrCode = Cart::generateQrCode($cart->user, $cart->activity);
+                    Ticket::createTicket($cart, $qrCode);
+                    $cart->status = 1;
+                    if ($cart->save()) {
+                        Yii::$app->session->setFlash('success', 'Checkout completed successfully.');
+                    } else {
+                        Yii::$app->session->setFlash('error', 'Failed to Checkout');
+                    }
 
+                    $content = $this->renderPartial('receipt', ['cart' => $cart]);
+                    $pdfContent = Cart::generatePdf($content);
+                    $qrCodeImage = $qrCode->writeString();
 
+                    if (Yii::$app->mailer->compose()
+                        ->setFrom('waypinpoint@gmail.com')
+                        ->setTo($cart->user->email)
+                        ->setSubject('Your Booking Receipt and Ticket')
+                        ->setTextBody('Your receipt and ticket are attached.')
+                        ->setHtmlBody('<b>Thank you for your booking! Your receipt and ticket are attached.</b>')
+                        ->attachContent($pdfContent, ['fileName' => 'receipt.pdf', 'contentType' => 'application/pdf'])
+                        ->attachContent($qrCodeImage, ['fileName' => 'ticket.png', 'contentType' => 'image/png'])
+                        ->send()) {
+                        return [
+                            'success' => true,
+                            'message' => 'Ticket and receipt sent to your email',
+                        ];
+                    } else {
+                        return [
+                            'success' => false,
+                            'message' => 'Could not complete purchase',
+                        ];
+                    }
+                }
+            }
+        }
     }
-
 
 }
 

@@ -2,6 +2,9 @@
 
 namespace common\models;
 
+use Da\QrCode\QrCode;
+use Dompdf\Dompdf;
+
 /**
  * This is the model class for table "cart".
  *
@@ -78,4 +81,24 @@ class Cart extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Calendar::class, ['id' => 'calendar_id']);
     }
+
+    public static function generatePdf($content): ?string
+    {
+        $dompdf = new Dompdf();
+        $dompdf->loadHtml($content);
+        $dompdf->setPaper('A4');
+        $dompdf->render();
+        return $dompdf->output();
+    }
+
+    public static function generateQrCode($user, $activity)
+    {
+        $qrCodeData = "User: $user->username, Activity: $activity->description, Price: $activity->priceperpax";
+        $qrCode = (new QrCode($qrCodeData))
+            ->setSize(250)
+            ->setMargin(5)
+            ->setBackgroundColor(51, 153, 255);
+        return $qrCode;
+    }
+
 }

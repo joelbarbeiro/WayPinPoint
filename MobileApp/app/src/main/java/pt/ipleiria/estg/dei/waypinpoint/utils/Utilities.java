@@ -30,6 +30,7 @@ public class Utilities {
     public static final int DELETE = 300;
     public static final int PICK_IMAGE = 400;
     public static final int REQUEST_CODE = 500;
+    public static final int CHECKOUT = 600;
     public static final String OP_CODE = "DETAIL_OPERATION";
     public static final String EMAIL = "EMAIL";
     public static final String ID = "ID";
