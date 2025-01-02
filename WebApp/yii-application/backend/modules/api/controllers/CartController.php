@@ -120,6 +120,7 @@ class CartController extends ActiveController
             'message' => json_encode($cart->getErrors()),
         ];
     }
+
     public function actionUpdate($id)
     {
 
@@ -151,7 +152,6 @@ class CartController extends ActiveController
             ];
         }
     }
-
 
 
     public function actionCheckout($id)
@@ -203,16 +203,13 @@ class CartController extends ActiveController
             if (!$mailSent) {
                 throw new \Exception("Failed to send email for Cart ID: $id");
             }
-
-            return [
-                'success' => true,
-                'message' => 'Ticket and receipt sent to your email',
-            ];
+            \Yii::$app->response->statusCode = 200;
+            throw new \Exception('Ticket and receipt sent to your email.');
         } catch (\Exception $e) {
             Yii::error($e->getMessage(), __METHOD__);
-            throw new \Exception("Could not send the ticket ". error($e->getMessage(), __METHOD__));
+            \Yii::$app->response->statusCode = 400;
+            throw new \Exception('Failed to Checkout: ' . json_encode($e->getMessage()));
         }
-
     }
 }
 
