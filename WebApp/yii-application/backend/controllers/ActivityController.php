@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use app\mosquitto\phpMQTT;
 use common\models\Activity;
 use common\models\ActivitySearch;
 use common\models\Calendar;
@@ -126,6 +127,7 @@ class ActivityController extends Controller
         $categories = $model->getCatories();
 
         if ($model->load($this->request->post()) && Activity::createActivity($model)) {
+            $this->publishArticleMessage("activity/created", "New activity for ", $model);
             return $this->redirect(['index']);
         }
 
@@ -194,5 +196,76 @@ class ActivityController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+    public static function publishToMosquitto($topic,$message)
+    {
+        $server = "127.0.0.1";
+        $port = 1883;
+        $username = ""; // set your username
+        $password = ""; // set your password
+        $client_id = "phpMQTT-publisher"; // unique!
+        $mqtt = new phpMQTT($server, $port, $client_id);
+        if ($mqtt->connect(true, NULL, $username, $password)) {
+            $mqtt->publish($topic, $message, 0);
+            $mqtt->close();
+        } else {
+            file_put_contents("debug.output", "Time out!");
+        }
+    }
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+
+        $payLoad = new \stdClass();
+        $payLoad->id = $this->id;
+        $payLoad->name = $this->name;
+        $payLoad->description = $this->description;
+        $payLoad->photo = $this->photo;
+        $payLoad->maxpax = $this->maxpax;
+        $payLoad->priceperpax = $this->priceperpax;
+        $payLoad->address = $this->address;
+        $payLoad->status = $this->status;
+        $payLoad->user_id = $this->user_id;
+        $payLoad->category_id = $this->category_id;
+
+        $jsonObject = json_encode($payLoad);
+        if ($insert)
+            $this->publishToMosquitto("activity/created", $jsonObject);
+        else
+            $this->publishToMosquitto("UPDATE", $jsonObject);
+    }
+
+    public function afterDelete()
+    {
+        parent::afterDelete();
+        $payLoad = new \stdClass();
+        $payLoad->id = $this->id;
+        $jsonObject = json_encode($payLoad);
+        $this->publishToMosquitto("DELETE", $jsonObject);
+    }
+
+    protected function publishArticleMessage($topic, $message, $activity)
+    {
+        if ($this !== null) {
+            $articleData = [
+                'id' => $activity->id,
+                'name' => $activity->name,
+                'description' => $activity->description,
+                'photo' => $activity->photo,
+                'maxpax' => $activity->maxpax,
+                'priceperpax' => $activity->priceperpax,
+                'address' => $activity->address,
+                'supplier_id' => $activity->user_id,
+                'category_id' => $activity->category_id,
+            ];
+
+            $messageData = [
+                'channel' => $topic,
+                'message' => $message,
+                'articleObject' => $articleData,
+            ];
+
+            $this->publishToMosquitto($topic, json_encode($messageData));
+        }
     }
 }

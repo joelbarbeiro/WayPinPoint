@@ -121,6 +121,9 @@ return [
                         'DELETE {id}' => 'deleteactivity',
                         'POST photo' => 'photo'
                     ],
+                    'tokens' => [
+                        '{id}' => '<id:\\d+>',
+                    ],
                 ],
             ],
         ],
