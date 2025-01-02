@@ -98,8 +98,9 @@ return [
                         'GET status' => 'status',
                         'GET buyers/{id}' => 'buyer',
                         'DELETE delete/{id}' => 'delete',
-                        'POST addtocart/{id}' => 'addtocart',
-                        'PUT updatecart/{id}' => 'updatecart',
+                        'POST addcart/{id}' => 'addcart',
+                        'PUT update/{id}' => 'update',
+
                     ],
                     'tokens' => [
                         '{id}' => '<id:\\d+>',
