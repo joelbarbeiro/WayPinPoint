@@ -103,6 +103,10 @@
     <string name="cart_total">Total:</string>
     <string name="cart_date">Date:</string>
     <string name="save_Cart">Save</string>
+    <string name="cart_checkout_success">Receipts and Ticket sent through email!</string>
+    <string name="cart_checkout_error">Could not complete purchase!</string>
+
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="img_default">img_default</string>
 
