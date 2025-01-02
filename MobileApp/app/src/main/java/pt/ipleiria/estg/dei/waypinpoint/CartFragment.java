@@ -54,7 +54,7 @@ public class CartFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         lvCart = view.findViewById(R.id.lvCart);
         int userId = getUserId(getContext());
         waypinpointDbHelper = new WaypinpointDbHelper(getContext());
-        cartList = waypinpointDbHelper.getCartByUserId(userId);
+        cartList = waypinpointDbHelper.getCartByUserIdDB(userId);
         activities = waypinpointDbHelper.getActivitiesDB();
         calendars = waypinpointDbHelper.getCalendarDB();
 
@@ -70,10 +70,13 @@ public class CartFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout);
         swipeRefreshLayout.setOnRefreshListener(this);
         SingletonManager.getInstance(getContext()).setCartListener(this);
-        SingletonManager.getInstance(getContext()).getCartByUserId(getContext());
+        loadCartData();
         return view;
     }
 
+    public void loadCartData(){
+        SingletonManager.getInstance(getContext()).getCartByUserId(getContext());
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -116,9 +119,9 @@ public class CartFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         swipeRefreshLayout.setRefreshing(false);
     }
 
-    public void onRefreshCartList(ArrayList<Cart> cartArrayList) {
-        if (cartArrayList != null) {
-            lvCart.setAdapter(new CartAdapter(getContext(), cartArrayList, activities, calendars));
+    public void onRefreshCartList(ArrayList<Cart> cartList) {
+        if (cartList != null) {
+            lvCart.setAdapter(new CartAdapter(getContext(), cartList, activities, calendars));
         }
     }
 

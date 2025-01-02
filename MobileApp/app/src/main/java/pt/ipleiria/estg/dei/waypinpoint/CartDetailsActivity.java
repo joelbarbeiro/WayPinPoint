@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,6 +37,7 @@ public class CartDetailsActivity extends AppCompatActivity implements CartListen
     private Cart cart;
     private TextView etActivityName, etQuantity, etPrice, etDate;
     private ImageView iv_activityImg;
+    private Button btnEditQuantity;
     public static final String DEFAULT_IMG = null;
     private Activity activity;
     private Calendar calendar;
@@ -54,11 +56,13 @@ public class CartDetailsActivity extends AppCompatActivity implements CartListen
         calendar = waypinpointDbHelper.getCalendarById(cart.getCalendar_id());
 
         fabCheckout = findViewById(R.id.fabCheckout);
-        etActivityName = findViewById(R.id.tvActivityDetailsName);
+        etActivityName = findViewById(R.id.etActivityName);
         etQuantity = findViewById(R.id.etQuantity);
         etPrice = findViewById(R.id.etPrice);
         etDate = findViewById(R.id.etDate);
         iv_activityImg = findViewById(R.id.iv_activityImg);
+        btnEditQuantity = findViewById(R.id.btnEditQuantity);
+        btnEditQuantity.setOnClickListener(v -> editQuantity());
         loadCart();
     }
 
@@ -75,6 +79,36 @@ public class CartDetailsActivity extends AppCompatActivity implements CartListen
                 .into(iv_activityImg);
         SingletonManager.getInstance(getApplicationContext()).setCartListener(this);
 
+    }
+
+    private void editQuantity() {
+        String quantityStr = etQuantity.getText().toString();
+        if(isQuantityValid(quantityStr)){
+            int newQuantity = Integer.parseInt(quantityStr);
+            //TODO UPDATE CART ( VER NA BASE DE DADOS )
+            cart.setQuantity(newQuantity);
+            SingletonManager.getInstance(getApplicationContext()).editCart(cart, getApplicationContext());
+            Toast.makeText(this, "Quantity Updated", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private boolean isQuantityValid(String input) {
+        if (input.isEmpty()) {
+            etQuantity.setError("Field cannot be empty");
+            return false;
+        }
+
+        try {
+            int quantity = Integer.parseInt(input);
+            if (quantity <= 0) {
+                etQuantity.setError("Quantity must be greater than 0");
+                return false;
+            }
+        } catch (NumberFormatException e) {
+            etQuantity.setError("Invalid quantity");
+            return false;
+        }
+        return true;
     }
 
     @Override
