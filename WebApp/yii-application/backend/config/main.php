@@ -99,7 +99,7 @@ return [
                         'GET buyers/{id}' => 'buyer',
                         'DELETE delete/{id}' => 'delete',
                         'POST addcart' => 'addcart',
-                        'PUT updatecart/{id}' => 'updatecart',
+                        'PUT update/{id}' => 'update',
                         'POST checkout/{id}' => 'checkout'
                     ],
                     'tokens' => [
