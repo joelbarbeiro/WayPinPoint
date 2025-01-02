@@ -55,7 +55,7 @@ public class CartDetailsActivity extends AppCompatActivity implements CartListen
         calendar = waypinpointDbHelper.getCalendarById(cart.getCalendar_id());
 
         fabCheckout = findViewById(R.id.fabCheckout);
-        etActivityName = findViewById(R.id.tvActivityDetailsName);
+        etActivityName = findViewById(R.id.etActivityName);
         etQuantity = findViewById(R.id.etQuantity);
         etPrice = findViewById(R.id.etPrice);
         etDate = findViewById(R.id.etDate);

@@ -74,6 +74,7 @@ class CartController extends ActiveController
                 'quantity' => $cart['quantity'],
                 'user_id' => $cart['user']['id'] ?? 'Unknown User',
                 'status' => $cart['status'],
+                'calendar_id' => $cart['calendar']['id'],
                 'date' => $cart['calendar']['date']['date'] ?? 'Unknown Date',
                 'time' => $cart['calendar']['time']['hour'] ?? 'Unknown Time',
                 'price' => $cart['activity']['priceperpax'],
@@ -152,48 +153,66 @@ class CartController extends ActiveController
     }
 
 
+
     public function actionCheckout($id)
     {
-        $cart = Cart::findOne(['id' => $id]);
-        if ($bookingId = Booking::createBooking($cart)) {
-            if ($saleId = Sale::createSale($cart)) {
-                if (Invoice::createInvoice($cart, $saleId, $bookingId)) {
-                    $qrCode = Cart::generateQrCode($cart->user, $cart->activity);
-                    Ticket::createTicket($cart, $qrCode);
-                    $cart->status = 1;
-                    if ($cart->save()) {
-                        Yii::$app->session->setFlash('success', 'Checkout completed successfully.');
-                    } else {
-                        Yii::$app->session->setFlash('error', 'Failed to Checkout');
-                    }
+        try {
 
-                    $content = $this->renderPartial('receipt', ['cart' => $cart]);
-                    $pdfContent = Cart::generatePdf($content);
-                    $qrCodeImage = $qrCode->writeString();
-
-                    if (Yii::$app->mailer->compose()
-                        ->setFrom('waypinpoint@gmail.com')
-                        ->setTo($cart->user->email)
-                        ->setSubject('Your Booking Receipt and Ticket')
-                        ->setTextBody('Your receipt and ticket are attached.')
-                        ->setHtmlBody('<b>Thank you for your booking! Your receipt and ticket are attached.</b>')
-                        ->attachContent($pdfContent, ['fileName' => 'receipt.pdf', 'contentType' => 'application/pdf'])
-                        ->attachContent($qrCodeImage, ['fileName' => 'ticket.png', 'contentType' => 'image/png'])
-                        ->send()) {
-                        return [
-                            'success' => true,
-                            'message' => 'Ticket and receipt sent to your email',
-                        ];
-                    } else {
-                        return [
-                            'success' => false,
-                            'message' => 'Could not complete purchase',
-                        ];
-                    }
-                }
+            $cart = Cart::findOne(['id' => $id]);
+            if (!$cart) {
+                throw new \Exception("Cart not found for ID: $id");
             }
-        }
-    }
 
+            $bookingId = Booking::createBooking($cart);
+            if (!$bookingId) {
+                throw new \Exception("Failed to create booking for Cart ID: $id");
+            }
+
+            $saleId = Sale::createSale($cart);
+            if (!$saleId) {
+                throw new \Exception("Failed to create sale for Cart ID: $id");
+            }
+
+            $invoiceCreated = Invoice::createInvoice($cart, $saleId, $bookingId);
+            if (!$invoiceCreated) {
+                throw new \Exception("Failed to create invoice for Cart ID: $id");
+            }
+
+            $qrCode = Cart::generateQrCode($cart->user, $cart->activity);
+            Ticket::createTicket($cart, $qrCode);
+
+            $cart->status = 1;
+            if (!$cart->save()) {
+                throw new \Exception("Failed to save Cart ID: $id. Errors: " . json_encode($cart->getErrors()));
+            }
+
+            $content = $this->renderPartial('receipt', ['cart' => $cart]);
+            $pdfContent = Cart::generatePdf($content);
+            $qrCodeImage = $qrCode->writeString();
+
+            $mailSent = Yii::$app->mailer->compose()
+                ->setFrom('waypinpoint@gmail.com')
+                ->setTo($cart->user->email)
+                ->setSubject('Your Booking Receipt and Ticket')
+                ->setTextBody('Your receipt and ticket are attached.')
+                ->setHtmlBody('<b>Thank you for your booking! Your receipt and ticket are attached.</b>')
+                ->attachContent($pdfContent, ['fileName' => 'receipt.pdf', 'contentType' => 'application/pdf'])
+                ->attachContent($qrCodeImage, ['fileName' => 'ticket.png', 'contentType' => 'image/png'])
+                ->send();
+
+            if (!$mailSent) {
+                throw new \Exception("Failed to send email for Cart ID: $id");
+            }
+
+            return [
+                'success' => true,
+                'message' => 'Ticket and receipt sent to your email',
+            ];
+        } catch (\Exception $e) {
+            Yii::error($e->getMessage(), __METHOD__);
+            throw new \Exception("Could not send the ticket ". error($e->getMessage(), __METHOD__));
+        }
+
+    }
 }
 
