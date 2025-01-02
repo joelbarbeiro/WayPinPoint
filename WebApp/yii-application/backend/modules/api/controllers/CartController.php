@@ -93,7 +93,7 @@ class CartController extends ActiveController
             'message' => 'Cart has been deleted'];
     }
 
-    public function actionAddCart($id)
+    public function actionAddCart()
     {
         $cart = new Cart();
         if ($cart->load(Yii::$app->request->post(), '')) {
@@ -115,43 +115,38 @@ class CartController extends ActiveController
             'message' => json_encode($cart->getErrors()),
         ];
     }
-
-    public function actionUpdatecart($id)
+    public function actionUpdate($id)
     {
-        $userId = Yii::$app->user->id;
-        if (!$userId) {
-            return ['error' => 'User not logged in'];
-        }
+
         $cartModel = new $this->modelClass;
-        $cartItems = $cartModel::findOne(['id' => $id, 'user_id' => $userId]);
-        if (!$cartItems) {
+        $cartItem = $cartModel::findOne($id);
+        if (!$cartItem) {
             return [
                 'success' => false,
-                'message' => 'Cart item not found or does not belong to the user',
+                'message' => 'Cart item not found',
             ];
         }
 
         $postData = Yii::$app->request->bodyParams;
+        if (isset($postData['quantity'])) {
+            $cartItem->quantity = $postData['quantity'];
+        }
 
-        $cartItems->quantity = $postData['quantity'] ?? $cartItems->quantity;
-        $cartItems->calendar_id = $postData['calendar_id'] ?? $cartItems->calendar_id;
-        if ($cartItems->save()) {
+        if ($cartItem->save()) {
             return [
                 'success' => true,
-                'message' => 'Cart item successfully updated',
-                'cart_id' => $cartItems->id,
-                'updated_fields' => [
-                    'quantity' => $cartItems->quantity,
-                    'calendar_id' => $cartItems->calendar_id,
-                ],
+                'message' => 'Cart quantity successfully updated',
+                'cart_id' => $cartItem->id,
+                'quantity' => $cartItem->quantity,
             ];
         } else {
             return [
                 'success' => false,
-                'errors' => $cartItems->getErrors(),
+                'errors' => $cartItem->getErrors(),
             ];
         }
     }
+
 
     public function actionCheckout()
     {
