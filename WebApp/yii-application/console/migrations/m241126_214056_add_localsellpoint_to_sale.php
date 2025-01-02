@@ -18,8 +18,8 @@ class m241126_214056_add_localsellpoint_to_sale extends Migration
             '{{%fk-sale-localsellpoint_id}}',
             '{{%sale}}',
             'localsellpoint_id',
-            '{{%userextra}}',
-            'localsellpoint_id',
+            '{{%localsellpoint}}',
+            'id',
             'CASCADE',
             'CASCADE'
         );

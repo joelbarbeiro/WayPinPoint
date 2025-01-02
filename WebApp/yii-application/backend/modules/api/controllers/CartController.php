@@ -2,8 +2,12 @@
 
 namespace backend\modules\api\controllers;
 
+use common\models\Booking;
 use common\models\Activity;
 use common\models\Cart;
+use common\models\Invoice;
+use common\models\Sale;
+use common\models\Ticket;
 use common\models\User;
 use Yii;
 use yii\filters\auth\HttpBasicAuth;
@@ -70,6 +74,7 @@ class CartController extends ActiveController
                 'quantity' => $cart['quantity'],
                 'user_id' => $cart['user']['id'] ?? 'Unknown User',
                 'status' => $cart['status'],
+                'calendar_id' => $cart['calendar']['id'],
                 'date' => $cart['calendar']['date']['date'] ?? 'Unknown Date',
                 'time' => $cart['calendar']['time']['hour'] ?? 'Unknown Time',
                 'price' => $cart['activity']['priceperpax'],
@@ -93,7 +98,7 @@ class CartController extends ActiveController
             'message' => 'Cart has been deleted'];
     }
 
-    public function actionAddCart($id)
+    public function actionAddCart()
     {
         $cart = new Cart();
         if ($cart->load(Yii::$app->request->post(), '')) {
@@ -115,50 +120,99 @@ class CartController extends ActiveController
             'message' => json_encode($cart->getErrors()),
         ];
     }
-
-    public function actionUpdatecart($id)
+    public function actionUpdate($id)
     {
-        $userId = Yii::$app->user->id;
-        if (!$userId) {
-            return ['error' => 'User not logged in'];
-        }
+
         $cartModel = new $this->modelClass;
-        $cartItems = $cartModel::findOne(['id' => $id, 'user_id' => $userId]);
-        if (!$cartItems) {
+        $cartItem = $cartModel::findOne($id);
+        if (!$cartItem) {
             return [
                 'success' => false,
-                'message' => 'Cart item not found or does not belong to the user',
+                'message' => 'Cart item not found',
             ];
         }
 
         $postData = Yii::$app->request->bodyParams;
+        if (isset($postData['quantity'])) {
+            $cartItem->quantity = $postData['quantity'];
+        }
 
-        $cartItems->quantity = $postData['quantity'] ?? $cartItems->quantity;
-        $cartItems->calendar_id = $postData['calendar_id'] ?? $cartItems->calendar_id;
-        if ($cartItems->save()) {
+        if ($cartItem->save()) {
             return [
                 'success' => true,
-                'message' => 'Cart item successfully updated',
-                'cart_id' => $cartItems->id,
-                'updated_fields' => [
-                    'quantity' => $cartItems->quantity,
-                    'calendar_id' => $cartItems->calendar_id,
-                ],
+                'message' => 'Cart quantity successfully updated',
+                'cart_id' => $cartItem->id,
+                'quantity' => $cartItem->quantity,
             ];
         } else {
             return [
                 'success' => false,
-                'errors' => $cartItems->getErrors(),
+                'errors' => $cartItem->getErrors(),
             ];
         }
     }
 
-    public function actionCheckout()
-    {
 
+
+    public function actionCheckout($id)
+    {
+        try {
+
+            $cart = Cart::findOne(['id' => $id]);
+            if (!$cart) {
+                throw new \Exception("Cart not found for ID: $id");
+            }
+
+            $bookingId = Booking::createBooking($cart);
+            if (!$bookingId) {
+                throw new \Exception("Failed to create booking for Cart ID: $id");
+            }
+
+            $saleId = Sale::createSale($cart);
+            if (!$saleId) {
+                throw new \Exception("Failed to create sale for Cart ID: $id");
+            }
+
+            $invoiceCreated = Invoice::createInvoice($cart, $saleId, $bookingId);
+            if (!$invoiceCreated) {
+                throw new \Exception("Failed to create invoice for Cart ID: $id");
+            }
+
+            $qrCode = Cart::generateQrCode($cart->user, $cart->activity);
+            Ticket::createTicket($cart, $qrCode);
+
+            $cart->status = 1;
+            if (!$cart->save()) {
+                throw new \Exception("Failed to save Cart ID: $id. Errors: " . json_encode($cart->getErrors()));
+            }
+
+            $content = $this->renderPartial('receipt', ['cart' => $cart]);
+            $pdfContent = Cart::generatePdf($content);
+            $qrCodeImage = $qrCode->writeString();
+
+            $mailSent = Yii::$app->mailer->compose()
+                ->setFrom('waypinpoint@gmail.com')
+                ->setTo($cart->user->email)
+                ->setSubject('Your Booking Receipt and Ticket')
+                ->setTextBody('Your receipt and ticket are attached.')
+                ->setHtmlBody('<b>Thank you for your booking! Your receipt and ticket are attached.</b>')
+                ->attachContent($pdfContent, ['fileName' => 'receipt.pdf', 'contentType' => 'application/pdf'])
+                ->attachContent($qrCodeImage, ['fileName' => 'ticket.png', 'contentType' => 'image/png'])
+                ->send();
+
+            if (!$mailSent) {
+                throw new \Exception("Failed to send email for Cart ID: $id");
+            }
+
+            return [
+                'success' => true,
+                'message' => 'Ticket and receipt sent to your email',
+            ];
+        } catch (\Exception $e) {
+            Yii::error($e->getMessage(), __METHOD__);
+            throw new \Exception("Could not send the ticket ". error($e->getMessage(), __METHOD__));
+        }
 
     }
-
-
 }
 

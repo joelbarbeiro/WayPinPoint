@@ -27,6 +27,11 @@ class RbacController extends Controller
         $viewActivity->description = 'View an activity';
         $auth->add($viewActivity);
 
+        $getActivityView = $auth->createPermission('getActivityView');
+        $getActivityView->description = 'View a activity view';
+        $auth->add($getActivityView);
+
+
         $deleteActivity = $auth->createPermission('deleteActivity');
         $deleteActivity->description = 'Delete an activity';
         $auth->add($deleteActivity);
@@ -136,6 +141,7 @@ class RbacController extends Controller
         $auth->add($supplier);
         $auth->addChild($supplier, $viewActivity);
         $auth->addChild($supplier, $createActivity);
+        $auth->addChild($supplier, $getActivityView);
         $auth->addChild($supplier, $updateActivity);
         $auth->addChild($supplier, $deleteActivity);
         $auth->addChild($supplier, $createShop);

@@ -1,5 +1,7 @@
 package Model;
 
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.CHECKOUT;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.DEFAULT_IMG;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.DELETE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EDIT;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EMAIL;
@@ -371,6 +373,14 @@ public class SingletonManager {
         return new ArrayList<>(carts);
     }
 
+    public void addCartsDB(ArrayList<Cart> carts) {
+        waypinpointDbHelper.removeAllCartDb();
+        for (Cart c : carts) {
+            System.out.println("DB Add review--> " + c);
+            waypinpointDbHelper.addCartDb(c);
+        }
+    }
+
     public ArrayList<Cart> getCarts() {
         carts = waypinpointDbHelper.getAllCartsDb();
         return new ArrayList<>(carts);
@@ -418,13 +428,6 @@ public class SingletonManager {
             volleyQueue.add(request);
         }
     }
-    public void addCartsDB(ArrayList<Cart> carts) {
-        waypinpointDbHelper.removeAllCartDb();
-        for (Cart cart : carts) {
-            System.out.println("DB Add Cart--> " + cart);
-            waypinpointDbHelper.addCartDb(cart);
-        }
-    }
 
     public void getCartByUserId(final Context context) {
         User user = getUser(getUserId(context));
@@ -432,6 +435,7 @@ public class SingletonManager {
         int userId = getUserId(context);
         if (!StatusJsonParser.isConnectionInternet(context)) {
             Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
+
             if (cartListener != null) {
                 cartListener.onRefreshCartList(waypinpointDbHelper.getCartByUserIdDB(userId));
             }
@@ -442,7 +446,6 @@ public class SingletonManager {
                     System.out.println("--> CARTGETAPI: " + response);
                     carts = CartJsonParser.parserJsonCarts(response);
                     addCartsDB(carts);
-
                     if (cartListener != null) {
                         cartListener.onRefreshCartList(carts);
                     }
@@ -583,6 +586,34 @@ public class SingletonManager {
                         Toast.makeText(context, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
+        volleyQueue.add(request);
+    }
+
+    public void checkoutCart(final Context context, final Cart cart){
+        String apiHost = getApiHost(context);
+        StringRequest request = new StringRequest(Request.Method.POST, apiHost + "carts/checkout/" + cart.getId(), new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Toast.makeText(context, R.string.cart_checkout_success, Toast.LENGTH_SHORT).show();
+                if (cartListener != null) {
+                    cartListener.onValidateOperation(CHECKOUT);
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(context, R.string.cart_checkout_error, Toast.LENGTH_SHORT).show();
+                String responseBody;
+                try {
+                    responseBody = new String(error.networkResponse.data, "UTF-8");
+                    Log.e("Checkout ", "Error Response Body: " + responseBody);
+                    Log.e("Checkout", "Error Message: " + error.getMessage());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
         volleyQueue.add(request);
     }
 
@@ -1063,7 +1094,6 @@ public class SingletonManager {
         User user = getUser(getUserId(context));
         if (!StatusJsonParser.isConnectionInternet(context)) {
             Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
-
             if (reviewsListener != null) {
                 reviewsListener.onRefreshReviewsList(waypinpointDbHelper.getReviewsDb());
             }
@@ -1074,7 +1104,6 @@ public class SingletonManager {
                     System.out.println("--> GETAPI: " + response);
                     reviews = ReviewJsonParser.parserJsonReviews(response);
                     addReviewsDb(reviews);
-
                     if (reviewsListener != null) {
                         reviewsListener.onRefreshReviewsList(reviews);
                     }

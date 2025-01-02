@@ -147,6 +147,7 @@
                 android:layout_gravity="end"
                 android:layout_margin="16dp"
                 android:clickable="true"
+                android:onClick="onClickCheckout"
                 app:srcCompat="@drawable/ic_cart_checkout" />
 
         </LinearLayout>
