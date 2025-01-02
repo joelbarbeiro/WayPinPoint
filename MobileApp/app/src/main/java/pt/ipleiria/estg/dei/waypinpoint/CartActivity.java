@@ -76,7 +76,6 @@ public class CartActivity extends AppCompatActivity implements CartListener {
                             .commit();
                     finish();
                 }
-
             }
         });
     }

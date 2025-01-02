@@ -279,7 +279,8 @@ class Activity extends \yii\db\ActiveRecord
         return Activity::find()
             ->joinWith('calendar')
             ->where([
-                'calendar.status' => 1
+                'calendar.status' => 1,
+                'activity.status' => 1,
             ])
             ->all();
     }
