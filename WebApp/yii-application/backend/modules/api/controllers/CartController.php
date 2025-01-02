@@ -70,7 +70,7 @@ class CartController extends ActiveController
         $data = array_map(function ($cart) {
             return [
                 'id' => $cart['id'],
-                'product_id' => $cart['activity']['name'] ?? 'Unknown Product',
+                'product_id' => $cart['activity']['id'] ?? 'Unknown Product',
                 'quantity' => $cart['quantity'],
                 'user_id' => $cart['user']['id'] ?? 'Unknown User',
                 'status' => $cart['status'],
@@ -98,7 +98,7 @@ class CartController extends ActiveController
             'message' => 'Cart has been deleted'];
     }
 
-    public function actionAddCart()
+    public function actionAddcart()
     {
         $cart = new Cart();
         if ($cart->load(Yii::$app->request->post(), '')) {
