@@ -100,12 +100,6 @@ public class CartActivity extends AppCompatActivity implements CartListener {
 
     }
 
-
-    @Override
-    public void onSuccess(ArrayList<Cart> carts) {
-
-    }
-
     @Override
     public void onError(String s) {
 

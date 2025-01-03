@@ -87,6 +87,7 @@ public class CartAdapter extends BaseAdapter {
         }
 
         private void update(Cart cart) {
+            System.out.println("->> ADAPT!!!OOOOO!!!!R " + cart);
             tvProductName.setText(String.valueOf(getActivityNameById(cart.getProduct_id(), activities)));
             tvQuantity.setText(String.valueOf(cart.getQuantity()));
             tvPrice.setText(String.valueOf(cart.getQuantity() * getPriceById(cart.getProduct_id(), activities)));

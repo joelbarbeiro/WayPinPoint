@@ -91,12 +91,10 @@ public class SingletonManager {
     //endregion
     //Region Cart Instances
     private CartListener cartListener;
-
     private ArrayList<Cart> carts;
     private Cart cart;
     //endregion
     //region # Activities instances #
-
     private ActivitiesListener activitiesListener;
     private ActivityListener activityListener;
 
@@ -441,17 +439,20 @@ public class SingletonManager {
         int userId = getUserId(context);
         if (!StatusJsonParser.isConnectionInternet(context)) {
             Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
+
             if (cartListener != null) {
+                System.out.println("->> USER 1 " + user);
                 cartListener.onRefreshCartList(waypinpointDbHelper.getCartByUserId(userId));
             }
         } else {
             JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, apiHost + "carts/buyers/" + userId, null, new Response.Listener<JSONArray>() {
                 @Override
                 public void onResponse(JSONArray response) {
-                    System.out.println("--> CARTGETAPI: " + response);
+                    System.out.println("->> CARTGETAPI: " + response);
                     carts = CartJsonParser.parserJsonCarts(response);
                     addCartsDB(carts);
                     if (cartListener != null) {
+                        System.out.println("->> USER 2 " + user + " " + carts);
                         cartListener.onRefreshCartList(carts);
                     }
                 }
@@ -482,6 +483,7 @@ public class SingletonManager {
     public void addCartApi(final Cart cart, final Context context) {
         User user = getUser(getUserId(context));
         String apiHost = getApiHost(context);
+        System.out.println("->> Cart " + apiHost + "carts/addcart");
         StringRequest request = new StringRequest(Request.Method.POST, apiHost + "carts/addcart", new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -592,7 +594,7 @@ public class SingletonManager {
         volleyQueue.add(request);
     }
 
-    public void checkoutCart(final Context context, final Cart cart){
+    public void checkoutCart(final Context context, final Cart cart) {
         String apiHost = getApiHost(context);
         StringRequest request = new StringRequest(Request.Method.POST, apiHost + "carts/checkout/" + cart.getId(), new Response.Listener<String>() {
             @Override

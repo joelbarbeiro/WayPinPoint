@@ -125,12 +125,6 @@ public class CartDetailsActivity extends AppCompatActivity implements CartListen
 
     }
 
-
-    @Override
-    public void onSuccess(ArrayList<Cart> carts) {
-
-    }
-
     @Override
     public void onError(String s) {
 

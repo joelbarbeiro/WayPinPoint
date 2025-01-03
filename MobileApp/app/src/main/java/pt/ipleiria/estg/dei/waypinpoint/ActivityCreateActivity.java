@@ -149,7 +149,7 @@ public class ActivityCreateActivity extends AppCompatActivity implements Activit
             @Override
             public void onClick(View view) {
                 if (activity != null) {
-                    activity.setName(etName.getText().toString());
+                    activity.setName(etName.getText().toString() );
                     activity.setDescription(etDescription.getText().toString());
                     activity.setPhoto(imageUri.toString());
                     activity.setMaxpax(Integer.parseInt(etMaxPax.getText().toString()));
