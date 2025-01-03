@@ -508,37 +508,38 @@ public class SingletonManager {
         volleyQueue.add(request);
     }
 
-    public void editCart(final Cart cart, final Context context) {
-        String apiHost = getApiHost(context);
-        StringRequest request = new StringRequest(Request.Method.PUT, apiHost + "carts/updatecart/" + cart.getId(),
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        waypinpointDbHelper.editCartDb(cart);
-                        if (cartListener != null) {
-                            cartListener.onValidateOperation(EDIT);
+        public void editCart(final Cart cart, final Context context) {
+            String apiHost = getApiHost(context);
+            StringRequest request = new StringRequest(Request.Method.PUT, apiHost + "carts/update/" + cart.getId(),
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            System.out.println("Edit Cart Response:" + response + cart);
+                            waypinpointDbHelper.editCartDb(cart);
+                            if (cartListener != null) {
+                                cartListener.onValidateOperation(EDIT);
+                            }
                         }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(context, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                }) {
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<>();
-                params.put("user_id", String.valueOf(getUserId(context)));
-                params.put("product_id", String.valueOf(cart.getProduct_id()));
-                params.put("quantity", String.valueOf(cart.getQuantity()));
-                params.put("status", "0");
-                params.put("calendar_id", String.valueOf(cart.getCalendar_id()));
-                return params;
-            }
-        };
-        volleyQueue.add(request);
-    }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(context, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }) {
+                @Override
+                protected Map<String, String> getParams() {
+                    Map<String, String> params = new HashMap<>();
+                    params.put("user_id", String.valueOf(getUserId(context)));
+                    params.put("product_id", String.valueOf(cart.getProduct_id()));
+                    params.put("quantity", String.valueOf(cart.getQuantity()));
+                    params.put("status", "0");
+                    params.put("calendar_id", String.valueOf(cart.getCalendar_id()));
+                    return params;
+                }
+            };
+            volleyQueue.add(request);
+        }
 
     public void removeCartAPI(final Context context, final Cart cart) {
         String apiHost = getApiHost(context);
@@ -589,10 +590,6 @@ public class SingletonManager {
             }
         });
         volleyQueue.add(request);
-    }
-
-    public void setCartsListener(CartListener cartsListener) {
-        this.cartListener = cartsListener;
     }
 
     public void setCartListener(CartListener cartListener) {
