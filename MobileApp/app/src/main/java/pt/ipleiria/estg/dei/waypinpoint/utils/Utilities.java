@@ -53,6 +53,7 @@ public class Utilities {
     public static final String IMG_URI = "IMG_URI";
     public static final String PHOTOS_URI = "PHOTOS_URI";
     public static final String IMG_URI_USER = "IMG_URI_USER";
+    public static final String BROKER_URL = "BROKER_URL";
 
     //region #ENDPOINTS TO SEND IMAGE
     public static final String ENDPOINT_ACTIVITY = "activity/photo";
@@ -154,6 +155,19 @@ public class Utilities {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         String imgUserPath = "http://" + uri + "/img/user/";
         editor.putString(IMG_URI_USER, imgUserPath);
+        editor.apply();
+    }
+    public static String getBrokerUri(Context context){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(BROKER_URL, MODE_PRIVATE);
+        System.out.println("--> Get BROKER URL " + sharedPreferences.getString(BROKER_URL, null));
+        return sharedPreferences.getString(BROKER_URL, null);
+    }
+
+    public static void setBrokerUrl(String uri, Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(BROKER_URL, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        String tmpUrl = "tcp://"+uri+":1883";
+        editor.putString(BROKER_URL, tmpUrl);
         editor.apply();
     }
 

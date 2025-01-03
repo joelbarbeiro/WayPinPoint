@@ -765,32 +765,6 @@ public class SingletonManager {
                         @Override
                         public void onErrorResponse(VolleyError error) {
                             System.out.println("->> onErrorResponse: " + error.getMessage());
-                            // Log the basic error message
-                            System.out.println("->> onErrorResponse: " + error.getMessage());
-                            System.out.println("->> " + params);
-
-                            // Handle different types of errors
-                            if (error instanceof NetworkError) {
-                                System.out.println("->> Network error occurred: " + error.getMessage());
-                            } else if (error instanceof ServerError) {
-                                System.out.println("->> Server error occurred: " + error.getMessage());
-                                NetworkResponse response = error.networkResponse;
-                                if (response != null) {
-                                    System.out.println("->> Server returned status code: " + response.statusCode);
-                                }
-                            } else if (error instanceof ParseError) {
-                                System.out.println("->> Parse error: " + error.getMessage());
-                            } else if (error instanceof TimeoutError) {
-                                System.out.println("->> Timeout error: " + error.getMessage());
-                            }
-
-                            // Log more details if networkResponse is available
-                            if (error.networkResponse != null) {
-                                System.out.println("->> Response code: " + error.networkResponse.statusCode);
-                                System.out.println("->> Response body: " + new String(error.networkResponse.data));
-                            }
-
-                            // Optionally, print the stack trace to debug further
                             error.printStackTrace();
                         }
                     }
@@ -861,32 +835,6 @@ public class SingletonManager {
                         @Override
                         public void onErrorResponse(VolleyError error) {
                             System.out.println("->> onErrorResponse: " + error.getMessage());
-                            // Log the basic error message
-                            System.out.println("->> onErrorResponse: " + error.getMessage());
-                            System.out.println("->> " + params);
-
-                            // Handle different types of errors
-                            if (error instanceof NetworkError) {
-                                System.out.println("->> Network error occurred: " + error.getMessage());
-                            } else if (error instanceof ServerError) {
-                                System.out.println("->> Server error occurred: " + error.getMessage());
-                                NetworkResponse response = error.networkResponse;
-                                if (response != null) {
-                                    System.out.println("->> Server returned status code: " + response.statusCode);
-                                }
-                            } else if (error instanceof ParseError) {
-                                System.out.println("->> Parse error: " + error.getMessage());
-                            } else if (error instanceof TimeoutError) {
-                                System.out.println("->> Timeout error: " + error.getMessage());
-                            }
-
-                            // Log more details if networkResponse is available
-                            if (error.networkResponse != null) {
-                                System.out.println("->> Response code: " + error.networkResponse.statusCode);
-                                System.out.println("->> Response body: " + new String(error.networkResponse.data));
-                            }
-
-                            // Optionally, print the stack trace to debug further
                             error.printStackTrace();
                         }
                     }
