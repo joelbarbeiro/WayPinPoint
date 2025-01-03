@@ -79,14 +79,6 @@ public class ActivityDetailsActivity extends AppCompatActivity {
 
         btBuyActivity = findViewById(R.id.btBuyActivity);
         loadActivity();
-//        btBuyActivity.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(ActivityDetailsActivity.this, CartActivity.class);
-//                intent.putExtra("ACTIVITY_ID", activity.getId());
-//                startActivity(intent);
-//            }
-//        });
     }
 
     private void loadActivity() {

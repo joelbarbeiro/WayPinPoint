@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,6 +35,7 @@ public class CartDetailsActivity extends AppCompatActivity implements CartListen
     private Cart cart;
     private TextView etActivityName, etQuantity, etPrice, etDate;
     private ImageView iv_activityImg;
+    private Button btnEditQuantity;
     public static final String DEFAULT_IMG = null;
     private Activity activity;
     private Calendar calendar;
@@ -58,6 +60,8 @@ public class CartDetailsActivity extends AppCompatActivity implements CartListen
         etDate = findViewById(R.id.etDate);
         iv_activityImg = findViewById(R.id.iv_activityImg);
         SingletonManager.getInstance(getApplicationContext()).setCartListener(this);
+        btnEditQuantity = findViewById(R.id.btnEditQuantity);
+        btnEditQuantity.setOnClickListener(v -> editQuantity());
         loadCart();
     }
 
@@ -72,6 +76,36 @@ public class CartDetailsActivity extends AppCompatActivity implements CartListen
                 .placeholder(R.drawable.img_default_activity)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(iv_activityImg);
+    }
+
+    private void editQuantity() {
+        String quantityStr = etQuantity.getText().toString();
+        if(isQuantityValid(quantityStr)){
+            int newQuantity = Integer.parseInt(quantityStr);
+            cart.setQuantity(newQuantity);
+            System.out.println("CartEditError" + newQuantity);
+            SingletonManager.getInstance(getApplicationContext()).editCart(cart, getApplicationContext());
+            Toast.makeText(this, "Quantity Updated", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private boolean isQuantityValid(String input) {
+        if (input.isEmpty()) {
+            etQuantity.setError("Field cannot be empty");
+            return false;
+        }
+
+        try {
+            int quantity = Integer.parseInt(input);
+            if (quantity <= 0) {
+                etQuantity.setError("Quantity must be greater than 0");
+                return false;
+            }
+        } catch (NumberFormatException e) {
+            etQuantity.setError("Invalid quantity");
+            return false;
+        }
+        return true;
     }
 
     @Override

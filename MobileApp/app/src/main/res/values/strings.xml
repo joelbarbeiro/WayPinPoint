@@ -100,7 +100,7 @@
     <string name="cart_added_successfully">Cart added successfully!</string>
     <string name="cart_activity_name">Activity Name:</string>
     <string name="cart_quantity">Quantity:</string>
-    <string name="cart_total">Total:</string>
+    <string name="cart_total">Price: </string>
     <string name="cart_date">Date:</string>
     <string name="save_Cart">Save</string>
     <string name="cart_checkout_success">Receipts and Ticket sent through email!</string>

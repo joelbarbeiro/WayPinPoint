@@ -668,7 +668,7 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
         this.db.delete(TABLE_NAME_CART, null, null);
     }
 
-    public ArrayList<Cart> getCartByUserId(int userId) {
+    public ArrayList<Cart> getCartByUserIdDB(int userId) {
         ArrayList<Cart> carts = new ArrayList<>();
         Cursor cursor = this.db.query(TABLE_NAME_CART, new String[]{ID, USER_ID, PRODUCT_ID, QUANTITY, STATUS, CALENDAR_ID},
                 USER_ID + "= ?",
