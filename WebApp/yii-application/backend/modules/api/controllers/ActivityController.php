@@ -44,8 +44,10 @@ class ActivityController extends ActiveController
     {
         $activities = Activity::getActivities();
         if ($activities) {
+            \Yii::$app->response->statusCode = 200;
             return $activities;
         }
+        \Yii::$app->response->statusCode = 400;
         return ['error' => 'Activity not found'];
     }
 
@@ -53,8 +55,10 @@ class ActivityController extends ActiveController
     {
         $activity = Activity::getActivityview($id);
         if ($activity) {
+            \Yii::$app->response->statusCode = 200;
             return ['activity' => $activity];
         }
+        \Yii::$app->response->statusCode = 400;
         return ['error' => 'Activity not found'];
     }
 
@@ -63,9 +67,11 @@ class ActivityController extends ActiveController
         $activity = new Activity();
         if ($activity->load(Yii::$app->request->post(), '')) {
             if (Activity::createActivity($activity)) {
+                \Yii::$app->response->statusCode = 200;
                 return $activity;
             }
         }
+        \Yii::$app->response->statusCode = 400;
         return [
             'status' => 'error',
             'message' => json_encode($activity->errors),
@@ -79,10 +85,11 @@ class ActivityController extends ActiveController
             $activity = $activity->getActivityView($id);
             $activity->load(Yii::$app->request->post(), '');
             if ($activity->updateActivity($activity)) {
+                \Yii::$app->response->statusCode = 200;
                 return $activity;
-
             }
         }
+        \Yii::$app->response->statusCode = 400;
         return [
             'status' => 'error',
             'message' => json_encode($activity->errors),
@@ -93,11 +100,13 @@ class ActivityController extends ActiveController
     {
         $activity = new Activity();
         if ($activity->deleteActivity($id)) {
+            \Yii::$app->response->statusCode = 200;
             return [
                 'activity' => 'success',
                 'message' => 'Update successfully',
             ];
         }
+        \Yii::$app->response->statusCode = 400;
         return [
             'status' => 'error',
             'message' => json_encode($activity->errors),
@@ -107,8 +116,10 @@ class ActivityController extends ActiveController
     {
         $calendar = Calendar::getCalendar();
         if ($calendar) {
+            \Yii::$app->response->statusCode = 200;
             return $calendar;
         }
+        \Yii::$app->response->statusCode = 400;
         return ['error' => 'Calendar not found'];
     }
 
@@ -116,16 +127,20 @@ class ActivityController extends ActiveController
     {
         $time = Time::getTimes();
         if ($time) {
+            \Yii::$app->response->statusCode = 200;
             return $time;
         }
+        \Yii::$app->response->statusCode = 400;
         return ['error' => 'Calendar not found'];
     }
     public function actionCategory()
     {
         $category = Category::getCategory();
         if ($category) {
+            \Yii::$app->response->statusCode = 200;
             return $category;
         }
+        \Yii::$app->response->statusCode = 400;
         return ['error' => 'Calendar not found'];
     }
 

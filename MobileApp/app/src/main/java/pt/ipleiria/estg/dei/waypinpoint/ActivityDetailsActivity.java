@@ -1,5 +1,6 @@
 package pt.ipleiria.estg.dei.waypinpoint;
 
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.REGISTER;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getCategoryById;
 
 import android.content.Intent;
@@ -166,7 +167,7 @@ public class ActivityDetailsActivity extends AppCompatActivity {
                 Intent intent = new Intent(ActivityDetailsActivity.this, CartActivity.class);
                 intent.putExtra("ACTIVITY_ID", activity.getId());
                 intent.putExtra("CALENDAR_ID", calendars.get(spinnerDateTime.getSelectedItemPosition()).getId());
-                startActivity(intent);
+                startActivityForResult(intent, REGISTER);
             }
         });
     }

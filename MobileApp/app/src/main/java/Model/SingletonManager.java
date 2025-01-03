@@ -1,7 +1,6 @@
 package Model;
 
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.CHECKOUT;
-import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.DEFAULT_IMG;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.DELETE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EDIT;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EMAIL;
@@ -46,6 +45,7 @@ import java.util.Map;
 import Listeners.ActivitiesListener;
 import Listeners.ActivityListener;
 import Listeners.CartListener;
+import Listeners.CartsListener;
 import Listeners.LoginListener;
 import Listeners.PhotosListener;
 import Listeners.ReviewListener;
@@ -56,12 +56,12 @@ import pt.ipleiria.estg.dei.waypinpoint.utils.ActivityJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.CalendarJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.CartJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.CategoryJsonParser;
+import pt.ipleiria.estg.dei.waypinpoint.utils.ImageSender;
 import pt.ipleiria.estg.dei.waypinpoint.utils.ReviewJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.StatusJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.TimeJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.UserJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.Utilities;
-import pt.ipleiria.estg.dei.waypinpoint.utils.ImageSender;
 
 public class SingletonManager {
 
@@ -83,8 +83,10 @@ public class SingletonManager {
     private ReviewListener reviewListener;
     private ArrayList<Review> reviews;
     //endregion
+
     //Region Cart Instances
     private CartListener cartListener;
+    private CartsListener cartsListener;
 
     private ArrayList<Cart> carts;
     private Cart cart;
@@ -376,7 +378,6 @@ public class SingletonManager {
     public void addCartsDB(ArrayList<Cart> carts) {
         waypinpointDbHelper.removeAllCartDb();
         for (Cart c : carts) {
-            System.out.println("DB Add review--> " + c);
             waypinpointDbHelper.addCartDb(c);
         }
     }
@@ -403,15 +404,49 @@ public class SingletonManager {
         return null;
     }
 
+    public void setCartsListener(CartsListener cartsListener) {
+        this.cartsListener = cartsListener;
+    }
+
+    public void setCartListener(CartListener cartListener) {
+        this.cartListener = cartListener;
+    }
+
+    public void getCartAPI(final Context context, final CartListener listener, final Cart cart) {
+        String apiHost = getApiHost(context);
+        if (!StatusJsonParser.isConnectionInternet(context)) {
+            Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
+            if (cartsListener != null) {
+                cartsListener.onRefreshCartList(waypinpointDbHelper.getCartByUserId(getUserId(context)));
+            }
+        } else {
+            JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, apiHost + "carts/" + cart.getId(), null, new Response.Listener<JSONArray>() {
+                @Override
+                public void onResponse(JSONArray response) {
+                    System.out.println("------> Cart Data: " + response.toString());
+                    Cart cart = CartJsonParser.parserJsonCart(response.toString());
+                    waypinpointDbHelper.addCartDb(cart);
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    System.out.println("Error fetching cart");
+                    Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            volleyQueue.add(request);
+        }
+    }
+
     public void getCartByUserId(final Context context) {
         User user = getUser(getUserId(context));
         String apiHost = getApiHost(context);
         int userId = getUserId(context);
         if (!StatusJsonParser.isConnectionInternet(context)) {
             Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
-
-            if (cartListener != null) {
-                cartListener.onRefreshCartList(waypinpointDbHelper.getCartByUserIdDB(userId));
+            if (cartsListener != null) {
+                cartsListener.onRefreshCartList(waypinpointDbHelper.getCartByUserId(userId));
             }
         } else {
             JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, apiHost + "carts/buyers/" + userId, null, new Response.Listener<JSONArray>() {
@@ -420,8 +455,8 @@ public class SingletonManager {
                     System.out.println("--> CARTGETAPI: " + response);
                     carts = CartJsonParser.parserJsonCarts(response);
                     addCartsDB(carts);
-                    if (cartListener != null) {
-                        cartListener.onRefreshCartList(carts);
+                    if (cartsListener != null) {
+                        cartsListener.onRefreshCartList(carts);
                     }
                 }
             }, new Response.ErrorListener() {
@@ -458,9 +493,12 @@ public class SingletonManager {
                     JSONObject jsonResponse = new JSONObject(response);
                     System.out.println("------> Cart Data: " + response);
                     waypinpointDbHelper.addCartDb(CartJsonParser.parserJsonCart(response));
-                    if(cartListener != null)
-                    {
-                        cartListener.onValidateOperation(REGISTER);
+                    if (jsonResponse.getBoolean("success")) {
+                        if (cartListener != null) {
+                            cartListener.onValidateOperation(REGISTER);
+                        }
+                    } else {
+                        Toast.makeText(context, "Error: " + jsonResponse.getString("errors"), Toast.LENGTH_SHORT).show();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -564,7 +602,7 @@ public class SingletonManager {
         volleyQueue.add(request);
     }
 
-    public void checkoutCart(final Context context, final Cart cart){
+    public void checkoutCart(final Context context, final Cart cart) {
         String apiHost = getApiHost(context);
         StringRequest request = new StringRequest(Request.Method.POST, apiHost + "carts/checkout/" + cart.getId(), new Response.Listener<String>() {
             @Override
@@ -590,10 +628,6 @@ public class SingletonManager {
             }
         });
         volleyQueue.add(request);
-    }
-
-    public void setCartListener(CartListener cartListener) {
-        this.cartListener = cartListener;
     }
 
     //ENDREGION

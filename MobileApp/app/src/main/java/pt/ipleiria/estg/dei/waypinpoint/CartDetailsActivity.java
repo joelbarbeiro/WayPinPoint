@@ -1,6 +1,5 @@
 package pt.ipleiria.estg.dei.waypinpoint;
 
-import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EDIT;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ID_CART;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.OP_CODE;
 
@@ -22,8 +21,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import java.util.ArrayList;
 
 import Listeners.CartListener;
 import Model.Activity;
@@ -62,6 +59,7 @@ public class CartDetailsActivity extends AppCompatActivity implements CartListen
         etPrice = findViewById(R.id.etPrice);
         etDate = findViewById(R.id.etDate);
         iv_activityImg = findViewById(R.id.iv_activityImg);
+        SingletonManager.getInstance(getApplicationContext()).setCartListener(this);
         btnEditQuantity = findViewById(R.id.btnEditQuantity);
         btnEditQuantity.setOnClickListener(v -> editQuantity());
         loadCart();
@@ -78,8 +76,6 @@ public class CartDetailsActivity extends AppCompatActivity implements CartListen
                 .placeholder(R.drawable.img_default_activity)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(iv_activityImg);
-        SingletonManager.getInstance(getApplicationContext()).setCartListener(this);
-
     }
 
     private void editQuantity() {
@@ -152,27 +148,6 @@ public class CartDetailsActivity extends AppCompatActivity implements CartListen
                 })
                 .setIcon(R.drawable.ic_dialog_remove)
                 .show();
-    }
-
-    //Maybe needs an Override
-    public void onRefreshDetails(int op) {
-
-    }
-
-
-    @Override
-    public void onSuccess(ArrayList<Cart> carts) {
-
-    }
-
-    @Override
-    public void onError(String s) {
-
-    }
-
-    @Override
-    public void onRefreshCartList(ArrayList<Cart> cartList) {
-
     }
 
     @Override

@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,10 +31,10 @@ import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 
+import Adapters.ReviewListAdapter;
 import Listeners.ReviewsListener;
 import Model.Review;
 import Model.SingletonManager;
-import Adapters.ReviewListAdapter;
 
 public class ListReviewsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, ReviewsListener {
 
@@ -42,6 +43,8 @@ public class ListReviewsFragment extends Fragment implements SwipeRefreshLayout.
     private SwipeRefreshLayout swipeRefreshLayout;
     private SearchView searchView;
     private FloatingActionButton fabReview;
+    private View emptyView;
+    private TextView tvEmptyMessage;
 
     public ListReviewsFragment() {
         // Required empty public constructor
@@ -52,6 +55,7 @@ public class ListReviewsFragment extends Fragment implements SwipeRefreshLayout.
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_list_reviews, container, false);
         lvReviews = view.findViewById(R.id.lvReviews);
+        emptyView = view.findViewById(R.id.emptyViewLayoutReviews);
         int activityId = getArguments().getInt(ID_ACTIVITY);
         int userId = getUserId(getContext());
         if (requireActivity() instanceof AppCompatActivity) {
@@ -124,8 +128,16 @@ public class ListReviewsFragment extends Fragment implements SwipeRefreshLayout.
 
     @Override
     public void onRefreshReviewsList(ArrayList<Review> listReviews) {
-        if (listReviews != null) {
+        if (listReviews != null || !listReviews.isEmpty()) {
+            lvReviews.setVisibility(View.VISIBLE);
+            emptyView.setVisibility(View.GONE);
             lvReviews.setAdapter(new ReviewListAdapter(getContext(), listReviews));
+        }
+        if (listReviews.isEmpty()) {
+            lvReviews.setVisibility(View.GONE);
+            emptyView.setVisibility(View.VISIBLE);
+            tvEmptyMessage = emptyView.findViewById(R.id.tvEmptyMessage);
+            tvEmptyMessage.setText(R.string.empty_placeholder_message);
         }
     }
 }

@@ -1,5 +1,6 @@
 package pt.ipleiria.estg.dei.waypinpoint;
 
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.CHECKOUT;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.DELETE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EDIT;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ID_CART;
@@ -16,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -26,18 +28,26 @@ import com.google.android.material.snackbar.Snackbar;
 import java.util.ArrayList;
 
 import Adapters.CartAdapter;
+import Listeners.CartsListener;
+import Adapters.CartAdapter;
 import Listeners.CartListener;
 import Model.Calendar;
 import Model.Cart;
 import Model.SingletonManager;
 import Model.WaypinpointDbHelper;
+import Adapters.CartAdapter;
 
-public class CartFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, CartListener {
+public class CartFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, CartsListener {
     private SwipeRefreshLayout swipeRefreshLayout;
     private ArrayList<Cart> cartList;
     private ArrayList<Model.Activity> activities;
     private ArrayList<Calendar> calendars;
     private ListView lvCart;
+    private View emptyView;
+    private TextView tvEmptyMessage;
+    private Cart cart;
+    private double price;
+    private CartAdapter CartAdapter;
     private WaypinpointDbHelper waypinpointDbHelper;
 
     public CartFragment() {
@@ -50,9 +60,10 @@ public class CartFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         View view = inflater.inflate(R.layout.fragment_cart, container, false);
         setHasOptionsMenu(true);
         lvCart = view.findViewById(R.id.lvCart);
+        emptyView = view.findViewById(R.id.emptyViewLayoutCarts);
         int userId = getUserId(getContext());
         waypinpointDbHelper = new WaypinpointDbHelper(getContext());
-        //cartList = waypinpointDbHelper.getCartByUserIdDB(userId);
+        cartList = waypinpointDbHelper.getCartByUserId(userId);
         activities = waypinpointDbHelper.getActivitiesDB();
         calendars = waypinpointDbHelper.getCalendarDB();
 
@@ -62,11 +73,12 @@ public class CartFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                 Intent intent = new Intent(getContext(), CartDetailsActivity.class);
                 intent.putExtra(ID_CART, (int) id);
                 intent.putExtra(USER_ID, userId);
-                startActivity(intent);
+                startActivityForResult(intent, EDIT);
             }
         });
-        swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout);
+        swipeRefreshLayout = view.findViewById(R.id.srl_Cart);
         swipeRefreshLayout.setOnRefreshListener(this);
+        SingletonManager.getInstance(getContext()).setCartsListener(this);
 
         SingletonManager.getInstance(getContext()).setCartListener(this);
         loadCartData();
@@ -77,18 +89,18 @@ public class CartFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         SingletonManager.getInstance(getContext()).getCartByUserId(getContext());
     }
 
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == REGISTER || requestCode == EDIT) {
+            if (requestCode == EDIT) {
                 SingletonManager.getInstance(getContext()).getCartByUserId(getContext());
                 switch (requestCode) {
-                    case REGISTER:
-                        Snackbar.make(getView(), "Cart Added Successfully", Snackbar.LENGTH_SHORT).show();
-                        break;
                     case EDIT:
                         if (data.getIntExtra(OP_CODE, 0) == DELETE) {
                             Snackbar.make(getView(), "Cart Removed Successfully", Snackbar.LENGTH_SHORT).show();
+                        } else if (data.getIntExtra(OP_CODE, 0) == CHECKOUT) {
+                            Snackbar.make(getView(), "Checkout Successful", Snackbar.LENGTH_SHORT).show();
                         } else {
                             Snackbar.make(getView(), "Cart Edited Successfully", Snackbar.LENGTH_SHORT).show();
                         }
@@ -101,34 +113,26 @@ public class CartFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-
-    @Override
-    public void onSuccess(ArrayList<Cart> carts) {
-
-    }
-
-    @Override
-    public void onError(String s) {
-
-    }
-
     @Override
     public void onRefresh() {
         loadCartData();
         swipeRefreshLayout.setRefreshing(false);
     }
 
-    public void onRefreshCartList(ArrayList<Cart> cartList) {
-        if (cartList != null) {
-            lvCart.setAdapter(new CartAdapter(getContext(), cartList, activities, calendars));
+    public void onRefreshCartList(ArrayList<Cart> cartArrayList) {
+        if (cartArrayList != null || !cartArrayList.isEmpty()) {
+            lvCart.setVisibility(View.VISIBLE);
+            emptyView.setVisibility(View.GONE);
+            activities = waypinpointDbHelper.getActivitiesDB();
+            calendars = waypinpointDbHelper.getCalendarDB();
+            lvCart.setAdapter(new CartAdapter(getContext(), cartArrayList, activities, calendars));
         }
-        else {
-            System.out.println("---> something is empty cartFragment");
+        if (cartArrayList.isEmpty()) {
+            lvCart.setVisibility(View.GONE);
+            emptyView.setVisibility(View.VISIBLE);
+            tvEmptyMessage = emptyView.findViewById(R.id.tvEmptyMessage);
+            tvEmptyMessage.setText(R.string.empty_cart_message);
         }
     }
 
-    @Override
-    public void onValidateOperation(int op) {
-
-    }
 }

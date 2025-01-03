@@ -1,27 +1,23 @@
 package pt.ipleiria.estg.dei.waypinpoint;
 
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ID_CART;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.OP_CODE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getUserId;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-
-import java.util.ArrayList;
 
 import Listeners.CartListener;
 import Model.Cart;
 import Model.SingletonManager;
-import Model.WaypinpointDbHelper;
 
 public class CartActivity extends AppCompatActivity implements CartListener {
     private FragmentManager fragmentManager;
@@ -30,7 +26,6 @@ public class CartActivity extends AppCompatActivity implements CartListener {
     private String apiHost = null;
     private Cart cart;
     private EditText etQuantity;
-    public static final String APIHOST = "APIHOST";
     private Button buttonAddCart;
     private CartListener listener;
     private double total;
@@ -61,7 +56,7 @@ public class CartActivity extends AppCompatActivity implements CartListener {
                             0,
                             calendarId
                     );
-
+                    SingletonManager.getInstance(getApplicationContext()).setCartListener(CartActivity.this);
                     SingletonManager.getInstance(getApplicationContext()).addCartApi(newCart, getApplicationContext());
                     Fragment fragment = new CartFragment();
                     Toast.makeText(CartActivity.this, "Cart Added Successfully", Toast.LENGTH_SHORT).show();
@@ -99,25 +94,12 @@ public class CartActivity extends AppCompatActivity implements CartListener {
         return true;
     }
 
-
-    @Override
-    public void onSuccess(ArrayList<Cart> carts) {
-
-    }
-
-    @Override
-    public void onError(String s) {
-
-    }
-
-    @Override
-    public void onRefreshCartList(ArrayList<Cart> cartList) {
-
-    }
-
     @Override
     public void onValidateOperation(int op) {
-
+        Intent intent = new Intent();
+        intent.putExtra(OP_CODE, op);
+        setResult(RESULT_OK, intent);
+        finish();
     }
 }
 
