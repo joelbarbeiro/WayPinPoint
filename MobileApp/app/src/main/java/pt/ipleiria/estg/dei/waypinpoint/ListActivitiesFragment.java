@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,13 +27,13 @@ import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 
+import Adapters.ActivitiesListAdapter;
 import Listeners.ActivitiesListener;
 import Model.Activity;
 import Model.Calendar;
 import Model.CalendarTime;
 import Model.Category;
 import Model.SingletonManager;
-import Adapters.ActivitiesListAdapter;
 
 
 public class ListActivitiesFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, ActivitiesListener {
@@ -43,6 +44,8 @@ public class ListActivitiesFragment extends Fragment implements SwipeRefreshLayo
     private ArrayList<CalendarTime> times;
     private ArrayList<Category> categories;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private View emptyView;
+    private TextView tvEmptyMessage;
     private SearchView searchView;
 
     public ListActivitiesFragment() {
@@ -55,7 +58,7 @@ public class ListActivitiesFragment extends Fragment implements SwipeRefreshLayo
         setHasOptionsMenu(true);
         View view = inflater.inflate(R.layout.fragment_list_activities, container, false);
         lvActivities = view.findViewById(R.id.lvActivities);
-
+        emptyView = view.findViewById(R.id.emptyViewLayoutActivities);
         lvActivities.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -77,11 +80,11 @@ public class ListActivitiesFragment extends Fragment implements SwipeRefreshLayo
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.menu_search, menu);
+        inflater.inflate(R.menu.menu_cart, menu);
 
+        MenuItem itemCart = menu.findItem(R.id.navCart);
         MenuItem itemSearch = menu.findItem(R.id.app_bar_search);
         searchView = (SearchView) itemSearch.getActionView();
-
-
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
@@ -100,6 +103,19 @@ public class ListActivitiesFragment extends Fragment implements SwipeRefreshLayo
 
                 lvActivities.setAdapter(new ActivitiesListAdapter(getContext(), tempActivity, calendars, times, categories));
 
+                return true;
+            }
+        });
+
+        itemCart.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                Fragment fragment = new CartFragment();
+                getActivity().getSupportFragmentManager()
+                        .beginTransaction()
+                        .addToBackStack(null)
+                        .replace(R.id.contentFragment, fragment)
+                        .commit();
                 return true;
             }
         });
@@ -156,12 +172,17 @@ public class ListActivitiesFragment extends Fragment implements SwipeRefreshLayo
     }
 
     @Override
-    public void onRefreshAllData(ArrayList<Activity> listActivities, ArrayList<Calendar> listCalendar, ArrayList<CalendarTime> listCalendarTime, ArrayList<Category> listCategories){
+    public void onRefreshAllData(ArrayList<Activity> listActivities, ArrayList<Calendar> listCalendar, ArrayList<CalendarTime> listCalendarTime, ArrayList<Category> listCategories) {
         if (listActivities != null && listCalendar != null && listCalendarTime != null && listCategories != null) {
+            lvActivities.setVisibility(View.VISIBLE);
+            emptyView.setVisibility(View.GONE);
             lvActivities.setAdapter(new ActivitiesListAdapter(getContext(), listActivities, listCalendar, listCalendarTime, listCategories));
         }
-        else{
-            System.out.println("---> something is empty listActivitiesFragment");
+        if (listActivities.isEmpty()) {
+            lvActivities.setVisibility(View.GONE);
+            emptyView.setVisibility(View.VISIBLE);
+            tvEmptyMessage = emptyView.findViewById(R.id.tvEmptyMessage);
+            tvEmptyMessage.setText(R.string.no_activities_message);
         }
     }
 }
