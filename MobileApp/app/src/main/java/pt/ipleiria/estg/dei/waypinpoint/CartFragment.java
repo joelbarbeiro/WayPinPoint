@@ -5,7 +5,6 @@ import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.DELETE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EDIT;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ID_CART;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.OP_CODE;
-import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.REGISTER;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.USER_ID;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getUserId;
 
@@ -29,13 +28,10 @@ import java.util.ArrayList;
 
 import Adapters.CartAdapter;
 import Listeners.CartsListener;
-import Adapters.CartAdapter;
-import Listeners.CartListener;
 import Model.Calendar;
 import Model.Cart;
 import Model.SingletonManager;
 import Model.WaypinpointDbHelper;
-import Adapters.CartAdapter;
 
 public class CartFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, CartsListener {
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -45,9 +41,6 @@ public class CartFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private ListView lvCart;
     private View emptyView;
     private TextView tvEmptyMessage;
-    private Cart cart;
-    private double price;
-    private CartAdapter CartAdapter;
     private WaypinpointDbHelper waypinpointDbHelper;
 
     public CartFragment() {
@@ -79,7 +72,6 @@ public class CartFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         swipeRefreshLayout = view.findViewById(R.id.srl_Cart);
         swipeRefreshLayout.setOnRefreshListener(this);
         SingletonManager.getInstance(getContext()).setCartsListener(this);
-
         loadCartData();
         return view;
     }
