@@ -63,7 +63,7 @@ public class CartFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         emptyView = view.findViewById(R.id.emptyViewLayoutCarts);
         int userId = getUserId(getContext());
         waypinpointDbHelper = new WaypinpointDbHelper(getContext());
-        cartList = waypinpointDbHelper.getCartByUserId(userId);
+        cartList = waypinpointDbHelper.getCartByUserIdDB(userId);
         activities = waypinpointDbHelper.getActivitiesDB();
         calendars = waypinpointDbHelper.getCalendarDB();
 
@@ -80,7 +80,6 @@ public class CartFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         swipeRefreshLayout.setOnRefreshListener(this);
         SingletonManager.getInstance(getContext()).setCartsListener(this);
 
-        SingletonManager.getInstance(getContext()).setCartListener(this);
         loadCartData();
         return view;
     }
