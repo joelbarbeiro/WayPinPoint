@@ -1,8 +1,8 @@
 package pt.ipleiria.estg.dei.waypinpoint;
 
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ACTIVITY_ID;
-import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.CALENDAR_ID;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ADD;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.CALENDAR_ID;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getCategoryById;
 
 import android.content.Intent;

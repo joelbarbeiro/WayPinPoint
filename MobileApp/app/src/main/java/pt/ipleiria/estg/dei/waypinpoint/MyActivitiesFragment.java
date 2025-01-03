@@ -1,21 +1,14 @@
 package pt.ipleiria.estg.dei.waypinpoint;
 
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ACTIVITY_ID;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ADD;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.DELETE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EDIT;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.OP_CODE;
-import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ADD;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.filterActivitiesBySupplier;
-
 
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,19 +19,24 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 
+import Adapters.ActivitiesListAdapter;
+import Adapters.MyActivitiesAdapter;
 import Listeners.ActivitiesListener;
 import Model.Activity;
 import Model.Calendar;
 import Model.CalendarTime;
 import Model.Category;
 import Model.SingletonManager;
-import Adapters.ActivitiesListAdapter;
-import Adapters.MyActivitiesAdapter;
 
 
 public class MyActivitiesFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, ActivitiesListener {
@@ -89,6 +87,7 @@ public class MyActivitiesFragment extends Fragment implements SwipeRefreshLayout
 
         return view;
     }
+
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.menu_search, menu);
@@ -149,28 +148,32 @@ public class MyActivitiesFragment extends Fragment implements SwipeRefreshLayout
     public void onRefreshActivitiesList(ArrayList<Activity> listActivities) {
 
     }
+
     @Override
     public void onRefreshCalendarList(ArrayList<Model.Calendar> listCalendar) {
 
     }
+
     @Override
     public void onRefreshTimeList(ArrayList<CalendarTime> listCalendarTime) {
 
     }
+
     @Override
     public void onRefreshCategoryList(ArrayList<Category> listCategory) {
 
     }
+
     @Override
-    public void onRefreshAllData(ArrayList<Activity> listActivities, ArrayList<Calendar> listCalendar, ArrayList<CalendarTime> listCalendarTime, ArrayList<Category> listCategories){
+    public void onRefreshAllData(ArrayList<Activity> listActivities, ArrayList<Calendar> listCalendar, ArrayList<CalendarTime> listCalendarTime, ArrayList<Category> listCategories) {
         if (listActivities != null && listCalendar != null && listCalendarTime != null && listCategories != null) {
             ArrayList<Activity> supplierActivity = filterActivitiesBySupplier(getContext(), listActivities);
             lvMyActivities.setAdapter(new MyActivitiesAdapter(getContext(), supplierActivity, listCalendar, listCalendarTime, listCategories));
-        }
-        else{
+        } else {
             System.out.println("---> something is empty listActivitiesFragment");
         }
     }
+
     @Override
     public void onRefresh() {
         SingletonManager.getInstance(getContext()).getActivities(getContext());

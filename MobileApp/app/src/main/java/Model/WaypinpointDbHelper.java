@@ -10,11 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.Nullable;
 
-import com.bumptech.glide.util.Util;
-
 import java.util.ArrayList;
-
-import pt.ipleiria.estg.dei.waypinpoint.utils.Utilities;
 
 public class WaypinpointDbHelper extends SQLiteOpenHelper {
 
@@ -716,7 +712,6 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
         }
         return cart;
     }
-
 
 
     //ENDREGION

@@ -1,11 +1,11 @@
 package Model;
 
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ADD;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.CHECKOUT;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.DELETE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EDIT;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EMAIL;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ID;
-import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ADD;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.TOKEN;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.USER_DATA;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getApiHost;
@@ -370,11 +370,6 @@ public class SingletonManager {
     //endregion
     //REGION # MÉTODOS CART - API #
 
-    public ArrayList<Cart> getCartsDB(ArrayList<Cart> carts) {
-        carts = waypinpointDbHelper.getAllCartsDb();
-        return new ArrayList<>(carts);
-    }
-
     public void addCartsDB(ArrayList<Cart> carts) {
         waypinpointDbHelper.removeAllCartDb();
         for (Cart c : carts) {
@@ -387,12 +382,6 @@ public class SingletonManager {
         return new ArrayList<>(carts);
     }
 
-    public void removeCartDb(int cartId) {
-        Cart cart = getCart(cartId);
-        if (cart != null) {
-            waypinpointDbHelper.removeCartDb(cart.getId());
-        }
-    }
 
     public Cart getCart(int id) {
         carts = getCarts();

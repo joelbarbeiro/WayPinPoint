@@ -24,6 +24,7 @@ public class CalendarTime {
     public String getHour() {
         return hour;
     }
+
     @Override
     public String toString() {
         return hour;

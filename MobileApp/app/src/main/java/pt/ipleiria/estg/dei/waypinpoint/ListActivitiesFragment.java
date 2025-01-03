@@ -1,9 +1,9 @@
 package pt.ipleiria.estg.dei.waypinpoint;
 
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ADD;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.DELETE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EDIT;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.OP_CODE;
-import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ADD;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -151,14 +151,17 @@ public class ListActivitiesFragment extends Fragment implements SwipeRefreshLayo
         SingletonManager.getInstance(getContext()).getActivities(getContext());
         swipeRefreshLayout.setRefreshing(false);
     }
+
     @Override
     public void onRefreshActivitiesList(ArrayList<Activity> listActivities) {
 
     }
+
     @Override
     public void onRefreshCalendarList(ArrayList<Calendar> listCalendar) {
 
     }
+
     @Override
     public void onRefreshTimeList(ArrayList<CalendarTime> listCalendarTime) {
 

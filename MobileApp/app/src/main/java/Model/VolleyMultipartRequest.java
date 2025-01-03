@@ -20,11 +20,11 @@ import java.util.Map;
 public class VolleyMultipartRequest extends Request<String> {
 
     private final JSONObject mParams;
-    private final  Map<String, File> mFiles;
+    private final Map<String, File> mFiles;
     private final Response.Listener<String> mListener;
     private final Response.ErrorListener mErrorListener;
 
-    public VolleyMultipartRequest(int method, String url, JSONObject params,  Map<String, File> files,
+    public VolleyMultipartRequest(int method, String url, JSONObject params, Map<String, File> files,
                                   Response.Listener<String> listener, Response.ErrorListener errorListener) {
         super(method, url, errorListener);
         this.mParams = params;
@@ -78,7 +78,7 @@ public class VolleyMultipartRequest extends Request<String> {
 
             if (mFiles != null && !mFiles.isEmpty()) {
                 for (Map.Entry<String, File> entry : mFiles.entrySet()) {
-                    if(entry.getValue() != null) {
+                    if (entry.getValue() != null) {
                         String key = entry.getKey();
                         File file = entry.getValue();
 
