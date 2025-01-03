@@ -70,6 +70,7 @@
     <string name="error_invalid_quantity">Invalid quantity</string>
     <string name="error_no_email_provided">No Email Provided</string>
 
+
     <!-- General Messages -->
     <string name="message_save_changes">Save changes</string>
 
@@ -144,7 +145,9 @@
     <string name="empty_photos_message">No photos added to this activity. Be the first to add a memory!</string>
     <string name="img_default">img_default</string>
 
+
     <!-- Activities -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="priceperpax">PricePerPax</string>
     <string name="maxpax">MaxPax</string>
     <string name="description">Description</string>
@@ -160,9 +163,9 @@
     <string name="create_activity_save">Save</string>
     <string name="selected_date_create_activity">Selected Date</string>
     <string name="category">Category</string>
-    <string name="availabillity">Availabillity</string>
+    <string name="availabillity">Availability</string>
     <string name="ticket_price">Ticket price</string>
-    <string name="activity_descritpion">Descritpion</string>
+    <string name="activity_descritpion">Description</string>
     <string name="menu_list_activities_label">List Activities</string>
     <string name="fab_save">Save</string>
     <string name="activity_create_address">Address</string>
@@ -174,6 +177,8 @@
     <string name="activity_edit_success_message">Activity edit successful!</string>
     <string name="Api_hostname_message_before_login">Please config api hostname before login or register</string>
     <string name="activity_string">Activity</string>
+
+
 
     <!-- Hints -->
     <string name="api_hostname_hint">Api Hostname</string>

@@ -41,9 +41,6 @@ public class CartFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private ListView lvCart;
     private View emptyView;
     private TextView tvEmptyMessage;
-    private Cart cart;
-    private double price;
-    private CartAdapter CartAdapter;
     private WaypinpointDbHelper waypinpointDbHelper;
 
     public CartFragment() {
@@ -75,7 +72,6 @@ public class CartFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         swipeRefreshLayout = view.findViewById(R.id.srl_Cart);
         swipeRefreshLayout.setOnRefreshListener(this);
         SingletonManager.getInstance(getContext()).setCartsListener(this);
-
         loadCartData();
         return view;
     }

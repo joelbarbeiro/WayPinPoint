@@ -81,7 +81,7 @@ public class CartDetailsActivity extends AppCompatActivity implements CartListen
 
     private void editQuantity() {
         String quantityStr = etQuantity.getText().toString();
-        if(isQuantityValid(quantityStr, getApplicationContext())) {
+        if (isQuantityValid(quantityStr, getApplicationContext())) {
             int newQuantity = Integer.parseInt(quantityStr);
             cart.setQuantity(newQuantity);
             SingletonManager.getInstance(getApplicationContext()).editCart(cart, getApplicationContext());

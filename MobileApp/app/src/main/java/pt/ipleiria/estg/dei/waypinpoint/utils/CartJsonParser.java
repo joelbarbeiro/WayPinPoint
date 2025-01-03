@@ -31,7 +31,7 @@ public class CartJsonParser {
                         quantity,
                         status,
                         calendar_id
-                        );
+                );
                 carts.add(auxCart);
             }
         } catch (JSONException e) {
@@ -72,7 +72,7 @@ public class CartJsonParser {
         return auxCart;
     }
 
-    public static boolean isConnectionInternet(Context context){
+    public static boolean isConnectionInternet(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
         NetworkInfo networkInfo = cm.getActiveNetworkInfo();
