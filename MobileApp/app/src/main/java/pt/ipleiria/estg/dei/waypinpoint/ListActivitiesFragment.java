@@ -3,7 +3,7 @@ package pt.ipleiria.estg.dei.waypinpoint;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.DELETE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EDIT;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.OP_CODE;
-import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.REGISTER;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ADD;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -126,25 +126,23 @@ public class ListActivitiesFragment extends Fragment implements SwipeRefreshLayo
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (resultCode == LoginActivity.RESULT_OK) {
-            if (requestCode == REGISTER || requestCode == EDIT) {
+            if (requestCode == ADD || requestCode == EDIT) {
                 SingletonManager.getInstance(getContext()).getActivities(getContext());
 
                 switch (requestCode) {
-                    case REGISTER:
-                        Snackbar.make(getView(), "Activity successfully created!", Snackbar.LENGTH_SHORT).show();
+                    case ADD:
+                        Snackbar.make(getView(), R.string.activity_success_message, Snackbar.LENGTH_SHORT).show();
                         break;
                     case EDIT:
                         if (data.getIntExtra(OP_CODE, 0) == DELETE) {
-                            Snackbar.make(getView(), "Activity removed!", Snackbar.LENGTH_SHORT).show();
+                            Snackbar.make(getView(), R.string.activity_remove_success, Snackbar.LENGTH_SHORT).show();
                         } else {
-                            Snackbar.make(getView(), "Activity edit successful!", Snackbar.LENGTH_SHORT).show();
+                            Snackbar.make(getView(), R.string.activity_edit_success_message, Snackbar.LENGTH_SHORT).show();
                         }
                         break;
                 }
             }
         }
-
-
         super.onActivityResult(requestCode, resultCode, data);
     }
 

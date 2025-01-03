@@ -25,6 +25,7 @@
         android:backgroundTint="@color/blue_500"
         android:contentDescription="@string/fab_add_activity"
         android:clickable="true"
+        android:focusable="true"
         android:src="@drawable/ic_action_add"
         app:tint="@android:color/white" />
 </FrameLayout>
