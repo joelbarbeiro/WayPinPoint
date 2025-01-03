@@ -5,7 +5,6 @@ import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EDIT;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.OP_CODE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.REGISTER;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -26,10 +25,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.material.snackbar.Snackbar;
 
-import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
-import org.eclipse.paho.client.mqttv3.MqttCallback;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
-
 import java.util.ArrayList;
 
 import Adapters.ActivitiesListAdapter;
@@ -38,6 +33,7 @@ import Model.Activity;
 import Model.Calendar;
 import Model.CalendarTime;
 import Model.Category;
+import Model.MQTTManager;
 import Model.SingletonManager;
 
 
@@ -65,12 +61,6 @@ public class ListActivitiesFragment extends Fragment implements SwipeRefreshLayo
         View view = inflater.inflate(R.layout.fragment_list_activities, container, false);
         lvActivities = view.findViewById(R.id.lvActivities);
         emptyView = view.findViewById(R.id.emptyViewLayoutActivities);
-
-        mqttManager = MQTTManager.getInstance(requireContext());
-        mqttManager.connect();
-        mqttManager.subscribe("activity/created");
-        mqttManager.subscribe("activity/updated");
-        mqttManager.subscribe("activity/deleted");
 
         lvActivities.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

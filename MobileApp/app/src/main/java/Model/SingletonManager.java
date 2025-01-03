@@ -19,14 +19,9 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
-import com.android.volley.NetworkError;
-import com.android.volley.NetworkResponse;
-import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
-import com.android.volley.ServerError;
-import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
@@ -47,6 +42,7 @@ import Listeners.ActivityListener;
 import Listeners.CartListener;
 import Listeners.CartsListener;
 import Listeners.LoginListener;
+import Listeners.MosquittoListener;
 import Listeners.PhotosListener;
 import Listeners.ReviewListener;
 import Listeners.ReviewsListener;
@@ -104,6 +100,8 @@ public class SingletonManager {
     //endregion
 
     private static RequestQueue volleyQueue = null;
+    private static MQTTManager mqttManager = null;
+    private static MqttNotificationManager mqttNotificationManager = null;
 
     public SingletonManager(Context context) {
         waypinpointDbHelper = new WaypinpointDbHelper(context);
@@ -121,6 +119,10 @@ public class SingletonManager {
         if (instance == null) {
             instance = new SingletonManager(context);
             volleyQueue = Volley.newRequestQueue(context);
+            mqttManager = new MQTTManager(context);
+            mqttManager.connect();
+            mqttNotificationManager = new MqttNotificationManager(context.getApplicationContext());
+            mqttManager.setMosquittoListener(mqttNotificationManager);
         }
         return instance;
     }

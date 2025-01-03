@@ -58,6 +58,9 @@ public class Utilities {
     //region #ENDPOINTS TO SEND IMAGE
     public static final String ENDPOINT_ACTIVITY = "activity/photo";
     public static final String ENDPOINT_USER = "user/photo";
+    public static final String MQTT_CREATE_ACTIVITY = "activity/created";
+    public static final String MQTT_UPDATE_ACTIVITY = "activity/updated";
+    public static final String MQTT_REVIEW_CREATE = "review/created";
     //endregion
 
     public static String getApiHost(Context context) {

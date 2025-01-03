@@ -72,6 +72,7 @@ public class CartFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         });
         swipeRefreshLayout = view.findViewById(R.id.srl_Cart);
         swipeRefreshLayout.setOnRefreshListener(this);
+        
         SingletonManager.getInstance(getContext()).setCartsListener(this);
         SingletonManager.getInstance(getContext()).getCartByUserId(getContext());
         return view;

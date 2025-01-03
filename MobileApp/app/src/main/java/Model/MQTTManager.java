@@ -1,48 +1,42 @@
-package pt.ipleiria.estg.dei.waypinpoint;
+package Model;
+
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.MQTT_CREATE_ACTIVITY;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.MQTT_UPDATE_ACTIVITY;
 
 import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
 
-
-import androidx.appcompat.app.AppCompatActivity;
-
-import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
-import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
+import Listeners.MosquittoListener;
 import pt.ipleiria.estg.dei.waypinpoint.utils.Utilities;
 
-
-public class MQTTManager extends AppCompatActivity {
+public class MQTTManager {
     private static final String TAG = "->> MQTTManager";
     private String BROKER_URL;
     private static final String CLIENT_ID = MqttClient.generateClientId();
-
     private MqttClient mqttClient;
-
     private static MQTTManager instance;
+    private MosquittoListener messageListener;
 
-    private MQTTManager(Context context) {
+    public MQTTManager(Context context) {
         BROKER_URL = Utilities.getBrokerUri(context);
         try {
             mqttClient = new MqttClient(BROKER_URL, CLIENT_ID, null);
 
-            // Set the callback to handle messages and connection states
             mqttClient.setCallback(new MqttCallback() {
                 @Override
                 public void messageArrived(String topic, MqttMessage message) throws Exception {
-                    // This method is called when a message is received
                     Log.d(TAG, "Message arrived on topic: " + topic);
                     Log.d(TAG, "Message: " + new String(message.getPayload()));
 
-                    String receivedMessage = new String(message.getPayload());
-
-                    System.out.println(TAG + " " + receivedMessage);
+                    if (messageListener != null) {
+                        messageListener.onMessageReceived(topic, String.valueOf(message));
+                    }
                 }
 
                 @Override
@@ -53,7 +47,17 @@ public class MQTTManager extends AppCompatActivity {
                 @Override
                 public void connectionLost(Throwable cause) {
                     Log.e(TAG, "Connection lost", cause);
+                    while (!mqttClient.isConnected()) {
+                        Log.d(TAG, "Attempting to reconnect...");
+                        connect();
+                        try {
+                            Thread.sleep(5000);
+                        } catch (Exception e) {
+                            Thread.currentThread().interrupt();
+                        }
+                    }
                 }
+
             });
 
         } catch (MqttException e) {
@@ -70,17 +74,16 @@ public class MQTTManager extends AppCompatActivity {
 
     public void connect() {
         try {
-            if (!mqttClient.isConnected()) {
                 mqttClient.connect();
-                System.out.println(TAG + " Connected");
-            }
+                Log.d(TAG, "Connected to server");
+                subscribe(MQTT_CREATE_ACTIVITY);
+                subscribe(MQTT_UPDATE_ACTIVITY);
         } catch (MqttException e) {
-            System.out.println(TAG + "Error connecting to broke " + e);
             Log.e(TAG, "Error connecting to broker", e);
         }
     }
 
-    public void disconnect(IMqttActionListener callback) {
+    public void disconnect() {
         try {
             if (mqttClient.isConnected()) {
                 mqttClient.disconnect();
@@ -94,12 +97,16 @@ public class MQTTManager extends AppCompatActivity {
         try {
             if (mqttClient.isConnected()) {
                 mqttClient.subscribe(topic);
-                System.out.println(TAG + " subscribed to " + topic);
+                Log.d(TAG, " Subscribed " + topic);
             } else {
                 Log.e(TAG, "Cannot subscribe, client not connected");
             }
         } catch (MqttException e) {
             Log.e(TAG, "Error subscribing to topic", e);
         }
+    }
+
+    public void setMosquittoListener(MqttNotificationManager mqttNotificationManager) {
+        this.messageListener = mqttNotificationManager;
     }
 }
