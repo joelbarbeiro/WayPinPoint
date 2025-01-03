@@ -6,6 +6,7 @@ import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.DELETE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EDIT;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EMAIL;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ID;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.NO_TOKEN;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.TOKEN;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.USER_DATA;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getApiHost;
@@ -87,20 +88,16 @@ public class SingletonManager {
     //Region Cart Instances
     private CartListener cartListener;
     private CartsListener cartsListener;
-
     private ArrayList<Cart> carts;
-    private Cart cart;
     //endregion
-    //region # Activities instances #
 
+    //region # Activities instances #
     private ActivitiesListener activitiesListener;
     private ActivityListener activityListener;
-
     private ArrayList<Activity> activities;
     private ArrayList<Calendar> calendars;
     private ArrayList<CalendarTime> calendarTimes;
     private ArrayList<Category> categories;
-
     //endregion
 
     private static RequestQueue volleyQueue = null;
@@ -147,10 +144,6 @@ public class SingletonManager {
             }
         }
         return null;
-    }
-
-    public void editPhotoDb(String photo, int id) {
-        waypinpointDbHelper.editPhotoDb(photo, id);
     }
 
     public void addUserDb(User user) {
@@ -207,11 +200,12 @@ public class SingletonManager {
         }
     }
 
-    public void editUserApi(String apiHost, final User user, final Context context) {
+    public void editUserApi(final User user, final Context context) {
+        String apiHost = getApiHost(context);
         if (!StatusJsonParser.isConnectionInternet(context)) {
             Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
         } else {
-            StringRequest request = new StringRequest(Request.Method.PUT, apiHost + "users/update/" + user.getId(), new Response.Listener<String>() {
+            StringRequest request = new StringRequest(Request.Method.PUT, apiHost + "users/" + user.getId(), new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
                     editUserDb(UserJsonParser.parserJsonUser(response));
@@ -270,7 +264,6 @@ public class SingletonManager {
     //endregion
 
     //region = API PHOTOS METHODS #
-
     public void setPhotosListener(PhotosListener photosListener) {
         this.photosListener = photosListener;
     }
@@ -350,7 +343,7 @@ public class SingletonManager {
                         Toast.makeText(context, R.string.login_error_message, Toast.LENGTH_SHORT).show();
                         listener.onErrorLogin(error.getMessage());
                     }
-                    editor.putString(TOKEN, "NO TOKEN");
+                    editor.putString(TOKEN, NO_TOKEN);
                     editor.apply();
                     listener.onErrorLogin(error.getMessage());
                 }
@@ -381,7 +374,6 @@ public class SingletonManager {
         carts = waypinpointDbHelper.getAllCartsDb();
         return new ArrayList<>(carts);
     }
-
 
     public Cart getCart(int id) {
         carts = getCarts();
@@ -653,7 +645,6 @@ public class SingletonManager {
                     addActivitiesDB(activities);
                     onRequestCompleted.run();
 
-
                     if (activitiesListener != null) {
                         activitiesListener.onRefreshAllData(activities, calendars, calendarTimes, categories);
                     }
@@ -716,7 +707,6 @@ public class SingletonManager {
                         @Override
                         public void onResponse(String response) {
                             //System.out.println("->> " + params);
-
                             //System.out.println("->> Server Response: " + response);
                             waypinpointDbHelper.addActivityDB(ActivityJsonParser.parserJsonActivity(response));
 

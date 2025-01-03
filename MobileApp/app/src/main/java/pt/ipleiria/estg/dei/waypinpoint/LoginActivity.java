@@ -3,6 +3,7 @@ package pt.ipleiria.estg.dei.waypinpoint;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ADD;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.APIHOST;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EMAIL;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.NO_TOKEN;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.SNACKBAR_MESSAGE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.TOKEN;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.USER_DATA;
@@ -158,8 +159,7 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
 
     public boolean isTokenValid() {
         SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences(USER_DATA, Context.MODE_PRIVATE);
-        System.out.println("TOKEN: --->" + sharedPreferences.getString(TOKEN, "NO TOKEN"));
-        if (sharedPreferences.getString(TOKEN, "NO TOKEN").matches("NO TOKEN")) {
+        if (sharedPreferences.getString(TOKEN, NO_TOKEN).matches(NO_TOKEN)) {
             System.out.println(getString(R.string.error_invalid_token));
             return false;
         } else {
