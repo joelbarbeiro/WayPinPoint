@@ -40,12 +40,13 @@ public class Utilities {
     public static final String API_HOSTNAME = "API_HOSTNAME";
     public static final String USER_DATA = "USER_DATA";
     public static final String TOKEN = "TOKEN";
+    public static final String NO_TOKEN = "NO TOKEN";
+
     public static final String SNACKBAR_MESSAGE = "SNACKBAR_MESSAGE";
     public static final String ID_CART = "ID_CART";
     public static final int DB_VERSION = 4;
     public static final String CALENDAR_ID = "CALENDAR_ID";
 
-    public static final String DEFAULT_IMG = "https://images.app.goo.gl/WRUpq3qmgD331B64A";
     public static final String PROFILE_PIC = "PROFILE_PIC";
     public static final String BACKEND_PORT = ":8080";
     public static final String ID_REVIEW = "ID_REVIEW";

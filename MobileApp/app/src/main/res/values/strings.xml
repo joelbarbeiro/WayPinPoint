@@ -44,6 +44,10 @@
     <string name="menu_main_user_edited">User Edited With Success</string>
     <string name="menu_main_pic_edited">Photo edited With Success</string>
     <string name="my_profile_photo_edit_label">Click the photo to edit</string>
+    <string name="my_profile_confirm_password_warning">The entered passwords are different</string>
+    <string name="my_profile_username_warning">Username is invalid</string>
+    <string name="my_profile_email_warning">Email is invalid\n</string>
+    <string name="my_profile_password_warning">The password has to be 8 characters long</string>
 
     <!-- Dashboard -->
     <string name="dashboard_name_label">Name: </string>
@@ -122,7 +126,6 @@
     <string name="cart_edit_success_message">Cart Edited Successfully</string>
     <string name="cart_removed_successful_message">Cart Removed Successfully</string>
 
-
     <!-- Review -->
     <string name="review_details_message_hint">Message</string>
     <string name="review_add_message">Add Review</string>
@@ -177,8 +180,6 @@
     <string name="activity_edit_success_message">Activity edit successful!</string>
     <string name="Api_hostname_message_before_login">Please config api hostname before login or register</string>
     <string name="activity_string">Activity</string>
-
-
 
     <!-- Hints -->
     <string name="api_hostname_hint">Api Hostname</string>

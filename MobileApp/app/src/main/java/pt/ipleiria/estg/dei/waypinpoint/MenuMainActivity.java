@@ -4,6 +4,7 @@ import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.DELETE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EDIT;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EMAIL;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ENDPOINT_USER;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.NO_TOKEN;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.OP_CODE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.PICK_IMAGE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.PROFILE_PIC;
@@ -179,7 +180,7 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
                     WaypinpointDbHelper waypinpointDbHelper = new WaypinpointDbHelper(getApplicationContext());
                     waypinpointDbHelper.removeAllUsersDb();
                     SharedPreferences.Editor editorUser = sharedPreferencesUser.edit();
-                    editorUser.putString(TOKEN, "NO TOKEN");
+                    editorUser.putString(TOKEN, NO_TOKEN);
                     editorUser.apply();
                     Intent intent = new Intent(MenuMainActivity.this, LoginActivity.class);
                     intent.putExtra(SNACKBAR_MESSAGE, R.string.my_profile_deleted);
@@ -226,6 +227,7 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
                         .into(photoProfile);
                 user = SingletonManager.getInstance(getApplicationContext()).getUser(id);
                 user.setPhoto(String.valueOf(imageUri));
+                SingletonManager.getInstance(getApplicationContext()).editUserApi(user, getApplicationContext());
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -241,7 +243,7 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
                         WaypinpointDbHelper waypinpointDbHelper = new WaypinpointDbHelper(getApplicationContext());
                         waypinpointDbHelper.removeAllUsersDb();
                         SharedPreferences.Editor editorUser = sharedPreferencesUser.edit();
-                        editorUser.putString(TOKEN, "NO TOKEN");
+                        editorUser.putString(TOKEN, NO_TOKEN);
                         editorUser.apply();
                         Intent intent = new Intent(MenuMainActivity.this, LoginActivity.class);
                         // Clear the back stack to prevent the user from going back to the previous activity after logging out

@@ -1,7 +1,6 @@
 package pt.ipleiria.estg.dei.waypinpoint;
 
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.OP_CODE;
-import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getApiHost;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getUserId;
 
 import android.content.DialogInterface;
@@ -49,8 +48,6 @@ public class MyProfileActivity extends AppCompatActivity implements UserListener
         deleteButton = findViewById(R.id.buttonDelete);
 
         user = SingletonManager.getInstance(getApplicationContext()).getUser(id);
-        apiHost = getApiHost(getApplicationContext());
-
         loadProfile();
     }
 
@@ -121,7 +118,7 @@ public class MyProfileActivity extends AppCompatActivity implements UserListener
             user.setAddress(address);
             user.setNif(nif);
             user.setPhone(phone);
-            SingletonManager.getInstance(getApplicationContext()).editUserApi(apiHost, user, getApplicationContext());
+            SingletonManager.getInstance(getApplicationContext()).editUserApi(user, getApplicationContext());
         }
         SingletonManager.getInstance(getApplicationContext()).setUserListener(this);
 
