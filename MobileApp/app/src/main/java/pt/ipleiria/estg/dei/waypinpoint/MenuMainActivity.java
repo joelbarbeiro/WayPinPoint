@@ -71,7 +71,6 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
         String profilePic = getImgUriUser(getApplicationContext()) + user.getId() + "/" + user.getPhoto();
         role = user.getRole();
 
-
         SharedPreferences sharedPreferencesUser = getSharedPreferences(USER_DATA, MODE_PRIVATE);
         fragmentManager = getSupportFragmentManager();
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -108,7 +107,7 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
             editorUser.putString(EMAIL, email);
             editorUser.apply();
         } else {
-            email = sharedPreferencesUser.getString(EMAIL, "No Email Provided");
+            email = sharedPreferencesUser.getString(EMAIL, getString(R.string.error_no_email_provided));
         }
 
         View hView = navigationView.getHeaderView(0);
@@ -146,14 +145,12 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
             startActivityForResult(intent, EDIT);
         }
         if (item.getItemId() == R.id.navListActivities) {
-            System.out.println("--> Activities");
             fragment = new ListActivitiesFragment();
             fragmentManager.beginTransaction()
                     .addToBackStack(null)
                     .replace(R.id.contentFragment, fragment).commit();
         }
         if (item.getItemId() == R.id.navMyActivities) {
-            System.out.println("--> My Activities");
             fragment = new MyActivitiesFragment();
             fragmentManager.beginTransaction()
                     .addToBackStack(null)
@@ -247,7 +244,10 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
                         editorUser.putString(TOKEN, "NO TOKEN");
                         editorUser.apply();
                         Intent intent = new Intent(MenuMainActivity.this, LoginActivity.class);
+                        // Clear the back stack to prevent the user from going back to the previous activity after logging out
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
+                        finish();
                         System.out.println("--> Logout");
                     }
                 })

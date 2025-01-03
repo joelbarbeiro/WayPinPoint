@@ -1,5 +1,6 @@
 package pt.ipleiria.estg.dei.waypinpoint;
 
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.API_HOSTNAME;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.BACKEND_PORT;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.setImgUri;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.setImgUriUser;
@@ -31,10 +32,10 @@ public class ApiHostnameSetupActivity extends AppCompatActivity {
         setContentView(R.layout.activity_api_hostname_setup);
 
         etHostname = findViewById(R.id.textEditHostname);
-        SharedPreferences sharedPreferences = getSharedPreferences("API_HOSTNAME", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getSharedPreferences(API_HOSTNAME, Context.MODE_PRIVATE);
 
-        if (sharedPreferences.getString("API_HOSTNAME", null) != null) {
-            etHostname.setText(extractDns(sharedPreferences.getString("API_HOSTNAME", url)));
+        if (sharedPreferences.getString(API_HOSTNAME, null) != null) {
+            etHostname.setText(extractDns(sharedPreferences.getString(API_HOSTNAME, url)));
         } else {
             etHostname.setText(url);
         }
@@ -47,9 +48,9 @@ public class ApiHostnameSetupActivity extends AppCompatActivity {
         setPhotoUri(etHostname.getText().toString(), getApplicationContext());
         setImgUriUser(etHostname.getText().toString() + BACKEND_PORT, getApplicationContext());
         try {
-            SharedPreferences sharedPreferences = getSharedPreferences("API_HOSTNAME", Context.MODE_PRIVATE);
+            SharedPreferences sharedPreferences = getSharedPreferences(API_HOSTNAME, Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putString("API_HOSTNAME", hostname);
+            editor.putString(API_HOSTNAME, hostname);
             editor.apply();
 
             //Toast.makeText(this, "New hostname " + hostname, Toast.LENGTH_SHORT).show();

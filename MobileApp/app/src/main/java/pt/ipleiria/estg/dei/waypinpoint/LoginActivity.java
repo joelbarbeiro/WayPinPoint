@@ -2,7 +2,7 @@ package pt.ipleiria.estg.dei.waypinpoint;
 
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.APIHOST;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EMAIL;
-import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.REGISTER;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ADD;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.SNACKBAR_MESSAGE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.TOKEN;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.USER_DATA;
@@ -60,7 +60,7 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
 
         if (getApiHost(getApplicationContext()) == null) {
             View rootView = findViewById(R.id.loginView);
-            Snackbar.make(rootView, "Please config api hostname before login or register", Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(rootView, R.string.Api_hostname_message_before_login, Snackbar.LENGTH_SHORT).show();
 
             int toastDuration = 1000;
             new Handler(getMainLooper()).postDelayed(() -> {
@@ -73,9 +73,6 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
             apiHost = getApiHost(getApplicationContext());
             View rootView = findViewById(R.id.loginView);
             Snackbar.make(rootView, "Hostname: " + apiHost, Snackbar.LENGTH_SHORT).show();
-            System.out.println("--> img path " + getImgUri(getApplicationContext()));
-            System.out.println("--> img USER path " + getImgUriUser(getApplicationContext()));
-
         }
 
         if (isTokenValid()) {
@@ -84,7 +81,7 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
             editor.apply();
 
             Intent intent = new Intent(getApplicationContext(), MenuMainActivity.class);
-            intent.putExtra(EMAIL, sharedPreferences.getString(EMAIL, "No Email Provided"));
+            intent.putExtra(EMAIL, sharedPreferences.getString(EMAIL, getString(R.string.error_no_email_provided)));
             startActivity(intent);
             finish();
         }
@@ -122,7 +119,7 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == REGISTER) {
+            if (requestCode == ADD) {
                 View rootView = findViewById(R.id.loginView);
                 Snackbar.make(rootView, R.string.login_register_success_message, Snackbar.LENGTH_SHORT).show();
             }
@@ -154,9 +151,9 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
 
         if (isEmailValid) {
             intent.putExtra(EMAIL, etEmail.getText().toString());
-            startActivityForResult(intent, REGISTER);
+            startActivityForResult(intent, ADD);
         } else {
-            startActivityForResult(intent, REGISTER);
+            startActivityForResult(intent, ADD);
         }
     }
 

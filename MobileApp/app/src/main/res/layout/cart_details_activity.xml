@@ -75,7 +75,7 @@
                     android:textSize="16sp"
                     android:textColor="@color/black"
                     android:inputType="number"
-                    android:hint="Enter Quantity" />
+                    android:hint="@string/enter_quantity_hint" />
 
                 <Button
                     android:id="@+id/btnEditQuantity"
@@ -147,6 +147,7 @@
                 android:layout_gravity="end"
                 android:layout_margin="16dp"
                 android:clickable="true"
+                android:focusable="true"
                 android:onClick="onClickCheckout"
                 app:srcCompat="@drawable/ic_cart_checkout" />
 

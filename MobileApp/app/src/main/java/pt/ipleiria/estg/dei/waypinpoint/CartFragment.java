@@ -5,7 +5,6 @@ import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.DELETE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EDIT;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ID_CART;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.OP_CODE;
-import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.REGISTER;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.USER_ID;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getUserId;
 
@@ -29,13 +28,10 @@ import java.util.ArrayList;
 
 import Adapters.CartAdapter;
 import Listeners.CartsListener;
-import Adapters.CartAdapter;
-import Listeners.CartListener;
 import Model.Calendar;
 import Model.Cart;
 import Model.SingletonManager;
 import Model.WaypinpointDbHelper;
-import Adapters.CartAdapter;
 
 public class CartFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, CartsListener {
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -97,11 +93,11 @@ public class CartFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                 switch (requestCode) {
                     case EDIT:
                         if (data.getIntExtra(OP_CODE, 0) == DELETE) {
-                            Snackbar.make(getView(), "Cart Removed Successfully", Snackbar.LENGTH_SHORT).show();
+                            Snackbar.make(getView(), R.string.cart_removed_successful_message, Snackbar.LENGTH_SHORT).show();
                         } else if (data.getIntExtra(OP_CODE, 0) == CHECKOUT) {
-                            Snackbar.make(getView(), "Checkout Successful", Snackbar.LENGTH_SHORT).show();
+                            Snackbar.make(getView(), R.string.checkout_success_message, Snackbar.LENGTH_SHORT).show();
                         } else {
-                            Snackbar.make(getView(), "Cart Edited Successfully", Snackbar.LENGTH_SHORT).show();
+                            Snackbar.make(getView(), R.string.cart_edit_success_message, Snackbar.LENGTH_SHORT).show();
                         }
                         break;
                     default:
@@ -133,5 +129,4 @@ public class CartFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             tvEmptyMessage.setText(R.string.empty_cart_message);
         }
     }
-
 }
