@@ -86,8 +86,8 @@ public class CartDetailsActivity extends AppCompatActivity implements CartListen
         String quantityStr = etQuantity.getText().toString();
         if(isQuantityValid(quantityStr)){
             int newQuantity = Integer.parseInt(quantityStr);
-            //TODO UPDATE CART ( VER NA BASE DE DADOS )
             cart.setQuantity(newQuantity);
+            System.out.println("CartEditError" + newQuantity);
             SingletonManager.getInstance(getApplicationContext()).editCart(cart, getApplicationContext());
             Toast.makeText(this, "Quantity Updated", Toast.LENGTH_SHORT).show();
         }

@@ -25,12 +25,12 @@ import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 
+import Adapters.CartAdapter;
 import Listeners.CartListener;
 import Model.Calendar;
 import Model.Cart;
 import Model.SingletonManager;
 import Model.WaypinpointDbHelper;
-import Adapters.CartAdapter;
 
 public class CartFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, CartListener {
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -38,9 +38,6 @@ public class CartFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private ArrayList<Model.Activity> activities;
     private ArrayList<Calendar> calendars;
     private ListView lvCart;
-    private Cart cart;
-    private double price;
-    private CartAdapter CartAdapter;
     private WaypinpointDbHelper waypinpointDbHelper;
 
     public CartFragment() {
@@ -51,10 +48,11 @@ public class CartFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_cart, container, false);
+        setHasOptionsMenu(true);
         lvCart = view.findViewById(R.id.lvCart);
         int userId = getUserId(getContext());
         waypinpointDbHelper = new WaypinpointDbHelper(getContext());
-        cartList = waypinpointDbHelper.getCartByUserIdDB(userId);
+        //cartList = waypinpointDbHelper.getCartByUserIdDB(userId);
         activities = waypinpointDbHelper.getActivitiesDB();
         calendars = waypinpointDbHelper.getCalendarDB();
 
@@ -69,12 +67,13 @@ public class CartFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         });
         swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout);
         swipeRefreshLayout.setOnRefreshListener(this);
+
         SingletonManager.getInstance(getContext()).setCartListener(this);
         loadCartData();
         return view;
     }
 
-    public void loadCartData(){
+    public void loadCartData() {
         SingletonManager.getInstance(getContext()).getCartByUserId(getContext());
     }
 
@@ -115,13 +114,16 @@ public class CartFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     @Override
     public void onRefresh() {
-        SingletonManager.getInstance(getContext()).getCartByUserId(getContext());
+        loadCartData();
         swipeRefreshLayout.setRefreshing(false);
     }
 
     public void onRefreshCartList(ArrayList<Cart> cartList) {
         if (cartList != null) {
             lvCart.setAdapter(new CartAdapter(getContext(), cartList, activities, calendars));
+        }
+        else {
+            System.out.println("---> something is empty cartFragment");
         }
     }
 

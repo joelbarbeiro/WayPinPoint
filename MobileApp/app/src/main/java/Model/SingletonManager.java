@@ -403,32 +403,6 @@ public class SingletonManager {
         return null;
     }
 
-    public void getCartAPI(final Context context, final CartListener listener, final Cart cart) {
-        String apiHost = getApiHost(context);
-        if (!StatusJsonParser.isConnectionInternet(context)) {
-            Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
-            listener.onError(context.getString(R.string.error_no_internet));
-
-        } else {
-            JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, apiHost + "carts/" + cart.getId(), null, new Response.Listener<JSONArray>() {
-                @Override
-                public void onResponse(JSONArray response) {
-                    System.out.println("------> Cart Data: " + response.toString());
-                    Cart cart = CartJsonParser.parserJsonCart(response.toString());
-                    waypinpointDbHelper.addCartDb(cart);
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    System.out.println("Error fetching cart");
-                    Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            });
-
-            volleyQueue.add(request);
-        }
-    }
-
     public void getCartByUserId(final Context context) {
         User user = getUser(getUserId(context));
         String apiHost = getApiHost(context);

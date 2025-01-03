@@ -64,6 +64,7 @@ public class CartActivity extends AppCompatActivity implements CartListener {
 
                     SingletonManager.getInstance(getApplicationContext()).addCartApi(newCart, getApplicationContext());
                     Fragment fragment = new CartFragment();
+                    Toast.makeText(CartActivity.this, "Cart Added Successfully", Toast.LENGTH_SHORT).show();
                     System.out.println("------> Initializing Transaction" + fragment);
                     findViewById(R.id.cartLayout).setVisibility(View.GONE);
                     FragmentManager fragmentManager = getSupportFragmentManager();
