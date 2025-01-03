@@ -23,26 +23,26 @@ class CartController extends ActiveController
 
     public $modelClass = 'common\models\Cart';
 
-    public function behaviors()
-    {
-        $behaviors = parent::behaviors();
-        $behaviors['authenticator'] = [
-            'class' => HttpBasicAuth::className(), // ou QueryParamAuth::className(),
-            'except' => ['index', 'view'],
-            'auth' => [$this, 'authintercept']
-        ];
-        return $behaviors;
-    }
-
-    public function authintercept($username, $password)
-    {
-        $user = User::findByUsername($username);
-        if ($user && $user->validatePassword($password)) {
-            $this->user = $user; //Guardar user autenticado         r
-            return $user;
-        }
-        throw new \yii\web\ForbiddenHttpException('Error auth'); //403
-    }
+//    public function behaviors()
+//    {
+//        $behaviors = parent::behaviors();
+//        $behaviors['authenticator'] = [
+//            'class' => HttpBasicAuth::className(), // ou QueryParamAuth::className(),
+//            'except' => ['index', 'view'],
+//            'auth' => [$this, 'authintercept']
+//        ];
+//        return $behaviors;
+//    }
+//
+//    public function authintercept($username, $password)
+//    {
+//        $user = User::findByUsername($username);
+//        if ($user && $user->validatePassword($password)) {
+//            $this->user = $user; //Guardar user autenticado         r
+//            return $user;
+//        }
+//        throw new \yii\web\ForbiddenHttpException('Error auth'); //403
+//    }
 
     public function actionCount()
     {
@@ -70,7 +70,7 @@ class CartController extends ActiveController
         $data = array_map(function ($cart) {
             return [
                 'id' => $cart['id'],
-                'product_id' => $cart['activity']['name'] ?? 'Unknown Product',
+                'product_id' => $cart['activity']['id'] ?? 'Unknown Product',
                 'quantity' => $cart['quantity'],
                 'user_id' => $cart['user']['id'] ?? 'Unknown User',
                 'status' => $cart['status'],
@@ -120,6 +120,7 @@ class CartController extends ActiveController
             'message' => json_encode($cart->getErrors()),
         ];
     }
+
     public function actionUpdate($id)
     {
 
@@ -151,7 +152,6 @@ class CartController extends ActiveController
             ];
         }
     }
-
 
 
     public function actionCheckout($id)
@@ -186,7 +186,7 @@ class CartController extends ActiveController
                 throw new \Exception("Failed to save Cart ID: $id. Errors: " . json_encode($cart->getErrors()));
             }
 
-            $content = $this->renderPartial('receipt', ['cart' => $cart]);
+            $content = $this->renderPartial('receiptApi', ['cart' => $cart]);
             $pdfContent = Cart::generatePdf($content);
             $qrCodeImage = $qrCode->writeString();
 
@@ -203,16 +203,14 @@ class CartController extends ActiveController
             if (!$mailSent) {
                 throw new \Exception("Failed to send email for Cart ID: $id");
             }
-
-            return [
-                'success' => true,
-                'message' => 'Ticket and receipt sent to your email',
+            return[
+                'status' => 'success',
+                'message' => 'Ticket and receipt sent to your email'
             ];
         } catch (\Exception $e) {
             Yii::error($e->getMessage(), __METHOD__);
-            throw new \Exception("Could not send the ticket ". error($e->getMessage(), __METHOD__));
+            \Yii::$app->response->statusCode = 400;
+            throw new \Exception('Failed to Checkout: ' . json_encode($e->getMessage()));
         }
-
     }
 }
-
