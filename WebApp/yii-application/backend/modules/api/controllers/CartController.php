@@ -98,7 +98,7 @@ class CartController extends ActiveController
             'message' => 'Cart has been deleted'];
     }
 
-    public function actionAddCart()
+    public function actionAddcart()
     {
         $cart = new Cart();
         if ($cart->load(Yii::$app->request->post(), '')) {
