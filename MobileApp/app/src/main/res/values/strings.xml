@@ -69,15 +69,7 @@
     <string name="error_quantity_zero">Quantity must be greater than 0</string>
     <string name="error_invalid_quantity">Invalid quantity</string>
     <string name="error_no_email_provided">No Email Provided</string>
-    <string name="network_error_occurred"><![CDATA["->> Network error occurred: "]]></string>
-    <string name="server_error_occurred"><![CDATA["->> Server error occurred: "]]></string>
-    <string name="server_returned_status_code"><![CDATA["->> Server returned status code: "]]></string>
-    <string name="parse_error"><![CDATA["->> Parse error: "]]></string>
-    <string name="timeout_error"><![CDATA["->> Timeout error: "]]></string>
-    <string name="response_code"><![CDATA["->> Response code: "]]></string>
-    <string name="response_body"><![CDATA["->> Response body: "]]></string>
-    <string name="server_response"><![CDATA["->> Server Response: "]]></string>
-    <string name="onerrorresponse"><![CDATA["->> onErrorResponse: "]]></string>
+
 
     <!-- General Messages -->
     <string name="message_save_changes">Save changes</string>
@@ -130,13 +122,6 @@
     <string name="cart_edit_success_message">Cart Edited Successfully</string>
     <string name="cart_removed_successful_message">Cart Removed Successfully</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="img_default">img_default</string>
-
-    <string name="dialog_review_remove">Remove Review</string>
-    <string name="dialog_review_message">Do you really wish to delete this review?</string>
-    <string name="yes_string">Yes</string>
-    <string name="no_string">No</string>
 
     <!-- Review -->
     <string name="review_details_message_hint">Message</string>
@@ -151,7 +136,6 @@
     <string name="review_added_success_message">Review Added Successfully</string>
     <string name="review_removed_success_message">Review Removed Successfully</string>
     <string name="review_edit_success">Review Edited Successfully</string>
-    <string name="getreview"><![CDATA["--> GETREVIEW --> "]]></string>
 
     <!-- Empty View -->
     <string name="empty_placeholder_icon_desc">Empty state placeholder</string>
@@ -193,9 +177,8 @@
     <string name="activity_edit_success_message">Activity edit successful!</string>
     <string name="Api_hostname_message_before_login">Please config api hostname before login or register</string>
     <string name="activity_string">Activity</string>
-    <string name="category_get"><![CDATA["--> Category GET --> "]]></string>
-    <string name="calendar_get"><![CDATA["--> Calendar GET --> "]]></string>
-    <string name="time_get"><![CDATA["--> Time GET --> "]]></string>
+
+
 
     <!-- Hints -->
     <string name="api_hostname_hint">Api Hostname</string>

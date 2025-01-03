@@ -435,7 +435,7 @@ public class SingletonManager {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    System.out.println("--> CARTGETERROR --> " + error);
+                    System.out.println("Cart Get Error" + error);
                 }
             }) {
                 @Override
@@ -745,23 +745,23 @@ public class SingletonManager {
 
                             // Handle different types of errors
                             if (error instanceof NetworkError) {
-                                System.out.println(context.getString(R.string.network_error_occurred) + error.getMessage());
+                                System.out.println("Network Error:" + error.getMessage());
                             } else if (error instanceof ServerError) {
-                                System.out.println(context.getString(R.string.server_error_occurred) + error.getMessage());
+                                System.out.println("Server Error" + error.getMessage());
                                 NetworkResponse response = error.networkResponse;
                                 if (response != null) {
-                                    System.out.println(context.getString(R.string.server_returned_status_code) + response.statusCode);
+                                    System.out.println("Server returned status code: " + response.statusCode);
                                 }
                             } else if (error instanceof ParseError) {
-                                System.out.println(context.getString(R.string.parse_error) + error.getMessage());
+                                System.out.println("Parse Error: " + error.getMessage());
                             } else if (error instanceof TimeoutError) {
-                                System.out.println(context.getString(R.string.timeout_error) + error.getMessage());
+                                System.out.println("Timeout Error: " + error.getMessage());
                             }
 
                             // Log more details if networkResponse is available
                             if (error.networkResponse != null) {
-                                System.out.println(context.getString(R.string.response_code) + error.networkResponse.statusCode);
-                                System.out.println(context.getString(R.string.response_body) + new String(error.networkResponse.data));
+                                System.out.println("Network Response Code: " + error.networkResponse.statusCode);
+                                System.out.println("Network Response Body: " + new String(error.networkResponse.data));
                             }
 
                             // Optionally, print the stack trace to debug further
@@ -823,7 +823,7 @@ public class SingletonManager {
                         public void onResponse(String response) {
                             //System.out.println("->> " + params);
 
-                            System.out.println(context.getString(R.string.server_response) + response);
+                            System.out.println("Server Response: " + response);
                             waypinpointDbHelper.editActivityDB(ActivityJsonParser.parserJsonActivity(response));
 
                             if (activitiesListener != null) {
@@ -834,29 +834,29 @@ public class SingletonManager {
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            System.out.println(context.getString(R.string.onerrorresponse) + error.getMessage());
+                            System.out.println("->> onErrorResponse: " + error.getMessage());
                             // Log the basic error message
                             //System.out.println("->> " + params);
 
                             // Handle different types of errors
                             if (error instanceof NetworkError) {
-                                System.out.println(context.getString(R.string.onerrorresponse) + error.getMessage());
+                                System.out.println("Network Error: " + error.getMessage());
                             } else if (error instanceof ServerError) {
-                                System.out.println(context.getString(R.string.server_error_occurred) + error.getMessage());
+                                System.out.println("Server Error: " + error.getMessage());
                                 NetworkResponse response = error.networkResponse;
                                 if (response != null) {
-                                    System.out.println(context.getString(R.string.server_returned_status_code) + response.statusCode);
+                                    System.out.println("Server returned status code: " + response.statusCode);
                                 }
                             } else if (error instanceof ParseError) {
-                                System.out.println(context.getString(R.string.parse_error) + error.getMessage());
+                                System.out.println("Parse Error: " + error.getMessage());
                             } else if (error instanceof TimeoutError) {
-                                System.out.println(context.getString(R.string.timeout_error) + error.getMessage());
+                                System.out.println("Timeout Error: " + error.getMessage());
                             }
 
                             // Log more details if networkResponse is available
                             if (error.networkResponse != null) {
-                                System.out.println(context.getString(R.string.response_code) + error.networkResponse.statusCode);
-                                System.out.println(context.getString(R.string.response_body) + new String(error.networkResponse.data));
+                                System.out.println("Network Response Code: " + error.networkResponse.statusCode);
+                                System.out.println("Network Response Body: " + new String(error.networkResponse.data));
                             }
 
                             // Optionally, print the stack trace to debug further
@@ -933,7 +933,7 @@ public class SingletonManager {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    System.out.println(context.getString(R.string.calendar_get) + error);
+                    System.out.println("--> GETCALENDAR --> " + error);
                     onComplete.run();
                 }
             });
@@ -973,7 +973,7 @@ public class SingletonManager {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    System.out.println(context.getString(R.string.time_get) + error);
+                    System.out.println("--> GETTIME --> " + error);
                     onComplete.run();
                 }
             });
@@ -1012,7 +1012,7 @@ public class SingletonManager {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    System.out.println(context.getString(R.string.category_get) + error);
+                    System.out.println(" -> GETCATEGORY --" + error);
                     onComplete.run();
                 }
             });
@@ -1085,7 +1085,7 @@ public class SingletonManager {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    System.out.println(context.getString(R.string.getreview) + error);
+                    System.out.println(" --> GETREVIEW --" + error);
 
                 }
             }) {
