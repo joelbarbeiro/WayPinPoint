@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,10 +28,10 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 
+import Adapters.PhotoListAdapter;
 import Listeners.PhotosListener;
 import Model.SingletonManager;
 import Model.User;
-import Adapters.PhotoListAdapter;
 import pt.ipleiria.estg.dei.waypinpoint.utils.ImageSender;
 
 
@@ -39,11 +40,12 @@ public class ActivityPhotosFragment extends Fragment implements SwipeRefreshLayo
     private ListView lvPhotos;
     private ArrayList<String> photos;
     private SwipeRefreshLayout swipeRefreshLayout;
-    private SearchView searchView;
     private FloatingActionButton fabPhotos;
     private int id;
     private User user;
     private String apiHost, role;
+    private View emptyView;
+    private TextView tvEmptyMessage;
 
 
     public ActivityPhotosFragment() {
@@ -58,6 +60,7 @@ public class ActivityPhotosFragment extends Fragment implements SwipeRefreshLayo
         lvPhotos = view.findViewById(R.id.lvPhotos);
         int userId = getUserId(getContext());
         int activityId = getArguments().getInt(ID_ACTIVITY);
+        emptyView = view.findViewById(R.id.emptyViewLayoutPhotos);
 
         fabPhotos = view.findViewById(R.id.fabPhotos);
         if (requireActivity() instanceof AppCompatActivity) {
@@ -114,7 +117,15 @@ public class ActivityPhotosFragment extends Fragment implements SwipeRefreshLayo
     @Override
     public void onRefreshPhotosList(ArrayList<String> listPhotos) {
         if (listPhotos != null) {
+            lvPhotos.setVisibility(View.VISIBLE);
+            emptyView.setVisibility(View.GONE);
             lvPhotos.setAdapter(new PhotoListAdapter(getContext(), listPhotos));
+        }
+        if (listPhotos.isEmpty()) {
+            lvPhotos.setVisibility(View.GONE);
+            emptyView.setVisibility(View.VISIBLE);
+            tvEmptyMessage = emptyView.findViewById(R.id.tvEmptyMessage);
+            tvEmptyMessage.setText(R.string.empty_photos_message);
         }
     }
 }
