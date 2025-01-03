@@ -1,7 +1,6 @@
 package Model;
 
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.CHECKOUT;
-import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.DEFAULT_IMG;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.DELETE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EDIT;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EMAIL;
@@ -29,7 +28,6 @@ import com.android.volley.Response;
 import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
@@ -38,8 +36,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -49,25 +45,23 @@ import java.util.Map;
 import Listeners.ActivitiesListener;
 import Listeners.ActivityListener;
 import Listeners.CartListener;
+import Listeners.CartsListener;
 import Listeners.LoginListener;
 import Listeners.PhotosListener;
 import Listeners.ReviewListener;
 import Listeners.ReviewsListener;
 import Listeners.UserListener;
-import pt.ipleiria.estg.dei.waypinpoint.ActivityCreateActivity;
-import pt.ipleiria.estg.dei.waypinpoint.ActivityDetailsActivity;
-import pt.ipleiria.estg.dei.waypinpoint.MenuMainActivity;
 import pt.ipleiria.estg.dei.waypinpoint.R;
 import pt.ipleiria.estg.dei.waypinpoint.utils.ActivityJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.CalendarJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.CartJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.CategoryJsonParser;
+import pt.ipleiria.estg.dei.waypinpoint.utils.ImageSender;
 import pt.ipleiria.estg.dei.waypinpoint.utils.ReviewJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.StatusJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.TimeJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.UserJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.Utilities;
-import pt.ipleiria.estg.dei.waypinpoint.utils.ImageSender;
 
 public class SingletonManager {
 
@@ -89,12 +83,16 @@ public class SingletonManager {
     private ReviewListener reviewListener;
     private ArrayList<Review> reviews;
     //endregion
+
     //Region Cart Instances
     private CartListener cartListener;
+    private CartsListener cartsListener;
+
     private ArrayList<Cart> carts;
     private Cart cart;
     //endregion
     //region # Activities instances #
+
     private ActivitiesListener activitiesListener;
     private ActivityListener activityListener;
 
@@ -380,7 +378,6 @@ public class SingletonManager {
     public void addCartsDB(ArrayList<Cart> carts) {
         waypinpointDbHelper.removeAllCartDb();
         for (Cart c : carts) {
-            System.out.println("DB Add review--> " + c);
             waypinpointDbHelper.addCartDb(c);
         }
     }
@@ -407,12 +404,21 @@ public class SingletonManager {
         return null;
     }
 
+    public void setCartsListener(CartsListener cartsListener) {
+        this.cartsListener = cartsListener;
+    }
+
+    public void setCartListener(CartListener cartListener) {
+        this.cartListener = cartListener;
+    }
+
     public void getCartAPI(final Context context, final CartListener listener, final Cart cart) {
         String apiHost = getApiHost(context);
         if (!StatusJsonParser.isConnectionInternet(context)) {
             Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
-            listener.onError(context.getString(R.string.error_no_internet));
-
+            if (cartsListener != null) {
+                cartsListener.onRefreshCartList(waypinpointDbHelper.getCartByUserId(getUserId(context)));
+            }
         } else {
             JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, apiHost + "carts/" + cart.getId(), null, new Response.Listener<JSONArray>() {
                 @Override
@@ -439,21 +445,18 @@ public class SingletonManager {
         int userId = getUserId(context);
         if (!StatusJsonParser.isConnectionInternet(context)) {
             Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
-
-            if (cartListener != null) {
-                System.out.println("->> USER 1 " + user);
-                cartListener.onRefreshCartList(waypinpointDbHelper.getCartByUserId(userId));
+            if (cartsListener != null) {
+                cartsListener.onRefreshCartList(waypinpointDbHelper.getCartByUserId(userId));
             }
         } else {
             JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, apiHost + "carts/buyers/" + userId, null, new Response.Listener<JSONArray>() {
                 @Override
                 public void onResponse(JSONArray response) {
-                    System.out.println("->> CARTGETAPI: " + response);
+                    System.out.println("--> CARTGETAPI: " + response);
                     carts = CartJsonParser.parserJsonCarts(response);
                     addCartsDB(carts);
-                    if (cartListener != null) {
-                        System.out.println("->> USER 2 " + user + " " + carts);
-                        cartListener.onRefreshCartList(carts);
+                    if (cartsListener != null) {
+                        cartsListener.onRefreshCartList(carts);
                     }
                 }
             }, new Response.ErrorListener() {
@@ -483,7 +486,6 @@ public class SingletonManager {
     public void addCartApi(final Cart cart, final Context context) {
         User user = getUser(getUserId(context));
         String apiHost = getApiHost(context);
-        System.out.println("->> Cart " + apiHost + "carts/addcart");
         StringRequest request = new StringRequest(Request.Method.POST, apiHost + "carts/addcart", new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -492,7 +494,9 @@ public class SingletonManager {
                     System.out.println("------> Cart Data: " + response);
                     waypinpointDbHelper.addCartDb(CartJsonParser.parserJsonCart(response));
                     if (jsonResponse.getBoolean("success")) {
-
+                        if (cartListener != null) {
+                            cartListener.onValidateOperation(REGISTER);
+                        }
                     } else {
                         Toast.makeText(context, "Error: " + jsonResponse.getString("errors"), Toast.LENGTH_SHORT).show();
                     }
@@ -620,14 +624,6 @@ public class SingletonManager {
             }
         });
         volleyQueue.add(request);
-    }
-
-    public void setCartsListener(CartListener cartsListener) {
-        this.cartListener = cartsListener;
-    }
-
-    public void setCartListener(CartListener cartListener) {
-        this.cartListener = cartListener;
     }
 
     //ENDREGION

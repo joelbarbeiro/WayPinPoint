@@ -2,7 +2,6 @@ package pt.ipleiria.estg.dei.waypinpoint;
 
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.DELETE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EDIT;
-import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.REGISTER;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EMAIL;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ENDPOINT_USER;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.OP_CODE;
@@ -28,7 +27,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -150,15 +148,17 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
         if (item.getItemId() == R.id.navListActivities) {
             System.out.println("--> Activities");
             fragment = new ListActivitiesFragment();
-            fragmentManager.beginTransaction().replace(R.id.contentFragment, fragment).commit();
+            fragmentManager.beginTransaction()
+                    .addToBackStack(null)
+                    .replace(R.id.contentFragment, fragment).commit();
         }
         if (item.getItemId() == R.id.navMyActivities) {
             System.out.println("--> My Activities");
             fragment = new MyActivitiesFragment();
-            fragmentManager.beginTransaction().replace(R.id.contentFragment, fragment).commit();
+            fragmentManager.beginTransaction()
+                    .addToBackStack(null)
+                    .replace(R.id.contentFragment, fragment).commit();
         }
-        if (item.getItemId() == R.id.navMyReceipts) System.out.println("--> My Receipts");
-        if (item.getItemId() == R.id.navChangeHost) System.out.println("--> Change Host");
         if (item.getItemId() == R.id.navLogout) {
             dialogLogout(sharedPreferencesUser);
         }
@@ -167,11 +167,6 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
             Intent intent = new Intent(this, QRCodeScannerActivity.class);
             startActivity(intent);
         }
-        if (item.getItemId() == R.id.drawerCart) {
-            fragment = new CartFragment();
-            fragmentManager.beginTransaction().replace(R.id.contentFragment, fragment).commit();
-        }
-        if (item.getItemId() == R.id.navQrCode) System.out.println("--> Validate QR-Code");
         drawer.closeDrawer(GravityCompat.START);
         if (fragment != null)
             fragmentManager.beginTransaction().replace(R.id.contentFragment, fragment).commit();
@@ -234,7 +229,6 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
                         .into(photoProfile);
                 user = SingletonManager.getInstance(getApplicationContext()).getUser(id);
                 user.setPhoto(String.valueOf(imageUri));
-//                SingletonManager.getInstance(getApplicationContext()).editUserApi(apiHost,user,getApplicationContext());
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -265,5 +259,15 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
                 })
                 .setIcon(R.drawable.ic_logout_menu)
                 .show();
+    }
+
+    @Override
+    public void onBackPressed() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        if (fragmentManager.getBackStackEntryCount() > 0) {
+            fragmentManager.popBackStack(); // Go to the previous fragment
+        } else {
+            super.onBackPressed(); // Close the app
+        }
     }
 }

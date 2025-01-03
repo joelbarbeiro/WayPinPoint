@@ -126,6 +126,14 @@
     <string name="review_message_title">Message:</string>
     <string name="review_score_title">Score:</string>
 
+    <!-- Empty View -->
+    <string name="empty_placeholder_icon_desc">Empty state placeholder</string>
+    <string name="empty_placeholder_message">No Reviews added. Be the first to add one!</string>
+    <string name="no_activities_message">No activities found. Explore more!</string>
+    <string name="empty_cart_message">Your cart is empty. Add items now!</string>
+    <string name="empty_photos_message">No photos added to this activity. Be the first to add a memory!</string>
+
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="priceperpax">PricePerPax</string>
