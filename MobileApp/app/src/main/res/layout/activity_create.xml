@@ -16,6 +16,7 @@
         android:backgroundTint="@color/blue_500"
         android:clickable="true"
         android:contentDescription="@string/fab_save"
+        android:focusable="true"
         android:src="@drawable/ic_save"
         app:srcCompat="@drawable/ic_save"
         app:tint="@android:color/white" />
@@ -39,14 +40,14 @@
                 android:id="@+id/textView6"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Click the image to edit" />
+                android:text="@string/image_edit_hint" />
 
             <EditText
                 android:id="@+id/etActivityCreateName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:hint="Name"
+                android:hint="@string/name_hint"
                 android:inputType="text"
                 android:minHeight="48dp" />
 
@@ -55,7 +56,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:hint="Description"
+                android:hint="@string/description_hint"
                 android:inputType="text"
                 android:minHeight="48dp"
                 android:singleLine="false" />
@@ -65,7 +66,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:hint="Maximun Participants"
+                android:hint="@string/maximum_participants_hint"
                 android:inputType="number"
                 android:minHeight="48dp" />
 
@@ -74,7 +75,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:hint="Ticket price"
+                android:hint="@string/ticket_price_hint"
                 android:inputType="number"
                 android:minHeight="48dp" />
 
@@ -83,7 +84,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:hint="Address"
+                android:hint="@string/address_hint"
                 android:inputType="text"
                 android:minHeight="48dp" />
 
@@ -97,7 +98,7 @@
             android:id="@+id/btCreateDateHour"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Add Date and Hour" />
+            android:text="@string/add_date_and_hour_hint" />
 
 
         <LinearLayout

@@ -5,7 +5,7 @@ import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.DELETE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EDIT;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EMAIL;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ID;
-import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.REGISTER;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ADD;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.TOKEN;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.USER_DATA;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getApiHost;
@@ -179,7 +179,7 @@ public class SingletonManager {
                 public void onResponse(String response) {
                     addUserDb(UserJsonParser.parserJsonUser(response));
                     if (userListener != null) {
-                        userListener.onValidateOperation(REGISTER);
+                        userListener.onValidateOperation(ADD);
                     }
                 }
             }, new Response.ErrorListener() {
@@ -467,7 +467,7 @@ public class SingletonManager {
                     waypinpointDbHelper.addCartDb(CartJsonParser.parserJsonCart(response));
                     if (jsonResponse.getBoolean("success")) {
                         if (cartListener != null) {
-                            cartListener.onValidateOperation(REGISTER);
+                            cartListener.onValidateOperation(ADD);
                         }
                     } else {
                         Toast.makeText(context, "Error: " + jsonResponse.getString("errors"), Toast.LENGTH_SHORT).show();
@@ -732,7 +732,7 @@ public class SingletonManager {
                             waypinpointDbHelper.addActivityDB(ActivityJsonParser.parserJsonActivity(response));
 
                             if (activitiesListener != null) {
-                                activityListener.onRefreshActivityDetails(REGISTER);
+                                activityListener.onRefreshActivityDetails(ADD);
                             }
                         }
                     },
@@ -1123,7 +1123,7 @@ public class SingletonManager {
 
                             addReviewDb(ReviewJsonParser.parserJsonReview(response));
                             if (reviewListener != null) {
-                                reviewListener.onValidateReviewOperation(REGISTER);
+                                reviewListener.onValidateReviewOperation(ADD);
                             }
                         }
                     }, new Response.ErrorListener() {

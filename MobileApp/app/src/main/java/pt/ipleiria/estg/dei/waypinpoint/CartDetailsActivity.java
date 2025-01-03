@@ -2,6 +2,7 @@ package pt.ipleiria.estg.dei.waypinpoint;
 
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ID_CART;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.OP_CODE;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.isQuantityValid;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -80,32 +81,11 @@ public class CartDetailsActivity extends AppCompatActivity implements CartListen
 
     private void editQuantity() {
         String quantityStr = etQuantity.getText().toString();
-        if(isQuantityValid(quantityStr)){
+        if(isQuantityValid(quantityStr, getApplicationContext())) {
             int newQuantity = Integer.parseInt(quantityStr);
             cart.setQuantity(newQuantity);
-            System.out.println("CartEditError" + newQuantity);
             SingletonManager.getInstance(getApplicationContext()).editCart(cart, getApplicationContext());
-            Toast.makeText(this, "Quantity Updated", Toast.LENGTH_SHORT).show();
         }
-    }
-
-    private boolean isQuantityValid(String input) {
-        if (input.isEmpty()) {
-            etQuantity.setError("Field cannot be empty");
-            return false;
-        }
-
-        try {
-            int quantity = Integer.parseInt(input);
-            if (quantity <= 0) {
-                etQuantity.setError("Quantity must be greater than 0");
-                return false;
-            }
-        } catch (NumberFormatException e) {
-            etQuantity.setError("Invalid quantity");
-            return false;
-        }
-        return true;
     }
 
     @Override
@@ -121,7 +101,7 @@ public class CartDetailsActivity extends AppCompatActivity implements CartListen
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.itemRemove) {
             if (!CartJsonParser.isConnectionInternet(getApplicationContext())) {
-                Toast.makeText(this, "No internet amigo", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
             } else {
                 dialogRemove();
             }
