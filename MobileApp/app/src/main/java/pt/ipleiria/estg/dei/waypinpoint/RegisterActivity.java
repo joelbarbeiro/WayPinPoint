@@ -114,30 +114,46 @@ public class RegisterActivity extends AppCompatActivity implements UserListener 
             return;
         }
 
-        if (!isPhoneValid && !isNifValid) {
+        if (!isPhoneValid || !isNifValid) {
             Toast.makeText(this, R.string.my_profile_nif_phone_warning, Toast.LENGTH_SHORT).show();
             return;
         }
 
-        if (isNifValid && isEmailValid && isPasswordValid && isConfirmPasswordEqual && isUsernameValid && isPhoneValid) {
-            user = new User(
-                    0,
-                    username,
-                    email,
-                    password,
-                    address,
-                    phone,
-                    nif,
-                   null,
-                    0,
-                    "",
-                    null
-            );
-            SingletonManager.getInstance(getApplicationContext()).addUserApi(apiHost, user, getApplicationContext());
-        } else {
-            Toast.makeText(this, R.string.error_default, Toast.LENGTH_SHORT).show();
+        if (!isConfirmPasswordEqual) {
+            Toast.makeText(this, R.string.my_profile_confirm_password_warning, Toast.LENGTH_SHORT).show();
+            return;
         }
+
+        if (!isUsernameValid) {
+            Toast.makeText(this, R.string.my_profile_username_warning, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (!isEmailValid) {
+            Toast.makeText(this, R.string.my_profile_email_warning, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (!isPasswordValid) {
+            Toast.makeText(this, R.string.my_profile_password_warning, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        user = new User(
+                0,
+                username,
+                email,
+                password,
+                address,
+                phone,
+                nif,
+                null,
+                0,
+                "",
+                null);
+
         SingletonManager.getInstance(getApplicationContext()).setUserListener(this);
+        SingletonManager.getInstance(getApplicationContext()).addUserApi(apiHost, user, getApplicationContext());
     }
 
     @Override

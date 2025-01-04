@@ -477,7 +477,7 @@ class Activity extends \yii\db\ActiveRecord
         if ($insert)
             $this->publishToMosquitto("activity/created", $jsonObject);
         else
-            $this->publishToMosquitto("UPDATE", $jsonObject);
+            $this->publishToMosquitto("activity/updated", $jsonObject);
     }
 
     public function afterDelete()
@@ -486,7 +486,7 @@ class Activity extends \yii\db\ActiveRecord
         $payLoad = new \stdClass();
         $payLoad->id = $this->id;
         $jsonObject = json_encode($payLoad);
-        $this->publishToMosquitto("DELETE", $jsonObject);
+        $this->publishToMosquitto("activity/deleted", $jsonObject);
     }
 
 }

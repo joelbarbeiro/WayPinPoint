@@ -2,6 +2,7 @@ package pt.ipleiria.estg.dei.waypinpoint;
 
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.API_HOSTNAME;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.BACKEND_PORT;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.setBrokerUrl;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.setImgUri;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.setImgUriUser;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.setPhotoUri;
@@ -47,6 +48,7 @@ public class ApiHostnameSetupActivity extends AppCompatActivity {
         setImgUri(etHostname.getText().toString(), getApplicationContext());
         setPhotoUri(etHostname.getText().toString(), getApplicationContext());
         setImgUriUser(etHostname.getText().toString() + BACKEND_PORT, getApplicationContext());
+        setBrokerUrl(etHostname.getText().toString(), getApplicationContext());
         try {
             SharedPreferences sharedPreferences = getSharedPreferences(API_HOSTNAME, Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
