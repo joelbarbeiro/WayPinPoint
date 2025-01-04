@@ -38,6 +38,7 @@
         android:backgroundTint="@color/blue_500"
         android:clickable="true"
         android:contentDescription="@string/fab_add_photo"
+        android:focusable="true"
         android:src="@drawable/ic_action_add"
         app:tint="@android:color/white" />
 

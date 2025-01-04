@@ -2,7 +2,8 @@ package Model;
 
 public class Cart {
     private int id, user_id, product_id, quantity, status, calendar_id;
-    public Cart(int id,int user_id, int product_id, int quantity, int status, int calendar_id) {
+
+    public Cart(int id, int user_id, int product_id, int quantity, int status, int calendar_id) {
         this.id = id;
         this.user_id = user_id;
         this.product_id = product_id;
@@ -10,8 +11,8 @@ public class Cart {
         this.status = status;
         this.calendar_id = calendar_id;
     }
-    public Cart()
-    {
+
+    public Cart() {
 
     }
 

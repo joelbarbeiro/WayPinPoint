@@ -15,7 +15,7 @@ public class CategoryJsonParser {
             for (int c = 0; c < response.length(); c++) {
                 JSONObject category = (JSONObject) response.get(c);
                 int id = category.getInt("id");
-                String description  = category.getString("description");
+                String description = category.getString("description");
 
                 Category auxCategory = new Category(id, description);
                 categories.add(auxCategory);

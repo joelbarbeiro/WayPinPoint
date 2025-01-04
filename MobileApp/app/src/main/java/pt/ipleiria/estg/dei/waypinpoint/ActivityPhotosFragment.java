@@ -14,7 +14,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.SearchView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -64,7 +63,7 @@ public class ActivityPhotosFragment extends Fragment implements SwipeRefreshLayo
 
         fabPhotos = view.findViewById(R.id.fabPhotos);
         if (requireActivity() instanceof AppCompatActivity) {
-            ((AppCompatActivity) requireActivity()).getSupportActionBar().setTitle("Photos for Activity");
+            ((AppCompatActivity) requireActivity()).getSupportActionBar().setTitle(R.string.photos_activity_title);
         }
         fabPhotos.setOnClickListener(new View.OnClickListener() {
             @Override

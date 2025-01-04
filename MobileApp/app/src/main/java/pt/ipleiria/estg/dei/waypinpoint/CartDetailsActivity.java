@@ -2,6 +2,7 @@ package pt.ipleiria.estg.dei.waypinpoint;
 
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ID_CART;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.OP_CODE;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.isQuantityValid;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -9,6 +10,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,6 +36,7 @@ public class CartDetailsActivity extends AppCompatActivity implements CartListen
     private Cart cart;
     private TextView etActivityName, etQuantity, etPrice, etDate;
     private ImageView iv_activityImg;
+    private Button btnEditQuantity;
     public static final String DEFAULT_IMG = null;
     private Activity activity;
     private Calendar calendar;
@@ -58,6 +61,8 @@ public class CartDetailsActivity extends AppCompatActivity implements CartListen
         etDate = findViewById(R.id.etDate);
         iv_activityImg = findViewById(R.id.iv_activityImg);
         SingletonManager.getInstance(getApplicationContext()).setCartListener(this);
+        btnEditQuantity = findViewById(R.id.btnEditQuantity);
+        btnEditQuantity.setOnClickListener(v -> editQuantity());
         loadCart();
     }
 
@@ -74,6 +79,15 @@ public class CartDetailsActivity extends AppCompatActivity implements CartListen
                 .into(iv_activityImg);
     }
 
+    private void editQuantity() {
+        String quantityStr = etQuantity.getText().toString();
+        if (isQuantityValid(quantityStr, getApplicationContext())) {
+            int newQuantity = Integer.parseInt(quantityStr);
+            cart.setQuantity(newQuantity);
+            SingletonManager.getInstance(getApplicationContext()).editCart(cart, getApplicationContext());
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if (cart != null) {
@@ -87,7 +101,7 @@ public class CartDetailsActivity extends AppCompatActivity implements CartListen
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.itemRemove) {
             if (!CartJsonParser.isConnectionInternet(getApplicationContext())) {
-                Toast.makeText(this, "No internet amigo", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
             } else {
                 dialogRemove();
             }

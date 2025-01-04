@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.widget.TextView;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -22,10 +23,11 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import Model.Category;
+import pt.ipleiria.estg.dei.waypinpoint.R;
 
 public class Utilities {
-
-    public static final int REGISTER = 100;
+    public static TextView etQuantity;
+    public static final int ADD = 100;
     public static final int EDIT = 200;
     public static final int DELETE = 300;
     public static final int PICK_IMAGE = 400;
@@ -38,11 +40,13 @@ public class Utilities {
     public static final String API_HOSTNAME = "API_HOSTNAME";
     public static final String USER_DATA = "USER_DATA";
     public static final String TOKEN = "TOKEN";
+    public static final String NO_TOKEN = "NO TOKEN";
+
     public static final String SNACKBAR_MESSAGE = "SNACKBAR_MESSAGE";
     public static final String ID_CART = "ID_CART";
     public static final int DB_VERSION = 4;
+    public static final String CALENDAR_ID = "CALENDAR_ID";
 
-    public static final String DEFAULT_IMG = "https://images.app.goo.gl/WRUpq3qmgD331B64A";
     public static final String PROFILE_PIC = "PROFILE_PIC";
     public static final String BACKEND_PORT = ":8080";
     public static final String ID_REVIEW = "ID_REVIEW";
@@ -246,15 +250,35 @@ public class Utilities {
 
         return formattedDate;
     }
-    public static ArrayList<Model.Activity> filterActivitiesBySupplier(Context context, ArrayList<Model.Activity> listActivities){
+
+    public static ArrayList<Model.Activity> filterActivitiesBySupplier(Context context, ArrayList<Model.Activity> listActivities) {
         ArrayList<Model.Activity> filteredActivities = new ArrayList<>();
-        for (Model.Activity a : listActivities){
+        for (Model.Activity a : listActivities) {
             if (Utilities.getUserId(context) == a.getSupplier()) {
                 filteredActivities.add(a);
-                System.out.println(">>> " + a );
+                System.out.println(">>> " + a);
             }
         }
 
         return filteredActivities;
+    }
+
+    public static boolean isQuantityValid(String input, Context context) {
+        etQuantity = etQuantity.findViewById(R.id.etQuantity);
+        if (input.isEmpty()) {
+            etQuantity.setError(context.getString(R.string.error_quantity_empty));
+            return false;
+        }
+        try {
+            int quantity = Integer.parseInt(input);
+            if (quantity <= 0) {
+                etQuantity.setError(context.getString(R.string.error_quantity_zero));
+                return false;
+            }
+        } catch (NumberFormatException e) {
+            etQuantity.setError(context.getString(R.string.error_invalid_quantity));
+            return false;
+        }
+        return true;
     }
 }

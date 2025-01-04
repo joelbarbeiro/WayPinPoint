@@ -10,11 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.Nullable;
 
-import com.bumptech.glide.util.Util;
-
 import java.util.ArrayList;
-
-import pt.ipleiria.estg.dei.waypinpoint.utils.Utilities;
 
 public class WaypinpointDbHelper extends SQLiteOpenHelper {
 
@@ -668,7 +664,7 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
         this.db.delete(TABLE_NAME_CART, null, null);
     }
 
-    public ArrayList<Cart> getCartByUserId(int userId) {
+    public ArrayList<Cart> getCartByUserIdDB(int userId) {
         ArrayList<Cart> carts = new ArrayList<>();
         Cursor cursor = this.db.query(TABLE_NAME_CART, new String[]{ID, USER_ID, PRODUCT_ID, QUANTITY, STATUS, CALENDAR_ID},
                 USER_ID + "= ?",
@@ -716,7 +712,6 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
         }
         return cart;
     }
-
 
 
     //ENDREGION

@@ -2,11 +2,11 @@ package pt.ipleiria.estg.dei.waypinpoint;
 
 import static pt.ipleiria.estg.dei.waypinpoint.ActivityDetailsActivity.ID_ACTIVITY;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ACTIVITY_ID;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ADD;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.DELETE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EDIT;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ID_REVIEW;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.OP_CODE;
-import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.REGISTER;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.USER_ID;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getUserId;
 
@@ -79,7 +79,7 @@ public class ListReviewsFragment extends Fragment implements SwipeRefreshLayout.
                 Intent intent = new Intent(getContext(), ReviewDetailsActivity.class);
                 intent.putExtra(USER_ID, userId);
                 intent.putExtra(ACTIVITY_ID, activityId);
-                startActivityForResult(intent, REGISTER);
+                startActivityForResult(intent, ADD);
             }
         });
 
@@ -96,19 +96,19 @@ public class ListReviewsFragment extends Fragment implements SwipeRefreshLayout.
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         int activityId = getArguments().getInt(ID_ACTIVITY);
         if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == REGISTER || requestCode == EDIT) {
+            if (requestCode == ADD || requestCode == EDIT) {
 
                 SingletonManager.getInstance(getContext()).getReviewsApi(getContext(), activityId);
 
                 switch (requestCode) {
-                    case REGISTER:
-                        Snackbar.make(getView(), "Review Added Successfully", Snackbar.LENGTH_SHORT).show();
+                    case ADD:
+                        Snackbar.make(getView(), R.string.review_added_success_message, Snackbar.LENGTH_SHORT).show();
                         break;
                     case EDIT:
                         if (data.getIntExtra(OP_CODE, 0) == DELETE) {
-                            Snackbar.make(getView(), "Review Removed Successfully", Snackbar.LENGTH_SHORT).show();
+                            Snackbar.make(getView(), R.string.review_removed_success_message, Snackbar.LENGTH_SHORT).show();
                         } else {
-                            Snackbar.make(getView(), "Review Edited Successfully", Snackbar.LENGTH_SHORT).show();
+                            Snackbar.make(getView(), R.string.review_edit_success, Snackbar.LENGTH_SHORT).show();
                         }
                         break;
                     default:

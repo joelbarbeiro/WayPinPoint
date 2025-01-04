@@ -41,9 +41,6 @@ public class CartFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private ListView lvCart;
     private View emptyView;
     private TextView tvEmptyMessage;
-    private Cart cart;
-    private double price;
-    private CartAdapter CartAdapter;
     private WaypinpointDbHelper waypinpointDbHelper;
 
     public CartFragment() {
@@ -54,10 +51,12 @@ public class CartFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_cart, container, false);
+        setHasOptionsMenu(true);
         lvCart = view.findViewById(R.id.lvCart);
         emptyView = view.findViewById(R.id.emptyViewLayoutCarts);
         int userId = getUserId(getContext());
         waypinpointDbHelper = new WaypinpointDbHelper(getContext());
+        cartList = waypinpointDbHelper.getCartByUserIdDB(userId);
         activities = waypinpointDbHelper.getActivitiesDB();
         calendars = waypinpointDbHelper.getCalendarDB();
 
@@ -74,9 +73,14 @@ public class CartFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         swipeRefreshLayout.setOnRefreshListener(this);
         
         SingletonManager.getInstance(getContext()).setCartsListener(this);
-        SingletonManager.getInstance(getContext()).getCartByUserId(getContext());
+        loadCartData();
         return view;
     }
+
+    public void loadCartData() {
+        SingletonManager.getInstance(getContext()).getCartByUserId(getContext());
+    }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -86,11 +90,11 @@ public class CartFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                 switch (requestCode) {
                     case EDIT:
                         if (data.getIntExtra(OP_CODE, 0) == DELETE) {
-                            Snackbar.make(getView(), "Cart Removed Successfully", Snackbar.LENGTH_SHORT).show();
+                            Snackbar.make(getView(), R.string.cart_removed_successful_message, Snackbar.LENGTH_SHORT).show();
                         } else if (data.getIntExtra(OP_CODE, 0) == CHECKOUT) {
-                            Snackbar.make(getView(), "Checkout Successful", Snackbar.LENGTH_SHORT).show();
+                            Snackbar.make(getView(), R.string.checkout_success_message, Snackbar.LENGTH_SHORT).show();
                         } else {
-                            Snackbar.make(getView(), "Cart Edited Successfully", Snackbar.LENGTH_SHORT).show();
+                            Snackbar.make(getView(), R.string.cart_edit_success_message, Snackbar.LENGTH_SHORT).show();
                         }
                         break;
                     default:
@@ -103,7 +107,7 @@ public class CartFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     @Override
     public void onRefresh() {
-        SingletonManager.getInstance(getContext()).getCartByUserId(getContext());
+        loadCartData();
         swipeRefreshLayout.setRefreshing(false);
     }
 
@@ -122,5 +126,4 @@ public class CartFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             tvEmptyMessage.setText(R.string.empty_cart_message);
         }
     }
-
 }

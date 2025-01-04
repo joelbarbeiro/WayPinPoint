@@ -1,26 +1,15 @@
 package pt.ipleiria.estg.dei.waypinpoint;
 
-import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.DEFAULT_IMG;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ACTIVITY_ID;
-import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.DELETE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EDIT;
-import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ENDPOINT_USER;
-import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ID;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.OP_CODE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.PICK_IMAGE;
-import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.PROFILE_PIC;
-import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.SNACKBAR_MESSAGE;
-import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.TOKEN;
-import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.USER_DATA;
-import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getApiHost;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getImgUri;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getUserId;
 
-import android.content.Context;
+import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -35,37 +24,21 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
-import android.app.DatePickerDialog;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.request.FutureTarget;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.concurrent.ExecutionException;
 
 import Listeners.ActivityListener;
 import Model.Activity;
@@ -121,7 +94,7 @@ public class ActivityCreateActivity extends AppCompatActivity implements Activit
 
         btCreateDateHour.setOnClickListener(v -> showDatePickerDialog());
 
-        imgActivity.setOnClickListener(new View.OnClickListener(){
+        imgActivity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -191,7 +164,7 @@ public class ActivityCreateActivity extends AppCompatActivity implements Activit
         SingletonManager.getInstance(getApplicationContext()).setActivityListener(this);
     }
 
-    private void loadActivity(){
+    private void loadActivity() {
         setTitle("Edit: " + activity.getName());
 
         etName.setText(activity.getName());
@@ -204,7 +177,7 @@ public class ActivityCreateActivity extends AppCompatActivity implements Activit
 
         String imgPath = getImgUri(getApplicationContext());
         Glide.with(getApplicationContext())
-                .load( imgPath + activity.getSupplier()+ "/" + activity.getPhoto())
+                .load(imgPath + activity.getSupplier() + "/" + activity.getPhoto())
                 .placeholder(R.drawable.img_default_activity)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(imgActivity);
@@ -296,9 +269,10 @@ public class ActivityCreateActivity extends AppCompatActivity implements Activit
             }
         });
     }
+
     public void loadExistingDateTime(int activity_id) {
         dateTimeForActivity(activity_id);
-        for (DateTimeParser i : dateHour){
+        for (DateTimeParser i : dateHour) {
             LinearLayout dateHourRow = new LinearLayout(this);
             dateHourRow.setOrientation(LinearLayout.HORIZONTAL);
 
@@ -375,7 +349,8 @@ public class ActivityCreateActivity extends AppCompatActivity implements Activit
         }
         return -1;
     }
-    public void dateTimeForActivity(int id){
+
+    public void dateTimeForActivity(int id) {
         calendars = waypinpointDbHelper.getCalendarByActivityId(id);
         for (Model.Calendar c : calendars) {
             int tmpHour = waypinpointDbHelper.getCalendarTimeById(c.getTime_id()).getId();
@@ -391,29 +366,31 @@ public class ActivityCreateActivity extends AppCompatActivity implements Activit
         setResult(RESULT_OK, intent);
         finish();
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-            if (requestCode == PICK_IMAGE && resultCode == android.app.Activity.RESULT_OK && data != null) {
-                imageUri = data.getData();
+        if (requestCode == PICK_IMAGE && resultCode == android.app.Activity.RESULT_OK && data != null) {
+            imageUri = data.getData();
 
-                if (imageUri != null) {
-                    imgActivity.setImageURI(imageUri);
-                }
+            if (imageUri != null) {
+                imgActivity.setImageURI(imageUri);
             }
+        }
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if(activity != null){
+        if (activity != null) {
             getMenuInflater().inflate(R.menu.menu_delete, menu);
             return super.onCreateOptionsMenu(menu);
         }
         return false;
     }
 
-    public boolean onOptionsItemSelected(@NonNull MenuItem item){
-        if(item.getItemId() == R.id.itemRemover){
-            if(!StatusJsonParser.isConnectionInternet(getApplicationContext())){
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.itemRemover) {
+            if (!StatusJsonParser.isConnectionInternet(getApplicationContext())) {
                 Toast.makeText(this, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
             } else {
                 dialogRemover();
@@ -422,10 +399,10 @@ public class ActivityCreateActivity extends AppCompatActivity implements Activit
         return super.onOptionsItemSelected(item);
     }
 
-    private void dialogRemover(){
+    private void dialogRemover() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Delete activity")
-                .setMessage("Do you really whant to remove it")
+        builder.setTitle(R.string.delete_activity_title)
+                .setMessage(R.string.dialog_remove_activity_message)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
