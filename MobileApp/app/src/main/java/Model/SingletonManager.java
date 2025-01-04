@@ -123,10 +123,10 @@ public class SingletonManager {
         if (instance == null) {
             instance = new SingletonManager(context);
             volleyQueue = Volley.newRequestQueue(context);
-                mqttManager = new MQTTManager(context);
-                mqttManager.connect();
-                mqttNotificationManager = new MqttNotificationManager(context.getApplicationContext());
-                mqttManager.setMosquittoListener(mqttNotificationManager);
+            mqttManager = new MQTTManager(context);
+            mqttManager.connect();
+            mqttNotificationManager = new MqttNotificationManager(context.getApplicationContext());
+            mqttManager.setMosquittoListener(mqttNotificationManager);
         }
         return instance;
     }
