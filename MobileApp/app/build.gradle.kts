@@ -44,6 +44,8 @@ dependencies {
     implementation ("com.android.volley:volley:1.2.1")
     implementation ("com.github.bumptech.glide:glide:4.16.0")
     implementation ("jp.wasabeef:glide-transformations:4.3.0")
+    implementation ("org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.1.0")
+    implementation ("org.eclipse.paho:org.eclipse.paho.android.service:1.1.1")
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)

@@ -33,6 +33,7 @@ import Model.Activity;
 import Model.Calendar;
 import Model.CalendarTime;
 import Model.Category;
+import Model.MQTTManager;
 import Model.SingletonManager;
 
 
@@ -47,6 +48,7 @@ public class ListActivitiesFragment extends Fragment implements SwipeRefreshLayo
     private View emptyView;
     private TextView tvEmptyMessage;
     private SearchView searchView;
+    private MQTTManager mqttManager;
 
     public ListActivitiesFragment() {
         // Required empty public constructor
@@ -59,6 +61,7 @@ public class ListActivitiesFragment extends Fragment implements SwipeRefreshLayo
         View view = inflater.inflate(R.layout.fragment_list_activities, container, false);
         lvActivities = view.findViewById(R.id.lvActivities);
         emptyView = view.findViewById(R.id.emptyViewLayoutActivities);
+
         lvActivities.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -76,6 +79,7 @@ public class ListActivitiesFragment extends Fragment implements SwipeRefreshLayo
 
         return view;
     }
+
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {

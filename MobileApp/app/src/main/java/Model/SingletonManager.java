@@ -1,6 +1,7 @@
 package Model;
 
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ADD;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.BROKER_URL;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.CHECKOUT;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.DELETE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EDIT;
@@ -10,6 +11,7 @@ import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.NO_TOKEN;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.TOKEN;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.USER_DATA;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getApiHost;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getBrokerUri;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getUserId;
 
 import android.content.Context;
@@ -48,6 +50,7 @@ import Listeners.ActivityListener;
 import Listeners.CartListener;
 import Listeners.CartsListener;
 import Listeners.LoginListener;
+import Listeners.MosquittoListener;
 import Listeners.PhotosListener;
 import Listeners.ReviewListener;
 import Listeners.ReviewsListener;
@@ -101,6 +104,8 @@ public class SingletonManager {
     //endregion
 
     private static RequestQueue volleyQueue = null;
+    private static MQTTManager mqttManager = null;
+    private static MqttNotificationManager mqttNotificationManager = null;
 
     public SingletonManager(Context context) {
         waypinpointDbHelper = new WaypinpointDbHelper(context);
@@ -118,6 +123,10 @@ public class SingletonManager {
         if (instance == null) {
             instance = new SingletonManager(context);
             volleyQueue = Volley.newRequestQueue(context);
+            mqttManager = new MQTTManager(context);
+            mqttManager.connect();
+            mqttNotificationManager = new MqttNotificationManager(context.getApplicationContext());
+            mqttManager.setMosquittoListener(mqttNotificationManager);
         }
         return instance;
     }
@@ -718,32 +727,7 @@ public class SingletonManager {
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            // Log the basic error message
                             //System.out.println("->> onErrorResponse: " + error.getMessage());
-                            //System.out.println("->> " + params);
-
-                            // Handle different types of errors
-                            if (error instanceof NetworkError) {
-                                System.out.println("Network Error:" + error.getMessage());
-                            } else if (error instanceof ServerError) {
-                                System.out.println("Server Error" + error.getMessage());
-                                NetworkResponse response = error.networkResponse;
-                                if (response != null) {
-                                    System.out.println("Server returned status code: " + response.statusCode);
-                                }
-                            } else if (error instanceof ParseError) {
-                                System.out.println("Parse Error: " + error.getMessage());
-                            } else if (error instanceof TimeoutError) {
-                                System.out.println("Timeout Error: " + error.getMessage());
-                            }
-
-                            // Log more details if networkResponse is available
-                            if (error.networkResponse != null) {
-                                System.out.println("Network Response Code: " + error.networkResponse.statusCode);
-                                System.out.println("Network Response Body: " + new String(error.networkResponse.data));
-                            }
-
-                            // Optionally, print the stack trace to debug further
                             error.printStackTrace();
                         }
                     }
@@ -802,7 +786,7 @@ public class SingletonManager {
                         public void onResponse(String response) {
                             //System.out.println("->> " + params);
 
-                            System.out.println("Server Response: " + response);
+                            //System.out.println("Server Response: " + response);
                             waypinpointDbHelper.editActivityDB(ActivityJsonParser.parserJsonActivity(response));
 
                             if (activitiesListener != null) {
@@ -813,32 +797,7 @@ public class SingletonManager {
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            System.out.println("->> onErrorResponse: " + error.getMessage());
-                            // Log the basic error message
-                            //System.out.println("->> " + params);
-
-                            // Handle different types of errors
-                            if (error instanceof NetworkError) {
-                                System.out.println("Network Error: " + error.getMessage());
-                            } else if (error instanceof ServerError) {
-                                System.out.println("Server Error: " + error.getMessage());
-                                NetworkResponse response = error.networkResponse;
-                                if (response != null) {
-                                    System.out.println("Server returned status code: " + response.statusCode);
-                                }
-                            } else if (error instanceof ParseError) {
-                                System.out.println("Parse Error: " + error.getMessage());
-                            } else if (error instanceof TimeoutError) {
-                                System.out.println("Timeout Error: " + error.getMessage());
-                            }
-
-                            // Log more details if networkResponse is available
-                            if (error.networkResponse != null) {
-                                System.out.println("Network Response Code: " + error.networkResponse.statusCode);
-                                System.out.println("Network Response Body: " + new String(error.networkResponse.data));
-                            }
-
-                            // Optionally, print the stack trace to debug further
+                            //System.out.println("->> onErrorResponse: " + error.getMessage());
                             error.printStackTrace();
                         }
                     }
@@ -912,7 +871,7 @@ public class SingletonManager {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    System.out.println("--> GETCALENDAR --> " + error);
+                    //System.out.println("--> GETCALENDAR --> " + error);
                     onComplete.run();
                 }
             });
@@ -952,7 +911,7 @@ public class SingletonManager {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    System.out.println("--> GETTIME --> " + error);
+                    //System.out.println("--> GETTIME --> " + error);
                     onComplete.run();
                 }
             });
@@ -991,7 +950,7 @@ public class SingletonManager {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    System.out.println(" -> GETCATEGORY --" + error);
+                    //System.out.println(" -> GETCATEGORY --" + error);
                     onComplete.run();
                 }
             });
@@ -1064,7 +1023,7 @@ public class SingletonManager {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    System.out.println(" --> GETREVIEW --" + error);
+                    //System.out.println(" --> GETREVIEW --" + error);
 
                 }
             }) {
