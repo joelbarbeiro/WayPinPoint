@@ -100,7 +100,7 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
                 ");";
         try {
             db.execSQL(createUserTable);
-            System.out.println("->>> Table " + TABLE_NAME_CART + " created successfully.");
+            //System.out.println("->>> Table " + TABLE_NAME_CART + " created successfully.");
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("->>> Error creating table: " + e.getMessage());
@@ -121,7 +121,7 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
                 ")";
         try {
             db.execSQL(createActivitiesTable);
-            System.out.println("->>> Table " + TABLE_NAME_CART + " created successfully.");
+            //System.out.println("->>> Table " + TABLE_NAME_CART + " created successfully.");
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("->>> Error creating table: " + e.getMessage());
@@ -134,7 +134,7 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
                 ")";
         try {
             db.execSQL(createCategoryTable);
-            System.out.println("->>> Table " + TABLE_NAME_CART + " created successfully.");
+            //System.out.println("->>> Table " + TABLE_NAME_CART + " created successfully.");
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("->>> Error creating table: " + e.getMessage());
@@ -150,7 +150,7 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
                 ")";
         try {
             db.execSQL(createCalendarTable);
-            System.out.println("->>> Table " + TABLE_NAME_CART + " created successfully.");
+            //System.out.println("->>> Table " + TABLE_NAME_CART + " created successfully.");
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("->>> Error creating table: " + e.getMessage());
@@ -163,7 +163,7 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
                 ")";
         try {
             db.execSQL(createTimeTable);
-            System.out.println("->>> Table " + TABLE_NAME_CART + " created successfully.");
+            //System.out.println("->>> Table " + TABLE_NAME_CART + " created successfully.");
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("->>> Error creating table: " + e.getMessage());
@@ -181,7 +181,7 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
                 ")";
         try {
             db.execSQL(createReviewsTable);
-            System.out.println("->>> Table " + TABLE_NAME_CART + " created successfully.");
+            //System.out.println("->>> Table " + TABLE_NAME_CART + " created successfully.");
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("->>> Error creating table: " + e.getMessage());
@@ -197,7 +197,7 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
                 ");";
         try {
             db.execSQL(createCartTable);
-            System.out.println("->>> Table " + TABLE_NAME_CART + " created successfully.");
+            //System.out.println("->>> Table " + TABLE_NAME_CART + " created successfully.");
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("->>> Error creating table: " + e.getMessage());

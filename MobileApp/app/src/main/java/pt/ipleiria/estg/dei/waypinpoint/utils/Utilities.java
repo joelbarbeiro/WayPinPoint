@@ -101,25 +101,32 @@ public class Utilities {
         return filePath;
     }
 
-    public static void checkAndRequestPermissions(Context context, Activity activity) {
+    public static void checkAndRequestMediaPermissions(Context context, Activity activity) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // Android 13+
             if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.READ_MEDIA_IMAGES)
                     != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(activity,
-                        new String[]{android.Manifest.permission.READ_MEDIA_IMAGES},
-                        REQUEST_CODE);
+                ActivityCompat.requestPermissions(activity, new String[]{android.Manifest.permission.READ_MEDIA_IMAGES}, REQUEST_CODE);
             }
         } else { // Android 6+
             if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE)
                     != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(activity,
-                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                        REQUEST_CODE);
+                ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_CODE);
             }
         }
+    }
+
+    public static void checkAndRequestCameraPermission(Context context, Activity activity) {
         if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(activity, new String[]{android.Manifest.permission.CAMERA}, REQUEST_CODE);
+        }
+    }
+
+    public static void checkAndRequestNotificationPermissions(Context context, Activity activity) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.POST_NOTIFICATIONS}, REQUEST_CODE);
+            }
         }
     }
 
@@ -164,7 +171,8 @@ public class Utilities {
         editor.putString(IMG_URI_USER, imgUserPath);
         editor.apply();
     }
-    public static String getBrokerUri(Context context){
+
+    public static String getBrokerUri(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(BROKER_URL, MODE_PRIVATE);
         System.out.println("--> Get BROKER URL " + sharedPreferences.getString(BROKER_URL, null));
         return sharedPreferences.getString(BROKER_URL, null);
@@ -173,7 +181,7 @@ public class Utilities {
     public static void setBrokerUrl(String uri, Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(BROKER_URL, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        String tmpUrl = "tcp://"+uri+":1883";
+        String tmpUrl = "tcp://" + uri + ":1883";
         editor.putString(BROKER_URL, tmpUrl);
         editor.apply();
     }

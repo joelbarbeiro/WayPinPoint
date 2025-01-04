@@ -1,6 +1,7 @@
 package Model;
 
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ADD;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.BROKER_URL;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.CHECKOUT;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.DELETE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EDIT;
@@ -10,6 +11,7 @@ import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.NO_TOKEN;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.TOKEN;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.USER_DATA;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getApiHost;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getBrokerUri;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getUserId;
 
 import android.content.Context;
@@ -121,10 +123,10 @@ public class SingletonManager {
         if (instance == null) {
             instance = new SingletonManager(context);
             volleyQueue = Volley.newRequestQueue(context);
-            mqttManager = new MQTTManager(context);
-            mqttManager.connect();
-            mqttNotificationManager = new MqttNotificationManager(context.getApplicationContext());
-            mqttManager.setMosquittoListener(mqttNotificationManager);
+                mqttManager = new MQTTManager(context);
+                mqttManager.connect();
+                mqttNotificationManager = new MqttNotificationManager(context.getApplicationContext());
+                mqttManager.setMosquittoListener(mqttNotificationManager);
         }
         return instance;
     }

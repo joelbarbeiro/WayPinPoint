@@ -11,7 +11,7 @@ import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.PROFILE_PIC;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.SNACKBAR_MESSAGE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.TOKEN;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.USER_DATA;
-import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.checkAndRequestPermissions;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.checkAndRequestCameraPermission;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getApiHost;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getImgUriUser;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getUserId;
@@ -161,7 +161,7 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
             dialogLogout(sharedPreferencesUser);
         }
         if (item.getItemId() == R.id.navQrCode) {
-            checkAndRequestPermissions(getApplicationContext(), MenuMainActivity.this);
+            checkAndRequestCameraPermission(getApplicationContext(), MenuMainActivity.this);
             Intent intent = new Intent(this, QRCodeScannerActivity.class);
             startActivity(intent);
         }

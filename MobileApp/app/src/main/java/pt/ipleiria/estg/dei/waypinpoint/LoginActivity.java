@@ -4,10 +4,13 @@ import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ADD;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.APIHOST;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EMAIL;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.NO_TOKEN;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.REQUEST_CODE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.SNACKBAR_MESSAGE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.TOKEN;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.USER_DATA;
-import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.checkAndRequestPermissions;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.checkAndRequestCameraPermission;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.checkAndRequestNotificationPermissions;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.checkAndRequestMediaPermissions;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getApiHost;
 
 import android.app.Activity;
@@ -16,6 +19,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.EditText;
@@ -47,7 +51,6 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
         etPassword = findViewById(R.id.registerTvPassword);
 
         FloatingActionButton fabApiHost;
-        checkAndRequestPermissions(getApplicationContext(), LoginActivity.this);
 
         fabApiHost = findViewById(R.id.fabApiHostnameConfig);
         fabApiHost.setOnClickListener(new View.OnClickListener() {
@@ -85,6 +88,10 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
             startActivity(intent);
             finish();
         }
+        checkAndRequestMediaPermissions(getApplicationContext(), LoginActivity.this);
+
+        checkAndRequestCameraPermission(getApplicationContext(), LoginActivity.this);
+        checkAndRequestNotificationPermissions(getApplicationContext(), LoginActivity.this);
     }
 
     @Override
