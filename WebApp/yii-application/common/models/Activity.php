@@ -4,6 +4,7 @@ namespace common\models;
 
 use backend\models\Sale;
 use backend\models\Ticket;
+use Bluerhinos\phpMQTT;
 use Yii;
 use yii\helpers\ArrayHelper;
 use yii\web\UploadedFile;
@@ -441,6 +442,51 @@ class Activity extends \yii\db\ActiveRecord
     {
         $activities = Activity::find()->where(['user_id' => $id])->all();
         return count($activities);
+    }
+    public static function publishToMosquitto($topic,$message)
+    {
+        $server = "127.0.0.1";
+        $port = 1883;
+        $username = ""; // set your username
+        $password = ""; // set your password
+        $client_id = "phpMQTT-publisher"; // unique!
+        $mqtt = new phpMQTT($server, $port, $client_id);
+        if ($mqtt->connect(true, NULL, $username, $password)) {
+            $mqtt->publish($topic, $message, 0);
+            $mqtt->close();
+        } else {
+            file_put_contents("debug.output", "Time out!");
+        }
+    }
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+
+        $payLoad = new \stdClass();
+        $payLoad->id = $this->id;
+        $payLoad->name = $this->name;
+        $payLoad->description = $this->description;
+        $payLoad->photo = $this->photo;
+        $payLoad->maxpax = $this->maxpax;
+        $payLoad->priceperpax = $this->priceperpax;
+        $payLoad->address = $this->address;
+        $payLoad->user_id = $this->user_id;
+        $payLoad->category_id = $this->category_id;
+
+        $jsonObject = json_encode($payLoad);
+        if ($insert)
+            $this->publishToMosquitto("activity/created", $jsonObject);
+        else
+            $this->publishToMosquitto("activity/updated", $jsonObject);
+    }
+
+    public function afterDelete()
+    {
+        parent::afterDelete();
+        $payLoad = new \stdClass();
+        $payLoad->id = $this->id;
+        $jsonObject = json_encode($payLoad);
+        $this->publishToMosquitto("activity/deleted", $jsonObject);
     }
 
 }

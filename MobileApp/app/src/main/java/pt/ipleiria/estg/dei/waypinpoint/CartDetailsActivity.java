@@ -1,8 +1,8 @@
 package pt.ipleiria.estg.dei.waypinpoint;
 
-import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EDIT;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ID_CART;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.OP_CODE;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.isQuantityValid;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,8 +22,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import java.util.ArrayList;
 
 import Listeners.CartListener;
 import Model.Activity;
@@ -37,6 +36,7 @@ public class CartDetailsActivity extends AppCompatActivity implements CartListen
     private Cart cart;
     private TextView etActivityName, etQuantity, etPrice, etDate;
     private ImageView iv_activityImg;
+    private Button btnEditQuantity;
     public static final String DEFAULT_IMG = null;
     private Activity activity;
     private Calendar calendar;
@@ -60,6 +60,9 @@ public class CartDetailsActivity extends AppCompatActivity implements CartListen
         etPrice = findViewById(R.id.etPrice);
         etDate = findViewById(R.id.etDate);
         iv_activityImg = findViewById(R.id.iv_activityImg);
+        SingletonManager.getInstance(getApplicationContext()).setCartListener(this);
+        btnEditQuantity = findViewById(R.id.btnEditQuantity);
+        btnEditQuantity.setOnClickListener(v -> editQuantity());
         loadCart();
     }
 
@@ -74,8 +77,15 @@ public class CartDetailsActivity extends AppCompatActivity implements CartListen
                 .placeholder(R.drawable.img_default_activity)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(iv_activityImg);
-        SingletonManager.getInstance(getApplicationContext()).setCartListener(this);
+    }
 
+    private void editQuantity() {
+        String quantityStr = etQuantity.getText().toString();
+        if (isQuantityValid(quantityStr, getApplicationContext(), etQuantity)) {
+            int newQuantity = Integer.parseInt(quantityStr);
+            cart.setQuantity(newQuantity);
+            SingletonManager.getInstance(getApplicationContext()).editCart(cart, getApplicationContext());
+        }
     }
 
     @Override
@@ -91,7 +101,7 @@ public class CartDetailsActivity extends AppCompatActivity implements CartListen
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.itemRemove) {
             if (!CartJsonParser.isConnectionInternet(getApplicationContext())) {
-                Toast.makeText(this, "No internet amigo", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
             } else {
                 dialogRemove();
             }
@@ -118,27 +128,6 @@ public class CartDetailsActivity extends AppCompatActivity implements CartListen
                 })
                 .setIcon(R.drawable.ic_dialog_remove)
                 .show();
-    }
-
-    //Maybe needs an Override
-    public void onRefreshDetails(int op) {
-
-    }
-
-
-    @Override
-    public void onSuccess(ArrayList<Cart> carts) {
-
-    }
-
-    @Override
-    public void onError(String s) {
-
-    }
-
-    @Override
-    public void onRefreshCartList(ArrayList<Cart> cartList) {
-
     }
 
     @Override

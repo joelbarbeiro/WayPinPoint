@@ -1,9 +1,9 @@
 package pt.ipleiria.estg.dei.waypinpoint;
 
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ADD;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.DELETE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EDIT;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.OP_CODE;
-import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.REGISTER;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,13 +27,14 @@ import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 
+import Adapters.ActivitiesListAdapter;
 import Listeners.ActivitiesListener;
 import Model.Activity;
 import Model.Calendar;
 import Model.CalendarTime;
 import Model.Category;
+import Model.MQTTManager;
 import Model.SingletonManager;
-import Adapters.ActivitiesListAdapter;
 
 
 public class ListActivitiesFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, ActivitiesListener {
@@ -43,7 +45,10 @@ public class ListActivitiesFragment extends Fragment implements SwipeRefreshLayo
     private ArrayList<CalendarTime> times;
     private ArrayList<Category> categories;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private View emptyView;
+    private TextView tvEmptyMessage;
     private SearchView searchView;
+    private MQTTManager mqttManager;
 
     public ListActivitiesFragment() {
         // Required empty public constructor
@@ -55,6 +60,7 @@ public class ListActivitiesFragment extends Fragment implements SwipeRefreshLayo
         setHasOptionsMenu(true);
         View view = inflater.inflate(R.layout.fragment_list_activities, container, false);
         lvActivities = view.findViewById(R.id.lvActivities);
+        emptyView = view.findViewById(R.id.emptyViewLayoutActivities);
 
         lvActivities.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -74,14 +80,15 @@ public class ListActivitiesFragment extends Fragment implements SwipeRefreshLayo
         return view;
     }
 
+
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.menu_search, menu);
+        inflater.inflate(R.menu.menu_cart, menu);
 
+        MenuItem itemCart = menu.findItem(R.id.navCart);
         MenuItem itemSearch = menu.findItem(R.id.app_bar_search);
         searchView = (SearchView) itemSearch.getActionView();
-
-
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
@@ -104,31 +111,42 @@ public class ListActivitiesFragment extends Fragment implements SwipeRefreshLayo
             }
         });
 
+        itemCart.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                Fragment fragment = new CartFragment();
+                getActivity().getSupportFragmentManager()
+                        .beginTransaction()
+                        .addToBackStack(null)
+                        .replace(R.id.contentFragment, fragment)
+                        .commit();
+                return true;
+            }
+        });
+
         super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (resultCode == LoginActivity.RESULT_OK) {
-            if (requestCode == REGISTER || requestCode == EDIT) {
+            if (requestCode == ADD || requestCode == EDIT) {
                 SingletonManager.getInstance(getContext()).getActivities(getContext());
 
                 switch (requestCode) {
-                    case REGISTER:
-                        Snackbar.make(getView(), "Activity successfully created!", Snackbar.LENGTH_SHORT).show();
+                    case ADD:
+                        Snackbar.make(getView(), R.string.activity_success_message, Snackbar.LENGTH_SHORT).show();
                         break;
                     case EDIT:
                         if (data.getIntExtra(OP_CODE, 0) == DELETE) {
-                            Snackbar.make(getView(), "Activity removed!", Snackbar.LENGTH_SHORT).show();
+                            Snackbar.make(getView(), R.string.activity_remove_success, Snackbar.LENGTH_SHORT).show();
                         } else {
-                            Snackbar.make(getView(), "Activity edit successful!", Snackbar.LENGTH_SHORT).show();
+                            Snackbar.make(getView(), R.string.activity_edit_success_message, Snackbar.LENGTH_SHORT).show();
                         }
                         break;
                 }
             }
         }
-
-
         super.onActivityResult(requestCode, resultCode, data);
     }
 
@@ -137,14 +155,17 @@ public class ListActivitiesFragment extends Fragment implements SwipeRefreshLayo
         SingletonManager.getInstance(getContext()).getActivities(getContext());
         swipeRefreshLayout.setRefreshing(false);
     }
+
     @Override
     public void onRefreshActivitiesList(ArrayList<Activity> listActivities) {
 
     }
+
     @Override
     public void onRefreshCalendarList(ArrayList<Calendar> listCalendar) {
 
     }
+
     @Override
     public void onRefreshTimeList(ArrayList<CalendarTime> listCalendarTime) {
 
@@ -156,12 +177,17 @@ public class ListActivitiesFragment extends Fragment implements SwipeRefreshLayo
     }
 
     @Override
-    public void onRefreshAllData(ArrayList<Activity> listActivities, ArrayList<Calendar> listCalendar, ArrayList<CalendarTime> listCalendarTime, ArrayList<Category> listCategories){
+    public void onRefreshAllData(ArrayList<Activity> listActivities, ArrayList<Calendar> listCalendar, ArrayList<CalendarTime> listCalendarTime, ArrayList<Category> listCategories) {
         if (listActivities != null && listCalendar != null && listCalendarTime != null && listCategories != null) {
+            lvActivities.setVisibility(View.VISIBLE);
+            emptyView.setVisibility(View.GONE);
             lvActivities.setAdapter(new ActivitiesListAdapter(getContext(), listActivities, listCalendar, listCalendarTime, listCategories));
         }
-        else{
-            System.out.println("---> something is empty listActivitiesFragment");
+        if (listActivities.isEmpty()) {
+            lvActivities.setVisibility(View.GONE);
+            emptyView.setVisibility(View.VISIBLE);
+            tvEmptyMessage = emptyView.findViewById(R.id.tvEmptyMessage);
+            tvEmptyMessage.setText(R.string.no_activities_message);
         }
     }
 }

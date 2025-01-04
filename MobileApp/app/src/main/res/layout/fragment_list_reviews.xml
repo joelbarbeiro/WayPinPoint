@@ -10,10 +10,23 @@
         android:id="@+id/srl_reviews"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <ListView
-            android:id="@+id/lvReviews"
+
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent">
+
+            <ListView
+                android:id="@+id/lvReviews"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="visible" />
+
+            <include
+                android:id="@+id/emptyViewLayoutReviews"
+                layout="@layout/item_empty_view"
+                android:visibility="gone" />
+        </FrameLayout>
+
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -23,8 +36,9 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
         android:backgroundTint="@color/blue_500"
-        android:contentDescription="@string/fab_add_Review"
         android:clickable="true"
+        android:contentDescription="@string/fab_add_Review"
+        android:focusable="true"
         android:src="@drawable/ic_action_add"
         app:tint="@android:color/white" />
 

@@ -3,6 +3,8 @@
 
 /** @var Cart $cart */
 
+$userExtra = \common\models\UserExtra::findOne(['user_id' => $cart->user->id]);
+
 use common\models\Cart;
 use common\models\User;
 
@@ -31,8 +33,8 @@ use common\models\User;
 <p>
 <h1>Receipt</h1>
 <p><strong>User:</strong> <?= $cart->user->username ?></p>
-<p><strong>NIF:</strong> <?= $cart->user->userextra->nif ?></p>
-<p><strong>Address:</strong> <?= $cart->user->userextra->address ?></p>
+<p><strong>NIF:</strong> <?= $userExtra->nif ?></p>
+<p><strong>Address:</strong> <?= $userExtra->address ?></p>
 <p><strong>Activity Name:</strong> <?= $cart->activity->name ?></p>
 <p><strong>Activity Description:</strong> <?= $cart->activity->description ?></p>
 <p><strong>Total</strong> <?= ($cart->activity->priceperpax * $cart->quantity) . "€" ?></p>

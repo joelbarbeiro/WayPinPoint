@@ -89,7 +89,7 @@ public class QRCodeScannerActivity extends AppCompatActivity {
             InputImage image = InputImage.fromMediaImage(mediaImage, imageProxy.getImageInfo().getRotationDegrees());
             barcodeScanner.process(image)
                     .addOnSuccessListener(barcodes -> processBarcodes(barcodes))
-                    .addOnFailureListener(e -> Log.e(TAG_QRCODEACTIVITY, "QR code scanning failed", e))
+                    .addOnFailureListener(e -> Log.e(TAG_QRCODEACTIVITY, getString(R.string.qr_code_scan_fail), e))
                     .addOnCompleteListener(task -> imageProxy.close());
         } else {
             imageProxy.close();
@@ -99,9 +99,9 @@ public class QRCodeScannerActivity extends AppCompatActivity {
     private void processBarcodes(List<Barcode> barcodes) {
         for (Barcode barcode : barcodes) {
             String rawValue = barcode.getRawValue();
-            Log.d(TAG_QRCODEACTIVITY, "Scanned QR Code: " + rawValue);
+            Log.d(TAG_QRCODEACTIVITY, getString(R.string.scanned_qr_code) + rawValue);
 
-            if (rawValue.contains("Activity")) {
+            if (rawValue.contains(getString(R.string.activity_string))) {
                 Toast.makeText(this, getString(R.string.QR_Code_valid) + rawValue, Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(this, R.string.QR_Code_invalid, Toast.LENGTH_SHORT).show();

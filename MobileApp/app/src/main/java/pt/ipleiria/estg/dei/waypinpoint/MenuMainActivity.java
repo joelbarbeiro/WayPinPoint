@@ -2,16 +2,16 @@ package pt.ipleiria.estg.dei.waypinpoint;
 
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.DELETE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EDIT;
-import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.REGISTER;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EMAIL;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ENDPOINT_USER;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.NO_TOKEN;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.OP_CODE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.PICK_IMAGE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.PROFILE_PIC;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.SNACKBAR_MESSAGE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.TOKEN;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.USER_DATA;
-import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.checkAndRequestPermissions;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.checkAndRequestCameraPermission;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getApiHost;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getImgUriUser;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getUserId;
@@ -28,7 +28,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -73,7 +72,6 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
         String profilePic = getImgUriUser(getApplicationContext()) + user.getId() + "/" + user.getPhoto();
         role = user.getRole();
 
-
         SharedPreferences sharedPreferencesUser = getSharedPreferences(USER_DATA, MODE_PRIVATE);
         fragmentManager = getSupportFragmentManager();
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -110,7 +108,7 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
             editorUser.putString(EMAIL, email);
             editorUser.apply();
         } else {
-            email = sharedPreferencesUser.getString(EMAIL, "No Email Provided");
+            email = sharedPreferencesUser.getString(EMAIL, getString(R.string.error_no_email_provided));
         }
 
         View hView = navigationView.getHeaderView(0);
@@ -148,30 +146,25 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
             startActivityForResult(intent, EDIT);
         }
         if (item.getItemId() == R.id.navListActivities) {
-            System.out.println("--> Activities");
             fragment = new ListActivitiesFragment();
-            fragmentManager.beginTransaction().replace(R.id.contentFragment, fragment).commit();
+            fragmentManager.beginTransaction()
+                    .addToBackStack(null)
+                    .replace(R.id.contentFragment, fragment).commit();
         }
         if (item.getItemId() == R.id.navMyActivities) {
-            System.out.println("--> My Activities");
             fragment = new MyActivitiesFragment();
-            fragmentManager.beginTransaction().replace(R.id.contentFragment, fragment).commit();
+            fragmentManager.beginTransaction()
+                    .addToBackStack(null)
+                    .replace(R.id.contentFragment, fragment).commit();
         }
-        if (item.getItemId() == R.id.navMyReceipts) System.out.println("--> My Receipts");
-        if (item.getItemId() == R.id.navChangeHost) System.out.println("--> Change Host");
         if (item.getItemId() == R.id.navLogout) {
             dialogLogout(sharedPreferencesUser);
         }
         if (item.getItemId() == R.id.navQrCode) {
-            checkAndRequestPermissions(getApplicationContext(), MenuMainActivity.this);
+            checkAndRequestCameraPermission(getApplicationContext(), MenuMainActivity.this);
             Intent intent = new Intent(this, QRCodeScannerActivity.class);
             startActivity(intent);
         }
-        if (item.getItemId() == R.id.drawerCart) {
-            fragment = new CartFragment();
-            fragmentManager.beginTransaction().replace(R.id.contentFragment, fragment).commit();
-        }
-        if (item.getItemId() == R.id.navQrCode) System.out.println("--> Validate QR-Code");
         drawer.closeDrawer(GravityCompat.START);
         if (fragment != null)
             fragmentManager.beginTransaction().replace(R.id.contentFragment, fragment).commit();
@@ -187,7 +180,7 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
                     WaypinpointDbHelper waypinpointDbHelper = new WaypinpointDbHelper(getApplicationContext());
                     waypinpointDbHelper.removeAllUsersDb();
                     SharedPreferences.Editor editorUser = sharedPreferencesUser.edit();
-                    editorUser.putString(TOKEN, "NO TOKEN");
+                    editorUser.putString(TOKEN, NO_TOKEN);
                     editorUser.apply();
                     Intent intent = new Intent(MenuMainActivity.this, LoginActivity.class);
                     intent.putExtra(SNACKBAR_MESSAGE, R.string.my_profile_deleted);
@@ -234,7 +227,7 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
                         .into(photoProfile);
                 user = SingletonManager.getInstance(getApplicationContext()).getUser(id);
                 user.setPhoto(String.valueOf(imageUri));
-//                SingletonManager.getInstance(getApplicationContext()).editUserApi(apiHost,user,getApplicationContext());
+                SingletonManager.getInstance(getApplicationContext()).editUserApi(user, getApplicationContext());
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -250,10 +243,13 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
                         WaypinpointDbHelper waypinpointDbHelper = new WaypinpointDbHelper(getApplicationContext());
                         waypinpointDbHelper.removeAllUsersDb();
                         SharedPreferences.Editor editorUser = sharedPreferencesUser.edit();
-                        editorUser.putString(TOKEN, "NO TOKEN");
+                        editorUser.putString(TOKEN, NO_TOKEN);
                         editorUser.apply();
                         Intent intent = new Intent(MenuMainActivity.this, LoginActivity.class);
+                        // Clear the back stack to prevent the user from going back to the previous activity after logging out
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
+                        finish();
                         System.out.println("--> Logout");
                     }
                 })
@@ -265,5 +261,15 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
                 })
                 .setIcon(R.drawable.ic_logout_menu)
                 .show();
+    }
+
+    @Override
+    public void onBackPressed() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        if (fragmentManager.getBackStackEntryCount() > 0) {
+            fragmentManager.popBackStack(); // Go to the previous fragment
+        } else {
+            super.onBackPressed(); // Close the app
+        }
     }
 }

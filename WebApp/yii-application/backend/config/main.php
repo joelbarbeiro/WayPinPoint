@@ -1,4 +1,4 @@
-<?php
+z<?php
 $params = array_merge(
     require __DIR__ . '/../../common/config/params.php',
     require __DIR__ . '/../../common/config/params-local.php',
@@ -68,7 +68,7 @@ return [
                         'POST register' => 'register',
                         'POST login' => 'login',
                         'PUT {id}' => 'edituserextras',
-                        'PUT photo' => 'photo',
+                        'POST photo' => 'photo',
                     ],
                     'tokens' => [
                         '{id}' => '<id:\\d+>',

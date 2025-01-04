@@ -10,11 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.Nullable;
 
-import com.bumptech.glide.util.Util;
-
 import java.util.ArrayList;
-
-import pt.ipleiria.estg.dei.waypinpoint.utils.Utilities;
 
 public class WaypinpointDbHelper extends SQLiteOpenHelper {
 
@@ -104,7 +100,7 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
                 ");";
         try {
             db.execSQL(createUserTable);
-            System.out.println("->>> Table " + TABLE_NAME_CART + " created successfully.");
+            //System.out.println("->>> Table " + TABLE_NAME_CART + " created successfully.");
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("->>> Error creating table: " + e.getMessage());
@@ -125,7 +121,7 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
                 ")";
         try {
             db.execSQL(createActivitiesTable);
-            System.out.println("->>> Table " + TABLE_NAME_CART + " created successfully.");
+            //System.out.println("->>> Table " + TABLE_NAME_CART + " created successfully.");
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("->>> Error creating table: " + e.getMessage());
@@ -138,7 +134,7 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
                 ")";
         try {
             db.execSQL(createCategoryTable);
-            System.out.println("->>> Table " + TABLE_NAME_CART + " created successfully.");
+            //System.out.println("->>> Table " + TABLE_NAME_CART + " created successfully.");
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("->>> Error creating table: " + e.getMessage());
@@ -154,7 +150,7 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
                 ")";
         try {
             db.execSQL(createCalendarTable);
-            System.out.println("->>> Table " + TABLE_NAME_CART + " created successfully.");
+            //System.out.println("->>> Table " + TABLE_NAME_CART + " created successfully.");
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("->>> Error creating table: " + e.getMessage());
@@ -167,7 +163,7 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
                 ")";
         try {
             db.execSQL(createTimeTable);
-            System.out.println("->>> Table " + TABLE_NAME_CART + " created successfully.");
+            //System.out.println("->>> Table " + TABLE_NAME_CART + " created successfully.");
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("->>> Error creating table: " + e.getMessage());
@@ -185,7 +181,7 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
                 ")";
         try {
             db.execSQL(createReviewsTable);
-            System.out.println("->>> Table " + TABLE_NAME_CART + " created successfully.");
+            //System.out.println("->>> Table " + TABLE_NAME_CART + " created successfully.");
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("->>> Error creating table: " + e.getMessage());
@@ -201,7 +197,7 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
                 ");";
         try {
             db.execSQL(createCartTable);
-            System.out.println("->>> Table " + TABLE_NAME_CART + " created successfully.");
+            //System.out.println("->>> Table " + TABLE_NAME_CART + " created successfully.");
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("->>> Error creating table: " + e.getMessage());
@@ -668,7 +664,7 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
         this.db.delete(TABLE_NAME_CART, null, null);
     }
 
-    public ArrayList<Cart> getCartByUserId(int userId) {
+    public ArrayList<Cart> getCartByUserIdDB(int userId) {
         ArrayList<Cart> carts = new ArrayList<>();
         Cursor cursor = this.db.query(TABLE_NAME_CART, new String[]{ID, USER_ID, PRODUCT_ID, QUANTITY, STATUS, CALENDAR_ID},
                 USER_ID + "= ?",
@@ -716,7 +712,6 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
         }
         return cart;
     }
-
 
 
     //ENDREGION

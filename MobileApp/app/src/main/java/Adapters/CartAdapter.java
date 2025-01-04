@@ -26,30 +26,30 @@ import pt.ipleiria.estg.dei.waypinpoint.utils.Utilities;
 public class CartAdapter extends BaseAdapter {
     private Context context;
     private LayoutInflater layoutInflater;
-    private ArrayList<Cart> arrayList;
+    private ArrayList<Cart> cartList;
     private ArrayList<Activity> activities;
     private ArrayList<Calendar> calendars;
 
-    public CartAdapter(Context context, ArrayList<Cart> arrayList, ArrayList<Activity> activities, ArrayList<Calendar> calendars) {
+    public CartAdapter(Context context, ArrayList<Cart> cartList, ArrayList<Activity> activities, ArrayList<Calendar> calendars) {
         this.context = context;
-        this.arrayList = arrayList;
+        this.cartList = cartList;
         this.activities = activities;
         this.calendars = calendars;
     }
 
     @Override
     public int getCount() {
-        return arrayList.size();
+        return cartList.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return arrayList.get(position);
+        return cartList.get(position);
     }
 
     @Override
     public long getItemId(int position) {
-        return arrayList.get(position).getId();
+        return cartList.get(position).getId();
     }
 
     @Override
@@ -69,7 +69,7 @@ public class CartAdapter extends BaseAdapter {
             convertView.setTag(viewHolderList);
         }
 
-        viewHolderList.update(arrayList.get(position));
+        viewHolderList.update(cartList.get(position));
 
         return convertView;
     }
@@ -87,6 +87,7 @@ public class CartAdapter extends BaseAdapter {
         }
 
         private void update(Cart cart) {
+            System.out.println("->> ADAPT!!!OOOOO!!!!R " + cart);
             tvProductName.setText(String.valueOf(getActivityNameById(cart.getProduct_id(), activities)));
             tvQuantity.setText(String.valueOf(cart.getQuantity()));
             tvPrice.setText(String.valueOf(cart.getQuantity() * getPriceById(cart.getProduct_id(), activities)));

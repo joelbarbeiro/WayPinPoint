@@ -1,15 +1,17 @@
 package pt.ipleiria.estg.dei.waypinpoint;
 
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ADD;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.APIHOST;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EMAIL;
-import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.REGISTER;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.NO_TOKEN;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.REQUEST_CODE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.SNACKBAR_MESSAGE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.TOKEN;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.USER_DATA;
-import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.checkAndRequestPermissions;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.checkAndRequestCameraPermission;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.checkAndRequestNotificationPermissions;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.checkAndRequestMediaPermissions;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getApiHost;
-import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getImgUri;
-import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getImgUriUser;
 
 import android.app.Activity;
 import android.content.Context;
@@ -17,10 +19,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -47,7 +51,6 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
         etPassword = findViewById(R.id.registerTvPassword);
 
         FloatingActionButton fabApiHost;
-        checkAndRequestPermissions(getApplicationContext(), LoginActivity.this);
 
         fabApiHost = findViewById(R.id.fabApiHostnameConfig);
         fabApiHost.setOnClickListener(new View.OnClickListener() {
@@ -60,7 +63,7 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
 
         if (getApiHost(getApplicationContext()) == null) {
             View rootView = findViewById(R.id.loginView);
-            Snackbar.make(rootView, "Please config api hostname before login or register", Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(rootView, R.string.Api_hostname_message_before_login, Snackbar.LENGTH_SHORT).show();
 
             int toastDuration = 1000;
             new Handler(getMainLooper()).postDelayed(() -> {
@@ -73,9 +76,6 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
             apiHost = getApiHost(getApplicationContext());
             View rootView = findViewById(R.id.loginView);
             Snackbar.make(rootView, "Hostname: " + apiHost, Snackbar.LENGTH_SHORT).show();
-            System.out.println("--> img path " + getImgUri(getApplicationContext()));
-            System.out.println("--> img USER path " + getImgUriUser(getApplicationContext()));
-
         }
 
         if (isTokenValid()) {
@@ -84,10 +84,14 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
             editor.apply();
 
             Intent intent = new Intent(getApplicationContext(), MenuMainActivity.class);
-            intent.putExtra(EMAIL, sharedPreferences.getString(EMAIL, "No Email Provided"));
+            intent.putExtra(EMAIL, sharedPreferences.getString(EMAIL, getString(R.string.error_no_email_provided)));
             startActivity(intent);
             finish();
         }
+        checkAndRequestMediaPermissions(getApplicationContext(), LoginActivity.this);
+
+        checkAndRequestCameraPermission(getApplicationContext(), LoginActivity.this);
+        checkAndRequestNotificationPermissions(getApplicationContext(), LoginActivity.this);
     }
 
     @Override
@@ -122,7 +126,7 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == REGISTER) {
+            if (requestCode == ADD) {
                 View rootView = findViewById(R.id.loginView);
                 Snackbar.make(rootView, R.string.login_register_success_message, Snackbar.LENGTH_SHORT).show();
             }
@@ -154,16 +158,15 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
 
         if (isEmailValid) {
             intent.putExtra(EMAIL, etEmail.getText().toString());
-            startActivityForResult(intent, REGISTER);
+            startActivityForResult(intent, ADD);
         } else {
-            startActivityForResult(intent, REGISTER);
+            startActivityForResult(intent, ADD);
         }
     }
 
     public boolean isTokenValid() {
         SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences(USER_DATA, Context.MODE_PRIVATE);
-        System.out.println("TOKEN: --->" + sharedPreferences.getString(TOKEN, "NO TOKEN"));
-        if (sharedPreferences.getString(TOKEN, "NO TOKEN").matches("NO TOKEN")) {
+        if (sharedPreferences.getString(TOKEN, NO_TOKEN).matches(NO_TOKEN)) {
             System.out.println(getString(R.string.error_invalid_token));
             return false;
         } else {

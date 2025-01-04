@@ -1,5 +1,8 @@
 package pt.ipleiria.estg.dei.waypinpoint;
 
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ACTIVITY_ID;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ADD;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.CALENDAR_ID;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getCategoryById;
 
 import android.content.Intent;
@@ -78,18 +81,10 @@ public class ActivityDetailsActivity extends AppCompatActivity {
 
         btBuyActivity = findViewById(R.id.btBuyActivity);
         loadActivity();
-//        btBuyActivity.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(ActivityDetailsActivity.this, CartActivity.class);
-//                intent.putExtra("ACTIVITY_ID", activity.getId());
-//                startActivity(intent);
-//            }
-//        });
     }
 
     private void loadActivity() {
-        setTitle("Detalhes: " + activity.getName());
+        setTitle(getString(R.string.details_activity_title) + activity.getName());
 
         tvName.setText(activity.getName());
         tvDescription.setText(activity.getDescription());
@@ -172,13 +167,12 @@ public class ActivityDetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(ActivityDetailsActivity.this, CartActivity.class);
-                intent.putExtra("ACTIVITY_ID", activity.getId());
-                intent.putExtra("CALENDAR_ID", calendars.get(spinnerDateTime.getSelectedItemPosition()).getId());
-                startActivity(intent);
+                intent.putExtra(ACTIVITY_ID, activity.getId());
+                intent.putExtra(CALENDAR_ID, calendars.get(spinnerDateTime.getSelectedItemPosition()).getId());
+                startActivityForResult(intent, ADD);
             }
         });
     }
-
 
     public void onClickReviews(View view) {
         // Hide background views
