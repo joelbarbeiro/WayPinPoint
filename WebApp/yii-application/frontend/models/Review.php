@@ -4,6 +4,7 @@ namespace frontend\models;
 
 use common\models\Activity;
 use common\models\User;
+use Bluerhinos\phpMQTT;
 
 /**
  * This is the model class for table "reviews".
@@ -67,5 +68,41 @@ class Review extends \yii\db\ActiveRecord
     public function getUser()
     {
         return $this->hasOne(User::class, ['id' => 'user_id']);
+    }
+
+    public static function publishToMosquitto($topic,$message)
+    {
+        $server = "127.0.0.1";
+        $port = 1883;
+        $username = ""; // set your username
+        $password = ""; // set your password
+        $client_id = "phpMQTT-publisher"; // unique!
+        $mqtt = new phpMQTT($server, $port, $client_id);
+        if ($mqtt->connect(true, NULL, $username, $password)) {
+            $mqtt->publish($topic, $message, 0);
+            $mqtt->close();
+        } else {
+            file_put_contents("debug.output", "Time out!");
+        }
+    }
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+        $user = User::findOne(['id' => $this->user_id]);
+
+        $payLoad = new \stdClass();
+        $payLoad->id = $this->id;
+        $payLoad->user_id = $this->user_id;
+        $payLoad->activity_id = $this->activity_id;
+        $payLoad->score = $this->score;
+        $payLoad->message = $this->message;
+        $payLoad->created_at = $this->created_at;
+        $payLoad->creator = $user->username;
+
+        $jsonObject = json_encode($payLoad);
+        if ($insert)
+            $this->publishToMosquitto("review/created", $jsonObject);
+        else
+            $this->publishToMosquitto("review/updated", $jsonObject);
     }
 }

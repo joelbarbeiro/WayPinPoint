@@ -103,7 +103,6 @@ class CartController extends Controller
             'activityName' => $activity->name,
             'calendarDate' => $calendar->date->date,
             'calendarHour' => $calendar->time->hour,
-
         ]);
     }
 

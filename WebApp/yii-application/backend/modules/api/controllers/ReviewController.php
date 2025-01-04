@@ -119,5 +119,4 @@ class ReviewController extends ActiveController
             'creator' => $user->username
         ];
     }
-
 }
