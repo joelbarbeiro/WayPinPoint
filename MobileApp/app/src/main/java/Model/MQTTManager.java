@@ -1,6 +1,8 @@
 package Model;
 
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.MQTT_CREATE_ACTIVITY;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.MQTT_REVIEW_CREATE;
+import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.MQTT_REVIEW_UPDATE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.MQTT_UPDATE_ACTIVITY;
 
 import android.content.Context;
@@ -74,10 +76,12 @@ public class MQTTManager {
 
     public void connect() {
         try {
-                mqttClient.connect();
-                Log.d(TAG, "Connected to server");
-                subscribe(MQTT_CREATE_ACTIVITY);
-                subscribe(MQTT_UPDATE_ACTIVITY);
+            mqttClient.connect();
+            Log.d(TAG, "Connected to server");
+            subscribe(MQTT_CREATE_ACTIVITY);
+            subscribe(MQTT_UPDATE_ACTIVITY);
+            subscribe(MQTT_REVIEW_CREATE);
+            subscribe(MQTT_REVIEW_UPDATE);
         } catch (MqttException e) {
             Log.e(TAG, "Error connecting to broker", e);
         }

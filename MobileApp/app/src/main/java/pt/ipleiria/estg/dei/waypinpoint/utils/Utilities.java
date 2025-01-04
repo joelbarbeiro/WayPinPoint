@@ -65,6 +65,8 @@ public class Utilities {
     public static final String MQTT_CREATE_ACTIVITY = "activity/created";
     public static final String MQTT_UPDATE_ACTIVITY = "activity/updated";
     public static final String MQTT_REVIEW_CREATE = "review/created";
+    public static final String MQTT_REVIEW_UPDATE = "review/updated";
+
     //endregion
 
     public static String getApiHost(Context context) {
