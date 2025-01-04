@@ -47,7 +47,7 @@ public class CartActivity extends AppCompatActivity implements CartListener {
             @Override
             public void onClick(View v) {
                 String quantityStr = etQuantity.getText().toString().trim();
-                if (isQuantityValid(quantityStr, getApplicationContext())) {
+                if (isQuantityValid(quantityStr, getApplicationContext(), etQuantity)) {
                     int quantity = Integer.parseInt(quantityStr);
                     Cart newCart = new Cart(
                             0,
