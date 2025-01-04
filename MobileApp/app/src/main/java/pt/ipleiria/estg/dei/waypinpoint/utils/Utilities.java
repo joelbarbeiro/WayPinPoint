@@ -271,8 +271,7 @@ public class Utilities {
         return filteredActivities;
     }
 
-    public static boolean isQuantityValid(String input, Context context) {
-        etQuantity = etQuantity.findViewById(R.id.etQuantity);
+    public static boolean isQuantityValid(String input, Context context, TextView etQuantity) {
         if (input.isEmpty()) {
             etQuantity.setError(context.getString(R.string.error_quantity_empty));
             return false;
