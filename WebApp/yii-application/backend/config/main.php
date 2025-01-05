@@ -125,6 +125,17 @@ return [
                         '{id}' => '<id:\\d+>',
                     ],
                 ],
+                [
+                    'class' => 'yii\rest\UrlRule',
+                    'controller' => 'api/invoice',
+                    'extraPatterns' => [
+                        'GET invoices/{id}' => 'invoices',
+                        'GET invoice/{id}' => 'invoice',
+                    ],
+                    'tokens' => [
+                        '{id}' => '<id:\\d+>',
+                    ],
+                ]
             ],
         ],
     ],

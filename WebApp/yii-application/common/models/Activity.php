@@ -479,14 +479,4 @@ class Activity extends \yii\db\ActiveRecord
         else
             $this->publishToMosquitto("activity/updated", $jsonObject);
     }
-
-    public function afterDelete()
-    {
-        parent::afterDelete();
-        $payLoad = new \stdClass();
-        $payLoad->id = $this->id;
-        $jsonObject = json_encode($payLoad);
-        $this->publishToMosquitto("activity/deleted", $jsonObject);
-    }
-
 }
