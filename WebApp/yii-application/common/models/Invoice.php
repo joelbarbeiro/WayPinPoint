@@ -100,4 +100,44 @@ class Invoice extends \yii\db\ActiveRecord
         return static::find()->count();
     }
 
+    public static function getInvoicesForUser($id)
+    {
+        $invoices = Invoice::find()->where(['user_id' => $id])->all();
+        $response = [];
+        foreach ($invoices as $invoice) {
+            $item["id"] = $invoice->id;
+            $item["username"] = $invoice->user->username;
+            $item["nif"] = $invoice->user->userextras->nif;
+            $item["adddress"] = $invoice->user->userextras->address;
+            $item["activityName"] = $invoice->booking->activity->name;
+            $item["activityDescription"] = $invoice->booking->activity->description;
+            $item["activityPrice"] = $invoice->booking->activity->priceperpax *
+                $invoice->booking->numberpax;
+            $item["date"] = $invoice->booking->calendar->date->date;
+            $item["time"] = $invoice->booking->calendar->time->hour;
+            array_push($response, $item);
+        }
+        if ($response) {
+            return $response;
+        }
+        return false;
+    }
+    public static function getInvoiceById($id){
+        $invoice = Invoice::findOne($id);
+        if($invoice) {
+            $item["id"] = $invoice->id;
+            $item["username"] = $invoice->user->username;
+            $item["nif"] = $invoice->user->userextras->nif;
+            $item["adddress"] = $invoice->user->userextras->address;
+            $item["activityName"] = $invoice->booking->activity->name;
+            $item["activityDescription"] = $invoice->booking->activity->description;
+            $item["activityPrice"] = $invoice->booking->activity->priceperpax *
+                $invoice->booking->numberpax;
+            $item["date"] = $invoice->booking->calendar->date->date;
+            $item["time"] = $invoice->booking->calendar->time->hour;
+
+            return $item;
+        }
+        return false;
+    }
 }
