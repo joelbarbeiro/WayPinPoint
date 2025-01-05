@@ -2,7 +2,7 @@
 
 namespace frontend\tests\acceptance;
 
-use frontend\tests\AcceptanceTester;
+use AcceptanceTester;
 use yii\helpers\Url;
 
 class HomeCest
@@ -18,4 +18,26 @@ class HomeCest
 
         $I->see('This is the About page.');
     }
+
+    public function buyAndCheckout(AcceptanceTester $I)
+    {
+        $I->amOnPage('/');
+        $I->see('Activities', 'h1');
+        $I->see('Buy', 'button');
+
+        $I->click('Buy');
+        $I->see('Enter Quantity', 'h1');
+
+        $I->fillField('input[name="quantity"]', '3');
+        $I->click('Submit');
+
+        $I->see('Product Name');
+        $I->see('Quantity:');
+        $I->see('Checkout', 'button');
+
+        $I->click('Checkout');
+
+    }
+
+
 }

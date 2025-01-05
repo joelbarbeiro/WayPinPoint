@@ -11,5 +11,8 @@ return [
         'request' => [
             'cookieValidationKey' => 'test',
         ],
+        'db' => [
+            'dsn' => 'mysql:host=localhost;dbname=waypinpoint',
+        ],
     ],
 ];
