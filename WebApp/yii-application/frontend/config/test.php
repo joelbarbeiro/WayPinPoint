@@ -13,6 +13,13 @@ return [
         ],
         'mailer' => [
             'messageClass' => \yii\symfonymailer\Message::class
-        ]
+        ],
+        'db' => [
+            'class' => 'yii\db\Connection',
+            'dsn' => 'mysql:host=127.0.0.1;dbname=waypinpoint',
+            'username' => 'root',
+            'password' => '',
+            'charset' => 'utf8',
+        ],
     ],
 ];
