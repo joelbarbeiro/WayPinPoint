@@ -22,6 +22,9 @@ $this->registerCssFile('@web/css/site.css');
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <?php foreach ($dataProvider->models as $local): ?>
+        <?php
+        if ($local->status == 0) continue;
+        ?>
         <div class="localsellpoint">
             <table>
                 <thead>

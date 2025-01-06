@@ -1,38 +1,19 @@
 <?php
-
 namespace backend\tests\functional;
-
 use backend\tests\FunctionalTester;
-use common\fixtures\UserFixture;
 use common\models\User;
 use common\models\UserExtra;
 
-/**
- * Class LoginCest
- */
-class LoginCest
+class CreateLocalShopCest
 {
-    protected $user;
-    protected $userextra;
-
-    public function _fixtures()
-    {
-        return [
-            'user' => [
-                'class' => UserFixture::class,
-                'dataFile' => codecept_data_dir() . 'login_data.php'
-            ]
-        ];
-    }
-
-    public function _before(\frontend\tests\FunctionalTester $I)
+    public function _before(FunctionalTester $I)
     {
         $this->user = $this->createValidUser(true);
         $this->userextra = $this->createUserExtra(true);
     }
 
     // tests
-    public function firstToTest(FunctionalTester $I)
+    public function tryToTest(FunctionalTester $I)
     {
         $I->amOnRoute('site/login'); // $I->amOnRoute('/');
         $I->see('Sign in to start your session');
@@ -50,6 +31,16 @@ class LoginCest
         $I->fillField('LoginForm[password]', '123123123');
         $I->click('Sign In');
         $I->see('Starter Page');
+
+        $I->see('Add Local Shop');
+        $I->click('Add Local Shop');
+
+        $I->see('Create Local Shop');
+        $I->fillField('Address', 'Local Street');
+        $I->fillField('Name', 'My Local Shop');
+        $I->see('Save');
+        $I->click('Save');
+        $I->see('Update');
     }
 
     private function createValidUser(bool $save = false)

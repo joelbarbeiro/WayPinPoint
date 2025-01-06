@@ -4,6 +4,7 @@ namespace common\models;
 
 use backend\models\Localsellpoint;
 use frontend\models\Review;
+use common\models\UserExtra;
 use Yii;
 use yii\base\NotSupportedException;
 use yii\db\ActiveRecord;
