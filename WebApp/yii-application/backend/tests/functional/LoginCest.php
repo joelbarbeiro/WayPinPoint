@@ -3,8 +3,8 @@
 namespace backend\tests\functional;
 
 use backend\tests\FunctionalTester;
-use common\fixtures\UserFixture;
 use common\models\User;
+use common\fixtures\UserFixture;
 use frontend\tests\functional\MainTester as FunctionalTesterRoute;
 
 /**

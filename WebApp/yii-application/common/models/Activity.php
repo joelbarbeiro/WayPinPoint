@@ -2,8 +2,6 @@
 
 namespace common\models;
 
-use common\models\Sale;
-use common\models\Ticket;
 use Bluerhinos\phpMQTT;
 use Yii;
 use yii\helpers\ArrayHelper;
@@ -22,6 +20,7 @@ use yii\web\UploadedFile;
  * @property string $address
  * @property int $status
  * @property int $user_id
+ * @property int $category_id
  *
  * @property Booking[] $booking
  * @property Calendar[] $calendar

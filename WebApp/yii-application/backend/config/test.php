@@ -11,6 +11,10 @@ return [
         'request' => [
             'cookieValidationKey' => 'test',
         ],
+//        'session' => [
+//            'class' => 'yii\web\Session',
+//            'autoStart' => false,
+//        ],
         'user' => [
             'class' => \yii\web\User::class,
             'identityClass' => 'common\models\User',
