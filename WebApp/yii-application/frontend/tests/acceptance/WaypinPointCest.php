@@ -20,22 +20,23 @@ class WaypinPointCest
 
         $I->amOnPage('//');
         $I->see('Activities');
-//        $I->see('Signup');
-//        $I->click('Signup');
-//        $I->see('Username');
-//        $I->fillField('SignupForm[username]', 'Test2');
-//        $I->see('Email');
-//        $I->fillField('SignupForm[email]', 'test1@test.com');
-//        $I->see('Password');
-//        $I->fillField('SignupForm[password]','123123123');
-//        $I->see('Phone');
-//        $I->fillField('SignupForm[phone]','912912912');
-//        $I->see('Address');
-//        $I->fillField('SignupForm[address]', 'Test Address');
-//        $I->see('Nif');
-//        $I->fillField('SignupForm[nif]', '912912913');
-//        $I->click('signup-button');
+        $I->see('Signup');
+        $I->click('Signup');
+        $I->see('Username');
+        $I->fillField('SignupForm[username]', 'Test');
+        $I->see('Email');
+        $I->fillField('SignupForm[email]', 'test@test.com');
+        $I->see('Password');
+        $I->fillField('SignupForm[password]','123123123');
+        $I->see('Phone');
+        $I->fillField('SignupForm[phone]','912912912');
+        $I->see('Address');
+        $I->fillField('SignupForm[address]', 'Test Address');
+        $I->see('Nif');
+        $I->fillField('SignupForm[nif]', '912912961');
+        $I->click('signup-button');
 
+        $I->waitForText('Activities');
         $I->click('Login');
         $I->fillField('Username', 'Test');
         $I->fillField('Password', '123123123');
@@ -55,8 +56,10 @@ class WaypinPointCest
 
         $I->see('Review');
         $I->click('Review');
+        $I->waitForText('Create Review');
         $I->see('Create Review');
         $I->click('Create Review');
+        $I->waitForText('Score');
         $I->see('Score');
         $I->seeInSource('★★★');
         $I->selectOption('input[name="Review[score]"][value="3"]', '3');

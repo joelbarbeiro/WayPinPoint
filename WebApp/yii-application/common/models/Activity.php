@@ -2,8 +2,8 @@
 
 namespace common\models;
 
-use backend\models\Sale;
-use backend\models\Ticket;
+use common\models\Sale;
+use common\models\Ticket;
 use Bluerhinos\phpMQTT;
 use Yii;
 use yii\helpers\ArrayHelper;

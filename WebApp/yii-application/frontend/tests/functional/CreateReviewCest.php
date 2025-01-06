@@ -1,34 +1,10 @@
 <?php
-
-namespace backend\tests\functional;
-
-use backend\tests\FunctionalTester;
-use common\fixtures\UserFixture;
+namespace frontend\tests\functional;
 use common\models\User;
-use frontend\tests\functional\MainTester as FunctionalTesterRoute;
-
-/**
- * Class LoginCest
- */
-class LoginCest
+use frontend\tests\FunctionalTester;
+class CreateReviewCest
 {
-    /**
-     * Load fixtures before db transaction begin
-     * Called in _before()
-     * @see \Codeception\Module\Yii2::_before()
-     * @see \Codeception\Module\Yii2::loadFixtures()
-     * @return array
-     */
-    public function _fixtures()
-    {
-        return [
-            'user' => [
-                'class' => UserFixture::class,
-                'dataFile' => codecept_data_dir() . 'login_data.php'
-            ]
-        ];
-    }
-    public function _before(\frontend\tests\FunctionalTester $I)
+    public function _before(FunctionalTester $I)
     {
         $this->createValidUser(true);
     }
@@ -36,10 +12,14 @@ class LoginCest
     // tests
     public function firstToTest(FunctionalTester $I)
     {
-        $I->amOnRoute('site/login'); // $I->amOnRoute('/');
-        $I->see('Sign in to start your session');
+        $I->amOnRoute('site/login');
+        $I->see('Activities');
+        $I->seeLink('Login');
 
-        $I->click('Sign In');
+        $I->click('Login');
+        $I->see('Please fill out the following fields to login:');
+
+        $I->click('login-button');
         $I->seeValidationError('Username cannot be blank.');
         $I->seeValidationError('Password cannot be blank.');
 
@@ -52,6 +32,18 @@ class LoginCest
         $I->fillField('LoginForm[password]', '123123123');
         $I->click('login-button');
         $I->see('Logout');
+
+        $I->see('Review');
+        $I->click('Review');
+        $I->see('Create Review');
+        $I->click('Create Review');
+
+        $I->see('Score');
+        $I->seeInSource('★★★');
+        $I->selectOption('input[name="Review[score]"][value="3"]', '3');
+        $I->fillField('Message', 'I Love This Activity');
+        $I->click('Save');
+        $I->see('Edit');
     }
 
     private function createValidUser(bool $save = false)

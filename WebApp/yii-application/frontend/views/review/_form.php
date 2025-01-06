@@ -11,7 +11,6 @@ use yii\widgets\ActiveForm;
 <div class="reviews-form">
 
     <?php $form = ActiveForm::begin(); ?>
-
     <h3>Score</h3>
     <label>
         <input type="radio" name="Review[score]" value="1"> ★
