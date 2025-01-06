@@ -11,18 +11,22 @@ use yii\widgets\ActiveForm;
 <div class="reviews-form">
 
     <?php $form = ActiveForm::begin(); ?>
-
-    <?= $form->field($model, 'score')->radioList([
-        1 => '1 Star',
-        2 => '2 Stars',
-        3 => '3 Stars',
-        4 => '4 Stars',
-        5 => '5 Stars',
-    ], [
-        'itemOptions' => [
-            'class' => 'radio-inline', // Optional: Add custom class for styling
-        ],
-    ]) ?>
+    <h3>Score</h3>
+    <label>
+        <input type="radio" name="Review[score]" value="1"> ★
+    </label>
+    <label>
+        <input type="radio" name="Review[score]" value="2"> ★★
+    </label>
+    <label>
+        <input type="radio" name="Review[score]" value="3"> ★★★
+    </label>
+    <label>
+        <input type="radio" name="Review[score]" value="4"> ★★★★
+    </label>
+    <label>
+        <input type="radio" name="Review[score]" value="5"> ★★★★★
+    </label>
 
     <?= $form->field($model, 'message')->textarea(['rows' => 6]) ?>
 

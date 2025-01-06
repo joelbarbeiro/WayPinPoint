@@ -7,16 +7,19 @@ use common\models\User;
 use Bluerhinos\phpMQTT;
 
 /**
- * This is the model class for table "reviews".
+ * This is the model class for table "review".
  *
  * @property int $id
  * @property int $activity_id
+ * @property int $user_id
  * @property int $score
  * @property string|null $message
- * @property string|null $created_at
+ * @property int|null $created_at
  *
  * @property Activity $activity
+ * @property User $user
  */
+
 class Review extends \yii\db\ActiveRecord
 {
     /**
@@ -33,11 +36,12 @@ class Review extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['activity_id', 'score'], 'required'],
-            [['activity_id', 'score'], 'integer'],
+            [['activity_id', 'user_id', 'score'], 'required'],
+            [['activity_id', 'user_id', 'score', 'created_at'], 'integer'],
+            [['score'], 'integer', 'min' => 0, 'max' => 5],
             [['message'], 'string'],
-            [['created_at'], 'safe'],
             [['activity_id'], 'exist', 'skipOnError' => true, 'targetClass' => Activity::class, 'targetAttribute' => ['activity_id' => 'id']],
+            [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
         ];
     }
 
@@ -49,6 +53,7 @@ class Review extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'activity_id' => 'Activity ID',
+            'user_id' => 'User ID',
             'score' => 'Score',
             'message' => 'Message',
             'created_at' => 'Created At',

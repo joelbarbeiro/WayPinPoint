@@ -209,7 +209,4 @@ class CartTest extends \Codeception\Test\Unit
         $this->assertFalse($wasSavedSuccessfully, "Cart should not be saved due to invalid status");
 
     }
-
-
-
 }
