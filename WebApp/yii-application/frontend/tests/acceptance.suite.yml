@@ -3,7 +3,7 @@ actor: AcceptanceTester
 modules:
     enabled:
         - WebDriver:
-            url: http://projeto/WayPinPoint/WebApp/yii-application/frontend/web/
+            url: http://waypinpoint/frontend/web/
             browser: chrome
             capabilities:
                 goog:chromeOptions:
