@@ -39,7 +39,7 @@ class Cart extends \yii\db\ActiveRecord
             [['calendar_id'], 'exist', 'skipOnError' => true, 'targetClass' => Calendar::class, 'targetAttribute' => ['calendar_id' => 'id']],
             [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Activity::class, 'targetAttribute' => ['product_id' => 'id']],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
-            [['quantity'], 'integer', 'min' => 1],
+            [['quantity'], 'integer', 'min' => 1, 'tooSmall' => 'Minimum quantity must be 1'],
             [['status'], 'in', 'range' => [0, 1]]
         ];
     }

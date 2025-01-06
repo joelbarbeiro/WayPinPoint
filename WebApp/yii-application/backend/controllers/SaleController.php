@@ -4,6 +4,8 @@ namespace backend\controllers;
 
 use backend\models\SaleSearch;
 use common\models\Activity;
+use common\models\Booking;
+use common\models\Invoice;
 use common\models\Sale;
 use common\models\UserExtra;
 use Yii;
@@ -105,6 +107,10 @@ class SaleController extends Controller
             $model->total = $activity->priceperpax * $model->quantity;
             if ($model->save()) {
                 Sale::createBooking($activity, $model->buyer, $model->calendar_id, $model->quantity);
+                $booking = Booking::find()
+                    ->where(['activity_id' => $activity->id, 'user_id' => $model->buyer ])
+                    ->one();
+                Invoice::createInvoiceBackend($userId, $model->id, $booking->id);
                 return $this->redirect(['view', 'id' => $model->id]);
             } else {
                 var_dump($model->getErrors());

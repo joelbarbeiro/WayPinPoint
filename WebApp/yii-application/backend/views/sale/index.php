@@ -43,7 +43,7 @@ $this->registerCssFile('@web/css/site.css');
                     <td><?= Html::encode($sale->seller->username) ?></td>
                     <td><?= Html::encode($sale->purchase_date) ?></td>
                     <td><?= Html::encode($sale->quantity) ?></td>
-                    <td><?= Html::encode($sale->total) ?></td>
+                    <td><?= Html::encode($sale->total) . "€"?></td>
                 </tr>
                 <?php }
                 if(Yii::$app->user->identity->getRole() == "manager")
@@ -56,7 +56,7 @@ $this->registerCssFile('@web/css/site.css');
                         <td><?= Html::encode($sale->seller->username) ?></td>
                         <td><?= Html::encode($sale->purchase_date) ?></td>
                         <td><?= Html::encode($sale->quantity) ?></td>
-                        <td><?= Html::encode($sale->total) ?></td>
+                        <td><?= Html::encode($sale->total). "€" ?></td>
                     </tr>
                 <?php }
                 } ?>

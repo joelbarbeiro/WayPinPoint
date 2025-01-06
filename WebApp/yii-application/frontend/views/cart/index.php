@@ -18,6 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <th scope="col">Description</th>
                 <th scope="col">Quantity</th>
                 <th scope="col">Price</th>
+                <th scope="col">Actions</th>
                 <th></th>
             </tr>
             </thead>
@@ -29,8 +30,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 echo '<td>' . $cart->activity->description . '</td>';
                 echo '<td>' . $cart->quantity . '</td>';
                 echo '<td>' . $cart->activity->priceperpax * $cart->quantity . ' € </td>';
-                echo '<td><a href="' . Url::to(['cart/checkout', 'id' => $cart->id]) . '" class="btn btn-primary">Checkout</a></td>';
-                echo '<td><a href="' . Url::to(['cart/delete', 'user_id' => $cart->user_id, 'product_id' => $cart->product_id]) . '" class="btn btn-danger" data-method="post" data-confirm="Are you sure you want to delete this item?">Delete</a></td>';
+                echo '<td>';
+                echo '<a href="' . Url::to(['cart/checkout', 'id' => $cart->id]) . '" class="btn btn-primary">Checkout</a>';
+                echo '<a href="' . Url::to(['cart/delete', 'user_id' => $cart->user_id, 'product_id' => $cart->product_id]) . '" class="btn btn-danger" data-method="post" data-confirm="Are you sure you want to delete this item?">Delete</a>';
+                echo '</td>';
                 echo '</tr>';
             }
             ?>
