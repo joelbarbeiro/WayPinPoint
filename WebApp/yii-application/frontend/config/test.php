@@ -21,6 +21,5 @@ return [
             'password' => '',
             'charset' => 'utf8',
         ],
-        'session' => null, // Disable session in tests
     ],
 ];
