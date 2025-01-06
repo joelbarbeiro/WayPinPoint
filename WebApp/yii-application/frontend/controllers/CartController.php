@@ -85,16 +85,23 @@ class CartController extends Controller
         $model->calendar_id = $calendarId;
         $calendar = Calendar::findOne($calendarId);
 
+        if($userId == null)
+        {
+            Yii::$app->session->setFlash('error', 'Need to be logged in to buy tickets');
+            return $this->redirect(['activity/index']);
+        }
         $model->user_id = $userId;
         $model->product_id = $activityId;
         if ($model->load($this->request->post())) {
-            if ($model->quantity < $activity->maxpax) {
+            $totalTicketsBooked = Booking::getTotalTicketsByActivity($activityId);
+            if (($model->quantity + $totalTicketsBooked) <= $activity->maxpax) {
                 if ($model->save()) {
                     return $this->redirect(['cart/index', 'user_id' => $model->user_id, 'product_id' => $model->product_id, 'calendar_id' => $model->calendar_id]);
                 }
+            } else {
+                Yii::$app->session->removeFlash('error');
+                Yii::$app->session->setFlash('error', 'Not enough tickets!');
             }
-        } else {
-            Yii::$app->session->setFlash('Not enough tickets available');
         }
 
         return $this->render('create', [
@@ -166,7 +173,7 @@ class CartController extends Controller
                 if (Invoice::createInvoice($cart, $saleId, $bookingId)) {
                     $qrCode = Cart::generateQrCode($cart->user, $cart->activity);
                     Ticket::createTicket($cart, $qrCode);
-                    //In this case status 1 is cart inactive
+
                     $cart->status = 1;
                     if ($cart->save()) {
                         Yii::$app->session->setFlash('success', 'Checkout completed successfully.');

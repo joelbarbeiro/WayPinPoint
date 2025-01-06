@@ -49,8 +49,8 @@ class Activity extends \yii\db\ActiveRecord
     {
         return [
             [['name', 'description', 'photo', 'maxpax', 'priceperpax', 'address', 'category_id'], 'required'],
-            [['maxpax'], 'integer'],
-            [['priceperpax'], 'number'],
+            [['maxpax'], 'number', 'min' => 1],
+            [['priceperpax'], 'number', 'min' => 1],
             [['name'], 'string', 'max' => 200],
             [['description'], 'string', 'max' => 255],
             [['photo'], 'string', 'max' => 250],

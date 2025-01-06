@@ -7,6 +7,12 @@ use yii\widgets\ActiveForm;
 /** @var \common\models\Cart $model */
 /** @var yii\widgets\ActiveForm $form */
 ?>
+<?php //if (Yii::$app->session->hasFlash('error')): ?>
+<!--    <div class="alert alert-danger">-->
+<!--        --><?php //= Yii::$app->session->getFlash('error') ?>
+<!--    </div>-->
+<?php //endif; ?>
+
 
 <div class="cart-form">
 
@@ -19,5 +25,4 @@ use yii\widgets\ActiveForm;
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
     </div>
     <?php ActiveForm::end(); ?>
-
 </div>
