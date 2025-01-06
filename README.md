@@ -17,7 +17,7 @@ A Platform to book activities via Web or Mobile
 
 2. Passo - ./yii rbac/init
 
-3. Passo - ./php yii migrate --migrationPath=@vendor/devanych/yii2-cart/migrations
+3. Passo - ./yii migrate --migrationPath=@vendor/devanych/yii2-cart/migrations
 
 > NOTA: Com as proximas migrações a tabela user, userextra e atividades ficam populadas. 
 
