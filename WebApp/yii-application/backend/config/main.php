@@ -29,8 +29,12 @@ return [
             'identityCookie' => ['name' => '_identity-backend', 'httpOnly' => true],
         ],
         'session' => [
-            // this is the name of the session cookie used for login on the backend
-            'name' => 'advanced-backend',
+            'class' => 'yii\web\Session',
+            'timeout' => 1440, // Adjust as needed
+            'cookieParams' => [
+                'httponly' => true,
+                'secure' => false, // Set to true if using HTTPS
+            ],
         ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
