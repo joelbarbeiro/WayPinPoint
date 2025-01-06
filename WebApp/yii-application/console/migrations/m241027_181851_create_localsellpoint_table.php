@@ -20,6 +20,7 @@ class m241027_181851_create_localsellpoint_table extends Migration
             'user_id' => $this->integer(),
             'address' => $this->string(400)->notNull(),
             'name' => $this->string(100)->notNull(),
+            'status' => $this->integer()->notNull()->defaultValue('1')
         ]);
 
         // creates index for column `user_id`

@@ -80,6 +80,7 @@ class RegisterForm extends \yii\db\ActiveRecord
                 $userExtra->user_id = $user->id;
                 $userExtra->address = $this->address;
                 $userExtra->nif = $this->nif;
+                $userExtra->supplier = $user->id;
                 $userExtra->uploadUserPhoto($this);
                 $userExtra->save(false);
             }
