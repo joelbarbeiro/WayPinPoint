@@ -17,10 +17,25 @@ namespace backend\tests;
  *
  * @SuppressWarnings(PHPMD)
  */
+//class FunctionalTester extends \Codeception\Actor
+//{
+//    use _generated\FunctionalTesterActions;
+//   /**
+//    * Define custom actions here
+//    */
+//}
 class FunctionalTester extends \Codeception\Actor
 {
     use _generated\FunctionalTesterActions;
-   /**
-    * Define custom actions here
-    */
+
+
+    public function seeValidationError($message)
+    {
+        $this->see($message, '.invalid-feedback');
+    }
+
+    public function dontSeeValidationError($message)
+    {
+        $this->dontSee($message, '.invalid-feedback');
+    }
 }
