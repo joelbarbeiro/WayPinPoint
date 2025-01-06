@@ -81,6 +81,19 @@ class Invoice extends \yii\db\ActiveRecord
         return $this->hasOne(User::class, ['id' => 'user_id']);
     }
 
+    public static function createInvoiceBackend($user_id, $sale_id, $booking_id)
+    {
+        $model = new Invoice();
+        $model->user_id = $user_id;
+        $model->sale_id = $sale_id;
+        $model->booking_id = $booking_id;
+        if($model->save()){
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
 
     public static function createInvoice($cart, $saleId, $bookingId)
     {

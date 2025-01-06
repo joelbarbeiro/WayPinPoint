@@ -6,7 +6,7 @@ use yii\widgets\DetailView;
 /** @var yii\web\View $this */
 /** @var \common\models\Ticket $model */
 
-$this->title = $model->id;
+$this->title = $model->activity->name;
 $this->params['breadcrumbs'][] = ['label' => 'Tickets', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
@@ -21,7 +21,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'class' => 'btn btn-danger',
             'data' => [
                 'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
+                'data-method' => 'post',
             ],
         ]) ?>
     </p>
@@ -29,11 +29,15 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
-            'id',
-            'activities_id',
+            [
+                'label' => 'Activity Name',
+                'value' => function ($model) {
+                    return $model->activity->name;
+                },
+            ],
             'participant',
             'qr',
-            'status',
+
         ],
     ]) ?>
 

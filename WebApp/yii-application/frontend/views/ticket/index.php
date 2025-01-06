@@ -20,18 +20,35 @@ $this->params['breadcrumbs'][] = $this->title;
         'dataProvider' => $dataProvider,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-            ['attribute' => 'Activity',
+
+            [
+                'attribute' => 'Activity',
                 'value' => function ($model) {
                     return $model->activity->description;
-                }],
-            ['attribute' => 'Participant',
+                }
+            ],
+            [
+                'attribute' => 'Participant',
                 'value' => function ($model) {
                     return Yii::$app->user->identity->username;
-                }],
+                }
+            ],
+
             [
                 'class' => ActionColumn::className(),
                 'template' => '{view} {delete} {print}',
+                'header' => 'Actions',
                 'buttons' => [
+                    'view' => function ($url, $model) {
+                        return Html::a(
+                            'View',
+                            ['view', 'id' => $model->id],
+                            [
+                                'class' => 'btn btn-primary',
+                                'title' => 'View',
+                            ]
+                        );
+                    },
                     'print' => function ($url, $model) {
                         return Html::a(
                             'Print Ticket',
@@ -39,8 +56,21 @@ $this->params['breadcrumbs'][] = $this->title;
                             [
                                 'class' => 'btn btn-primary',
                                 'title' => 'Print Ticket',
-                            ]);
-                    }
+                            ]
+                        );
+                    },
+                    'delete' => function ($url, $model) {
+                        return Html::a(
+                            'Delete',
+                            ['delete', 'id' => $model->id],
+                            [
+                                'class' => 'btn btn-danger',
+                                'title' => 'Delete',
+                                'data-method' => 'post',
+                                'data-confirm' => 'Are you sure you want to delete this item?',
+                            ]
+                        );
+                    },
                 ],
                 'urlCreator' => function ($action, Ticket $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'id' => $model->id]);

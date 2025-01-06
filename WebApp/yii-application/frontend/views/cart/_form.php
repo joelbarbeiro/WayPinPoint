@@ -14,7 +14,7 @@ use yii\widgets\ActiveForm;
     <?= "<strong>Date of the activity:</strong> " . $calendarDate . " " . $calendarHour ?><br>
 
     <?php $form = ActiveForm::begin(); ?>
-    <?= $form->field($model, 'quantity')->textInput() ?>
+    <?= $form->field($model, 'quantity')->textInput(['type' => 'number', 'min' => 1]) ?>
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
     </div>
