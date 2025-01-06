@@ -196,8 +196,9 @@ class LocalsellpointController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
-
+        $localShop = $this->findModel($id);
+        $localShop->status = 0;
+        $localShop->save();
         return $this->redirect(['index']);
     }
 

@@ -33,10 +33,10 @@ class m241118_214239_seed_user_userextra_localsellpoint_table extends Migration
         $userIdSupplier2 = (new \yii\db\Query())->select('id')->from('user')->where(['username' => 'supplier2'])->scalar();
 
         // Step 3: Insert localsellpoint records with the correct user_id
-        $this->batchInsert('localsellpoint', ['user_id', 'address', 'name'], [
-            [$adminIdSupplier, 'website', 'Website'],
-            [$userIdSupplier1, 'Supplier1 Address', 'Supplier1 Sellpoint'],
-            [$userIdSupplier2, 'Supplier2 Address', 'Supplier2 Sellpoint'],
+        $this->batchInsert('localsellpoint', ['user_id', 'address', 'name' , 'status'], [
+            [$adminIdSupplier, 'website', 'Website', 1],
+            [$userIdSupplier1, 'Supplier1 Address', 'Supplier1 Sellpoint', 1],
+            [$userIdSupplier2, 'Supplier2 Address', 'Supplier2 Sellpoint', 1],
         ]);
         $adminSellPoint = (new \yii\db\Query())->select('id')->from('localsellpoint')->where(['user_id' => $adminIdSupplier])->scalar();
         $localsellpointId1 = (new \yii\db\Query())->select('id')->from('localsellpoint')->where(['user_id' => $userIdSupplier1])->scalar();

@@ -41,11 +41,10 @@ class Localsellpoint extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user_id'], 'integer'],
+            [['user_id', 'status'], 'integer'],
             [['address', 'name'], 'required'],
             [['address'], 'string', 'max' => 400],
             [['name'], 'string', 'max' => 100],
-            [['localuserextra'], 'integer'],
             [['assignedManager'], 'safe'],
             [['assignedEmployees'], 'safe'],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
@@ -64,7 +63,7 @@ class Localsellpoint extends \yii\db\ActiveRecord
             'name' => 'Name',
             'assignedManager' => 'Assigned Manager',
             'assignedEmployees' => 'Assigned Employees',
-            'localuserextra' => 'Local User',
+            'status' => 'Status',
         ];
     }
 
@@ -73,10 +72,6 @@ class Localsellpoint extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getLocalsellpointUserextra()
-    {
-        return $this->hasMany(LocalsellpointUserextra::class, ['localsellpoint_id' => 'id']);
-    }
 
     /**
      * Gets query for [[User]].
@@ -93,11 +88,6 @@ class Localsellpoint extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getUserextras()
-    {
-        return $this->hasMany(UserExtra::class, ['id' => 'userextra_id'])
-            ->via('localsellpointUserextra');
-    }
 
     public static function getLocalStoreForSupplier($userId): array
     {
