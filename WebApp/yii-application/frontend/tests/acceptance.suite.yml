@@ -5,5 +5,9 @@ modules:
         - WebDriver:
             url: http://projeto/WayPinPoint/WebApp/yii-application/frontend/web/
             browser: chrome
+            capabilities:
+                goog:chromeOptions:
+                    args: []
+
         - Yii2:
             part: init

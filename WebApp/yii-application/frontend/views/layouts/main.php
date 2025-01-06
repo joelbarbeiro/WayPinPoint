@@ -111,9 +111,10 @@ $this->registerCssFile('@web/css/style.css', ['depends' => [BootstrapAsset::clas
         if (!Yii::$app->user->isGuest) {
             $userId = Yii::$app->user->identity->id;
             echo Html::a(
-                '<i class="fa fa-user-alt"></i>',
+                '<i id="btnProfile" class="fa fa-user-alt"></i>',
                 ['/user/view', 'id' => $userId],
-                ['class' => 'btn btn-outline-primary']
+                ['class' => 'btn btn-outline-primary' , 'id' => 'btnProfile'
+                ],
             );
         }
 
