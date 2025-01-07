@@ -11,7 +11,6 @@ use yii\widgets\ActiveForm;
 /** @var Activity $model title */
 
 $this->title = 'Activities';
-$this->registerCssFile('@web/css/site.css');
 ?>
 <div class="activity-index">
     <div class="container">

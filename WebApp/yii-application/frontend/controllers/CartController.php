@@ -174,8 +174,8 @@ class CartController extends Controller
         if ($bookingId = Booking::createBooking($cart)) {
             if ($saleId = Sale::createSale($cart)) {
                 if (Invoice::createInvoice($cart, $saleId, $bookingId)) {
-                    $qrCode = Cart::generateQrCode($cart->user, $cart->activity);
-                    Ticket::createTicket($cart, $qrCode);
+                    $qrCode = Cart::generateQrCode($cart);
+                    Ticket::createTicket($cart, $qrCode, $bookingId);
 
                     $cart->status = 1;
                     if ($cart->save()) {
