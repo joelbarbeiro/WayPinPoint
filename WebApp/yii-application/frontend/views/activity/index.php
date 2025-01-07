@@ -45,13 +45,13 @@ $this->title = 'Activities';
                     }
                     $form = ActiveForm::begin([
                         'action' => Url::to(['cart/create']),
-                        'method' => 'get', // Use GET to include the selected values in the URL
+                        'method' => 'get',
                     ]);
                     echo Html::dropDownList(
-                        'calendarId', // The name of the parameter
-                        null, // Default selected value
-                        $dropdownOptions, // Options for the dropdown
-                        ['class' => 'form-control']); // Additional HTML attributes
+                        'calendarId',
+                        null,
+                        $dropdownOptions,
+                        ['class' => 'form-control']);
 
                     echo '<div class="d-flex justify-content-between">';
                     echo '<a href="' . Url::to(['activity/view', 'id' => $activity->id]) . '" class="btn btn-primary">View</a>';

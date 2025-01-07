@@ -150,8 +150,8 @@ class ActivityTest extends \Codeception\Test\Unit
     }
 
     public function testValidActivity(){
-        $pessoa = $this->createValidActivity();
-        $pessoa->save();
+        $calendar = $this->createValidActivity();
+        $calendar->save();
         $this->assertTrue(true, "Should be returning an exception");
     }
 
