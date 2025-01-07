@@ -6,6 +6,7 @@ use Bluerhinos\phpMQTT;
 use Yii;
 use yii\helpers\ArrayHelper;
 use yii\web\UploadedFile;
+use function PHPUnit\Framework\isEmpty;
 
 
 /**
@@ -300,7 +301,13 @@ class Activity extends \yii\db\ActiveRecord
     public static function createActivity($model)
     {
         $getDateTimes = $model->getCalendarArray();
-        $model->uploadPhoto();
+        if(YII_ENV_TEST) {
+            $model->photo = "testFile.jpg";
+        } else {
+            $model->uploadPhoto();
+        }
+        var_dump($model);
+
         if ($model->user_id == null) {
             $model->user_id = Yii::$app->user->id;
         }
