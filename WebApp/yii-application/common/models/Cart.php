@@ -93,9 +93,9 @@ class Cart extends \yii\db\ActiveRecord
         return $dompdf->output();
     }
 
-    public static function generateQrCode($user, $activity)
+    public static function generateQrCode($cart)
     {
-        $qrCodeData = "User: $user->username, Activity: $activity->description, Price: $activity->priceperpax";
+        $qrCodeData = "User: ". $cart->user->username.", Activity: ".$cart->activity->description. ", Price: ".$cart->activity->priceperpax.", Number of tickets: ".$cart->quantity;
         $qrCode = (new QrCode($qrCodeData))
             ->setSize(250)
             ->setMargin(5)

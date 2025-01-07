@@ -10,6 +10,7 @@ namespace common\models;
  * @property int $participant
  * @property string $qr
  * @property int $status
+ * @property int $booking_id
  */
 class Ticket extends \yii\db\ActiveRecord
 {
@@ -29,7 +30,9 @@ class Ticket extends \yii\db\ActiveRecord
         return [
             [['activity_id', 'participant', 'qr'], 'required'],
             [['activity_id', 'participant', 'status'], 'integer'],
+            [['booking_id'], 'exist', 'skipOnError' => true, 'targetClass' => Booking::class, 'targetAttribute' => ['booking_id' => 'id']],
             [['qr'], 'string', 'max' => 250],
+            [['participant'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['participant' => 'id']],
         ];
     }
 
@@ -44,6 +47,7 @@ class Ticket extends \yii\db\ActiveRecord
             'participant' => 'Participant',
             'qr' => 'Qr',
             'status' => 'Status',
+            'booking_id' => 'Booking ID',
         ];
     }
 
@@ -57,6 +61,11 @@ class Ticket extends \yii\db\ActiveRecord
         return $this->hasOne(Activity::class, ['id' => 'activity_id']);
     }
 
+    public function getBooking()
+    {
+        return $this->hasOne(Booking::class, ['id' => 'booking_id']);
+    }
+
     /**
      * Gets query for [[Participant0]].
      *
@@ -67,11 +76,12 @@ class Ticket extends \yii\db\ActiveRecord
         return $this->hasOne(User::class, ['id' => 'participant']);
     }
 
-    public static function createTicket($cart, $qrCode)
+    public static function createTicket($cart, $qrCode, $bookingId)
     {
         $model = new Ticket();
         $model->activity_id = $cart->product_id;
         $model->participant = $cart->user_id;
+        $model->booking_id = $bookingId;
         $model->qr = $qrCode->getText();
         $model->status = 0;
         if ($model->save()) {
