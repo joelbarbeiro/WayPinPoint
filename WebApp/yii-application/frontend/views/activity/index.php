@@ -3,6 +3,7 @@
 use common\models\Activity;
 use yii\helpers\Html;
 use yii\helpers\Url;
+use yii\widgets\ActiveForm;
 
 /** @var yii\web\View $this */
 /** @var \common\models\ActivitySearch $searchModel */
@@ -43,16 +44,26 @@ $this->registerCssFile('@web/css/site.css');
                             $dropdownOptions[$calendar->id] = $calendar->date->date . ' - ' . $calendar->time->hour;
                         }
                     }
+                    $form = ActiveForm::begin([
+                        'action' => Url::to(['cart/create']),
+                        'method' => 'get', // Use GET to include the selected values in the URL
+                    ]);
                     echo Html::dropDownList(
-                        'calendar',
-                        null,
-                        $dropdownOptions,
-                    );
+                        'calendarId', // The name of the parameter
+                        null, // Default selected value
+                        $dropdownOptions, // Options for the dropdown
+                        ['class' => 'form-control']); // Additional HTML attributes
 
                     echo '<div class="d-flex justify-content-between">';
                     echo '<a href="' . Url::to(['activity/view', 'id' => $activity->id]) . '" class="btn btn-primary">View</a>';
                     echo '<a href="' . Url::to(['review/index', 'id' => $activity->id]) . '" class="btn btn-outline-warning">Review</a>';
-                    echo '<a href="' . Url::to(['cart/create', 'activityId' => $activity->id, 'calendarId' => $calendar->id]) . '" class="btn btn-outline-success">Buy</a>';
+
+                    echo Html::hiddenInput('activityId', $activity->id);
+                    echo Html::submitButton('Buy', [
+                        'class' => 'btn btn-outline-success',
+                    ]);
+                    ActiveForm::end();
+//                    echo '<a href="' . Url::to(['cart/create', 'activityId' => $activity->id, 'calendarId' => $calendar->id]) . '" class="btn btn-outline-success">Buy</a>';
                     echo '</div>';
                     echo '</div>';
                     echo '</div>';

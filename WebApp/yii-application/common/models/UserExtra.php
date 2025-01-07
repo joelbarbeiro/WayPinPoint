@@ -44,7 +44,7 @@ class UserExtra extends \yii\db\ActiveRecord
             [['user_id', 'nif', 'address', 'phone'], 'required'],
             [['user_id', 'localsellpoint_id', 'nif', 'supplier'], 'integer'],
             [['address'], 'string', 'max' => 255],
-            [['phone'], 'string', 'max' => 20],
+            [['phone'], 'in', 'range' => [100000000, 999999999]],
             [['nif'], 'unique'],
             [['localsellpoint_id'], 'exist', 'skipOnError' => true, 'targetClass' => Localsellpoint::class, 'targetAttribute' => ['localsellpoint_id' => 'id']],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],

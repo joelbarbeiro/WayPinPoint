@@ -49,9 +49,9 @@ use yii\widgets\ActiveForm;
 
     ?>
 
-    <?= $form->field($model, 'maxpax')->textInput() ?>
+    <?= $form->field($model, 'maxpax')->textInput(['type' => 'number', 'min' => 1]) ?>
 
-    <?= $form->field($model, 'priceperpax')->textInput() ?>
+    <?= $form->field($model, 'priceperpax')->textInput(['type' => 'number', 'min' => 1]) ?>
 
     <?= $form->field($model, 'address')->textInput(['maxlength' => true]) ?>
 

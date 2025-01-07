@@ -120,4 +120,11 @@ class Booking extends \yii\db\ActiveRecord
         return count($bookingsCount);
     }
 
+    public static function getTotalTicketsByActivity($id)
+    {
+        return Booking::find()
+            ->where(['activity_id' => $id])
+            ->sum('numberpax') ?? 0;
+    }
+
 }
