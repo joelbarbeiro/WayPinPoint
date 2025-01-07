@@ -9,8 +9,6 @@ use common\models\Cart;
 use common\models\Invoice;
 use common\models\Sale;
 use common\models\Ticket;
-use Da\QrCode\QrCode;
-use Dompdf\Dompdf;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
@@ -77,23 +75,26 @@ class CartController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
-    public function actionCreate($activityId, $calendarId)
+    public function actionCreate()
     {
+        $activityId = Yii::$app->request->get('activityId');
+        $calendarId = Yii::$app->request->get('calendarId');
+
         $model = new Cart();
         $activity = Activity::findOne($activityId);
         $userId = Yii::$app->user->id;
         $model->calendar_id = $calendarId;
         $calendar = Calendar::findOne($calendarId);
 
-        if($userId == null)
-        {
+        if ($userId == null) {
             Yii::$app->session->setFlash('error', 'Need to be logged in to buy tickets');
             return $this->redirect(['activity/index']);
         }
         $model->user_id = $userId;
         $model->product_id = $activityId;
+        $model->calendar_id = $calendarId;
         if ($model->load($this->request->post())) {
-            $totalTicketsBooked = Booking::getTotalTicketsByActivity($activityId);
+            $totalTicketsBooked = Booking::getTotalTicketsByActivity($activityId, $calendarId);
             if (($model->quantity + $totalTicketsBooked) <= $activity->maxpax) {
                 if ($model->save()) {
                     return $this->redirect(['cart/index', 'user_id' => $model->user_id, 'product_id' => $model->product_id, 'calendar_id' => $model->calendar_id]);
@@ -111,6 +112,8 @@ class CartController extends Controller
             'calendarDate' => $calendar->date->date,
             'calendarHour' => $calendar->time->hour,
         ]);
+
+
     }
 
     /**
