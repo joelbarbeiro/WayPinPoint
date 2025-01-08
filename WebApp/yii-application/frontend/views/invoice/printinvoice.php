@@ -29,14 +29,15 @@ use common\models\User;
 </head>
 <body>
 <h1>Receipt</h1>
-<p><strong>User:</strong> <?= $invoice->user->username ?></p>
-<p><strong>Activity:</strong> <?= $invoice->booking->activity->description ?></p>
-<p><strong>Price per Pax:</strong> <?= $invoice->booking->activity->priceperpax . "€" ?></p>
-<p><strong>Quantity:</strong> <?= $invoice->booking->activity->maxpax ?></p>
+<p><strong>User: </strong> <?= $invoice->user->username ?></p>
+<p><strong>NIF: </strong> <?= $invoice->user->userextra->nif ?></p>
+<p><strong>Address: </strong><?=$invoice->user->userextra->address ?></p>
+<p><strong>Activity: </strong> <?= $invoice->booking->activity->description ?></p>
+<p><strong>Ticket Quantity: </strong> <?= $invoice->sale->quantity ?></p>
 <p><strong>Total: </strong><?= $invoice->sale->total . '€' ?></p>
-<p><strong>Purchase Date:</strong> <?= $invoice->sale->purchase_date ?></p>
-<p><strong>Activity Date:</strong> <?= $invoice->booking->calendar->date->date ?> </p>
-<p><strong>Activity Hour:</strong> <?= $invoice->booking->calendar->time->hour ?> </p>
+<p><strong>Purchase Date: </strong> <?= $invoice->sale->purchase_date ?></p>
+<p><strong>Activity Date: </strong> <?= $invoice->booking->calendar->date->date ?> </p>
+<p><strong>Activity Hour: </strong> <?= $invoice->booking->calendar->time->hour ?> </p>
 
 </body>
 </html>
