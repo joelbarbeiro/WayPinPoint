@@ -3,9 +3,9 @@
 namespace frontend\controllers;
 
 use common\models\Activity;
+use common\models\Cart;
 use common\models\Ticket;
 use common\models\User;
-use Da\QrCode\QrCode;
 use Mpdf\Mpdf;
 use Yii;
 use yii\data\ActiveDataProvider;
@@ -140,7 +140,6 @@ class TicketController extends Controller
         if(!$ticket){
             Yii::$app->session->setFlash('error', 'Ticket not found');
         }
-        $ticket = Ticket::findOne($id);
         $userId = $ticket->participant;
         $user = User::findOne($userId);
         $activity = Activity::findOne($ticket->activity_id);
@@ -148,30 +147,22 @@ class TicketController extends Controller
             Yii::$app->session->setFlash('error', 'Related user or activity not found');
             return null;
         }
-        $qrCode = self::generateQrCode($user, $activity);
+        $cart = Cart::find()->where(['product_id'=>$activity->id, 'user_id' => $user->id, 'calendar_id'=> $ticket->booking->calendar_id])->one();
+        $qrCode = Cart::generateQrCode($cart);
         $content =  Yii::$app->controller->renderPartial('printticket', [
             'user' => $user,
             'activity' => $activity,
             'qrCode' => $qrCode,
+            'quantity' => $cart->quantity
         ]);
         self::generatePdf($content, $user, $activity);
-    }
-    public static function generateQrCode($user, $activity)
-    {
-        $qrCodeData = "User: $user->username, Activity: $activity->description, Price: $activity->priceperpax"; //IGUALAR A VARIAVEL QR NO TICKET
-        $qrCode = (new QrCode($qrCodeData))
-            ->setSize(250)
-            ->setMargin(5)
-            ->setBackgroundColor(51, 153, 255);
-
-        return $qrCode;
     }
 
     public static function generatePdf($content, $user, $activity)
     {
         $pdf = new Mpdf();
         $pdf->WriteHTML($content);
-        return Yii::$app->response->sendContentAsFile($pdf->Output('', 'S'), "receipt_{$user->username}_{$activity->description}.pdf", [
+        return Yii::$app->response->sendContentAsFile($pdf->Output('', 'S'), "receipt_{$user->username}_{$activity->name}.pdf", [
             'mimeType' => 'application/pdf',
         ]);
     }

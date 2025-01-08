@@ -178,8 +178,8 @@ class CartController extends ActiveController
                 throw new \Exception("Failed to create invoice for Cart ID: $id");
             }
 
-            $qrCode = Cart::generateQrCode($cart->user, $cart->activity);
-            Ticket::createTicket($cart, $qrCode);
+            $qrCode = Cart::generateQrCode($cart);
+            Ticket::createTicket($cart, $qrCode, $bookingId);
 
             $cart->status = 1;
             if (!$cart->save()) {

@@ -6,7 +6,6 @@ use common\models\Activity;
 use common\models\Cart;
 use common\models\Category;
 use common\models\User;
-use yii\db\Exception;
 
 class CartTest extends \Codeception\Test\Unit
 {
@@ -38,6 +37,7 @@ class CartTest extends \Codeception\Test\Unit
     protected $user;
     protected $category;
     protected $activity;
+    protected $cart;
 
     protected function _before()
     {
@@ -53,8 +53,8 @@ class CartTest extends \Codeception\Test\Unit
         $this->activity->save();
 
 
-        $cart = $this->createValidCart();
-        $cart->save();
+        $this->cart = $this->createValidCart();
+        $this->cart->save();
 
     }
 
@@ -101,7 +101,7 @@ class CartTest extends \Codeception\Test\Unit
 
         $this->assertTrue($wasSavedSuccessfully);
 
-        $cartFromDatabase = Cart::find()->where(['product_id' => self::VALID_PRODUCT_ID])->one();
+        $cartFromDatabase = Cart::find()->where(['user_id' => $this->user->id])->one();
         $this->assertNotNull($cartFromDatabase);
         $this->assertEquals(self::VALID_PRODUCT_ID, $cartFromDatabase->product_id);
         $this->assertEquals( self::VALID_QUANTITY, $cartFromDatabase->quantity);

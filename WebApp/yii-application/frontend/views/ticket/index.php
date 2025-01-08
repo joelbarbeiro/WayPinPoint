@@ -20,11 +20,10 @@ $this->params['breadcrumbs'][] = $this->title;
         'dataProvider' => $dataProvider,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-
             [
                 'attribute' => 'Activity',
                 'value' => function ($model) {
-                    return $model->activity->description;
+                    return $model->activity->name;
                 }
             ],
             [
@@ -33,7 +32,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     return Yii::$app->user->identity->username;
                 }
             ],
-
             [
                 'class' => ActionColumn::className(),
                 'template' => '{view} {delete} {print}',
@@ -78,6 +76,4 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
         ],
     ]); ?>
-
-
 </div>

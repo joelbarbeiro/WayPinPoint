@@ -121,9 +121,6 @@ class RbacController extends Controller
         $deleteCart->description = 'Delete a Cart';
         $auth->add($deleteCart);
 
-        //Calendar permissions ( Closing and Opening dates for activities )
-
-
         // Define roles and their permissions
         $client = $auth->createRole('client');
         $auth->add($client);

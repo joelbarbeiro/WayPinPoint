@@ -16,7 +16,6 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Delete', ['delete', 'id' => $model->id], [
             'class' => 'btn btn-danger',
             'data' => [
@@ -35,9 +34,14 @@ $this->params['breadcrumbs'][] = $this->title;
                     return $model->activity->name;
                 },
             ],
+            [
+                'label' => 'Ticket Quantity:',
+                'value' => function ($model) {
+                    return $model->booking->numberpax;
+                },
+            ],
             'participant',
             'qr',
-
         ],
     ]) ?>
 
