@@ -127,6 +127,10 @@ class Sale extends \yii\db\ActiveRecord
     {
         return $this->hasOne(UserExtra::class, ['user_id' => 'seller_id']);
     }
+    public function getBuyerextra()
+    {
+        return $this->hasOne(UserExtra::class, ['user_id' => 'buyer']);
+    }
 
     public static function createSale($cart)
     {

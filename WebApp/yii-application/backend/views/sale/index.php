@@ -27,6 +27,7 @@ $this->registerCssFile('@web/css/site.css');
                     <th>Purchase Date</th>
                     <th>Quantity</th>
                     <th>Total</th>
+                    <th>Invoice</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -43,6 +44,12 @@ $this->registerCssFile('@web/css/site.css');
                     <td><?= Html::encode($sale->purchase_date) ?></td>
                     <td><?= Html::encode($sale->quantity) ?></td>
                     <td><?= Html::encode($sale->total) . "€"?></td>
+                    <td> <a href="<?= Html::encode(Url::to(['sale/print', 'sale_id' => $sale->id]))
+                        ?>"
+                            class="btn btn-primary"
+                            title="<?= Html::encode('Print Invoice') ?>">
+                            <?= Html::encode('Print Invoice') ?>
+                        </a>
                 </tr>
                 <?php }
                 if(Yii::$app->user->identity->getRole() == "manager")
