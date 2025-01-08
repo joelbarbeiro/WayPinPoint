@@ -73,6 +73,9 @@ class RegisterForm extends \yii\db\ActiveRecord
             $user->email = $this->email;
             $user->setPassword($this->password);
             $user->generateAuthKey();
+            $user->generateEmailVerificationToken();
+            $user->created_at = time();
+            $user->updated_at = 0;
             $user->status = 10;
             if ($user->save(false)) {
                 $userExtra = new UserExtra();
