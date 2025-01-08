@@ -82,6 +82,8 @@ class RoleRegisterForm extends ActiveRecord
             $user->setPassword($this->password);
             $user->generateAuthKey();
             $user->generateEmailVerificationToken();
+            $user->created_at = time();
+            $user->updated_at = 0;
             $user->status = 10;
             if ($user->save(false)) {
                 $userExtra = new UserExtra();
@@ -127,12 +129,12 @@ class RoleRegisterForm extends ActiveRecord
 
             $user->username = $this->username;
             $user->email = $this->email;
+            $user->updated_at = time();
             $userExtra->phone = $this->phone;
             $userExtra->address = $this->address;
             $userExtra->nif = $this->nif;
             $userExtra->uploadUserPhoto($this);
             $userExtra->localsellpoint_id = $this->localsellpoint;
-
             $auth = \Yii::$app->authManager;
             $auth->revokeAll($user->id);
             $newRole = $auth->getRole($this->role);

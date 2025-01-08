@@ -36,6 +36,7 @@ use common\models\User;
 <p><strong>Activity Name:</strong> <?= $invoice->sale->activity->name ?></p>
 <p><strong>Activity Description:</strong> <?= $invoice->sale->activity->description ?></p>
 <p><strong>Total</strong> <?= $invoice->sale->total . "€" ?></p>
+<p><strong>Purchase Date: <?= $invoice->sale->purchase_date ?> </strong></p>
 <p><strong>Day:</strong> <?= $invoice->booking->calendar->date->date ?> </p>
 <p><strong>Hour:</strong> <?= $invoice->booking->calendar->time->hour ?> </p>
 <p><strong>Quantity:</strong> <?= $invoice->sale->quantity ?></p>
