@@ -6,7 +6,6 @@ use yii\helpers\Url;
 /** @var yii\web\View $this */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 $this->title = 'Shopping Cart';
-$this->params['breadcrumbs'][] = $this->title;
 ?>
     <h1><?= Html::encode($this->title) ?></h1>
     <div class="cart-index">
@@ -33,7 +32,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 echo '<td>' . $cart->activity->priceperpax * $cart->quantity . ' € </td>';
                 echo '<td>' . $cart->calendar->date->date . "/" . $cart->calendar->time->hour . '</td>';
                 echo '<td>';
-                echo '<a href="' . Url::to(['cart/checkout', 'id' => $cart->id]) . '" class="btn btn-primary">Checkout</a>';
+                echo '<a href="' . Url::to(['cart/checkout', 'id' => $cart->id]) . '" class="btn btn-outline-primary mr-3">Checkout</a>';
                 echo '<a href="' . Url::to(['cart/delete', 'user_id' => $cart->user_id, 'product_id' => $cart->product_id]) . '" class="btn btn-danger" data-method="post" data-confirm="Are you sure you want to delete this item?">Delete</a>';
                 echo '</td>';
                 echo '</tr>';

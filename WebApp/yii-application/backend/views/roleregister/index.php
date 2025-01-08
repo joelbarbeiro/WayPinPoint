@@ -8,7 +8,6 @@ use yii\helpers\Url;
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
 $this->title = 'Employees ';
-$this->params['breadcrumbs'][] = $this->title;
 $this->registerCssFile('@web/css/site.css');
 
 ?>

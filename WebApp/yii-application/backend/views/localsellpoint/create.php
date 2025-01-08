@@ -4,8 +4,6 @@
 /** @var backend\models\Localsellpoint $model */
 
 $this->title = 'Create Local Shop';
-$this->params['breadcrumbs'][] = ['label' => 'Localsellpoints', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="localsellpoint-create">
 

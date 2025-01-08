@@ -10,7 +10,6 @@ use yii\helpers\Url;
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
 $this->title = 'Tickets';
-$this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="ticket-index">
 
@@ -34,7 +33,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'class' => ActionColumn::className(),
-                'template' => '{view} {delete} {print}',
+                'template' => '{view} {print} {delete}',
                 'header' => 'Actions',
                 'buttons' => [
                     'view' => function ($url, $model) {
@@ -42,7 +41,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             'View',
                             ['view', 'id' => $model->id],
                             [
-                                'class' => 'btn btn-primary',
+                                'class' => 'btn btn-outline-primary',
                                 'title' => 'View',
                             ]
                         );
@@ -52,7 +51,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             'Print Ticket',
                             ['ticket/print', 'id' => $model->id],
                             [
-                                'class' => 'btn btn-primary',
+                                'class' => 'btn btn-outline-success',
                                 'title' => 'Print Ticket',
                             ]
                         );

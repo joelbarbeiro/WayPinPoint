@@ -6,8 +6,6 @@
 /** @var backend\controllers\ActivityController $categories */
 
 $this->title = 'Create Activities';
-$this->params['breadcrumbs'][] = ['label' => 'Activity', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="activities-create">
 

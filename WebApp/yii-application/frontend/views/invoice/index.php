@@ -11,7 +11,6 @@ use yii\helpers\Html;
 /** @var Invoice $model */
 
 $this->title = 'Invoices';
-$this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="invoice-index">
 

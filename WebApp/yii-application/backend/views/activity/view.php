@@ -7,8 +7,6 @@ use yii\web\YiiAsset;
 /** @var common\models\Activity $model */
 
 $this->title = "View Activity";
-$this->params['breadcrumbs'][] = ['label' => 'Activity', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
 YiiAsset::register($this);
 
 $imgPath = Url::to('@web/img/activity/' . $userId = Yii::$app->user->identity->userExtra->supplier . '/');

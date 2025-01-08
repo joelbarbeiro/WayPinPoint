@@ -6,9 +6,6 @@ use yii\helpers\Html;
 /** @var backend\models\Localsellpoint $model */
 
 $this->title = $model->name;
-$this->params['breadcrumbs'][] = ['label' => 'Localsellpoints', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->name, 'url' => ['view', 'id' => $model->id]];
-$this->params['breadcrumbs'][] = 'Update';
 ?>
 <div class="localsellpoint-update">
 

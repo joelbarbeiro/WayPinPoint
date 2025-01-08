@@ -7,7 +7,6 @@ use yii\helpers\Url;
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
 $this->title = 'Calendars';
-$this->params['breadcrumbs'][] = $this->title;
 ?>
 
 <div class="calendar-index">

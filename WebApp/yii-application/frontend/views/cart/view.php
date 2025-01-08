@@ -7,8 +7,7 @@ use yii\widgets\DetailView;
 /** @var \common\models\Cart $model */
 
 $this->title = $model->activity->description;
-$this->params['breadcrumbs'][] = ['label' => 'Carts', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+
 \yii\web\YiiAsset::register($this);
 ?>
 <div class="cart-view">

@@ -10,7 +10,6 @@ use yii\helpers\Url;
 /** @var Sale $model title */
 
 $this->title = 'Sales';
-$this->params['breadcrumbs'][] = $this->title;
 $imgPath = Url::to('@web/assets/uploads/' . Yii::$app->user->id . '/');
 $this->registerCssFile('@web/css/site.css');
 

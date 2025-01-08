@@ -52,6 +52,7 @@ $this->registerCssFile('@web/css/site.css', [
                 'method' => 'post',
             ]);
 
+            echo '<div class="d-flex justify-content-between">';
             echo Html::activeHiddenInput($model, 'activity_id', ['value' => $activity->id]); // Pass activity ID
             echo Html::activeHiddenInput($model, 'calendar_id', ['value' => $calendar->id]);
             echo $form->field($model, 'buyer')->dropDownList(
@@ -75,6 +76,7 @@ $this->registerCssFile('@web/css/site.css', [
             echo '</div>';
             echo '</div>';
             echo '</div>';
+
             $counter++;
             if ($counter % 2 == 0) {
                 echo '</div><div class="row">';

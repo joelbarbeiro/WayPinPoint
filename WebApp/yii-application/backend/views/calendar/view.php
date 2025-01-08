@@ -6,8 +6,6 @@ use yii\helpers\Html;
 /** @var \common\models\Calendar $model */
 
 $this->title = $model->id;
-$this->params['breadcrumbs'][] = ['label' => 'Calendars', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
 <div class="calendar-view">

@@ -7,7 +7,6 @@
 use common\models\Booking;
 
 $this->title = 'Starter Page For ' . $role . " " . $user->username;
-$this->params['breadcrumbs'] = [['label' => $this->title]];
 ?>
 <?php if ($role == "admin") { ?>
     <div class="container-fluid">
