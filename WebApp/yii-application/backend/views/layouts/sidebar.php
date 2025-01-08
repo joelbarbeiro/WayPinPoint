@@ -78,6 +78,8 @@ $imgUserPath = Url::to('@web/img/user/' . Yii::$app->user->id . '/');
             if ($user->getRole() == "manager") {
                 echo \hail812\adminlte\widgets\Menu::widget([
                     'items' => [
+                        ['label' => 'Employee Management', 'header' => true],
+                        ['label' => 'User', 'icon' => 'user', 'url' => Url::to(['role-register/index'])],
                         ['label' => 'Activities', 'header' => true],
                         ['label' => 'Bookings', 'icon' => 'file-code', 'url' => ['booking/index']],
                         ['label' => 'Manage Calendar', 'icon' => 'file-code', 'url' => ['calendar/index']],
@@ -90,6 +92,8 @@ $imgUserPath = Url::to('@web/img/user/' . Yii::$app->user->id . '/');
             if ($user->getRole() == "salesperson") {
                 echo \hail812\adminlte\widgets\Menu::widget([
                     'items' => [
+                        ['label' => 'Employee Management', 'header' => true],
+                        ['label' => 'User', 'icon' => 'user', 'url' => Url::to(['role-register/index'])],
                         ['label' => 'Activities', 'header' => true],
                         ['label' => 'Bookings', 'icon' => 'file-code', 'url' => ['booking/index']],
                         ['label' => 'Manage activity', 'icon' => 'map', 'url' => ['activity/index']],
@@ -100,6 +104,9 @@ $imgUserPath = Url::to('@web/img/user/' . Yii::$app->user->id . '/');
             if ($user->getRole() == "guide") {
                 echo \hail812\adminlte\widgets\Menu::widget([
                     'items' => [
+                        ['label' => 'Employee Management', 'header' => true],
+                        ['label' => 'User', 'icon' => 'user', 'url' => Url::to(['role-register/index'])],
+                        ['label' => 'Activities', 'header' => true],
                         ['label' => 'Bookings', 'icon' => 'file-code', 'url' => ['booking/index']],
                     ],
                 ]);

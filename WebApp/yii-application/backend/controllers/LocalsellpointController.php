@@ -39,7 +39,17 @@ class LocalsellpointController extends Controller
                     [
                         'actions' => ['index', 'create', 'update', 'delete', 'view'],
                         'allow' => true,
-                        'roles' => ['admin', 'supplier', 'manager', 'salesperson', 'guide'],
+                        'roles' => ['admin', 'supplier'],
+                    ],
+                    [
+                        'actions' => ['index','update', 'view'],
+                        'allow' => true,
+                        'roles' => ['manager'],
+                    ],
+                    [
+                        'actions' => ['view'],
+                        'allow' => true,
+                        'roles' => ['guide', 'salesperson'],
                     ],
                     [
                         'actions' => ['logout', 'index'],

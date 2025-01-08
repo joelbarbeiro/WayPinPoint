@@ -12,7 +12,7 @@ class RbacController extends Controller
         $auth = Yii::$app->authManager;
         $auth->removeAll();
 
-        //Note: not every Class has a permission because its dependent on other classes to be created ( Time, Ticket, Invoice, Calendar, Date, Picture can't be CRUD )
+        //Note: not every Class has a permission because its dependent on other classes to be created (Time, Ticket, Invoice, Date, Picture can't be CRUD )
 
         //Activities permissions
         $createActivity = $auth->createPermission('createActivity');
@@ -30,7 +30,6 @@ class RbacController extends Controller
         $getActivityView = $auth->createPermission('getActivityView');
         $getActivityView->description = 'View a activity view';
         $auth->add($getActivityView);
-
 
         $deleteActivity = $auth->createPermission('deleteActivity');
         $deleteActivity->description = 'Delete an activity';
@@ -87,6 +86,11 @@ class RbacController extends Controller
         $deleteUserWithRole->description = 'Delete an user with Role';
         $auth->add($deleteUserWithRole);
 
+        // Edit Password from users in backoffice ( Employees )
+        $updateEmployeePassword = $auth->createPermission('updateEmployeePassword');
+        $updateEmployeePassword->description = 'Update Employee Password';
+        $auth->add($updateEmployeePassword);
+
         //Sale Permissions and bookings ( It is done at the same time)
         $createSaleAndBooking = $auth->createPermission('createSaleAndBooking');
         $createSaleAndBooking->description = 'Create a sale and booking';
@@ -121,19 +125,24 @@ class RbacController extends Controller
         $deleteCart->description = 'Delete a Cart';
         $auth->add($deleteCart);
 
-        // Define roles and their permissions
-        $client = $auth->createRole('client');
-        $auth->add($client);
-        $auth->addChild($client, $viewActivity);
-        $auth->addChild($client, $viewReview);
-        $auth->addChild($client, $createReview);
-        $auth->addChild($client, $updateReview);
-        $auth->addChild($client, $deleteReview);
-        $auth->addChild($client, $viewCart);
-        $auth->addChild($client, $createCart);
-        $auth->addChild($client, $updateCart);
-        $auth->addChild($client, $deleteCart);
+        // Calendar Permissions
+        $createCalendar = $auth->createPermission('createCalendar');
+        $createCalendar->description = 'Create a Calendar';
+        $auth->add($createCalendar);
 
+        $updateCalendar = $auth->createPermission('updateCalendar');
+        $updateCalendar->description = 'Update a Calendar';
+        $auth->add($updateCalendar);
+
+        $viewCalendar = $auth->createPermission('viewCalendar');
+        $viewCalendar->description = 'View a Calendar';
+        $auth->add($viewCalendar);
+
+        $deleteCalendar = $auth->createPermission('deleteCalendar');
+        $deleteCalendar->description = 'Delete a Calendar';
+        $auth->add($deleteCalendar);
+
+        // Define roles and their permissions
         $supplier = $auth->createRole('supplier');
         $auth->add($supplier);
         $auth->addChild($supplier, $viewActivity);
@@ -153,10 +162,15 @@ class RbacController extends Controller
         $auth->addChild($supplier, $createUserWithRole);
         $auth->addChild($supplier, $updateUserWithRole);
         $auth->addChild($supplier, $deleteUserWithRole);
+        $auth->addChild($supplier, $updateEmployeePassword);
         $auth->addChild($supplier, $viewSaleAndBooking);
         $auth->addChild($supplier, $createSaleAndBooking);
         $auth->addChild($supplier, $updateSaleAndBooking);
         $auth->addChild($supplier, $deleteSaleAndBooking);
+        $auth->addChild($supplier, $viewCalendar);
+        $auth->addChild($supplier, $createCalendar);
+        $auth->addChild($supplier, $updateCalendar);
+        $auth->addChild($supplier, $deleteCalendar);
 
         $manager = $auth->createRole('manager');
         $auth->add($manager);
@@ -168,10 +182,13 @@ class RbacController extends Controller
         $auth->addChild($manager, $updateReview);
         $auth->addChild($manager, $deleteReview);
         $auth->addChild($manager, $viewUserWithRole);
+        $auth->addChild($manager, $updateEmployeePassword);
         $auth->addChild($manager, $viewSaleAndBooking);
         $auth->addChild($manager, $createSaleAndBooking);
         $auth->addChild($manager, $updateSaleAndBooking);
         $auth->addChild($manager, $deleteSaleAndBooking);
+        $auth->addChild($manager, $viewCalendar);
+        $auth->addChild($manager, $updateCalendar);
 
         $salesperson = $auth->createRole('salesperson');
         $auth->add($salesperson);
@@ -196,6 +213,18 @@ class RbacController extends Controller
         $auth->addChild($guide, $deleteReview);
         $auth->addChild($guide, $viewSaleAndBooking);
 
+        $client = $auth->createRole('client');
+        $auth->add($client);
+        $auth->addChild($client, $viewActivity);
+        $auth->addChild($client, $viewReview);
+        $auth->addChild($client, $createReview);
+        $auth->addChild($client, $updateReview);
+        $auth->addChild($client, $deleteReview);
+        $auth->addChild($client, $viewCart);
+        $auth->addChild($client, $createCart);
+        $auth->addChild($client, $updateCart);
+        $auth->addChild($client, $deleteCart);
+
         $admin = $auth->createRole('admin');
         $auth->add($admin);
         $auth->addChild($admin, $updateActivity);
@@ -219,10 +248,15 @@ class RbacController extends Controller
         $auth->addChild($admin, $createUserWithRole);
         $auth->addChild($admin, $updateUserWithRole);
         $auth->addChild($admin, $deleteUserWithRole);
+        $auth->addChild($admin, $updateEmployeePassword);
         $auth->addChild($admin, $viewSaleAndBooking);
         $auth->addChild($admin, $createSaleAndBooking);
         $auth->addChild($admin, $updateSaleAndBooking);
         $auth->addChild($admin, $deleteSaleAndBooking);
+        $auth->addChild($admin, $viewCalendar);
+        $auth->addChild($admin, $createCalendar);
+        $auth->addChild($admin, $updateCalendar);
+        $auth->addChild($admin, $deleteCalendar);
         $auth->addChild($admin, $viewCart);
         $auth->addChild($admin, $createCart);
         $auth->addChild($admin, $updateCart);

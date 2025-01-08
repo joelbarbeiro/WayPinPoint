@@ -35,6 +35,16 @@ class SaleController extends Controller
                         'delete' => ['POST'],
                     ],
                 ],
+                [
+                    'actions' => ['index', 'create', 'update', 'delete', 'view'],
+                    'allow' => false,
+                    'roles' => ['client', 'guide'],
+                ],
+                [
+                    'actions' => ['index', 'create', 'update', 'delete', 'view'],
+                    'allow' => true,
+                    'roles' => ['admin', 'supplier', 'manager', 'salesperson'],
+                ],
             ]
         );
     }

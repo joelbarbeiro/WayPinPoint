@@ -21,7 +21,7 @@ $this->registerCssFile('@web/css/site.css');
     <?php foreach ($dataProvider->models as $employee): ?>
         <?php
         if ($employee->user->status == 0 ||
-            $employee->supplier != Yii::$app->user->id ||
+            $employee->supplier != Yii::$app->user->identity->userextra->supplier ||
             $employee->user->getRole() == 'supplier') continue;
         ?>
         <?php $imgPath = Url::to('@web/img/user/' . $employee->user_id . '/'); ?>

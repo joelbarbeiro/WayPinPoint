@@ -29,13 +29,14 @@ class CalendarController extends Controller
                     'class' => AccessControl::class,
                     'rules' => [
                         [
-                            'actions' => ['index', 'create', 'update', 'delete', 'update-status'],
+                            'actions' => ['index', 'create', 'update', 'delete', 'view','update-status'],
                             'allow' => true,
+                            'roles' => ['admin', 'supplier', 'manager'],
                         ],
                         [
-                            'actions' => ['logout', 'index'],
-                            'allow' => true,
-                            'roles' => ['@'],
+                            'actions' => ['index', 'create', 'update', 'delete', 'view'],
+                            'allow' => false,
+                            'roles' => ['salesperson', 'guide', 'client'],
                         ],
                     ],
                 ],
