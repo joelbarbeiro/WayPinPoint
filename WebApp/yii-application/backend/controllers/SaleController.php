@@ -14,7 +14,6 @@ use Da\QrCode\QrCode;
 use Mpdf\Mpdf;
 use Yii;
 use yii\filters\AccessControl;
-use yii\db\Expression;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
 use yii\web\BadRequestHttpException;
@@ -128,7 +127,7 @@ class SaleController extends Controller
             if ($model->save()) {
                 Sale::createBooking($activity, $model->buyer, $model->calendar_id, $model->quantity);
                 $booking = Booking::find()
-                    ->where(['activity_id' => $activity->id, 'user_id' => $model->buyer ])
+                    ->where(['activity_id' => $activity->id, 'user_id' => $model->buyer])
                     ->one();
                 $invoice = Invoice::createInvoiceBackend($userId, $model->id, $booking->id);
                 $qrCode = $this->generateQrCodeSale($model);
@@ -231,7 +230,7 @@ class SaleController extends Controller
 
     public static function generateQrCodeSale($sale)
     {
-        $qrCodeData = "User: ". $sale->buyer0->username . ", Activity: ".$sale->activity->description. ", Price: ".$sale->total.", Number of tickets: ".$sale->quantity;
+        $qrCodeData = "User: " . $sale->buyer0->username . ", Activity: " . $sale->activity->description . ", Price: " . $sale->total . ", Number of tickets: " . $sale->quantity;
         $qrCode = (new QrCode($qrCodeData))
             ->setSize(250)
             ->setMargin(5)

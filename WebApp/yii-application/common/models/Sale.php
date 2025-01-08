@@ -2,7 +2,6 @@
 
 namespace common\models;
 
-use common\models\UserExtra;
 use Yii;
 use yii\db\Expression;
 use yii\web\ServerErrorHttpException;
@@ -127,6 +126,7 @@ class Sale extends \yii\db\ActiveRecord
     {
         return $this->hasOne(UserExtra::class, ['user_id' => 'seller_id']);
     }
+
     public function getBuyerextra()
     {
         return $this->hasOne(UserExtra::class, ['user_id' => 'buyer']);
