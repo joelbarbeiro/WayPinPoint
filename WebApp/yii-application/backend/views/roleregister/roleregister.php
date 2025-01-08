@@ -9,13 +9,10 @@ use backend\models\RoleRegisterForm;
 use yii\bootstrap5\ActiveForm;
 use yii\bootstrap5\Html;
 
+$this->title = 'New Employee Information:';
 ?>
-
 <div class="signup-form">
-    <h1><?= Html::encode($this->title) ?></h1>
-
     <?php $form = ActiveForm::begin(['id' => 'form-signup']); ?>
-
     <?= $form->field($model, 'photoFile')->fileInput(['multiple' => false, 'accept' => 'image/*']) ?>
     <?= $form->field($model, 'username')->textInput(['autofocus' => true]) ?>
     <?= $form->field($model, 'email')->input('email') ?>

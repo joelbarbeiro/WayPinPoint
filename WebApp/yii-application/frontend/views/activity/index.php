@@ -51,7 +51,7 @@ $this->title = 'Activities';
                         'calendarId',
                         null,
                         $dropdownOptions,
-                        ['class' => 'form-control', 'prompt' => 'Select a time']
+                        ['class' => 'form-control']
                     );
 
                     echo '<div class="d-flex justify-content-end mt-3">'; // Align to the right
