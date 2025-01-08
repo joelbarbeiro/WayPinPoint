@@ -5,12 +5,14 @@ namespace backend\controllers;
 use backend\models\SaleSearch;
 use common\models\Activity;
 use common\models\Booking;
+use common\models\Cart;
 use common\models\Invoice;
 use common\models\Sale;
+use common\models\Ticket;
 use common\models\UserExtra;
+use Da\QrCode\QrCode;
 use Mpdf\Mpdf;
 use Yii;
-use yii\db\Expression;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
@@ -120,14 +122,34 @@ class SaleController extends Controller
             if (!$activity) {
                 throw new NotFoundHttpException('Activity not found.');
             }
-            $model->purchase_date = new Expression('NOW()');
+            $model->purchase_date = date('Y-m-d H:i:s', time());
             $model->total = $activity->priceperpax * $model->quantity;
             if ($model->save()) {
                 Sale::createBooking($activity, $model->buyer, $model->calendar_id, $model->quantity);
                 $booking = Booking::find()
                     ->where(['activity_id' => $activity->id, 'user_id' => $model->buyer])
                     ->one();
-                Invoice::createInvoiceBackend($userId, $model->id, $booking->id);
+                $invoice = Invoice::createInvoiceBackend($userId, $model->id, $booking->id);
+                $qrCode = $this->generateQrCodeSale($model);
+                $qrCodeImage = $qrCode->writeString(); // QR Code as PNG string
+
+                $this->createTicketBackend($model, $qrCode, $booking->id);
+                $content = $this->renderPartial('receipt', ['sale' => $model, 'invoice' => $invoice]);
+                $pdfContent = Cart::generatePdf($content);
+                $buyerEmail = $model->buyer0->email;
+                if (Yii::$app->mailer->compose()
+                    ->setFrom('waypinpoint@gmail.com')
+                    ->setTo($buyerEmail)
+                    ->setSubject('Your Booking Receipt and Ticket')
+                    ->setTextBody('Your receipt and ticket are attached.')
+                    ->setHtmlBody('<b>Thank you for your booking! Your receipt and ticket are attached.</b>')
+                    ->attachContent($pdfContent, ['fileName' => 'receipt.pdf', 'contentType' => 'application/pdf'])
+                    ->attachContent($qrCodeImage, ['fileName' => 'ticket.png', 'contentType' => 'image/png'])
+                    ->send()) {
+                    Yii::$app->session->setFlash('success', 'Ticket and Receipt sent by Email! You can find them in your personal area as well to download');
+                } else {
+                    Yii::$app->session->setFlash('error', 'Failed to send ticket and receipt by email! Don\'t worry you can find them in your personal area to download');
+                }
                 return $this->redirect(['view', 'id' => $model->id]);
             } else {
                 var_dump($model->getErrors());
@@ -204,5 +226,30 @@ class SaleController extends Controller
         return Yii::$app->response->sendContentAsFile($pdf->Output('', 'S'), "receipt_{$invoice->sale->purchase_date}.pdf", [
             'mimeType' => 'application/pdf',
         ]);
+    }
+
+    public static function generateQrCodeSale($sale)
+    {
+        $qrCodeData = "User: " . $sale->buyer0->username . ", Activity: " . $sale->activity->description . ", Price: " . $sale->total . ", Number of tickets: " . $sale->quantity;
+        $qrCode = (new QrCode($qrCodeData))
+            ->setSize(250)
+            ->setMargin(5)
+            ->setBackgroundColor(51, 153, 255);
+        return $qrCode;
+    }
+
+    public static function createTicketBackend($sale, $qrCode, $bookingId)
+    {
+        $model = new Ticket();
+        $model->activity_id = $sale->activity_id;
+        $model->participant = $sale->buyer;
+        $model->booking_id = $bookingId;
+        $model->qr = $qrCode->getText();
+        $model->status = 0;
+        if ($model->save()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
