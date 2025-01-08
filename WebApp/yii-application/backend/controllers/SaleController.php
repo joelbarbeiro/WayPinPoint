@@ -13,6 +13,7 @@ use common\models\UserExtra;
 use Da\QrCode\QrCode;
 use Mpdf\Mpdf;
 use Yii;
+use yii\db\Expression;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
