@@ -22,7 +22,13 @@ $this->title = $name;
             The above error occurred while the Web server was processing your request.
             Please contact us if you think this is a server error. Thank you.
         </p>
-        <?= Html::a('Return to dashboard', ['site/login'], [
+        <?= Html::a('Return to login', ['site/logout'], [
+            'class' => 'btn btn-primary',
+            'data' => [
+                'method' => 'post',
+            ],
+        ]) ?>
+        <?= Html::a('Go Back', ['site/index'], [
             'class' => 'btn btn-primary',
             'data' => [
                 'method' => 'post',

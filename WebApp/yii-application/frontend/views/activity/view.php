@@ -43,11 +43,11 @@ $this->title = $model->name;
             $dropdownOptions, // Options for the dropdown
             ['class' => 'form-control']); // Additional HTML attributes
 
-        echo '<div class="d-flex justify-content-between">';
-        echo '<a href="' . Url::to(['review/index', 'id' => $model->id]) . '" class="btn btn-outline-warning">Review</a>';
+        echo '<div class="d-flex justify-content-end mt-3">';
+        echo '<a href="' . Url::to(['review/index', 'id' => $model->id]) . '" class="btn btn-outline-warning me-2">Review</a>';
         echo Html::hiddenInput('activityId', $model->id);
         echo Html::submitButton('Buy', [
-            'class' => 'btn btn-outline-success',
+            'class' => 'btn btn-outline-success me-2',
         ]);
         ActiveForm::end();
 

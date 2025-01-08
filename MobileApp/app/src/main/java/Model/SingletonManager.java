@@ -187,8 +187,13 @@ public class SingletonManager {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    System.out.println("---> " + error.getMessage());
-                    Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
+                    String responseBody;
+                    try {
+                        responseBody = new String(error.networkResponse.data, "UTF-8");
+                        Log.e("ReviewDetailsActivity", "Error Response Body: " + responseBody);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }) {
                 @Override

@@ -18,6 +18,32 @@ class RoleRegisterController extends \yii\web\Controller
      * @var mixed
      */
 
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'actions' => ['role-register', 'index', 'delete', 'view', 'update', 'role-update', 'update-password'],
+                        'allow' => true,
+                        'roles' => ['admin', 'supplier'],
+                    ],
+                    [
+                        'actions' => ['index', 'view','update-password'],
+                        'allow' => true,
+                        'roles' => ['manager'],
+                    ],
+                    [
+                        'actions' => ['index', 'view'],
+                        'allow' => true,
+                        'roles' => ['salesperson'],
+                    ],
+                ],
+            ],
+        ];
+    }
+
     public function actionIndex()
     {
         $searchModel = new UserExtraSearch();
@@ -149,21 +175,5 @@ class RoleRegisterController extends \yii\web\Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
-    }
-
-    public function behaviors()
-    {
-        return [
-            'access' => [
-                'class' => AccessControl::class,
-                'rules' => [
-                    [
-                        'actions' => ['role-register', 'index', 'delete', 'view', 'update', 'role-update', 'update-password'],
-                        'allow' => true,
-                        'roles' => ['supplier'],
-                    ],
-                ],
-            ],
-        ];
     }
 }

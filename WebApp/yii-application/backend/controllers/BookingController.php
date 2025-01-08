@@ -5,9 +5,10 @@ namespace backend\controllers;
 use common\models\Booking;
 use common\models\Sale;
 use yii\data\ActiveDataProvider;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
  * BookingController implements the CRUD actions for Booking model.
@@ -28,10 +29,24 @@ class BookingController extends Controller
                         'delete' => ['POST'],
                     ],
                 ],
+                'access' => [
+                    'class' => AccessControl::class,
+                    'rules' => [
+                        [
+                            'actions' => ['index', 'create', 'update', 'delete', 'view'], // Backoffice actions
+                            'allow' => false,
+                            'roles' => ['client'], // Explicitly deny client access to backoffice activity actions
+                        ],
+                        [
+                            'actions' => ['index', 'create', 'update', 'delete', 'view'],
+                            'allow' => true,
+                            'roles' => ['admin', 'supplier', 'manager', 'salesperson','guide'],
+                        ],
+                    ],
+                ]
             ]
         );
     }
-
     /**
      * Lists all Booking models.
      *

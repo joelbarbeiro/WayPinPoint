@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use backend\models\CustomErrorAction;
 use backend\models\Localsellpoint;
 use backend\models\RegisterForm;
 use common\models\Activity;
@@ -16,7 +17,6 @@ use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
-use yii\web\ForbiddenHttpException;
 use yii\web\Response;
 
 /**
@@ -38,22 +38,12 @@ class SiteController extends Controller
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['index', 'create', 'update', 'delete', 'view'], // Adjust actions as needed
-                        'allow' => true,
-                        'roles' => ['admin'], // Ensure this matches the role returned by getRole()
-                    ],
-                    [
                         'actions' => ['index', 'create', 'update', 'delete', 'view'], // Backoffice actions
                         'allow' => false,
                         'roles' => ['client'], // Explicitly deny client access to backoffice
                     ],
                     [
                         'actions' => ['index', 'create', 'update', 'delete', 'login', 'view'],
-                        'allow' => true,
-                        'roles' => ['admin', 'supplier', 'manager', 'salesperson', 'guide'],
-                    ],
-                    [
-                        'actions' => ['index', 'create', 'update', 'delete', 'view', 'update-status'],
                         'allow' => true,
                         'roles' => ['admin', 'supplier', 'manager', 'salesperson', 'guide'],
                     ],
@@ -81,11 +71,9 @@ class SiteController extends Controller
     {
         return [
             'error' => [
-                'class' => \yii\web\ErrorAction::class,
+                'class' => CustomErrorAction::class,
                 'layout' => 'blank'
             ],
-
-
         ];
     }
 

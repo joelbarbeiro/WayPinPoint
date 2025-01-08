@@ -42,12 +42,17 @@ class ActivityController extends Controller
                         [
                             'actions' => ['index', 'create', 'update', 'delete', 'view'], // Backoffice actions
                             'allow' => false,
-                            'roles' => ['client'], // Explicitly deny client access to backoffice
+                            'roles' => ['client'], // Explicitly deny client access to backoffice activity actions
+                        ],
+                        [
+                            'actions' => ['create', 'update', 'delete',],
+                            'allow' => false,
+                            'roles' => ['manager', 'salesperson', 'guide'],
                         ],
                         [
                             'actions' => ['index', 'create', 'update', 'delete', 'view'],
                             'allow' => true,
-                            'roles' => ['admin', 'supplier', 'manager', 'salesperson', 'guide'],
+                            'roles' => ['admin', 'supplier'],
                         ],
                         [
                             'actions' => ['logout', 'index'],
