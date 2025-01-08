@@ -15,40 +15,50 @@ class m241217_205533_seed_activity extends Migration
         $this->batchInsert('activity',
             ['name', 'description', 'photo', 'maxpax', 'priceperpax', 'address', 'category_id', 'user_id', 'status'],
             [
-                ['Yoga Class', 'Relaxing yoga session for beginners.', 'BDXY3Ih8XhADZTKM.jpg', 15, 10.50, '123 Wellness St, City', 1, 2, 1],
-                ['Cooking Workshop', 'Learn to cook Italian cuisine.', 'CsyUFl49b7WISizS.jpg', 10, 30.00, '456 Kitchen Ave, City', 2, 3, 1],
-                ['Photography Walk', 'Capture nature and landscapes.', 'hd2UBNjh0xf-_tis.jpg', 20, 15.00, '789 Park Rd, City', 3, 3, 1],
-                ['Rock Climbing', 'Outdoor rock climbing for all levels.', 'jILk_o8lkagycDXR.jpg', 8, 50.00, 'Mountain Base, Highlands', 4, 2, 1],
-                ['Painting Class', 'Learn watercolor techniques.', 'NtgkN4GX3xTl_erN.jpg', 12, 20.00, '321 Art Lane, City', 5, 3, 1],
-                ['Swimming Lesson', 'Beginner swimming lessons.', 'RKkYk5i4bAuyKg4Y.jpg', 10, 25.00, 'City Pool Center, Main St', 6, 2, 1],
-                ['Cycling Tour', 'Explore the city on two wheels.', 'sKU4K-SB6L2emHDf.jpg', 15, 12.50, 'Central Plaza, City', 7, 3, 1],
-                ['Music Workshop', 'Learn to play the guitar.', 'SryE67L-I3mz1U0h.jpg', 6, 40.00, 'Music Academy, 12th St', 8, 3, 1],
-                ['Fitness Bootcamp', 'Intense outdoor workout session.', 'YSK1iO4rCQiY8PWz.jpg', 20, 35.00, 'Hilltop Park, City', 9, 2, 1],
-                ['Language Exchange', 'Practice Spanish with native speakers.', 'BrmfyPNe61RZqhJS.jpg', 25, 5.00, 'Library Hall, Downtown', 10, 2, 1],
+              ['Mountain Adventure Hike', 'Explore scenic trails with breathtaking mountain views.', 'WLxQvbMyfas.jpg', 15, 50.00, '123 Trailhead Lane, Mountainview', 1, 2, 1],
+              ['Forest Camping Escape', 'Experience a weekend under the stars surrounded by nature.', 'GxxHf3fJYPI.jpg', 20, 80.00, '456 Woodland Road, Nature Park', 2, 2, 1],
+              ['Coastal Cycling Tour', 'Ride along picturesque coastal roads with ocean views.', 'LR5-OExz4eE.jpg', 10, 40.00, '789 Seaside Avenue, Coastal Town', 3, 3, 1],
+              ['Wetland Birdwatching Tour', 'Observe unique bird species in their natural habitats.', 'ITjiVXcwVng.jpg', 8, 60.00, '321 Wetland Reserve, Birdland', 4, 3, 1],
+              ['Weekend Soccer Tournament', 'Join a friendly soccer tournament in the local community.', 'WvDYdXDzkhs.jpg', 22, 20.00, '111 Sports Arena, Downtown', 5, 2, 1],
+              ['Yoga in the Park', 'Relax and recharge with a morning yoga session in the park.', 'J6cg9TA8-e8.jpg', 25, 30.00, '234 Greenway Park, Downtown', 6, 3, 1],
+              ['Forest Birdwatching Adventure', 'Discover exotic birds in dense forest habitats.', 'ed-XvG01qV-0.jpg', 6, 70.00, '567 Forest Trail, Birdland', 7, 2, 1],
+              ['Rock Climbing for Beginners', 'Learn the basics of rock climbing with professional guides.', '7qTA0RDgXb0.jpg', 12, 90.00, '890 Cliffside Drive, Adventure City', 8, 3, 1],
+              ['Picnic by the Lake', 'Enjoy a relaxing outing by the serene lake.', 'ZHVqVY1NZJQ.jpg', 30, 20.00, '678 Lakeside Avenue, Relaxation Town', 9, 3, 1],
+              ['Summer Music Festival', 'Experience live music from top artists under the stars.', '8CqDvPuo_kI.jpg', 500, 120.00, '900 Festival Grounds, Music City', 10, 2, 1],
+              ['Scenic Road Trip Adventure', 'Drive through breathtaking landscapes with a group of adventurers.', 'MBz7o-W8kUE.jpg', 4, 200.00, '123 Highway Route, Adventure Land', 11, 3, 1],
+              ['City Heritage Walking Tour', 'Discover the rich history and culture of the city.', 'yBXF8NNlHcg.jpg', 20, 25.00, '123 Heritage Square, Oldtown', 12, 2, 1],
+              ['Stargazing Night Out', 'Spend the night watching stars and learning about constellations.', 'V6s1cmE39XM.jpg', 10, 50.00, '456 Observatory Road, Galaxy Point', 13, 3, 1],
+              ['Art and Wine Workshop', 'Unleash your creativity while enjoying fine wine.', '8T7NG5tvC8E.jpg', 15, 60.00, '789 Art Studio Lane, Creative Town', 14, 3, 1],
             ]
         );
 
         $this->batchInsert('date', ['id', 'date'], [
-            [1, '2025-06-10'],
-            [2, '2025-06-15'],
-            [3, '2025-06-20'],
-            [4, '2025-06-25'],
-            [5, '2025-07-01'],
-            [6, '2025-07-05'],
-            [7, '2025-07-10'],
-            [8, '2025-07-15'],
-            [9, '2025-08-01'],
-            [10, '2025-08-10'],
+          [1, '2025-06-10'],
+          [2, '2025-06-15'],
+          [3, '2025-06-20'],
+          [4, '2025-06-25'],
+          [5, '2025-07-01'],
+          [6, '2025-07-05'],
+          [7, '2025-07-10'],
+          [8, '2025-07-15'],
+          [9, '2025-08-01'],
+          [10, '2025-08-10'],
         ]);
         $time_id = 30;
         $calendarData = [];
-
-        for ($i = 1; $i <= 10; $i++) {
-            $calendarData[] = [$i, $i, $time_id];
+        $activitiesWithTwoDates = [1, 2, 3, 4, 5, 8, 10, 11, 12, 13];
+        $dateCounter = 1;
+        for ($activity_id = 1; $activity_id <= 14; $activity_id++) {
+          $calendarData[] = [$activity_id, $dateCounter, $time_id, 1];
+          $time_id++;
+          if (in_array($activity_id, $activitiesWithTwoDates)) {
+            $dateCounter = $dateCounter % 10 + 1;
+            $calendarData[] = [$activity_id, $dateCounter, $time_id, 1];
             $time_id++;
+          }
+          $dateCounter = $dateCounter % 10 + 1;
         }
-
-        $this->batchInsert('calendar', ['activity_id', 'date_id', 'time_id'], $calendarData);
+        $this->batchInsert('calendar', ['activity_id', 'date_id', 'time_id', 'status'], $calendarData);
     }
 
     /**
