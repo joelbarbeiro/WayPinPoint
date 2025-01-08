@@ -8,7 +8,6 @@ use yii\helpers\Html;
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
 $this->title = 'Activities';
-$this->params['breadcrumbs'][] = $this->title;
 ?>
     <div class="signup-form">
         <h1><?= Html::encode($this->title) ?></h1>

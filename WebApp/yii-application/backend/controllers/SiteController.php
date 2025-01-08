@@ -191,14 +191,14 @@ class SiteController extends Controller
     public function actionError()
     {
         $exception = Yii::$app->errorHandler->exception;
-
         if ($exception !== null) {
-            if ($exception instanceof ForbiddenHttpException) {
+            if ($exception->statusCode === 403) {
                 // Render a custom 403 view
-                return $this->render('@backend/views/error');
+                return $this->render('@backend/views/loginerror', ['exception' => $exception]);
             }
+            return $this->render('@backend/views/error', ['exception' => $exception]);
         }
-        return $this->render('error', ['exception' => $exception]);
+        return $this->render('@backend/views/error');
     }
 
     /**

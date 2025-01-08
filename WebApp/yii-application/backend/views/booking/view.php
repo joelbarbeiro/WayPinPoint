@@ -7,8 +7,6 @@ use yii\widgets\DetailView;
 /** @var common\models\Booking $model */
 
 $this->title = $model->id;
-$this->params['breadcrumbs'][] = ['label' => 'Bookings', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
 <div class="booking-view">

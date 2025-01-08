@@ -7,8 +7,6 @@ use yii\helpers\Url;
 /** @var common\models\UserExtra $model */
 
 $this->title = "Employee : " . $model->user->username;
-$this->params['breadcrumbs'][] = ['label' => 'User Extras', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
 <div class="user-extra-view">

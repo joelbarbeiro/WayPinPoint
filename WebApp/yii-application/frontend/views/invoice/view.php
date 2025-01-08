@@ -7,8 +7,7 @@ use yii\widgets\DetailView;
 /** @var common\models\Invoice $model */
 
 $this->title = $model->id;
-$this->params['breadcrumbs'][] = ['label' => 'Invoices', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+
 \yii\web\YiiAsset::register($this);
 ?>
 <div class="invoice-view">

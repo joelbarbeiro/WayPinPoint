@@ -7,8 +7,7 @@ use yii\widgets\DetailView;
 /** @var frontend\models\Review $model */
 
 $this->title = $model->id;
-$this->params['breadcrumbs'][] = ['label' => 'Review', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+
 \yii\web\YiiAsset::register($this);
 ?>
 <div class="reviews-view">

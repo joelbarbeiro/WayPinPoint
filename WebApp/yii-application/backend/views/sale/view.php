@@ -7,8 +7,6 @@ use yii\widgets\DetailView;
 /** @var common\models\Sale $model */
 
 $this->title = $model->activity->name;
-$this->params['breadcrumbs'][] = ['label' => 'Sales', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
 <div class="sale-view">

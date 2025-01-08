@@ -8,9 +8,6 @@ use yii\helpers\Html;
 /** @var backend\controllers\ActivityController $categories */
 
 $this->title = 'Update Activities: ' . $model->name;
-$this->params['breadcrumbs'][] = ['label' => 'Activity', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->name, 'url' => ['view', 'id' => $model->id]];
-$this->params['breadcrumbs'][] = 'Update';
 
 ?>
 <div class="activities-update">

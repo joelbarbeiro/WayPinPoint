@@ -9,7 +9,6 @@ use yii\helpers\Url;
 /** @var common\models\Booking $model */
 
 $this->title = 'Bookings';
-$this->params['breadcrumbs'][] = $this->title;
 
 ?>
 <div class="booking-index">
