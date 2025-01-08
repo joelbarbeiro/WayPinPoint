@@ -38,7 +38,10 @@ $this->title = $model->activity->name;
                 'attribute' => 'total',
                 'format' => ['currency', 'EUR']
             ],
-            'purchase_date',
+            [
+                'attribute' => 'purchase_date',
+                'value' => $model->purchase_date,
+            ],
             [
                 'attribute' => 'seller_id',
                 'value' => $model->seller ? $model->seller->username : 'N/A', // Assuming `username` is the field in `User`

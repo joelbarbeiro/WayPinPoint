@@ -88,7 +88,7 @@ class Invoice extends \yii\db\ActiveRecord
         $model->sale_id = $sale_id;
         $model->booking_id = $booking_id;
         if($model->save()){
-            return true;
+            return $model;
         }
         else {
             return false;
