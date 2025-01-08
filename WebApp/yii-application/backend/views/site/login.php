@@ -4,9 +4,15 @@
 /** @var \common\models\LoginForm $model */
 
 use yii\bootstrap5\Html;
+use yii\helpers\Url;
+
+$logo = Url::to('@web/img/logo/waypinpoint.png');
 
 ?>
-<div class="card">
+<div class="d-flex flex-column justify-content-center align-items-center vh-50 p-3">
+    <img src="<?= $logo?>" alt="Logo Waypinpoint" class="rounded-5" >
+</div>
+<div class="card rounded-5">
     <div class="card-body login-card-body">
         <p class="login-box-msg">Sign in to start your session</p>
 
@@ -14,7 +20,6 @@ use yii\bootstrap5\Html;
 
         <?= $form->field($model,'username', [
             'options' => ['class' => 'form-group has-feedback'],
-            'inputTemplate' => '{input}<div class="input-group-append"><div class="input-group-text"><span class="fas fa-envelope"></span></div></div>',
             'template' => '{beginWrapper}{input}{error}{endWrapper}',
             'wrapperOptions' => ['class' => 'input-group mb-3']
         ])
@@ -23,13 +28,11 @@ use yii\bootstrap5\Html;
 
         <?= $form->field($model, 'password', [
             'options' => ['class' => 'form-group has-feedback'],
-            'inputTemplate' => '{input}<div class="input-group-append"><div class="input-group-text"><span class="fas fa-lock"></span></div></div>',
             'template' => '{beginWrapper}{input}{error}{endWrapper}',
             'wrapperOptions' => ['class' => 'input-group mb-3']
         ])
             ->label(false)
             ->passwordInput(['placeholder' => $model->getAttributeLabel('password')]) ?>
-
 
         <div class="row">
             <div class="col-8">
@@ -41,27 +44,13 @@ use yii\bootstrap5\Html;
                     'uncheck' => null
                 ]) ?>
             </div>
-            <div class="col-4">
-                <?= Html::submitButton('Sign In', ['class' => 'btn btn-primary btn-block']) ?>
+            <div class="d-flex flex-column justify-content-center align-items-center vh-50 p-3">
+                <?= Html::submitButton('Sign In', ['class' => 'btn btn-outline-primary btn-block']) ?>
             </div>
         </div>
 
         <?php \yii\bootstrap4\ActiveForm::end(); ?>
 
-        <div class="social-auth-links text-center mb-3">
-            <p>- OR -</p>
-            <a href="#" class="btn btn-block btn-primary">
-                <i class="fab fa-facebook mr-2"></i> Sign in using Facebook
-            </a>
-            <a href="#" class="btn btn-block btn-danger">
-                <i class="fab fa-google-plus mr-2"></i> Sign in using Google+
-            </a>
-        </div>
-        <!-- /.social-auth-links -->
-
-        <p class="mb-1">
-            <a href="forgot-password.html">I forgot my password</a>
-        </p>
         <p class="mb-0">
             <a href="<?= \yii\helpers\Url::toRoute('site/register')?>">Register new supplier</a>
         </p>

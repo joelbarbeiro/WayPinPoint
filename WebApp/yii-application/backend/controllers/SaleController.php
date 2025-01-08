@@ -11,8 +11,10 @@ use common\models\Sale;
 use common\models\Ticket;
 use common\models\UserExtra;
 use Da\QrCode\QrCode;
+use Mpdf\Mpdf;
 use Yii;
 use yii\filters\AccessControl;
+use yii\db\Expression;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
 use yii\web\BadRequestHttpException;
@@ -47,7 +49,7 @@ class SaleController extends Controller
                             'roles' => ['client', 'guide'],
                         ],
                         [
-                            'actions' => ['index', 'create', 'update', 'delete', 'view'],
+                            'actions' => ['index', 'create', 'update', 'delete', 'view', 'print'],
                             'allow' => true,
                             'roles' => ['admin', 'supplier', 'manager', 'salesperson'],
                         ],
@@ -150,7 +152,6 @@ class SaleController extends Controller
                     Yii::$app->session->setFlash('error', 'Failed to send ticket and receipt by email! Don\'t worry you can find them in your personal area to download');
                 }
                 return $this->redirect(['view', 'id' => $model->id]);
-
             } else {
                 var_dump($model->getErrors());
             }
@@ -214,6 +215,18 @@ class SaleController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    public function actionPrint($sale_id)
+    {
+        $invoice = Invoice::find()->where(['sale_id' => $sale_id])->one();
+        $content = $this->renderPartial('invoice', ['invoice' => $invoice]);
+
+        $pdf = new Mpdf();
+        $pdf->WriteHTML($content);
+        return Yii::$app->response->sendContentAsFile($pdf->Output('', 'S'), "receipt_{$invoice->sale->purchase_date}.pdf", [
+            'mimeType' => 'application/pdf',
+        ]);
     }
 
     public static function generateQrCodeSale($sale)

@@ -2,6 +2,8 @@
 
 namespace common\models;
 
+use Dompdf\Dompdf;
+
 /**
  * This is the model class for table "invoice".
  *
