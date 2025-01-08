@@ -23,13 +23,12 @@ class m241128_201209_create_table_categories extends Migration
             [4,'Bird watching'],
             [5,'Sports'],
             [6,'Group Class'],
-            [7,'Bird watching'],
-            [8,'Rock climbing'],
-            [9,'Outings'],
-            [10,'Live concerts'],
-            [11,'Road trips'],
-            [12,'Cultural tourism'],
-            [13,'Other']
+            [7,'Rock climbing'],
+            [8,'Outings'],
+            [9,'Live concerts'],
+            [10,'Road trips'],
+            [11,'Cultural tourism'],
+            [12,'Other']
         ]);
     }
 
