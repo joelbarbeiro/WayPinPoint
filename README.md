@@ -6,9 +6,9 @@ A Platform to book activities via Web or Mobile
 
 #### Instalação do yii advanced e atualização do composer
 
-1. passo - Correr o comando php init
+1. Passo - Correr o comando php init
 
-2. passo - composer update
+2. Passo - composer update
 
 #### Correr os comandos de migração db
 
