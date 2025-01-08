@@ -8,8 +8,10 @@ use common\models\Booking;
 use common\models\Invoice;
 use common\models\Sale;
 use common\models\UserExtra;
+use Mpdf\Mpdf;
 use Yii;
 use yii\db\Expression;
+use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
 use yii\web\BadRequestHttpException;
@@ -35,16 +37,21 @@ class SaleController extends Controller
                         'delete' => ['POST'],
                     ],
                 ],
-                [
-                    'actions' => ['index', 'create', 'update', 'delete', 'view'],
-                    'allow' => false,
-                    'roles' => ['client', 'guide'],
-                ],
-                [
-                    'actions' => ['index', 'create', 'update', 'delete', 'view'],
-                    'allow' => true,
-                    'roles' => ['admin', 'supplier', 'manager', 'salesperson'],
-                ],
+                'access' => [
+                    'class' => AccessControl::class,
+                    'rules' => [
+                        [
+                            'actions' => ['index', 'create', 'update', 'delete', 'view'],
+                            'allow' => false,
+                            'roles' => ['client', 'guide'],
+                        ],
+                        [
+                            'actions' => ['index', 'create', 'update', 'delete', 'view', 'print'],
+                            'allow' => true,
+                            'roles' => ['admin', 'supplier', 'manager', 'salesperson'],
+                        ],
+                    ],
+                ]
             ]
         );
     }
@@ -118,7 +125,7 @@ class SaleController extends Controller
             if ($model->save()) {
                 Sale::createBooking($activity, $model->buyer, $model->calendar_id, $model->quantity);
                 $booking = Booking::find()
-                    ->where(['activity_id' => $activity->id, 'user_id' => $model->buyer ])
+                    ->where(['activity_id' => $activity->id, 'user_id' => $model->buyer])
                     ->one();
                 Invoice::createInvoiceBackend($userId, $model->id, $booking->id);
                 return $this->redirect(['view', 'id' => $model->id]);
@@ -185,5 +192,17 @@ class SaleController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    public function actionPrint($sale_id)
+    {
+        $invoice = Invoice::find()->where(['sale_id' => $sale_id])->one();
+        $content = $this->renderPartial('invoice', ['invoice' => $invoice]);
+
+        $pdf = new Mpdf();
+        $pdf->WriteHTML($content);
+        return Yii::$app->response->sendContentAsFile($pdf->Output('', 'S'), "receipt_{$invoice->sale->purchase_date}.pdf", [
+            'mimeType' => 'application/pdf',
+        ]);
     }
 }
