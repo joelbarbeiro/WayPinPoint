@@ -27,7 +27,7 @@ class CreateEmployeeCest
         $I->click('Sign In');
         $I->seeValidationError('Incorrect username or password.');
 
-        $I->fillField('LoginForm[username]', 'Test1');
+        $I->fillField('LoginForm[username]', 'Test9');
         $I->fillField('LoginForm[password]', '123123123');
         $I->click('Sign In');
         $I->see('Starter Page');
@@ -54,7 +54,7 @@ class CreateEmployeeCest
         $I->fillField('Phone', '915556661');
         $I->fillField('Address', 'Employee Street');
         $I->fillField('Nif', '456456789');
-        $I->selectOption('RoleRegisterForm[localsellpoint]',"14"); // MUDAR SEMPRE PARA UM ACIMA
+        $I->selectOption('RoleRegisterForm[localsellpoint]',"5"); // MUDAR SEMPRE PARA UM ACIMA
         $I->selectOption('RoleRegisterForm[role]',"manager");
         $I->see('Register User');
         $I->click('Register User');
@@ -65,8 +65,8 @@ class CreateEmployeeCest
     private function createValidUser(bool $save = false)
     {
         $user = new User();
-        $user->username = 'Test1';
-        $user->email = 'test1@test.com';
+        $user->username = 'Test9';
+        $user->email = 'test9@test.com';
         $user->setPassword('123123123');
         $user->generateAuthKey();
         $user->generateEmailVerificationToken();
@@ -91,7 +91,7 @@ class CreateEmployeeCest
         $userExtra->phone = "912222222";
         $userExtra->user_id = $this->user->id;
         $userExtra->address = "Avenida do Alfredo Junior";
-        $userExtra->nif = "213212296";
+        $userExtra->nif = "213212242";
         if ($save) {
             $userExtra->save(false);
         }

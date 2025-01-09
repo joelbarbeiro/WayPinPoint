@@ -4,6 +4,8 @@
 /** @var \common\models\Activity $activity */
 
 use common\models\User;
+use yii\helpers\Url;
+
 
 ?>
 <!DOCTYPE html>
@@ -28,7 +30,7 @@ use common\models\User;
     </style>
 </head>
 <body>
-<h1>Receipt</h1>
+<h1>Waypinpoint Receipt</h1>
 <p><strong>User: </strong> <?= $invoice->user->username ?></p>
 <p><strong>NIF: </strong> <?= $invoice->user->userextra->nif ?></p>
 <p><strong>Address: </strong><?=$invoice->user->userextra->address ?></p>

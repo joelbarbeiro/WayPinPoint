@@ -3,8 +3,11 @@
 namespace common\tests;
 
 use common\models\Activity;
+use common\models\Calendar;
 use common\models\Cart;
 use common\models\Category;
+use common\models\Date;
+use common\models\Time;
 use common\models\User;
 
 class CartTest extends \Codeception\Test\Unit
@@ -33,11 +36,14 @@ class CartTest extends \Codeception\Test\Unit
     private const VALID_QUANTITY = 1;
     private const VALID_STATUS = 0;
     private const VALID_CALENDAR_ID = 1;
-    protected UnitTester $tester;
+    protected $tester;
     protected $user;
     protected $category;
     protected $activity;
     protected $cart;
+    protected $calendar;
+    protected $time;
+    protected $date;
 
     protected function _before()
     {
@@ -52,6 +58,16 @@ class CartTest extends \Codeception\Test\Unit
         $this->activity = $this->createValidActivity();
         $this->activity->save();
 
+        $this->time = $this->createTime();
+        $this->time->hour = "11:00";
+        $this->time->save();
+
+        $this->date = $this->createDate();
+        $this->date->date = "2025-01-05";
+        $this->date->save();
+
+        $this->calendar = $this->createCalendar();
+        $this->calendar->save();
 
         $this->cart = $this->createValidCart();
         $this->cart->save();
@@ -98,24 +114,23 @@ class CartTest extends \Codeception\Test\Unit
     {
         $cart = $this->createValidCart();
         $wasSavedSuccessfully = $cart->save(false);
-
         $this->assertTrue($wasSavedSuccessfully);
 
         $cartFromDatabase = Cart::find()->where(['user_id' => $this->user->id])->one();
         $this->assertNotNull($cartFromDatabase);
-        $this->assertEquals(self::VALID_PRODUCT_ID, $cartFromDatabase->product_id);
-        $this->assertEquals( self::VALID_QUANTITY, $cartFromDatabase->quantity);
-        $this->assertEquals(self::VALID_STATUS, $cartFromDatabase->status);
+        $this->assertEquals($cart->product_id, $cartFromDatabase->product_id);
+        $this->assertEquals( $cart->quantity, $cartFromDatabase->quantity);
+        $this->assertEquals($cart->status, $cartFromDatabase->status);
     }
 
     private function createValidCart()
     {
         $cart = new Cart();
-        $cart->product_id = self::VALID_PRODUCT_ID;
+        $cart->product_id = $this->activity->id;
         $cart->user_id = $this->user->id;
         $cart->quantity = self::VALID_QUANTITY;
         $cart->status = self::VALID_STATUS;
-        $cart->calendar_id = self::VALID_CALENDAR_ID;
+        $cart->calendar_id = $this->calendar->id;
         return $cart;
     }
 
@@ -208,5 +223,29 @@ class CartTest extends \Codeception\Test\Unit
         $wasSavedSuccessfully = $cart->save();
         $this->assertFalse($wasSavedSuccessfully, "Cart should not be saved due to invalid status");
 
+    }
+
+    public function createTime(){
+        $time = new Time();
+        $time->hour = self::VALID_HOUR;
+
+        return $time;
+    }
+
+    public function createDate(){
+        $date = new Date();
+        $date->date = self::VALID_DATE;
+
+        return $date;
+    }
+
+    public function createCalendar(){
+        $calendar = new Calendar();
+        $calendar->activity_id = $this->activity->id;
+        $calendar->date_id = $this->date->id;
+        $calendar->time_id = $this->time->id;
+        $calendar->status = "1";
+
+        return $calendar;
     }
 }

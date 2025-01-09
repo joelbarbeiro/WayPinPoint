@@ -65,7 +65,7 @@ class LocalSellpointTest extends \Codeception\Test\Unit
 
         $localShopFromDatabase = Localsellpoint::findOne(['name' => 'New Name']);
         $this->assertNotNull($localShopFromDatabase);
-        $this->assertEquals("New Message", $localShopFromDatabase->address);
+        $this->assertEquals("New Address", $localShopFromDatabase->address);
     }
 
     public function testUpdateAndRead()

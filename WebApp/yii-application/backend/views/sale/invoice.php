@@ -29,7 +29,7 @@ use common\models\User;
 </head>
 <body>
 <p>
-<h1>Receipt</h1>
+<h1>Waypinpoint Receipt</h1>
 <p><strong>User:</strong> <?= $invoice->sale->buyer0->username ?></p>
 <p><strong>NIF:</strong> <?= $invoice->sale->buyerextra->nif ?></p>
 <p><strong>Address:</strong> <?= $invoice->sale->buyerextra->address ?></p>

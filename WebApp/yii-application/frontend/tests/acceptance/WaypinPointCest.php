@@ -45,7 +45,8 @@ class WaypinPointCest
         $I->see('Activities');
         $I->see('Buy');
         $I->click('Buy');
-        $I->see('Number of tickets ');
+        $I->waitForText('Number of tickets');
+        $I->see('Number of tickets');
         $I->fillField('Cart[quantity]', '1');
         $I->click('Save');
         $I->waitForText('Shopping Cart');
