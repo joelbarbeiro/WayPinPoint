@@ -10,6 +10,7 @@ class WaypinPointCest
 {
     protected $user;
     protected $userextra;
+
     public function before(AcceptanceTester $I)
     {
 
@@ -17,7 +18,7 @@ class WaypinPointCest
 
     public function buyAndCheckout(AcceptanceTester $I)
     {
-
+    // FAZER ZOOM OUT NO CHROME ( CTRL menos ) PARA PASSAR O TESTE
         $I->amOnPage('//');
         $I->see('Activities');
         $I->see('Signup');
@@ -27,9 +28,9 @@ class WaypinPointCest
         $I->see('Email');
         $I->fillField('SignupForm[email]', 'test@test.com');
         $I->see('Password');
-        $I->fillField('SignupForm[password]','123123123');
+        $I->fillField('SignupForm[password]', '123123123');
         $I->see('Phone');
-        $I->fillField('SignupForm[phone]','912912912');
+        $I->fillField('SignupForm[phone]', '912912912');
         $I->see('Address');
         $I->fillField('SignupForm[address]', 'Test Address');
         $I->see('Nif');
@@ -43,6 +44,7 @@ class WaypinPointCest
         $I->click('login-button');
         $I->waitForText('Activities');
         $I->see('Activities');
+        $I->waitForText('Buy');
         $I->see('Buy');
         $I->click('Buy');
         $I->waitForText('Number of tickets');
