@@ -477,6 +477,7 @@ class Activity extends \yii\db\ActiveRecord
         $payLoad->priceperpax = $this->priceperpax;
         $payLoad->address = $this->address;
         $payLoad->user_id = $this->user_id;
+        $payLoad->status = $this->status;
         $payLoad->category_id = $this->category_id;
 
         $jsonObject = json_encode($payLoad);
