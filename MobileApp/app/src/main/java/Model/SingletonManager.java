@@ -1,7 +1,6 @@
 package Model;
 
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ADD;
-import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.BROKER_URL;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.CHECKOUT;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.DELETE;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.EDIT;
@@ -11,7 +10,6 @@ import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.NO_TOKEN;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.TOKEN;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.USER_DATA;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getApiHost;
-import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getBrokerUri;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.getUserId;
 
 import android.content.Context;
@@ -22,14 +20,9 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
-import com.android.volley.NetworkError;
-import com.android.volley.NetworkResponse;
-import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
-import com.android.volley.ServerError;
-import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
@@ -49,8 +42,8 @@ import Listeners.ActivitiesListener;
 import Listeners.ActivityListener;
 import Listeners.CartListener;
 import Listeners.CartsListener;
+import Listeners.InvoicesListener;
 import Listeners.LoginListener;
-import Listeners.MosquittoListener;
 import Listeners.PhotosListener;
 import Listeners.ReviewListener;
 import Listeners.ReviewsListener;
@@ -61,6 +54,7 @@ import pt.ipleiria.estg.dei.waypinpoint.utils.CalendarJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.CartJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.CategoryJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.ImageSender;
+import pt.ipleiria.estg.dei.waypinpoint.utils.InvoiceJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.ReviewJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.StatusJsonParser;
 import pt.ipleiria.estg.dei.waypinpoint.utils.TimeJsonParser;
@@ -88,7 +82,7 @@ public class SingletonManager {
     private ArrayList<Review> reviews;
     //endregion
 
-    //Region Cart Instances
+    //region # Cart Instances #
     private CartListener cartListener;
     private CartsListener cartsListener;
     private ArrayList<Cart> carts;
@@ -101,6 +95,11 @@ public class SingletonManager {
     private ArrayList<Calendar> calendars;
     private ArrayList<CalendarTime> calendarTimes;
     private ArrayList<Category> categories;
+    //endregion
+
+    //region # Invoices Instances #
+    private ArrayList<Invoice> invoices;
+    private InvoicesListener invoicesListener;
     //endregion
 
     private static RequestQueue volleyQueue = null;
@@ -131,6 +130,9 @@ public class SingletonManager {
         return instance;
     }
 
+
+
+    //region = API USER METHODS #
     //REGISTER LISTENERS
     public void setUserListener(UserListener userListener) {
         this.userListener = userListener;
@@ -169,8 +171,6 @@ public class SingletonManager {
             waypinpointDbHelper.removeUserDb(b.getId());
         }
     }
-
-    //region = API USER METHODS #
 
     public void addUserApi(String apiHost, final User user, final Context context) {
         if (!StatusJsonParser.isConnectionInternet(context)) {
@@ -375,8 +375,8 @@ public class SingletonManager {
         }
     }
     //endregion
-    //REGION # MÉTODOS CART - API #
 
+    //region# MÉTODOS CART - API #
     public void addCartsDB(ArrayList<Cart> carts) {
         waypinpointDbHelper.removeAllCartDb();
         for (Cart c : carts) {
@@ -595,8 +595,7 @@ public class SingletonManager {
         });
         volleyQueue.add(request);
     }
-
-    //ENDREGION
+    //endregion
 
     //region # Activity API #
     public void setActivitiesListener(ActivitiesListener activitiesListener) {
@@ -1160,6 +1159,87 @@ public class SingletonManager {
                     Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
+            volleyQueue.add(request);
+        }
+    }
+    //endregion
+
+    //region # INVOICE API #
+    public void setInvoicesListener(InvoicesListener invoicesListener) {
+        this.invoicesListener = invoicesListener;
+    }
+
+    public Invoice getInvoice(int id) {
+        for (Invoice invoice : invoices) {
+            if (invoice.getId() == id) {
+                return invoice;
+            }
+        }
+        return null;
+    }
+
+    public void addInvoicesDb(ArrayList<Invoice> invoices) {
+        waypinpointDbHelper.delAllInvoicesDb();
+        for (Invoice r : invoices) {
+            //System.out.println("DB Add invoice--> " + r);
+            waypinpointDbHelper.addInvoiceDB(r);
+        }
+    }
+
+    public void addInvoiceDb(Invoice invoice) {
+        waypinpointDbHelper.addInvoiceDB(invoice);
+    }
+
+    public void editInvoiceDb(Invoice invoice) {
+        waypinpointDbHelper.editInvoiceDb(invoice);
+    }
+
+    public void removeInvoiceDb(int invoiceId) {
+        Invoice i = getInvoice(invoiceId);
+        if (i != null) {
+            waypinpointDbHelper.removeInvoiceDb(i.getId());
+        }
+    }
+
+    public void getInvoicesForUserApi(final Context context, int id) {
+        String apiHost = getApiHost(context);
+        User user = getUser(getUserId(context));
+        if (!StatusJsonParser.isConnectionInternet(context)) {
+            Toast.makeText(context, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
+            if (invoicesListener != null) {
+                invoicesListener.onRefreshInvoicesList(waypinpointDbHelper.getInvoicesDB());
+            }
+        } else {
+            JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, apiHost + "invoices/invoices/" + id, null, new Response.Listener<JSONArray>() {
+                @Override
+                public void onResponse(JSONArray response) {
+                    //System.out.println("--> GETAPI: " + response);
+                    invoices = InvoiceJsonParser.parserJsonInvoices(response);
+                    addInvoicesDb(invoices);
+                    if (invoicesListener != null) {
+                        invoicesListener.onRefreshInvoicesList(invoices);
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    //System.out.println(" --> GETREVIEW --" + error);
+
+                }
+            }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> headers = new HashMap<>();
+                    // Add Basic Authentication Header
+                    String username = user.getUsername(); // Replace with your username
+                    String password = user.getPassword(); // Replace with your password
+                    String credentials = username + ":" + password;
+                    String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+                    headers.put("Authorization", auth);
+                    return headers;
+                }
+            };
+
             volleyQueue.add(request);
         }
     }

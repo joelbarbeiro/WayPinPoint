@@ -157,6 +157,12 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
                     .addToBackStack(null)
                     .replace(R.id.contentFragment, fragment).commit();
         }
+        if (item.getItemId() == R.id.navMyInvoices) {
+            fragment = new ListInvoicesFragment();
+            fragmentManager.beginTransaction()
+                    .addToBackStack(null)
+                    .replace(R.id.contentFragment, fragment).commit();
+        }
         if (item.getItemId() == R.id.navLogout) {
             dialogLogout(sharedPreferencesUser);
         }

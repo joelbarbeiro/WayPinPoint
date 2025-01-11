@@ -90,6 +90,9 @@
     <string name="no_string">No</string>
     <string name="delete_activity_title">Delete activity</string>
     <string name="dialog_remove_activity_message">Do you really want to remove it</string>
+    <string name="dialog_download">Download</string>
+    <string name="dialog_invoice_title">Remove or Download Invoice</string>
+    <string name="dialog_invoice_message">Do you wish to remove or download this invoice?</string>
 
     <!-- QR Code -->
     <string name="QR_Code_valid"><bold>"Valid QR Code: "</bold></string>
@@ -158,7 +161,7 @@
     <string name="add_to_cart">Add to cart</string>
     <string name="fab_add_activity">Add Activity</string>
     <string name="menu_search_title_search">Search</string>
-    <string name="menu_delete">delete</string>
+    <string name="menu_delete">Delete</string>
     <string name="activity_review_label">Review</string>
     <string name="activity_pictures_description">Activity Pictures</string>
     <string name="details_activity_category">Category</string>
@@ -180,6 +183,12 @@
     <string name="activity_edit_success_message">Activity edit successful!</string>
     <string name="Api_hostname_message_before_login">Please config api hostname before login or register</string>
     <string name="activity_string">Activity</string>
+
+    <!-- Invoices -->
+    <string name="invoice_hour_hint">Hour</string>
+    <string name="invoice_participant_label">Participant Username:</string>
+    <string name="invoice_activity_label">Activity:</string>
+    <string name="invoices_my_invoices">My Invoices</string>
 
     <!-- Hints -->
     <string name="api_hostname_hint">Api Hostname</string>
