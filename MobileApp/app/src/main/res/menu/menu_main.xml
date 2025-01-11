@@ -16,6 +16,10 @@
             android:id="@+id/navMyActivities"
             android:icon="@drawable/ic_my_activities_menu"
             android:title="@string/menu_my_activities_label" />
+        <item
+            android:id="@+id/navMyInvoices"
+            android:icon="@drawable/ic_invoice_list"
+            android:title="@string/invoices_my_invoices" />
 
     </group>
     <item

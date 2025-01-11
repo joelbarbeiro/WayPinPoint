@@ -44,6 +44,7 @@ public class Utilities {
 
     public static final String SNACKBAR_MESSAGE = "SNACKBAR_MESSAGE";
     public static final String ID_CART = "ID_CART";
+    public static final String ID_INVOICE = "ID_INVOICE";
     public static final int DB_VERSION = 4;
     public static final String CALENDAR_ID = "CALENDAR_ID";
 

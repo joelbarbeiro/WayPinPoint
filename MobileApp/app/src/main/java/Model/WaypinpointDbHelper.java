@@ -30,8 +30,8 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
     private static final String PHOTO = "photo";
     private static final String ID = "id";
     private static final String ROLE = "role";
-
     //endregion
+
     //region = CART DECLARATIONS #
     private static final String TABLE_NAME_CART = "cart";
     public static final String USER = "user";
@@ -40,6 +40,7 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
     private static final String STATUS_ = "status";
     private static final String CALENDAR_ID = "calendar_id";
     //endregion
+
     //region = ACTIVITIES DECLARATIONS #
     private static final String TABLE_NAME_ACTIVITIES = "activities";
     private static final String NAME = "name";
@@ -76,6 +77,15 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
     private static final String MESSAGE = "message";
     private static final String CREATED_AT = "created_at";
     private static final String CREATOR = "creator";
+    //endregion
+
+    //region = INVOICE DECLARATIONS #
+    private static final String TABLE_NAME_INVOICES = "invoices";
+    private static final String PARTICIPANT = "participant";
+    private static final String DAY = "day";
+    private static final String ACTIVITYNAME = "activity_name";
+    private static final String ACTIVITYDESCRIPTION = "activity_description";
+    private static final String PRICE = "price";
     //endregion
 
     public WaypinpointDbHelper(@Nullable Context context) {
@@ -202,6 +212,25 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
             e.printStackTrace();
             System.out.println("->>> Error creating table: " + e.getMessage());
         }
+
+        String createInvoiceTable = "CREATE TABLE " + TABLE_NAME_INVOICES +
+                "(" + ID + " INTEGER, " +
+                PARTICIPANT + " TEXT NOT NULL, " +
+                ADDRESS + " TEXT NOT NULL, " +
+                DAY + " TEXT NOT NULL, " +
+                HOUR + " TEXT NOT NULL, " +
+                ACTIVITYNAME + " TEXT NOT NULL, " +
+                ACTIVITYDESCRIPTION + " TEXT NOT NULL, " +
+                PRICE + " INTEGER NOT NULL, " +
+                NIF + " INTEGER NOT NULL" +
+                ");";
+        try {
+            db.execSQL(createInvoiceTable);
+            //System.out.println("->>> Table " + TABLE_NAME_CART + " created successfully.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("->>> Error creating table: " + e.getMessage());
+        }
     }
 
     @Override
@@ -213,6 +242,7 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME_TIME);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME_REVIEWS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME_CART);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME_INVOICES);
         this.onCreate(db);
     }
 
@@ -560,7 +590,6 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
     }
     //endregion
 
-
     //region REVIEWS DB METHODS#
     public void addReviewDB(Review r) {
         ContentValues val = new ContentValues();
@@ -616,7 +645,8 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
     }
 
     //endregion
-    //REGION CART DB METHODS #
+
+    //region CART DB METHODS #
     public void addCartDb(Cart cart) {
         ContentValues values = new ContentValues();
         values.put(ID, cart.getId());
@@ -712,8 +742,67 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
         }
         return cart;
     }
+    //endregion
 
+    //region INVOICE DB METHODS #
+    public void addInvoiceDB(Invoice i) {
+        ContentValues val = new ContentValues();
+        val.put(ID, i.getId());
+        val.put(PARTICIPANT, i.getParticipant());
+        val.put(ADDRESS, i.getAddress());
+        val.put(DAY, i.getDay());
+        val.put(HOUR, i.getHour());
+        val.put(ACTIVITYNAME, i.getActivityName());
+        val.put(ACTIVITYDESCRIPTION, i.getActivityDescription());
+        val.put(PRICE, i.getPrice());
+        val.put(NIF, i.getNif());
 
-    //ENDREGION
+        this.db.insert(TABLE_NAME_INVOICES, null, val);
+    }
 
+    public boolean editInvoiceDb(Invoice invoice) {
+        ContentValues values = new ContentValues();
+        values.put(PARTICIPANT, invoice.getParticipant());
+        values.put(ADDRESS, invoice.getAddress());
+        values.put(DAY, invoice.getDay());
+        values.put(HOUR, invoice.getHour());
+        values.put(ACTIVITYNAME, invoice.getActivityName());
+        values.put(ACTIVITYDESCRIPTION, invoice.getActivityDescription());
+        values.put(PRICE, invoice.getPrice());
+        values.put(NIF, invoice.getNif());
+
+        return this.db.update(TABLE_NAME_INVOICES, values, ID + "= ?", new String[]{"" + invoice.getId()}) > 0;
+    }
+
+    public boolean removeInvoiceDb(int id) {
+        return this.db.delete(TABLE_NAME_INVOICES, ID + "= ?", new String[]{"" + id}) == 1;
+    }
+
+    public void delAllInvoicesDb() {
+        this.db.delete(TABLE_NAME_INVOICES, null, null);
+    }
+
+    public ArrayList<Invoice> getInvoicesDB() {
+        ArrayList<Invoice> invoices = new ArrayList<>();
+        Cursor cursor = this.db.query(TABLE_NAME_INVOICES, new String[]{ID, PARTICIPANT, ADDRESS, DAY, HOUR, ACTIVITYNAME, ACTIVITYDESCRIPTION, PRICE, NIF},
+                null, null, null, null, null);
+        if (cursor.moveToFirst()) {
+            do {
+                Invoice auxInvoice = new Invoice(
+                        cursor.getInt(0),
+                        cursor.getString(1),
+                        cursor.getString(2),
+                        cursor.getString(3),
+                        cursor.getString(4),
+                        cursor.getString(5),
+                        cursor.getString(6),
+                        cursor.getInt(7),
+                        cursor.getInt(8));
+                invoices.add(auxInvoice);
+            } while (cursor.moveToNext());
+        }
+        return invoices;
+    }
+
+    //endregion
 }
