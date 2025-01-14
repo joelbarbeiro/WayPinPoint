@@ -409,7 +409,6 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
         ContentValues val = new ContentValues();
         val.put(ID, c.getId());
         val.put(ID_ACTIVITY, c.getActivity_id());
-        val.put(ID_CALENDAR, c.getActivity_id());
         val.put(ID_DATE, c.getDate_id());
         val.put(DATE, c.getDate());
         val.put(ID_TIME, c.getTime_id());
@@ -421,7 +420,6 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
         ContentValues val = new ContentValues();
         val.put(ID, c.getId());
         val.put(ID_ACTIVITY, c.getActivity_id());
-        val.put(ID_CALENDAR, c.getActivity_id());
         val.put(ID_DATE, c.getDate_id());
         val.put(DATE, c.getDate());
         val.put(ID_TIME, c.getTime_id());

@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import Model.Activity;
 import Model.Calendar;
 import Model.CalendarTime;
-import Model.Cart;
 import Model.Category;
 import Model.SingletonManager;
 import Model.WaypinpointDbHelper;
@@ -52,7 +51,7 @@ public class ActivityDetailsActivity extends AppCompatActivity {
     private ImageView imageActivity;
     private FloatingActionButton fabCrudActivity;
     private Button btBuyActivity;
-    private Cart cart;
+    private int calendarId;
     private FragmentManager fragmentManager;
     private WaypinpointDbHelper waypinpointDbHelper;
 
@@ -147,7 +146,7 @@ public class ActivityDetailsActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Calendar selectedCalendar = (Calendar) parent.getItemAtPosition(position);
-                int calendarId = selectedCalendar.getId();
+                calendarId = selectedCalendar.getId();
             }
 
             @Override
@@ -168,7 +167,7 @@ public class ActivityDetailsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(ActivityDetailsActivity.this, CartActivity.class);
                 intent.putExtra(ACTIVITY_ID, activity.getId());
-                intent.putExtra(CALENDAR_ID, calendars.get(spinnerDateTime.getSelectedItemPosition()).getId());
+                intent.putExtra(CALENDAR_ID, calendarId);
                 startActivityForResult(intent, ADD);
             }
         });
