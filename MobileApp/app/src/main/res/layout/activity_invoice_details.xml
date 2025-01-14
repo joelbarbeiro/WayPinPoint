@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ActivityDetailsActivity">
+    tools:context=".InvoiceDetailsActivity">
 
 
     <!-- ScrollView with Existing Content -->
@@ -232,6 +232,13 @@
                     android:text="@string/category" />
 
             </LinearLayout>
+
+            <Button
+                android:id="@+id/btGetPdf"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="onClickGetPdf"
+                android:text="Get PDF" />
 
             <Space
                 android:layout_width="match_parent"

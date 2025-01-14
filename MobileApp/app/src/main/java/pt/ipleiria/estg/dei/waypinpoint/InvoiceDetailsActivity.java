@@ -3,6 +3,7 @@ package pt.ipleiria.estg.dei.waypinpoint;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ID_INVOICE;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -12,6 +13,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import Model.Invoice;
+import Model.PdfGenerator;
 import Model.SingletonManager;
 
 public class InvoiceDetailsActivity extends AppCompatActivity {
@@ -50,5 +52,9 @@ public class InvoiceDetailsActivity extends AppCompatActivity {
         tvPrice.setText(String.valueOf(invoice.getPrice()));
         tvNif.setText(String.valueOf(invoice.getNif()));
 
+    }
+
+    public void onClickGetPdf(View view) {
+        PdfGenerator.generate(getApplicationContext(), invoice);
     }
 }
