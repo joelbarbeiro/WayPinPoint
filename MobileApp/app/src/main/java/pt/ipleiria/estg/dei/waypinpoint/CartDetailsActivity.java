@@ -26,6 +26,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import Listeners.CartListener;
 import Model.Activity;
 import Model.Calendar;
+import Model.CalendarTime;
 import Model.Cart;
 import Model.SingletonManager;
 import Model.WaypinpointDbHelper;
@@ -70,7 +71,7 @@ public class CartDetailsActivity extends AppCompatActivity implements CartListen
         etActivityName.setText(activity.getName());
         etQuantity.setText("" + cart.getQuantity());
         etPrice.setText("" + activity.getPriceperpax());
-        etDate.setText("" + calendar.getDate());
+        etDate.setText(calendar.getDate() + " / " + waypinpointDbHelper.getCalendarTimeById(calendar.getTime_id()).toString());;
         String imgPath = Utilities.getImgUri(getApplicationContext()) + activity.getSupplier() + "/" + activity.getPhoto();
         Glide.with(getApplicationContext())
                 .load(imgPath)
