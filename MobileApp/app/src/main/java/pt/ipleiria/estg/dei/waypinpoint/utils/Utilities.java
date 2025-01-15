@@ -26,7 +26,6 @@ import Model.Category;
 import pt.ipleiria.estg.dei.waypinpoint.R;
 
 public class Utilities {
-    public static TextView etQuantity;
     public static final int ADD = 100;
     public static final int EDIT = 200;
     public static final int DELETE = 300;

@@ -131,7 +131,6 @@ public class SingletonManager {
     }
 
 
-
     //region = API USER METHODS #
     //REGISTER LISTENERS
     public void setUserListener(UserListener userListener) {
@@ -293,11 +292,10 @@ public class SingletonManager {
                     try {
                         ArrayList<String> photos = new ArrayList<>();
                         for (int i = 0; i < response.length(); i++) {
-                            String photoUrl = response.getString(i); // Extract URLs from the response
+                            String photoUrl = response.getString(i);
                             photos.add(photoUrl);
                         }
                         //System.out.println("---> PHOTOS: " + photos);
-                        // Notify listener with the updated photos list
                         if (photosListener != null) {
                             photosListener.onRefreshPhotosList(photos);
                         }
@@ -436,9 +434,8 @@ public class SingletonManager {
                 @Override
                 public Map<String, String> getHeaders() throws AuthFailureError {
                     Map<String, String> headers = new HashMap<>();
-                    // Add Basic Authentication Header
-                    String username = user.getUsername(); // Replace with your username
-                    String password = user.getPassword(); // Replace with your password
+                    String username = user.getUsername();
+                    String password = user.getPassword();
                     String credentials = username + ":" + password;
                     String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
                     headers.put("Authorization", auth);
@@ -464,6 +461,7 @@ public class SingletonManager {
                         if (cartListener != null) {
                             cartListener.onValidateOperation(ADD);
                         }
+                        Toast.makeText(context, "Activity added to cart", Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(context, "Error: " + jsonResponse.getString("errors"), Toast.LENGTH_SHORT).show();
                     }
@@ -477,13 +475,12 @@ public class SingletonManager {
                 if (error.networkResponse != null) {
                     int statusCode = error.networkResponse.statusCode;
                     String responseBody = new String(error.networkResponse.data);
-                    Toast.makeText(context, "Server Error: " + statusCode + "\n" + responseBody, Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, responseBody, Toast.LENGTH_LONG).show();
                     Log.e("ServerError", "Code: " + statusCode + " Response: " + responseBody);
                 } else {
                     Toast.makeText(context, "No response from server.", Toast.LENGTH_SHORT).show();
                     Log.e("ServerError", "No response from server.");
                 }
-                Toast.makeText(context, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         }) {
             @Override
@@ -501,9 +498,8 @@ public class SingletonManager {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
-                // Add Basic Authentication Header
-                String username = user.getUsername(); // Replace with your username
-                String password = user.getPassword(); // Replace with your password
+                String username = user.getUsername();
+                String password = user.getPassword();
                 String credentials = username + ":" + password;
                 String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
                 headers.put("Authorization", auth);
@@ -1034,9 +1030,8 @@ public class SingletonManager {
                 @Override
                 public Map<String, String> getHeaders() throws AuthFailureError {
                     Map<String, String> headers = new HashMap<>();
-                    // Add Basic Authentication Header
-                    String username = user.getUsername(); // Replace with your username
-                    String password = user.getPassword(); // Replace with your password
+                    String username = user.getUsername();
+                    String password = user.getPassword();
                     String credentials = username + ":" + password;
                     String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
                     headers.put("Authorization", auth);
@@ -1230,9 +1225,8 @@ public class SingletonManager {
                 @Override
                 public Map<String, String> getHeaders() throws AuthFailureError {
                     Map<String, String> headers = new HashMap<>();
-                    // Add Basic Authentication Header
-                    String username = user.getUsername(); // Replace with your username
-                    String password = user.getPassword(); // Replace with your password
+                    String username = user.getUsername();
+                    String password = user.getPassword();
                     String credentials = username + ":" + password;
                     String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
                     headers.put("Authorization", auth);
