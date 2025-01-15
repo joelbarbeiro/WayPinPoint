@@ -2,14 +2,11 @@
 
 namespace backend\modules\api\controllers;
 
-use \common\models\Activity;
+use common\models\Activity;
 use common\models\Calendar;
 use common\models\Category;
 use common\models\Time;
-use common\models\User;
-use common\models\UserExtra;
 use Yii;
-use yii\filters\auth\HttpBasicAuth;
 use yii\rest\ActiveController;
 
 class ActivityController extends ActiveController
@@ -81,7 +78,7 @@ class ActivityController extends ActiveController
     public function actionUpdateactivity($id)
     {
         $activity = new Activity();
-        if(Yii::$app->request->post()) {
+        if (Yii::$app->request->post()) {
             $activity = $activity->getActivityView($id);
             $activity->load(Yii::$app->request->post(), '');
             if ($activity->updateActivity($activity)) {
@@ -112,6 +109,7 @@ class ActivityController extends ActiveController
             'message' => json_encode($activity->errors),
         ];
     }
+
     public function actionCalendar()
     {
         $calendar = Calendar::getCalendar();
@@ -133,6 +131,7 @@ class ActivityController extends ActiveController
         \Yii::$app->response->statusCode = 400;
         return ['error' => 'Calendar not found'];
     }
+
     public function actionCategory()
     {
         $category = Category::getCategory();
@@ -179,14 +178,14 @@ class ActivityController extends ActiveController
                     $transaction->rollBack();
                     \Yii::$app->response->statusCode = 400;
                     throw new \Exception('Failed to save photo data');
-                } else{
+                } else {
                     $transaction->commit();
                     return [
                         'status' => 'success',
                         'photo' => $uniqueFilename
                     ];
                 }
-            } else{
+            } else {
                 \Yii::$app->response->statusCode = 400;
                 throw new \Exception('Empty photo file');
             }
@@ -199,7 +198,7 @@ class ActivityController extends ActiveController
 
     public function actionPictures($id)
     {
-        $photosDirectory = Yii::getAlias('@backend/web/img/activity/photos/' . $id . '/') ;
+        $photosDirectory = Yii::getAlias('@backend/web/img/activity/photos/' . $id . '/');
 
         if (!is_dir($photosDirectory)) {
             return $this->asJson([]);

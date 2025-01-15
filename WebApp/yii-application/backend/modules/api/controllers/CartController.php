@@ -3,14 +3,11 @@
 namespace backend\modules\api\controllers;
 
 use common\models\Booking;
-use common\models\Activity;
 use common\models\Cart;
 use common\models\Invoice;
 use common\models\Sale;
 use common\models\Ticket;
-use common\models\User;
 use Yii;
-use yii\filters\auth\HttpBasicAuth;
 use yii\rest\ActiveController;
 
 class CartController extends ActiveController
@@ -100,19 +97,30 @@ class CartController extends ActiveController
 
     public function actionAddcart()
     {
+
         $cart = new Cart();
+
+        $id = $cart->product_id;
+        $calendarId = $cart->calendar_id;
+        $ticketsAvailable = Booking::getTotalTicketsByActivity($id, $calendarId);
+
         if ($cart->load(Yii::$app->request->post(), '')) {
-            if ($cart->save()) {
-                return [
-                    'success' => true,
-                    'message' => 'Cart created successfully',
-                    'id' => $cart->id,
-                    'user_id' => $cart->user_id,
-                    'product_id' => $cart->product_id,
-                    'status' => $cart->status = 0,
-                    'quantity' => $cart->quantity,
-                    'calendar_id' => $cart->calendar_id,
-                ];
+            if (($ticketsAvailable + $cart->quantity) <= $cart->activity->maxpax) {
+                if ($cart->save()) {
+                    return [
+                        'success' => true,
+                        'message' => 'Cart created successfully',
+                        'id' => $cart->id,
+                        'user_id' => $cart->user_id,
+                        'product_id' => $cart->product_id,
+                        'status' => $cart->status = 0,
+                        'quantity' => $cart->quantity,
+                        'calendar_id' => $cart->calendar_id,
+                    ];
+                }
+            } else {
+                \Yii::$app->response->statusCode = 400;
+                return "Not enough tickets available";
             }
         }
         return [
@@ -203,7 +211,7 @@ class CartController extends ActiveController
             if (!$mailSent) {
                 throw new \Exception("Failed to send email for Cart ID: $id");
             }
-            return[
+            return [
                 'status' => 'success',
                 'message' => 'Ticket and receipt sent to your email'
             ];
