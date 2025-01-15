@@ -110,7 +110,6 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
                 ");";
         try {
             db.execSQL(createUserTable);
-            //System.out.println("->>> Table " + TABLE_NAME_CART + " created successfully.");
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("->>> Error creating table: " + e.getMessage());
@@ -131,7 +130,6 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
                 ")";
         try {
             db.execSQL(createActivitiesTable);
-            //System.out.println("->>> Table " + TABLE_NAME_CART + " created successfully.");
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("->>> Error creating table: " + e.getMessage());
@@ -144,7 +142,6 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
                 ")";
         try {
             db.execSQL(createCategoryTable);
-            //System.out.println("->>> Table " + TABLE_NAME_CART + " created successfully.");
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("->>> Error creating table: " + e.getMessage());
@@ -160,7 +157,6 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
                 ")";
         try {
             db.execSQL(createCalendarTable);
-            //System.out.println("->>> Table " + TABLE_NAME_CART + " created successfully.");
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("->>> Error creating table: " + e.getMessage());
@@ -173,7 +169,6 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
                 ")";
         try {
             db.execSQL(createTimeTable);
-            //System.out.println("->>> Table " + TABLE_NAME_CART + " created successfully.");
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("->>> Error creating table: " + e.getMessage());
@@ -191,7 +186,6 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
                 ")";
         try {
             db.execSQL(createReviewsTable);
-            //System.out.println("->>> Table " + TABLE_NAME_CART + " created successfully.");
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("->>> Error creating table: " + e.getMessage());
@@ -207,7 +201,6 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
                 ");";
         try {
             db.execSQL(createCartTable);
-            //System.out.println("->>> Table " + TABLE_NAME_CART + " created successfully.");
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("->>> Error creating table: " + e.getMessage());
@@ -226,7 +219,6 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
                 ");";
         try {
             db.execSQL(createInvoiceTable);
-            //System.out.println("->>> Table " + TABLE_NAME_CART + " created successfully.");
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("->>> Error creating table: " + e.getMessage());
@@ -465,7 +457,7 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
                     cursor.getInt(4)
             );
         } else {
-            System.out.println(" if move first >>>>- vazio");
+            System.out.println("Error getting calendar");
         }
         return calendar;
     }
@@ -481,9 +473,7 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
                 selection,
                 selectionArgs,
                 null, null, null);
-        System.out.println("calendar cursor >>>>- " + cursor);
         if (cursor.moveToFirst()) {
-            System.out.println(" if move first >>>>- entrou");
             do {
                 Calendar auxCalendar = new Calendar(cursor.getInt(0), cursor.getInt(1), cursor.getInt(2),
                         cursor.getString(3), cursor.getInt(4));
@@ -491,7 +481,7 @@ public class WaypinpointDbHelper extends SQLiteOpenHelper {
                 System.out.println("Cal >>>>- " + auxCalendar);
             } while (cursor.moveToNext());
         } else {
-            System.out.println(" if move first >>>>- vazio");
+            System.out.println("Error getting ccalendars");
         }
         return calendars;
     }

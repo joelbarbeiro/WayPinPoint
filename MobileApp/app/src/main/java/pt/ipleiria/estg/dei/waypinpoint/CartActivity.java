@@ -12,31 +12,24 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
 
 import Listeners.CartListener;
 import Model.Cart;
 import Model.SingletonManager;
 
 public class CartActivity extends AppCompatActivity implements CartListener {
-    private FragmentManager fragmentManager;
-    private int quantity;
-    private int activityId;
-    private String apiHost = null;
     private Cart cart;
     private EditText etQuantity;
     private Button buttonAddCart;
     private CartListener listener;
-    private double total;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart);
-
         Intent intent = getIntent();
         int calendarId = intent.getIntExtra(CALENDAR_ID, 0);
         int activityId = intent.getIntExtra(ACTIVITY_ID, 0);
@@ -58,7 +51,6 @@ public class CartActivity extends AppCompatActivity implements CartListener {
                             0,
                             calendarId
                     );
-                    Toast.makeText(getApplicationContext(), "Activity added to cart", Toast.LENGTH_SHORT).show();
                     SingletonManager.getInstance(getApplicationContext()).setCartListener(CartActivity.this);
                     SingletonManager.getInstance(getApplicationContext()).addCartApi(newCart, getApplicationContext());
                 }
