@@ -121,17 +121,17 @@ public class ActivityCreateActivity extends AppCompatActivity implements Activit
         fabCreateActivity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                collectDateHourData();
                 if (etName.getText().toString().isEmpty() ||
                         etDescription.getText().toString().isEmpty() ||
                         etMaxPax.getText().toString().isEmpty() ||
                         etPricePerPax.getText().toString().isEmpty() ||
                         etAddress.getText().toString().isEmpty()||
-                        imageUri == null || imageUri.toString().isEmpty()) {
+                        imageUri == null || imageUri.toString().isEmpty() || dateHour.isEmpty()) {
 
                     Toast.makeText(getApplicationContext(), R.string.activity_empty_fields, Toast.LENGTH_SHORT).show();
                     return;
                 }
-                collectDateHourData();
                 if (activity != null) {
                     activity.setName(etName.getText().toString() );
                     activity.setDescription(etDescription.getText().toString());
@@ -225,26 +225,6 @@ public class ActivityCreateActivity extends AppCompatActivity implements Activit
         hourAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spHours.setAdapter(hourAdapter);
 
-
-        spHours.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                CalendarTime selectedTime = (CalendarTime) parent.getItemAtPosition(position);
-                int hourId = selectedTime.getId();
-                String hourString = selectedTime.getHour();
-
-                DateTimeParser tmpDateHour = new DateTimeParser(selectedDate, hourId);
-
-                if (!dateHour.contains(tmpDateHour)) {
-                    //dateHour.add(tmpDateHour);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
-
         dateHourRow.addView(tvDate);
         dateHourRow.addView(spHours);
 
@@ -331,20 +311,6 @@ public class ActivityCreateActivity extends AppCompatActivity implements Activit
             if (preselectedIndex != -1) {
                 spHours.setSelection(preselectedIndex);
             }
-
-            spHours.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    CalendarTime selectedTime = (CalendarTime) parent.getItemAtPosition(position);
-                    if (selectedTime != null) {
-                        int timeId = selectedTime.getId();
-                    }
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-                }
-            });
 
             dateHourRow.addView(tvDate);
             dateHourRow.addView(spHours);
