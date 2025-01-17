@@ -232,7 +232,6 @@ public class SingletonManager {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     System.out.println("---> " + error.getMessage());
-                    Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }) {
                 @Override
@@ -696,6 +695,7 @@ public class SingletonManager {
                 JSONArray hourArray = new JSONArray();
 
                 int i = 0;
+                System.out.println("->>"+dateTimeParser);
                 for (DateTimeParser dateTime : dateTimeParser) {
                     params.put("date[" + i + "]", dateTime.getParserDate());
                     params.put("hour[" + i + "]", dateTime.getParserTime());
@@ -719,8 +719,8 @@ public class SingletonManager {
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
-                            //System.out.println("->> " + params);
-                            //System.out.println("->> Server Response: " + response);
+                            System.out.println("->> " + params);
+                            System.out.println("->> Server Response: " + response);
                             waypinpointDbHelper.addActivityDB(ActivityJsonParser.parserJsonActivity(response));
 
                             if (activitiesListener != null) {
@@ -731,7 +731,7 @@ public class SingletonManager {
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            //System.out.println("->> onErrorResponse: " + error.getMessage());
+                            System.out.println("->> onErrorResponse: " + error.getMessage());
                             error.printStackTrace();
                         }
                     }

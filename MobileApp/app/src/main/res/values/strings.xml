@@ -183,6 +183,8 @@
     <string name="activity_edit_success_message">Activity edit successful!</string>
     <string name="Api_hostname_message_before_login">Please config api hostname before login or register</string>
     <string name="activity_string">Activity</string>
+    <string name="activity_empty_fields">Please fill in all fields</string>
+
 
     <!-- Invoices -->
     <string name="invoice_hour_hint">Hour</string>

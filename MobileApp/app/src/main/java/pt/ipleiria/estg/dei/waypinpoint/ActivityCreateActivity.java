@@ -121,6 +121,17 @@ public class ActivityCreateActivity extends AppCompatActivity implements Activit
         fabCreateActivity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (etName.getText().toString().isEmpty() ||
+                        etDescription.getText().toString().isEmpty() ||
+                        etMaxPax.getText().toString().isEmpty() ||
+                        etPricePerPax.getText().toString().isEmpty() ||
+                        etAddress.getText().toString().isEmpty()||
+                        imageUri == null || imageUri.toString().isEmpty()) {
+
+                    Toast.makeText(getApplicationContext(), R.string.activity_empty_fields, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                collectDateHourData();
                 if (activity != null) {
                     activity.setName(etName.getText().toString() );
                     activity.setDescription(etDescription.getText().toString());
@@ -214,6 +225,7 @@ public class ActivityCreateActivity extends AppCompatActivity implements Activit
         hourAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spHours.setAdapter(hourAdapter);
 
+
         spHours.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -224,7 +236,7 @@ public class ActivityCreateActivity extends AppCompatActivity implements Activit
                 DateTimeParser tmpDateHour = new DateTimeParser(selectedDate, hourId);
 
                 if (!dateHour.contains(tmpDateHour)) {
-                    dateHour.add(tmpDateHour);
+                    //dateHour.add(tmpDateHour);
                 }
             }
 
@@ -415,5 +427,19 @@ public class ActivityCreateActivity extends AppCompatActivity implements Activit
                     }
                 }).setIcon(android.R.drawable.ic_delete)
                 .show();
+    }
+    private void collectDateHourData() {
+        dateHour.clear();
+        DateTimeParser tmpDateTime;
+        for (int i = 0; i < lvDateHour.getChildCount(); i++) {
+            LinearLayout row = (LinearLayout) lvDateHour.getChildAt(i);
+            TextView dateTextView = (TextView) row.getChildAt(0);
+            Spinner hourSpinner = (Spinner) row.getChildAt(1);
+            CalendarTime selectedTime = (CalendarTime) hourSpinner.getSelectedItem();
+
+            tmpDateTime = new DateTimeParser(dateTextView.getText().toString(), selectedTime.getId());
+
+            dateHour.add(tmpDateTime);
+        }
     }
 }
