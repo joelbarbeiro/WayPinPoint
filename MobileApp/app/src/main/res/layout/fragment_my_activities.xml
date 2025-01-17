@@ -13,7 +13,14 @@
         <ListView
             android:id="@+id/lvMyActivities"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:visibility="visible" />
+
+        <include
+            android:id="@+id/emptyViewLayoutMyActivities"
+            layout="@layout/item_empty_view"
+            android:visibility="gone" />
+
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

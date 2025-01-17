@@ -52,22 +52,18 @@ public class QRCodeScannerActivity extends AppCompatActivity {
             try {
                 ProcessCameraProvider cameraProvider = cameraProviderFuture.get();
 
-                // Camera selector for back camera
                 CameraSelector cameraSelector = new CameraSelector.Builder()
                         .requireLensFacing(CameraSelector.LENS_FACING_BACK)
                         .build();
 
-                // Preview Use Case
                 androidx.camera.core.Preview preview = new androidx.camera.core.Preview.Builder().build();
                 preview.setSurfaceProvider(previewView.getSurfaceProvider());
 
-                // Image Analysis Use Case
                 ImageAnalysis imageAnalysis = new ImageAnalysis.Builder()
                         .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                         .build();
                 imageAnalysis.setAnalyzer(cameraExecutor, this::analyzeImage);
 
-                // Bind use cases to the lifecycle
                 cameraProvider.bindToLifecycle(
                         (LifecycleOwner) this,
                         cameraSelector,

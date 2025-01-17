@@ -1,5 +1,6 @@
 package Model;
 
+import static java.util.Collections.emptyList;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ADD;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.CHECKOUT;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.DELETE;
@@ -108,11 +109,11 @@ public class SingletonManager {
 
     public SingletonManager(Context context) {
         waypinpointDbHelper = new WaypinpointDbHelper(context);
-
         users = new ArrayList<>();
         carts = new ArrayList<>();
         activities = new ArrayList<>();
         reviews = new ArrayList<>();
+        invoices = new ArrayList<>();
         calendars = new ArrayList<>();
         calendarTimes = new ArrayList<>();
         categories = new ArrayList<>();
@@ -1218,8 +1219,9 @@ public class SingletonManager {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    //System.out.println(" --> GETREVIEW --" + error);
-
+                    if (invoicesListener != null) {
+                        invoicesListener.onRefreshInvoicesList(invoices);
+                    }
                 }
             }) {
                 @Override
