@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -47,8 +48,11 @@ public class MyActivitiesFragment extends Fragment implements SwipeRefreshLayout
     private ArrayList<CalendarTime> times;
     private ArrayList<Category> categories;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private View emptyView;
     private SearchView searchView;
     private FloatingActionButton fabCrudActivity;
+    private TextView tvEmptyMessage;
+
 
     public MyActivitiesFragment() {
 
@@ -61,6 +65,7 @@ public class MyActivitiesFragment extends Fragment implements SwipeRefreshLayout
         setHasOptionsMenu(true);
         View view = inflater.inflate(R.layout.fragment_my_activities, container, false);
         lvMyActivities = view.findViewById(R.id.lvMyActivities);
+        emptyView = view.findViewById(R.id.emptyViewLayoutMyActivities);
 
         lvMyActivities.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -168,9 +173,16 @@ public class MyActivitiesFragment extends Fragment implements SwipeRefreshLayout
     public void onRefreshAllData(ArrayList<Activity> listActivities, ArrayList<Calendar> listCalendar, ArrayList<CalendarTime> listCalendarTime, ArrayList<Category> listCategories) {
         if (listActivities != null && listCalendar != null && listCalendarTime != null && listCategories != null) {
             ArrayList<Activity> supplierActivity = filterActivitiesBySupplier(getContext(), listActivities);
-            lvMyActivities.setAdapter(new MyActivitiesAdapter(getContext(), supplierActivity, listCalendar, listCalendarTime, listCategories));
-        } else {
-            System.out.println("---> something is empty listActivitiesFragment");
+            if(!supplierActivity.isEmpty()) {
+                lvMyActivities.setVisibility(View.VISIBLE);
+                emptyView.setVisibility(View.GONE);
+                lvMyActivities.setAdapter(new MyActivitiesAdapter(getContext(), supplierActivity, listCalendar, listCalendarTime, listCategories));
+            } else {
+                lvMyActivities.setVisibility(View.GONE);
+                emptyView.setVisibility(View.VISIBLE);
+                tvEmptyMessage = emptyView.findViewById(R.id.tvEmptyMessage);
+                tvEmptyMessage.setText(R.string.empty_my_activities_message);
+            }
         }
     }
 

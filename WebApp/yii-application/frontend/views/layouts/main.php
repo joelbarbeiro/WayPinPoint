@@ -66,7 +66,7 @@ $this->registerCssFile('@web/css/style.css', ['depends' => [BootstrapAsset::clas
 
         $categories = Category::find()->select(['id', 'description'])->asArray()->all();
 
-        $categories[0] = ['id' => 0, 'description' => 'All Activities'];
+        $categories[13] = ['id' => 0, 'description' => 'All Activities'];
 
         $categoryDropdownItems = [];
         foreach ($categories as $category) {

@@ -39,6 +39,11 @@ class SiteController extends Controller
                     ],
                     [
                         'actions' => ['index', 'create', 'update', 'delete', 'view'], // Backoffice actions
+                        'allow' => true,
+                        'roles' => ['admin'], // Explicitly deny client access to backoffice
+                    ],
+                    [
+                        'actions' => ['index', 'create', 'update', 'delete', 'view'], // Backoffice actions
                         'allow' => false,
                         'roles' => ['client'], // Explicitly deny client access to backoffice
                     ],

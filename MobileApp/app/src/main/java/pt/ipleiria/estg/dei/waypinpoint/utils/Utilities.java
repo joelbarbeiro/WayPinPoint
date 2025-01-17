@@ -269,7 +269,6 @@ public class Utilities {
                 System.out.println(">>> " + a);
             }
         }
-
         return filteredActivities;
     }
 

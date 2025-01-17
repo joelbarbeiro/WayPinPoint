@@ -110,7 +110,7 @@ public class ListInvoicesFragment extends Fragment implements SwipeRefreshLayout
             lvInvoices.setVisibility(View.GONE);
             emptyView.setVisibility(View.VISIBLE);
             tvEmptyMessage = emptyView.findViewById(R.id.tvEmptyMessage);
-            tvEmptyMessage.setText(R.string.empty_placeholder_message);
+            tvEmptyMessage.setText(R.string.empty_invoices_message);
         }
     }
 }
