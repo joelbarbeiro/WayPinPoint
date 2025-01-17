@@ -55,7 +55,6 @@ public class MqttNotificationManager implements MosquittoListener {
                 break;
             default:
                 break;
-
         }
     }
 

@@ -60,7 +60,7 @@ class ActivitySearch extends Activity
             return $dataProvider;
         }
 
-        if (!empty($this->category_id)) {
+        if (!empty($this->category_id) && $this->category_id != 0) {
             $query->andFilterWhere(['category_id' => $this->category_id]);
         }
 

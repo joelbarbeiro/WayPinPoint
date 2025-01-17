@@ -149,6 +149,8 @@
     <string name="no_activities_message">No activities found. Explore more!</string>
     <string name="empty_cart_message">Your cart is empty. Add items now!</string>
     <string name="empty_photos_message">No photos added to this activity. Be the first to add a memory!</string>
+    <string name="empty_my_activities_message">You have no activities added. Add your first activity here !</string>
+    <string name="empty_invoices_message">You have no Invoices at this time. \nBuy tickets to our amazing activities and check your invoices here!</string>
     <string name="img_default">img_default</string>
 
 
@@ -202,5 +204,6 @@
     <string name="address_hint">Address</string>
     <string name="add_date_and_hour_hint">Add Date and Hour</string>
     <string name="enter_quantity_hint">Enter Quantity</string>
+    <string name="invoice_download_pdf">Download PDF</string>
 
 </resources>
