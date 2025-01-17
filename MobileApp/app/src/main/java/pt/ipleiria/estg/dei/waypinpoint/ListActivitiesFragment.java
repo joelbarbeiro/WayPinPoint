@@ -71,7 +71,7 @@ public class ListActivitiesFragment extends Fragment implements SwipeRefreshLayo
             }
         });
 
-        swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout);
+        swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout_Activities);
         swipeRefreshLayout.setOnRefreshListener(this);
 
         SingletonManager.getInstance(getContext()).setActivitiesListener(this);
@@ -150,11 +150,6 @@ public class ListActivitiesFragment extends Fragment implements SwipeRefreshLayo
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    @Override
-    public void onRefresh() {
-        SingletonManager.getInstance(getContext()).getActivities(getContext());
-        swipeRefreshLayout.setRefreshing(false);
-    }
 
     @Override
     public void onRefreshActivitiesList(ArrayList<Activity> listActivities) {
@@ -189,5 +184,11 @@ public class ListActivitiesFragment extends Fragment implements SwipeRefreshLayo
             tvEmptyMessage = emptyView.findViewById(R.id.tvEmptyMessage);
             tvEmptyMessage.setText(R.string.no_activities_message);
         }
+    }
+
+    @Override
+    public void onRefresh() {
+        SingletonManager.getInstance(getContext()).getActivities(getContext());
+        swipeRefreshLayout.setRefreshing(false);
     }
 }
