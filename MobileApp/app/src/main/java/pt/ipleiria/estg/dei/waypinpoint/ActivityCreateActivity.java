@@ -127,7 +127,8 @@ public class ActivityCreateActivity extends AppCompatActivity implements Activit
                         etMaxPax.getText().toString().isEmpty() ||
                         etPricePerPax.getText().toString().isEmpty() ||
                         etAddress.getText().toString().isEmpty()||
-                        imageUri == null || imageUri.toString().isEmpty() || dateHour.isEmpty()) {
+                        imageUri == null || imageUri.toString().isEmpty() ||
+                        dateHour.isEmpty()) {
 
                     Toast.makeText(getApplicationContext(), R.string.activity_empty_fields, Toast.LENGTH_SHORT).show();
                     return;
@@ -166,6 +167,10 @@ public class ActivityCreateActivity extends AppCompatActivity implements Activit
                     try {
                         SingletonManager.getInstance(getApplicationContext()).postActivityAPI(activity, dateHour, getApplicationContext());
                     } catch (IOException e) {
+                        if(activity.getId() == 0){
+                            activity = null;
+                            Toast.makeText(getApplicationContext(), R.string.activity_saving_error, Toast.LENGTH_SHORT).show();
+                        }
                         throw new RuntimeException(e);
                     }
                 }
@@ -253,7 +258,7 @@ public class ActivityCreateActivity extends AppCompatActivity implements Activit
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Category selectedCategory = (Category) parent.getItemAtPosition(position);
                 categoryId = selectedCategory.getId();
-                System.out.println("->> Category id " + categoryId);
+                //System.out.println("->> Category id " + categoryId);
             }
 
             @Override
