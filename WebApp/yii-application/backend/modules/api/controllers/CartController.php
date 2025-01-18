@@ -59,9 +59,12 @@ class CartController extends ActiveController
     {
         $cartModel = new $this->modelClass;
         $cartItems = $cartModel::find()
+            ->joinWith(['activity' , 'calendar'])
             ->with(['activity', 'user', 'calendar.date', 'calendar.time'])
-            ->where(['user_id' => $id])
-            ->andWhere(['status' => '0'])
+            ->where(['cart.user_id' => $id])
+            ->andWhere(['cart.status' => '0'])
+            ->andWhere(['activity.status' => 1])
+            ->andWhere(['calendar.status' => 1])
             ->asArray()
             ->all();
         $data = array_map(function ($cart) {
@@ -129,11 +132,10 @@ class CartController extends ActiveController
         ];
     }
 
-    public function actionUpdate($id)
+    public function actionUpdatecart($id)
     {
 
-        $cartModel = new $this->modelClass;
-        $cartItem = $cartModel::findOne($id);
+        $cartItem = Cart::findOne($id);
         if (!$cartItem) {
             return [
                 'success' => false,
@@ -141,26 +143,28 @@ class CartController extends ActiveController
             ];
         }
 
-        $postData = Yii::$app->request->bodyParams;
-        if (isset($postData['quantity'])) {
-            $cartItem->quantity = $postData['quantity'];
-        }
-
-        if ($cartItem->save()) {
-            return [
-                'success' => true,
-                'message' => 'Cart quantity successfully updated',
-                'cart_id' => $cartItem->id,
-                'quantity' => $cartItem->quantity,
-            ];
+        $calendarId = $cartItem->calendar_id;
+        $activityId = $cartItem->product_id;
+        $ticketsAvailable = Booking::getTotalTicketsByActivity($activityId, $calendarId);
+        $postData = Yii::$app->request->post();
+        $cartItem->quantity = $postData['quantity'];
+        if (($ticketsAvailable + $cartItem->quantity) <= $cartItem->activity->maxpax) {
+            if ($cartItem->save()) {
+                return [
+                    'success' => true,
+                    'message' => 'Cart quantity successfully updated',
+                    'cart_id' => $cartItem->id,
+                    'quantity' => $cartItem->quantity,
+                ];
+            } else {
+                \Yii::$app->response->statusCode = 400;
+                return "Not able to save your Cart";
+            }
         } else {
-            return [
-                'success' => false,
-                'errors' => $cartItem->getErrors(),
-            ];
+            \Yii::$app->response->statusCode = 400;
+            return "Not enough tickets available";
         }
     }
-
 
     public function actionCheckout($id)
     {

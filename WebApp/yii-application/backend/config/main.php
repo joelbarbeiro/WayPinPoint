@@ -103,7 +103,7 @@ return [
                         'GET buyers/{id}' => 'buyer',
                         'DELETE delete/{id}' => 'delete',
                         'POST addcart' => 'addcart',
-                        'PUT update/{id}' => 'update',
+                        'PUT updatecart/{id}' => 'updatecart',
                         'POST checkout/{id}' => 'checkout'
                     ],
                     'tokens' => [
@@ -139,7 +139,7 @@ return [
                     'tokens' => [
                         '{id}' => '<id:\\d+>',
                     ],
-                ]
+                ],
             ],
         ],
     ],
