@@ -88,7 +88,7 @@ public class ActivityDetailsActivity extends AppCompatActivity {
         tvName.setText(activity.getName());
         tvDescription.setText(activity.getDescription());
         tvMaxPax.setText("" + activity.getMaxpax());
-        tvPricePerPax.setText("" + activity.getPriceperpax());
+        tvPricePerPax.setText("" + activity.getPriceperpax() + " €");
         tvCategory.setText(getCategoryById(activity.getId(), categories));
 
         //region # DateTime spinner #
