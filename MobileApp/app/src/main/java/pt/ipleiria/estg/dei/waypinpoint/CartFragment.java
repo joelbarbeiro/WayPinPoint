@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -71,7 +72,22 @@ public class CartFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         });
         swipeRefreshLayout = view.findViewById(R.id.srl_Cart);
         swipeRefreshLayout.setOnRefreshListener(this);
-        
+
+        lvCart.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                boolean enableRefresh = firstVisibleItem == 0 &&
+                        view.getChildAt(0) != null &&
+                        view.getChildAt(0).getTop() == 0;
+                swipeRefreshLayout.setEnabled(enableRefresh);
+            }
+        });
+
         SingletonManager.getInstance(getContext()).setCartsListener(this);
         loadCartData();
         return view;

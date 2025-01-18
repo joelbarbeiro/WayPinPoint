@@ -10,6 +10,11 @@
         android:id="@+id/swipe_refresh_layout_Crud_Activities"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
         <ListView
             android:id="@+id/lvMyActivities"
             android:layout_width="match_parent"
@@ -20,6 +25,8 @@
             android:id="@+id/emptyViewLayoutMyActivities"
             layout="@layout/item_empty_view"
             android:visibility="gone" />
+
+    </FrameLayout>
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 

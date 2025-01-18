@@ -1,6 +1,5 @@
 package Model;
 
-import static java.util.Collections.emptyList;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.ADD;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.CHECKOUT;
 import static pt.ipleiria.estg.dei.waypinpoint.utils.Utilities.DELETE;
@@ -348,16 +347,9 @@ public class SingletonManager {
                     System.out.println("---> ERROR Login" + error.getMessage() + error);
                     SharedPreferences sharedPreferences = context.getSharedPreferences(USER_DATA, Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
-                    if (error.networkResponse.statusCode == 401) {
-                        Toast.makeText(context, R.string.login_invalid_login, Toast.LENGTH_SHORT).show();
-                        listener.onErrorLogin(error.getMessage());
-                    } else {
-                        Toast.makeText(context, R.string.login_error_message, Toast.LENGTH_SHORT).show();
-                        listener.onErrorLogin(error.getMessage());
-                    }
+                    listener.onErrorLogin(context.getString(R.string.login_error_message_api));
                     editor.putString(TOKEN, NO_TOKEN);
                     editor.apply();
-                    listener.onErrorLogin(error.getMessage());
                 }
             }) {
                 protected Map<String, String> getParams() {
@@ -692,7 +684,7 @@ public class SingletonManager {
                 JSONArray hourArray = new JSONArray();
 
                 int i = 0;
-                System.out.println("->>"+dateTimeParser);
+                System.out.println("->>" + dateTimeParser);
                 for (DateTimeParser dateTime : dateTimeParser) {
                     params.put("date[" + i + "]", dateTime.getParserDate());
                     params.put("hour[" + i + "]", dateTime.getParserTime());
