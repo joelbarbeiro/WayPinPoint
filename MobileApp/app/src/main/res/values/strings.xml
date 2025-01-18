@@ -186,6 +186,7 @@
     <string name="Api_hostname_message_before_login">Please config api hostname before login or register</string>
     <string name="activity_string">Activity</string>
     <string name="activity_empty_fields">Please fill in all fields</string>
+    <string name="activity_saving_error">Please save the activity again</string>
 
 
     <!-- Invoices -->
