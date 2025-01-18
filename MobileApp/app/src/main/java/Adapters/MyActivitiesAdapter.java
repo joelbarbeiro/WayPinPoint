@@ -87,7 +87,7 @@ public class MyActivitiesAdapter extends BaseAdapter {
         public void update(Activity activity) {
             tvName.setText(activity.getName());
             tvCatgory.setText(Utilities.getCategoryById(activity.getCategory(), categories));
-            tvPrice.setText("" + activity.getPriceperpax());
+            tvPrice.setText("" + activity.getPriceperpax()+ " €");
             tvAddress.setText(activity.getAddress());
             String imgPath = Utilities.getImgUri(context) + activity.getSupplier() + "/" + activity.getPhoto();
             Glide.with(context)
