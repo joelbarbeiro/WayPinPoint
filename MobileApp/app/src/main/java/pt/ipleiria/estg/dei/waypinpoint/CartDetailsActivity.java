@@ -70,7 +70,7 @@ public class CartDetailsActivity extends AppCompatActivity implements CartListen
     private void loadCart() {
         etActivityName.setText(activity.getName());
         etQuantity.setText("" + cart.getQuantity());
-        etPrice.setText("" + activity.getPriceperpax());
+        etPrice.setText("" + activity.getPriceperpax() + "€");
         etDate.setText(calendar.getDate() + " / " + waypinpointDbHelper.getCalendarTimeById(calendar.getTime_id()).toString());;
         String imgPath = Utilities.getImgUri(getApplicationContext()) + activity.getSupplier() + "/" + activity.getPhoto();
         Glide.with(getApplicationContext())
