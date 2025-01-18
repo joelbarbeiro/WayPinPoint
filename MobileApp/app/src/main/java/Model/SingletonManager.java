@@ -503,7 +503,7 @@ public class SingletonManager {
 
     public void editCart(final Cart cart, final Context context) {
         String apiHost = getApiHost(context);
-        StringRequest request = new StringRequest(Request.Method.PUT, apiHost + "carts/update/" + cart.getId(),
+        StringRequest request = new StringRequest(Request.Method.PUT, apiHost + "carts/updatecart/" + cart.getId(),
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -517,17 +517,19 @@ public class SingletonManager {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(context, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                        String responseBody;
+                        try {
+                            responseBody = new String(error.networkResponse.data, "UTF-8");
+                            Toast.makeText(context, responseBody, Toast.LENGTH_SHORT).show();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 }) {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
-                params.put("user_id", String.valueOf(getUserId(context)));
-                params.put("product_id", String.valueOf(cart.getProduct_id()));
                 params.put("quantity", String.valueOf(cart.getQuantity()));
-                params.put("status", "0");
-                params.put("calendar_id", String.valueOf(cart.getCalendar_id()));
                 return params;
             }
         };
