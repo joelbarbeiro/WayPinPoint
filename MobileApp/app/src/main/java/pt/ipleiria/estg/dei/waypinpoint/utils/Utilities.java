@@ -80,29 +80,6 @@ public class Utilities {
         return sharedPreferences.getInt(ID, 0);
     }
 
-    public static void toastDuration(int duration) {
-        new Handler(getMainLooper()).postDelayed(() -> {
-        }, duration);
-    }
-
-    public static String getRealPathFromURI(Uri uri, Context context) {
-        String filePath = null;
-        if ("content".equalsIgnoreCase(uri.getScheme())) {
-            String[] projection = {MediaStore.Images.Media.DATA};
-            try (Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null)) {
-                if (cursor != null && cursor.moveToFirst()) {
-                    int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-                    filePath = cursor.getString(columnIndex);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else if ("file".equalsIgnoreCase(uri.getScheme())) {
-            filePath = uri.getPath();
-        }
-        return filePath;
-    }
-
     public static void checkAndRequestMediaPermissions(Context context, Activity activity) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // Android 13+
             if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.READ_MEDIA_IMAGES)

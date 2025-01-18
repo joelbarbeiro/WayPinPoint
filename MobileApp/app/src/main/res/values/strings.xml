@@ -10,6 +10,7 @@
     <string name="login_register_label">Not a member? Sign Up</string>
     <string name="login_register_success_message">User Registered Successfully</string>
     <string name="login_sign_up">Sign Up</string>
+    <string name="login_error_message_api">User not validated</string>
 
     <!-- Register -->
     <string name="register_title">Register</string>

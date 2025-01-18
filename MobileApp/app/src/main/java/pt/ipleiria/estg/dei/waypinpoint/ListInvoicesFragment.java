@@ -16,6 +16,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
@@ -66,6 +67,21 @@ public class ListInvoicesFragment extends Fragment implements SwipeRefreshLayout
 
         swipeRefreshLayout = view.findViewById(R.id.srl_invoices);
         swipeRefreshLayout.setOnRefreshListener(this);
+
+        lvInvoices.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                boolean enableRefresh = firstVisibleItem == 0 &&
+                        view.getChildAt(0) != null &&
+                        view.getChildAt(0).getTop() == 0;
+                swipeRefreshLayout.setEnabled(enableRefresh);
+            }
+        });
 
         SingletonManager.getInstance(getContext()).setInvoicesListener(this);
         SingletonManager.getInstance(getContext()).getInvoicesForUserApi(getContext(), userId);

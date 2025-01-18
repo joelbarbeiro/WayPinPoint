@@ -13,6 +13,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
@@ -73,6 +74,21 @@ public class ListActivitiesFragment extends Fragment implements SwipeRefreshLayo
 
         swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout_Activities);
         swipeRefreshLayout.setOnRefreshListener(this);
+
+        lvActivities.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                boolean enableRefresh = firstVisibleItem == 0 &&
+                        view.getChildAt(0) != null &&
+                        view.getChildAt(0).getTop() == 0;
+                swipeRefreshLayout.setEnabled(enableRefresh);
+            }
+        });
 
         SingletonManager.getInstance(getContext()).setActivitiesListener(this);
         SingletonManager.getInstance(getContext()).getActivities(getContext());
@@ -149,7 +165,6 @@ public class ListActivitiesFragment extends Fragment implements SwipeRefreshLayo
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
-
 
     @Override
     public void onRefreshActivitiesList(ArrayList<Activity> listActivities) {

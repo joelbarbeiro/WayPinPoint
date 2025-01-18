@@ -13,6 +13,7 @@ import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -75,6 +76,21 @@ public class ActivityPhotosFragment extends Fragment implements SwipeRefreshLayo
 
         swipeRefreshLayout = view.findViewById(R.id.srl_photos);
         swipeRefreshLayout.setOnRefreshListener(this);
+
+        lvPhotos.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                boolean enableRefresh = firstVisibleItem == 0 &&
+                        view.getChildAt(0) != null &&
+                        view.getChildAt(0).getTop() == 0;
+                swipeRefreshLayout.setEnabled(enableRefresh);
+            }
+        });
 
         SingletonManager.getInstance(getContext()).setPhotosListener(this);
         SingletonManager.getInstance(getContext()).getAllPhotos(getContext(), activityId);

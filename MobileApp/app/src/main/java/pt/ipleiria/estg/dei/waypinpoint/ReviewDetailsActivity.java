@@ -57,7 +57,7 @@ public class ReviewDetailsActivity extends AppCompatActivity implements ReviewLi
         fabSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                float rating = rbScore.getRating();
+                int rating = (int) rbScore.getRating();
                 String message = etMessage.getText().toString().trim();
 
                 if (rating == 0) {

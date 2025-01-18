@@ -15,6 +15,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
@@ -87,6 +88,21 @@ public class MyActivitiesFragment extends Fragment implements SwipeRefreshLayout
         swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout_Crud_Activities);
         swipeRefreshLayout.setOnRefreshListener(this);
 
+        lvMyActivities.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                boolean enableRefresh = firstVisibleItem == 0 &&
+                        view.getChildAt(0) != null &&
+                        view.getChildAt(0).getTop() == 0;
+                swipeRefreshLayout.setEnabled(enableRefresh);
+            }
+        });
+
         SingletonManager.getInstance(getContext()).setActivitiesListener(this);
         SingletonManager.getInstance(getContext()).getActivities(getContext());
 
@@ -111,7 +127,7 @@ public class MyActivitiesFragment extends Fragment implements SwipeRefreshLayout
             public boolean onQueryTextChange(String s) {
                 ArrayList<Activity> tempActivity = new ArrayList<>();
 
-                for (Activity a : SingletonManager.getInstance(getContext()).getActivities()) {
+                for (Activity a : filterActivitiesBySupplier(getContext(), SingletonManager.getInstance(getContext()).getActivities())) {
                     if (a.getName().toLowerCase().contains(s.toLowerCase())) {
                         tempActivity.add(a);
                     }
@@ -173,7 +189,7 @@ public class MyActivitiesFragment extends Fragment implements SwipeRefreshLayout
     public void onRefreshAllData(ArrayList<Activity> listActivities, ArrayList<Calendar> listCalendar, ArrayList<CalendarTime> listCalendarTime, ArrayList<Category> listCategories) {
         if (listActivities != null && listCalendar != null && listCalendarTime != null && listCategories != null) {
             ArrayList<Activity> supplierActivity = filterActivitiesBySupplier(getContext(), listActivities);
-            if(!supplierActivity.isEmpty()) {
+            if (!supplierActivity.isEmpty()) {
                 lvMyActivities.setVisibility(View.VISIBLE);
                 emptyView.setVisibility(View.GONE);
                 lvMyActivities.setAdapter(new MyActivitiesAdapter(getContext(), supplierActivity, listCalendar, listCalendarTime, listCategories));
