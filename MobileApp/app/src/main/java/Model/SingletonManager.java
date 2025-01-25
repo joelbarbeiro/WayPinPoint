@@ -571,10 +571,10 @@ public class SingletonManager {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(context, R.string.cart_checkout_error, Toast.LENGTH_SHORT).show();
                 String responseBody;
                 try {
                     responseBody = new String(error.networkResponse.data, "UTF-8");
+                    Toast.makeText(context, responseBody, Toast.LENGTH_SHORT).show();
                     Log.e("Checkout ", "Error Response Body: " + responseBody);
                     Log.e("Checkout", "Error Message: " + error.getMessage());
                 } catch (Exception e) {
