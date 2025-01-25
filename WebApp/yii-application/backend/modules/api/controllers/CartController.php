@@ -59,7 +59,7 @@ class CartController extends ActiveController
     {
         $cartModel = new $this->modelClass;
         $cartItems = $cartModel::find()
-            ->joinWith(['activity' , 'calendar'])
+            ->joinWith(['activity', 'calendar'])
             ->with(['activity', 'user', 'calendar.date', 'calendar.time'])
             ->where(['cart.user_id' => $id])
             ->andWhere(['cart.status' => '0'])
@@ -102,13 +102,8 @@ class CartController extends ActiveController
     {
 
         $cart = new Cart();
-
-        $id = $cart->product_id;
-        $calendarId = $cart->calendar_id;
-        $ticketsAvailable = Booking::getTotalTicketsByActivity($id, $calendarId);
-
         if ($cart->load(Yii::$app->request->post(), '')) {
-            if (($ticketsAvailable + $cart->quantity) <= $cart->activity->maxpax) {
+            if (($cart->quantity) <= $cart->activity->maxpax) {
                 if ($cart->save()) {
                     return [
                         'success' => true,
@@ -123,7 +118,7 @@ class CartController extends ActiveController
                 }
             } else {
                 \Yii::$app->response->statusCode = 400;
-                return "Not enough tickets available";
+                return "Can only purchase a maximum of ". $cart->activity->maxpax . " tickets for this date";
             }
         }
         return [
@@ -145,10 +140,10 @@ class CartController extends ActiveController
 
         $calendarId = $cartItem->calendar_id;
         $activityId = $cartItem->product_id;
-        $ticketsAvailable = Booking::getTotalTicketsByActivity($activityId, $calendarId);
+        $ticketsBought = Booking::getTotalTicketsByActivity($activityId, $calendarId);
         $postData = Yii::$app->request->post();
         $cartItem->quantity = $postData['quantity'];
-        if (($ticketsAvailable + $cartItem->quantity) <= $cartItem->activity->maxpax) {
+        if (($ticketsBought + $cartItem->quantity) <= $cartItem->activity->maxpax) {
             if ($cartItem->save()) {
                 return [
                     'success' => true,
@@ -162,7 +157,8 @@ class CartController extends ActiveController
             }
         } else {
             \Yii::$app->response->statusCode = 400;
-            return "Not enough tickets available";
+            return "Not enough tickets, there's ". $cartItem->activity->maxpax - $ticketsBought ." left";
+
         }
     }
 
@@ -175,45 +171,55 @@ class CartController extends ActiveController
                 throw new \Exception("Cart not found for ID: $id");
             }
 
-            $bookingId = Booking::createBooking($cart);
-            if (!$bookingId) {
-                throw new \Exception("Failed to create booking for Cart ID: $id");
-            }
+            $activityId = $cart->product_id;
+            $calendarId = $cart->calendar_id;
+            $ticketsBought = Booking::getTotalTicketsByActivity($activityId, $calendarId);
+            if (($ticketsBought + $cart->quantity) <= $cart->activity->maxpax) {
+                $bookingId = Booking::createBooking($cart);
+                if (!$bookingId) {
+                    throw new \Exception("Failed to create booking for Cart ID: $id");
+                }
 
-            $saleId = Sale::createSale($cart);
-            if (!$saleId) {
-                throw new \Exception("Failed to create sale for Cart ID: $id");
-            }
+                $saleId = Sale::createSale($cart);
+                if (!$saleId) {
+                    throw new \Exception("Failed to create sale for Cart ID: $id");
+                }
 
-            $invoiceCreated = Invoice::createInvoice($cart, $saleId, $bookingId);
-            if (!$invoiceCreated) {
-                throw new \Exception("Failed to create invoice for Cart ID: $id");
-            }
+                $invoiceCreated = Invoice::createInvoice($cart, $saleId, $bookingId);
+                if (!$invoiceCreated) {
+                    throw new \Exception("Failed to create invoice for Cart ID: $id");
+                }
 
-            $qrCode = Cart::generateQrCode($cart);
-            Ticket::createTicket($cart, $qrCode, $bookingId);
 
-            $cart->status = 1;
-            if (!$cart->save()) {
-                throw new \Exception("Failed to save Cart ID: $id. Errors: " . json_encode($cart->getErrors()));
-            }
+                $qrCode = Cart::generateQrCode($cart);
+                Ticket::createTicket($cart, $qrCode, $bookingId);
 
-            $content = $this->renderPartial('receiptApi', ['cart' => $cart]);
-            $pdfContent = Cart::generatePdf($content);
-            $qrCodeImage = $qrCode->writeString();
+                $cart->status = 1;
+                if (!$cart->save()) {
+                    throw new \Exception("Failed to save Cart ID: $id. Errors: " . json_encode($cart->getErrors()));
+                }
 
-            $mailSent = Yii::$app->mailer->compose()
-                ->setFrom('waypinpoint@gmail.com')
-                ->setTo($cart->user->email)
-                ->setSubject('Your Booking Receipt and Ticket')
-                ->setTextBody('Your receipt and ticket are attached.')
-                ->setHtmlBody('<b>Thank you for your booking! Your receipt and ticket are attached.</b>')
-                ->attachContent($pdfContent, ['fileName' => 'receipt.pdf', 'contentType' => 'application/pdf'])
-                ->attachContent($qrCodeImage, ['fileName' => 'ticket.png', 'contentType' => 'image/png'])
-                ->send();
+                $content = $this->renderPartial('receiptApi', ['cart' => $cart]);
+                $pdfContent = Cart::generatePdf($content);
+                $qrCodeImage = $qrCode->writeString();
 
-            if (!$mailSent) {
-                throw new \Exception("Failed to send email for Cart ID: $id");
+                $mailSent = Yii::$app->mailer->compose()
+                    ->setFrom('waypinpoint@gmail.com')
+                    ->setTo($cart->user->email)
+                    ->setSubject('Your Booking Receipt and Ticket')
+                    ->setTextBody('Your receipt and ticket are attached.')
+                    ->setHtmlBody('<b>Thank you for your booking! Your receipt and ticket are attached.</b>')
+                    ->attachContent($pdfContent, ['fileName' => 'receipt.pdf', 'contentType' => 'application/pdf'])
+                    ->attachContent($qrCodeImage, ['fileName' => 'ticket.png', 'contentType' => 'image/png'])
+                    ->send();
+
+                if (!$mailSent) {
+                    throw new \Exception("Failed to send email for Cart ID: $id");
+                }
+            } else
+            {
+                \Yii::$app->response->statusCode = 400;
+                return "Not enough tickets, there's ". $cart->activity->maxpax - $ticketsBought ." left";
             }
             return [
                 'status' => 'success',
