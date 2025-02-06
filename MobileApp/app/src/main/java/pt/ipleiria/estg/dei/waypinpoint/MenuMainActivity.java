@@ -101,7 +101,7 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
     }
 
     private void loadHeader(SharedPreferences sharedPreferencesUser, String profilePic) {
-        email = getIntent().getStringExtra(EMAIL).toString();
+        email = getIntent().getStringExtra(EMAIL);
 
         if (email != null) {
             SharedPreferences.Editor editorUser = sharedPreferencesUser.edit();
