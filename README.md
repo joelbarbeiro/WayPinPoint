@@ -37,16 +37,16 @@ A Platform to book activities via Web or Mobile
 
 | USERNAME | PASSWORD |
 |----------|----------|
-| supplier1 | supplier1 |
-| supplier2 | supplier2 |
-| manager1 | manager1 |
-| manager2 | manager2 |
-| salesperson1 | salesperson1 |
-| salesperson2 | salesperson2 |
-| guide1 | guide1 |
-| guide2 | guide2 |
-| client1 | client1 |
-| client2 | client2 |
+| emily | supplier1 |
+| julia | supplier2 |
+| matthew | manager1 |
+| david | manager2 |
+| lucas | salesperson1 |
+| john | salesperson2 |
+| clara | guide1 |
+| sophie | guide2 |
+| olivia | client1 |
+| luke | client2 |
 
 > NOTA: Para receber o bilhete e a fatura no email, registar conta com um email a que tenha acesso.
 
