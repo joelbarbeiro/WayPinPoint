@@ -12,50 +12,49 @@ class m241118_214239_seed_user_userextra_localsellpoint_table extends Migration
      */
     public function safeUp()
     {
-        // Step 1: Insert users
+        // Step 1: Insert users with new real names
         $this->batchInsert('user', ['username', 'email', 'password_hash', 'auth_key', 'created_at', 'updated_at', 'verification_token'], [
             ['admin', 'admin@example.com', Yii::$app->security->generatePasswordHash('admin'), Yii::$app->security->generateRandomString(), 0,0,'0'],
-            ['supplier1', 'supplier1@example.com', Yii::$app->security->generatePasswordHash('supplier1'),Yii::$app->security->generateRandomString(),0,0,'0'],
-            ['supplier2', 'supplier2@example.com', Yii::$app->security->generatePasswordHash('supplier2'),Yii::$app->security->generateRandomString(), 0,0,'0'],
-            ['manager1', 'manager1@example.com', Yii::$app->security->generatePasswordHash('manager1'),Yii::$app->security->generateRandomString(),0,0,'0'],
-            ['manager2', 'manager2@example.com', Yii::$app->security->generatePasswordHash('manager2'),Yii::$app->security->generateRandomString(), 0,0,'0'],
-            ['salesperson1', 'salesperson1@example.com', Yii::$app->security->generatePasswordHash('salesperson1'),Yii::$app->security->generateRandomString(),0,0,'0'],
-            ['salesperson2', 'salesperson2@example.com', Yii::$app->security->generatePasswordHash('salesperson2'),Yii::$app->security->generateRandomString(), 0,0,'0'],
-            ['guide1', 'guide1@example.com', Yii::$app->security->generatePasswordHash('guide1'),Yii::$app->security->generateRandomString(), 0,0,'0'],
-            ['guide2', 'guide2@example.com', Yii::$app->security->generatePasswordHash('guide2'),Yii::$app->security->generateRandomString(),0,0,'0'],
-            ['client1', 'client1@example.com', Yii::$app->security->generatePasswordHash('client1'),Yii::$app->security->generateRandomString(),0,0,'0'],
-            ['client2', 'client2@example.com', Yii::$app->security->generatePasswordHash('client2'),Yii::$app->security->generateRandomString(),0,0,'0'],
+            ['emily', 'emily@example.com', Yii::$app->security->generatePasswordHash('supplier1'), Yii::$app->security->generateRandomString(),0,0,'0'],
+            ['julia', 'julia@example.com', Yii::$app->security->generatePasswordHash('supplier2'), Yii::$app->security->generateRandomString(), 0,0,'0'],
+            ['matthew', 'matthew@example.com', Yii::$app->security->generatePasswordHash('manager1'), Yii::$app->security->generateRandomString(),0,0,'0'],
+            ['david', 'david@example.com', Yii::$app->security->generatePasswordHash('manager2'), Yii::$app->security->generateRandomString(), 0,0,'0'],
+            ['lucas', 'lucas@example.com', Yii::$app->security->generatePasswordHash('salesperson1'), Yii::$app->security->generateRandomString(),0,0,'0'],
+            ['john', 'john@example.com', Yii::$app->security->generatePasswordHash('salesperson2'), Yii::$app->security->generateRandomString(), 0,0,'0'],
+            ['clara', 'clara@example.com', Yii::$app->security->generatePasswordHash('guide1'), Yii::$app->security->generateRandomString(), 0,0,'0'],
+            ['sophie', 'sophie@example.com', Yii::$app->security->generatePasswordHash('guide2'), Yii::$app->security->generateRandomString(), 0,0,'0'],
+            ['olivia', 'olivia@example.com', Yii::$app->security->generatePasswordHash('client1'), Yii::$app->security->generateRandomString(),0,0,'0'],
+            ['luke', 'luke@example.com', Yii::$app->security->generatePasswordHash('client2'), Yii::$app->security->generateRandomString(),0,0,'0'],
         ]);
 
         // Step 2: Retrieve the user IDs (after insert)
         $adminIdSupplier = (new \yii\db\Query())->select('id')->from('user')->where(['username' => 'admin'])->scalar();
-        $userIdSupplier1 = (new \yii\db\Query())->select('id')->from('user')->where(['username' => 'supplier1'])->scalar();
-        $userIdSupplier2 = (new \yii\db\Query())->select('id')->from('user')->where(['username' => 'supplier2'])->scalar();
+        $userIdSupplier1 = (new \yii\db\Query())->select('id')->from('user')->where(['username' => 'emily'])->scalar();
+        $userIdSupplier2 = (new \yii\db\Query())->select('id')->from('user')->where(['username' => 'julia'])->scalar();
 
         // Step 3: Insert localsellpoint records with the correct user_id
         $this->batchInsert('localsellpoint', ['user_id', 'address', 'name' , 'status'], [
             [$adminIdSupplier, 'website', 'Website', 1],
-            [$userIdSupplier1, 'Supplier1 Address', 'Supplier1 Sellpoint', 1],
-            [$userIdSupplier2, 'Supplier2 Address', 'Supplier2 Sellpoint', 1],
+            [$userIdSupplier1, 'Emily\'s Address, 123 Main Street', 'Emily\'s Sellpoint', 1],
+            [$userIdSupplier2, 'Julia\'s Address, 456 Oak Street', 'Julia\'s Sellpoint', 1],
         ]);
         $adminSellPoint = (new \yii\db\Query())->select('id')->from('localsellpoint')->where(['user_id' => $adminIdSupplier])->scalar();
         $localsellpointId1 = (new \yii\db\Query())->select('id')->from('localsellpoint')->where(['user_id' => $userIdSupplier1])->scalar();
         $localsellpointId2 = (new \yii\db\Query())->select('id')->from('localsellpoint')->where(['user_id' => $userIdSupplier2])->scalar();
 
-
-        // Step 4: Insert userextra records
+        // Step 4: Insert userextra records with updated data
         $usersData = [
             'admin' => ['nif' => 987654222, 'address' => 'Admin Address', 'phone' => '0987654321','photo'=> 'E35moiq2WSjIUs6T.jpeg', 'supplier' => $adminIdSupplier, 'localsellpoint_id' => $adminSellPoint],
-            'supplier1' => ['nif' => 987654321, 'address' => 'Supplier1 Address', 'phone' => '0987654321','photo'=> 'P8Sx4JRg_2S5_zni.jpeg', 'supplier' => $userIdSupplier1, 'localsellpoint_id' => $localsellpointId1],
-            'supplier2' => ['nif' => 567890123, 'address' => 'Supplier2 Address', 'phone' => '5678901234', 'photo'=> 'kXVn4GehTmqUMez3.jpg','supplier' => $userIdSupplier2, 'localsellpoint_id' => $localsellpointId2],
-            'manager1' => ['nif' => 345678901, 'address' => 'Manager1 Address', 'phone' => '3456789012','photo'=> 'rLB2CUDgIzhuja5t.jpg', 'supplier' => $userIdSupplier1, 'localsellpoint_id' => $localsellpointId1],
-            'manager2' => ['nif' => 234567890, 'address' => 'Manager2 Address', 'phone' => '2345678901','photo'=> 'X4vuAZjVLs9TZlkt.jpeg', 'supplier' => $userIdSupplier2, 'localsellpoint_id' => $localsellpointId2],
-            'salesperson1' => ['nif' => 876543210, 'address' => 'Salesperson1 Address', 'phone' => '8765432109','photo'=> '5sWR4L_-iVSMrG4T.jpg', 'supplier' => $userIdSupplier1, 'localsellpoint_id' => $localsellpointId1],
-            'salesperson2' => ['nif' => 765432109, 'address' => 'Salesperson2 Address', 'phone' => '7654321098', 'photo'=> 'zJ4MUbJrB9KfwYN7.jpeg','supplier' => $userIdSupplier2, 'localsellpoint_id' => $localsellpointId2],
-            'guide1' => ['nif' => 654321098, 'address' => 'Guide1 Address', 'phone' => '6543210987','photo'=> 'dNB5yZv8IgGoVm4D.jpg', 'supplier' => $userIdSupplier1, 'localsellpoint_id' => $localsellpointId1],
-            'guide2' => ['nif' => 543210987, 'address' => 'Guide2 Address', 'phone' => '5432109876','photo'=> 'sOaAX7bSet74Myea.jpg', 'supplier' => $userIdSupplier2, 'localsellpoint_id' => $localsellpointId2],
-            'client1' => ['nif' => 432109876, 'address' => 'Client1 Address', 'phone' => '4321098765','photo'=> 'OyvGbaj69i9ZjLAk.jpeg', 'supplier' => 0, 'localsellpoint_id' => null],
-            'client2' => ['nif' => 321098765, 'address' => 'Client2 Address', 'phone' => '3210987654','photo'=> 'elQNDZvUmyavSxMS.jpg', 'supplier' => 0, 'localsellpoint_id' => null],
+            'emily' => ['nif' => 987654321, 'address' => 'Emily\'s Address, 123 Main Street', 'phone' => '0987654321','photo'=> 'P8Sx4JRg_2S5_zni.jpeg', 'supplier' => $userIdSupplier1, 'localsellpoint_id' => $localsellpointId1],
+            'julia' => ['nif' => 567890123, 'address' => 'Julia\'s Address, 456 Oak Street', 'phone' => '5678901234', 'photo'=> 'kXVn4GehTmqUMez3.jpg','supplier' => $userIdSupplier2, 'localsellpoint_id' => $localsellpointId2],
+            'matthew' => ['nif' => 345678901, 'address' => 'Matthew\'s Address, 789 Pine Street', 'phone' => '3456789012','photo'=> 'rLB2CUDgIzhuja5t.jpg', 'supplier' => $userIdSupplier1, 'localsellpoint_id' => $localsellpointId1],
+            'david' => ['nif' => 234567890, 'address' => 'David\'s Address, 321 Birch Street', 'phone' => '2345678901','photo'=> 'X4vuAZjVLs9TZlkt.jpeg', 'supplier' => $userIdSupplier2, 'localsellpoint_id' => $localsellpointId2],
+            'lucas' => ['nif' => 876543210, 'address' => 'Lucas\'s Address, 987 Cedar Street', 'phone' => '8765432109','photo'=> '5sWR4L_-iVSMrG4T.jpg', 'supplier' => $userIdSupplier1, 'localsellpoint_id' => $localsellpointId1],
+            'john' => ['nif' => 765432109, 'address' => 'John\'s Address, 654 Maple Street', 'phone' => '7654321098', 'photo'=> 'zJ4MUbJrB9KfwYN7.jpeg','supplier' => $userIdSupplier2, 'localsellpoint_id' => $localsellpointId2],
+            'clara' => ['nif' => 654321098, 'address' => 'Clara\'s Address, 741 Elm Street', 'phone' => '6543210987','photo'=> 'dNB5yZv8IgGoVm4D.jpg', 'supplier' => $userIdSupplier1, 'localsellpoint_id' => $localsellpointId1],
+            'sophie' => ['nif' => 543210987, 'address' => 'Sophie\'s Address, 852 Redwood Avenue', 'phone' => '5432109876','photo'=> 'sOaAX7bSet74Myea.jpg', 'supplier' => $userIdSupplier2, 'localsellpoint_id' => $localsellpointId2],
+            'olivia' => ['nif' => 432109876, 'address' => 'Olivia\'s Address, 963 Palm Lane', 'phone' => '4321098765','photo'=> 'OyvGbaj69i9ZjLAk.jpeg', 'supplier' => 0, 'localsellpoint_id' => null],
+            'luke' => ['nif' => 321098765, 'address' => 'Luke\'s Address, 159 Oak Lane', 'phone' => '3210987654','photo'=> 'elQNDZvUmyavSxMS.jpg', 'supplier' => 0, 'localsellpoint_id' => null],
         ];
 
         foreach ($usersData as $username => $data) {
@@ -84,11 +83,11 @@ class m241118_214239_seed_user_userextra_localsellpoint_table extends Migration
         // Define roles based on usernames
         $roles = [
             'admin' => ['admin'],
-            'supplier' => ['supplier1', 'supplier2'],
-            'manager' => ['manager1', 'manager2'],
-            'salesperson' => ['salesperson1', 'salesperson2'],
-            'guide' => ['guide1', 'guide2'],
-            'client' => ['client1', 'client2'],
+            'supplier' => ['emily', 'julia'],
+            'manager' => ['matthew', 'david'],
+            'salesperson' => ['lucas', 'john'],
+            'guide' => ['clara', 'sophie'],
+            'client' => ['olivia', 'luke'],
         ];
 
         foreach ($roles as $roleName => $usernames) {
