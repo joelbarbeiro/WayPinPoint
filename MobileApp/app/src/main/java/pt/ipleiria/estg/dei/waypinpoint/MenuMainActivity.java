@@ -90,7 +90,9 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
 
         Menu menu = navigationView.getMenu();
         MenuItem employeeSection = menu.findItem(R.id.navQrCode);
+        MenuItem supplierSection = menu.findItem(R.id.navMyActivities);
 
+        supplierSection.setVisible("supplier".equals(role));
         employeeSection.setVisible(!"client".equals(role));
         loadDefaultFragment();
     }
@@ -246,8 +248,7 @@ public class MenuMainActivity extends AppCompatActivity implements NavigationVie
         builder.setPositiveButton(R.string.yes_string, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        WaypinpointDbHelper waypinpointDbHelper = new WaypinpointDbHelper(getApplicationContext());
-                        waypinpointDbHelper.removeAllUsersDb();
+                        SingletonManager.getInstance(getApplicationContext()).removeAllUsers();
                         SharedPreferences.Editor editorUser = sharedPreferencesUser.edit();
                         editorUser.putString(TOKEN, NO_TOKEN);
                         editorUser.apply();

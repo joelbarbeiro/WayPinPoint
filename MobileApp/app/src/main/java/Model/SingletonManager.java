@@ -164,6 +164,10 @@ public class SingletonManager {
         waypinpointDbHelper.editUserDb(user);
     }
 
+    public void removeAllUsers() {
+        waypinpointDbHelper.removeAllUsersDb();
+    }
+
     public void removeUserDb(int userId) {
         User b = getUser(userId);
         if (b != null) {
