@@ -84,7 +84,11 @@ public class QRCodeScannerActivity extends AppCompatActivity {
         if (mediaImage != null) {
             InputImage image = InputImage.fromMediaImage(mediaImage, imageProxy.getImageInfo().getRotationDegrees());
             barcodeScanner.process(image)
-                    .addOnSuccessListener(barcodes -> processBarcodes(barcodes))
+                    .addOnSuccessListener(barcodes -> {
+                        if (!barcodes.isEmpty()) {
+                            processBarcodes(barcodes.get(0));
+                        }
+                    })
                     .addOnFailureListener(e -> Log.e(TAG_QRCODEACTIVITY, getString(R.string.qr_code_scan_fail), e))
                     .addOnCompleteListener(task -> imageProxy.close());
         } else {
@@ -92,17 +96,21 @@ public class QRCodeScannerActivity extends AppCompatActivity {
         }
     }
 
-    private void processBarcodes(List<Barcode> barcodes) {
-        for (Barcode barcode : barcodes) {
+    private void processBarcodes(Barcode barcode) {
             String rawValue = barcode.getRawValue();
             Log.d(TAG_QRCODEACTIVITY, getString(R.string.scanned_qr_code) + rawValue);
 
             if (rawValue.contains(getString(R.string.activity_string))) {
-                Toast.makeText(this, getString(R.string.QR_Code_valid) + rawValue, Toast.LENGTH_SHORT).show();
+                Toast toast = Toast.makeText(this, getString(R.string.QR_Code_valid) + rawValue, Toast.LENGTH_LONG);
+                toast.show();
+                new android.os.Handler().postDelayed(toast::cancel, 2000);
             } else {
-                Toast.makeText(this, R.string.QR_Code_invalid, Toast.LENGTH_SHORT).show();
+                Toast toast = Toast.makeText(this, getString(R.string.QR_Code_invalid), Toast.LENGTH_LONG);
+                toast.show();
+
+                new android.os.Handler().postDelayed(toast::cancel, 2000);
             }
-        }
+
     }
 
     @Override
